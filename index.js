@@ -19,3 +19,16 @@ app.use(bodyParser.json())
 app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 
+app.get('/', (req, res) => {
+  res.render('index', {
+  })
+});
+
+app.get('/navbar', (req, res) => {
+  res.render('navbar', {
+  })
+});
+
+app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
+

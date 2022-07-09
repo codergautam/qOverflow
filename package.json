@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-css": "tailwindcss build ./src/index.css -o ./public/index.css",
+    "watch-css": "tailwindcss build ./src/index.css -o ./public/index.css --watch",
     "start": "nodemon index.js"
   },
   "repository": {
