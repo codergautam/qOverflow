@@ -1,0 +1,51 @@
+<link rel="stylesheet" href="/index.css">
+
+<nav class="bg-teal-800">
+  <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+    <div class="relative flex items-center justify-between h-16">
+      <div class="flex-1 flex ">
+        <!-- Logo -->
+        <div class="flex-shrink-0 flex ">
+          <img class="block lg:block h-8 w-auto" src="" alt="">
+        </div>
+      </div>
+      <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+
+        <div class="ml-3 relative">
+          <div>
+     
+              <% if(loggedIn) { %>
+                <%= user.username %>
+                   <!-- Profile picture -->
+            <button type="button" class="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+ <img class="h-8 w-8 rounded-full" src="<%= user.img %>" alt="profilepic">
+            </button>
+             
+              <% } else { %>
+              <% if (typeof login == "undefined" || !login) { %>
+                <button onclick="location.href = '/auth/login'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                  <% } else { %>
+                <button onclick="location.href = '/auth/login'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+  
+                    <% } %>
+                Login
+              </button>
+              &nbsp;
+              <% if (typeof signup == "undefined" || !signup) { %>
+              <button onclick="location.href = '/auth/signup'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                <% } else { %>
+              <button onclick="location.href = '/auth/signup'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+
+                  <% } %>
+                Signup
+              </button>
+            </button>
+            <% } %>
+          </div>
+
+    
+      </div>
+    </div>
+  </div>
+
+</nav>
