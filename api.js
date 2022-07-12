@@ -43,9 +43,9 @@ class Api {
     return this.sendRequest("/users/" + username, 'DELETE');
   }
 
-  async loginUser(username, password, userData) {
+  async loginUser(username, password, salt) {
 
-    const saltBuffer = await passwordUtils.convertHexToBuffer(userData.salt);
+    const saltBuffer = await passwordUtils.convertHexToBuffer(salt);
 
     const { keyString  } = await passwordUtils.deriveKeyFromPassword(password, saltBuffer);
 

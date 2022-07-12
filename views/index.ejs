@@ -10,7 +10,7 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <body>  
-   <%-  include('../views/navbar.ejs'); %>
+   <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
    <%= loggedIn ? user.username : "Not logged in" %>
 </body>
 </html>

@@ -11,6 +11,11 @@ const passwordUtils = require('./utils/password')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
  const api = new Api(process.env.key)
+ var gravatar = require('gravatar');
+
+ function gravatarGen(email) {
+  return gravatar.url(email, {s: '200', r: 'x'}, true);
+ }
 
 var session = require('express-session')
 
@@ -25,7 +30,7 @@ app.use(session({
   secret: 'digifduifug9di9vifgm',
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: true }
+  cookie: { secure: false }
 }))
 
 app.get('/', (req, res) => {
@@ -37,10 +42,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/auth/login', (req, res) => {
+  if(req.session.loggedIn) return res.redirect('/')
+
   res.render('login', {
   })
 });
 app.get('/auth/signup', (req, res) => {
+  if(req.session.loggedIn) return res.redirect('/')
+
   res.render('signup', {
   })
 });
@@ -70,7 +79,8 @@ app.post("/auth/signup", (req,res) => {
         username: data.user.username,
         user_id: data.user.user_id,
         email: data.user.email,
-        points: data.user.points
+        points: data.user.points,
+        img: gravatarGen(data.user.email)
       }
       res.redirect('/')
     } else {
@@ -85,6 +95,45 @@ app.post("/auth/signup", (req,res) => {
   });
 
 })
+
+app.post("/auth/login", async (req,res) => {
+  // get form data
+  const { username, password } = req.body
+  if(!username || !password) {
+    console.log("Missing username or password")
+    return
+  }
+
+  var user = await api.getUser(username);
+  if(user.success) {
+  // login user
+  var salt = user.user.salt;
+   api.loginUser(username, password, salt).then(data => {
+
+    if(data.success) {
+      req.session.loggedIn = true
+      req.session.user = {
+        username: user.user.username,
+        user_id: user.user.user_id,
+        email: user.user.email,
+        points: user.user.points,
+        img: gravatarGen(user.user.email)
+      }
+      res.redirect('/')
+    } else {
+      res.render('login', {
+        error: {msg: "Incorrect password"}
+      })
+    }
+  
+   })
+} else {
+  res.render('login', {
+    error: {msg: "Invalid username"}
+  })
+}
+
+});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
