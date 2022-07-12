@@ -3,8 +3,9 @@ const passwordUtils = require('./utils/password');
 
 class Api {
   constructor(key) {
-    this.baseUrl = 'https://drive.api.hscc.bdpa.org/v1'
+    this.baseUrl = 'https://qoverflow.api.hscc.bdpa.org/v1';
     this.key = key
+    console.log(this.key)
   }
    async sendRequest(endpoint, method, data) {
     try {
@@ -69,24 +70,6 @@ class Api {
       salt: saltString
     });
   }
-
-  async createFile(username, name, textContent, tags = [" "]) {
-    return this.sendRequest('/filesystem/' + username, 'POST', {
-      type: 'file',
-      name: name, 
-      text: textContent,
-      tags: tags,
-      lock: {
-        user: username,
-        client: this.makeid(12),
-        createdAt: Date.now()
-      }
-    })
-  }
-
-  async getUserFiles(username) {
-    return this.sendRequest('/filesystem/' + username + '/search', 'GET');
-  }8
 
   async getUser(username) {
     return this.sendRequest('/users/'+username, 'GET');
