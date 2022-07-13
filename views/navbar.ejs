@@ -1,5 +1,7 @@
 <link rel="stylesheet" href="/index.css">
-
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap" rel="stylesheet">
 <nav class="bg-teal-800">
   <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
     <div class="relative flex items-center justify-between h-16">
@@ -15,31 +17,35 @@
           <div>
      
               <% if(loggedIn) { %>
-                <%= user.username %>
                    <!-- Profile picture -->
-            <button type="button" class="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
- <img class="h-8 w-8 rounded-full" src="<%= user.img %>" alt="profilepic">
-            </button>
+                  <div class="flex space-x-2">
+                      <button type="button" class="ml-2 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
+                        <img class="h-10 w-10 rounded-full" src="<%= user.img %>" alt="profilepic">  
+                      </button>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                      </svg>
+                      <h2 class="text-xl my-auto font-bold text-white"><%= user.username %></h2>
+                  </div>
              
               <% } else { %>
               <% if (typeof login == "undefined" || !login) { %>
                 <button onclick="location.href = '/auth/login'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                  <% } else { %>
+              <% } else { %>
                 <button onclick="location.href = '/auth/login'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
   
-                    <% } %>
+              <% } %>
                 Login
-              </button>
+                </button>
               &nbsp;
               <% if (typeof signup == "undefined" || !signup) { %>
-              <button onclick="location.href = '/auth/signup'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                <% } else { %>
-              <button onclick="location.href = '/auth/signup'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                <button onclick="location.href = '/auth/signup'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <% } else { %>
+                <button onclick="location.href = '/auth/signup'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
 
-                  <% } %>
+              <% } %>
                 Signup
-              </button>
-            </button>
+                </button>
             <% } %>
           </div>
 
