@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.wavy-hover {
+    @apply underline-offset-2 group-hover:underline group-hover:decoration-wavy group-hover:decoration-2 decoration-white ;
+}

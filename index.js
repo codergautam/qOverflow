@@ -41,6 +41,15 @@ app.get('/', (req, res) => { //Homepage
   })
 });
 
+app.get('/dashboard', (req, res) => {
+    console.log(req.session)
+    res.render('dashboard', {
+        loggedIn: req.session.loggedIn,
+        user: req.session.user
+    })
+})
+
+
 app.get('/auth/login', (req, res) => {
   if(req.session.loggedIn) return res.redirect('/')
 

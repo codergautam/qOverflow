@@ -1,8 +1,8 @@
 <link rel="stylesheet" href="/index.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap" rel="stylesheet">
-<nav class="bg-teal-800">
+<nav class="bg-indigo-400 py-3">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap');
+  </style>
   <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
     <div class="relative flex items-center justify-between h-16">
       <div class="flex-1 flex ">
@@ -18,15 +18,37 @@
      
               <% if(loggedIn) { %>
                    <!-- Profile picture -->
-                  <div class="flex space-x-2">
-                      <button type="button" class="ml-2 text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white" id="user-menu-button" aria-expanded="false" aria-haspopup="true">
-                        <img class="h-10 w-10 rounded-full" src="<%= user.img %>" alt="profilepic">  
-                      </button>
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
-                      </svg>
-                      <h2 class="text-xl my-auto font-bold text-white"><%= user.username %></h2>
+                  <div class="flex space-x-2 justify-start">
+                    <!--Home Icon-->
+                    <a href="./">
+                      <div class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+                        </svg>
+                        <h2 class="overflow-hidden wavy-hover group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">Home</h2>
+                      </div>
+                    </a>
+                    <a href="./mail">
+                      <!--Mail Icon-->
+                      <div class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                          <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                        </svg>
+                        <h2 class="overflow-hidden wavy-hover group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">Mail</h2>
+                      </div>
+                    </a>
+                    <a href="./dashboard">
+                      <!--Dashboard Icon-->
+                      <div class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                        </svg>
+                        <h2 class="overflow-hidden wavy-hover text-2xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">Dashboard</h2>
+                      </div>
+                    </a>
                   </div>
+                  
              
               <% } else { %>
               <% if (typeof login == "undefined" || !login) { %>
