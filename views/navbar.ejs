@@ -1,0 +1,83 @@
+<html>
+  <nav class="bg-teal-600 py-1 shadow-md shadow-indigo-400/50">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dosis&family=Helvetica&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap');
+    </style>
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
+      <div class="relative flex items-center justify-between h-16">
+        <div class="flex-1 flex ">
+          <!-- Logo -->
+          <div class="flex-shrink-0 flex ">
+            <img class="block lg:block h-8 w-auto" src="" alt="">
+          </div>
+        </div>
+        <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+
+          <div class="ml-3 relative">
+            <div>
+              <% if(loggedIn) { %>
+                <!-- Profile picture -->
+                <div class="flex space-x-2 justify-start">
+                  <!--Home Icon-->
+                  <a href="./">
+                    <div class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                      </svg>
+                      <h2 class="overflow-hidden group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">Home</h2>
+                    </div>
+                  </a>
+                  <a href="./mail">
+                    <!--Mail Icon-->
+                    <div class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                      </svg>
+                      <h2 class="overflow-hidden group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">Mail</h2>
+                    </div>
+                  </a>
+                  <a href="./dashboard">
+                    <!--Dashboard Icon-->
+                    <div class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                      </svg>
+                      <h2 class="overflow-hidden text-2xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">Dashboard</h2>
+                    </div>
+                  </a>
+                </div>
+          
+              <% } else { %>
+              <% if (typeof login == "undefined" || !login) { %>
+                <button onclick="location.href = '/auth/login'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <% } else { %>
+                <button onclick="location.href = '/auth/login'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+
+              <% } %>
+                Login
+                </button>
+              &nbsp;
+              <% if (typeof signup == "undefined" || !signup) { %>
+                <button onclick="location.href = '/auth/signup'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <% } else { %>
+                <button onclick="location.href = '/auth/signup'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+              <% } %>
+                Signup
+                </button>
+            <% } %>
+                    <!-- Profile picture -->
+                    
+                    
+              
+                
+            </div>
+
+      
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </nav>
+</html>
