@@ -5,9 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "nodemon-watch": "nodemon index.js",
     "build-css": "tailwindcss build ./src/index.css -o ./public/index.css",
     "watch-css": "tailwindcss build ./src/index.css -o ./public/index.css --watch",
-    "start": "nodemon index.js"
+    "start": "concurrently --kill-others \"npm run watch-css\" \"npm run nodemon-watch\""
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
     "better-sqlite3": "^7.6.0",
     "better-sqlite3-session-store": "^0.1.0",
     "body-parser": "^1.20.0",
+    "concurrently": "^7.2.2",
     "cookie-parser": "^1.4.6",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.1",

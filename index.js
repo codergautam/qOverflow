@@ -33,7 +33,7 @@ app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 
 app.use(session({
-  secret: 'digifduifug9di9vifgm',
+  secret: process.env.secret,
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false },
@@ -52,7 +52,7 @@ app.use(session({
   )
 }))
 
-app.get('/', (req, res) => {
+app.get('/', (req, res) => { //Homepage
   console.log(req.session)
   res.render('index', {
     loggedIn: req.session.loggedIn ?? false,
@@ -60,17 +60,24 @@ app.get('/', (req, res) => {
   })
 });
 
+app.get('/dashboard', (req, res) => {
+    console.log(req.session)
+    res.render('dashboard', {
+        loggedIn: req.session.loggedIn,
+        user: req.session.user
+    })
+})
+
+
 app.get('/auth/login', (req, res) => {
   if(req.session.loggedIn) return res.redirect('/')
 
-  res.render('login', {
-  })
+  res.render('login', {})
 });
 app.get('/auth/signup', (req, res) => {
   if(req.session.loggedIn) return res.redirect('/')
 
-  res.render('signup', {
-  })
+  res.render('signup', {})
 });
 
 app.post("/auth/signup", (req,res) => {
@@ -78,6 +85,7 @@ app.post("/auth/signup", (req,res) => {
   const { username, password, email } = req.body
   if(!username || !password || !email) {
     console.log("Missing username or password or email")
+    console.log(`Username: ${username}, Password: ${password}, Email: ${email}`)
     return 
   }
 
@@ -125,27 +133,27 @@ app.post("/auth/login", async (req,res) => {
 
   var user = await api.getUser(username);
   if(user.success) {
-  // login user
-  var salt = user.user.salt;
-   api.loginUser(username, password, salt).then(data => {
+    // login user
+    var salt = user.user.salt;
+    api.loginUser(username, password, salt).then(data => {
 
-    if(data.success) {
-      req.session.loggedIn = true
-      req.session.user = {
-        username: user.user.username,
-        user_id: user.user.user_id,
-        email: user.user.email,
-        points: user.user.points,
-        img: gravatarGen(user.user.email)
-      }
-      res.redirect('/')
-    } else {
-      res.render('login', {
-        error: {msg: "Incorrect password"}
-      })
-    }
-  
-   })
+        if(data.success) {
+            req.session.loggedIn = true
+            req.session.user = {
+                username: user.user.username,
+                user_id: user.user.user_id,
+                email: user.user.email,
+                points: user.user.points,
+                img: gravatarGen(user.user.email)
+            }
+            res.redirect('/')
+        } else {
+            res.render('login', {
+                error: {msg: "Incorrect password"}
+            })
+        }
+    
+    })
 } else {
   res.render('login', {
     error: {msg: "Invalid username"}
