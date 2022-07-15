@@ -8,8 +8,10 @@
     <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
-    <div class="grid relative grid-cols-6 bg-gray-100">
+    <div class="grid relative grid-cols-6 bg-gray-50">
+        <div class="col-span-6">
+            <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
+        </div>
         <div class="relative flex-col col-span-2 bg-white h-full">
             <div class="absolute bg-gray-50 left-6 top-4 w-1/2 h-20 z-0 rounded-md">
 
@@ -36,8 +38,8 @@
                     </div>
                 </div>
             </div>
-            <div class="ml-2 z-10 col-span-2 bg-white mt-4 rounded-lg w-full px-4 pt-2">
-                <div class="ml-2 inline-block py-4">
+            <div class="ml-4 z-10 col-span-2mt-4 px-4 pt-2">
+                <div class="inline-block py-4">
                     <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
                         You Can...
                     </div>
@@ -51,8 +53,48 @@
                 </div>
             </div>
         </div>
-        <div class="col-span-2 bg-gray-50 h-screen">
-
+        <div class="col-span-3 h-screen">
+            <div class="relative flex-col">
+                <div class="mt-8 flex-col z-10">
+                    <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
+                        <p class="font-staat text-5xl text-gray-700">
+                            Your Feed:
+                        </p>
+                    </div>
+                    <div class="flex-col">
+                        <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
+                            Questions
+                        </p>
+                        <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg min-w-full">
+                            <div class="px-4 py-4 ">
+                              <div class="font-bold text-lg mb-2">What's the meaning of lififififififififi?</div>
+                              <p class="text-gray-700 text-base w-5/6">
+                                I wonder what it is can some one answer pls thanks fiidfidfuifdidfifdguufugifdugifdugifduidfugidfudiugfiduidfug idkdijdgfigudigudiugdiugidfugidfgdifgudfgfdgfdfg
+                              </p>
+                            </div>
+                            <div class="px-6 pt-4 pb-2 ">
+                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: Your mom</span>
+                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">2 hours ago</span>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="ml-6 mt-4 text-gray-700 font-semibold text-3xl">
+                        Answers
+                        <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg min-w-full">
+                            <div class="px-4 py-4 ">
+                              <div class="font-semibold text-base mb-2">What's the meaning of lififififififififi?</div>
+                              <p class="text-gray-800 text-2xl font-bold w-5/6">
+                                Well, a wise man once answered this existential question with a profound response, "42"
+                              </p>
+                            </div>
+                            <div class="px-6 pt-4 pb-2 ">
+                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: Your dog</span>
+                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">1 hour ago</span>
+                            </div>
+                        </div>
+                    </p>
+                </div>
+            </div>
         </div>
     </div>
 </body>
