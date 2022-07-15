@@ -3,8 +3,9 @@ const passwordUtils = require('./utils/password');
 
 class Api {
   constructor(key) {
-    this.baseUrl = 'https://drive.api.hscc.bdpa.org/v1'
+    this.baseUrl = 'https://qoverflow.api.hscc.bdpa.org/v1';
     this.key = key
+    console.log(this.key)
   }
    async sendRequest(endpoint, method, data) {
     try {
@@ -17,6 +18,7 @@ class Api {
       }
     })
     var text= await req.text()
+    console.log(text)
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
@@ -42,9 +44,9 @@ class Api {
     return this.sendRequest("/users/" + username, 'DELETE');
   }
 
-  async loginUser(username, password, userData) {
+  async loginUser(username, password, salt) {
 
-    const saltBuffer = await passwordUtils.convertHexToBuffer(userData.salt);
+    const saltBuffer = await passwordUtils.convertHexToBuffer(salt);
 
     const { keyString  } = await passwordUtils.deriveKeyFromPassword(password, saltBuffer);
 
@@ -70,26 +72,30 @@ class Api {
     });
   }
 
-  async createFile(username, name, textContent, tags = [" "]) {
-    return this.sendRequest('/filesystem/' + username, 'POST', {
-      type: 'file',
-      name: name, 
-      text: textContent,
-      tags: tags,
-      lock: {
-        user: username,
-        client: this.makeid(12),
-        createdAt: Date.now()
-      }
-    })
-  }
-
-  async getUserFiles(username) {
-    return this.sendRequest('/filesystem/' + username + '/search', 'GET');
-  }8
-
   async getUser(username) {
     return this.sendRequest('/users/'+username, 'GET');
+  }
+
+  async getQuestions(sort, regex, match, after) {
+    var params =  {
+      sort: sort,
+      regexMatch: regex ? encodeURIComponent(JSON.stringify(regex)) : undefined ,
+      match: match ? encodeURIComponent(JSON.stringify(match)): undefined,
+      after: after
+    };
+  
+    
+
+    var urlEncodedParams = new URLSearchParams();
+    for (var key in params) {
+     if(params[key]) urlEncodedParams.append(key, params[key]);
+    }
+    console.log('/questions/search?'+urlEncodedParams)
+
+
+    
+    return await this.sendRequest('/questions/search?'+urlEncodedParams, 'GET');
+    
   }
 
   makeid(length) {

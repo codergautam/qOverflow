@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "nodemon-watch": "nodemon index.js",
     "build-css": "tailwindcss build ./src/index.css -o ./public/index.css",
-    "start": "nodemon index.js"
+    "watch-css": "tailwindcss build ./src/index.css -o ./public/index.css --watch",
+    "start": "concurrently --kill-others \"npm run watch-css\" \"npm run nodemon-watch\""
   },
   "repository": {
     "type": "git",
@@ -19,12 +21,17 @@
   },
   "homepage": "https://github.com/codergautam/qOverflow#readme",
   "dependencies": {
+    "better-sqlite3": "^7.6.0",
+    "better-sqlite3-session-store": "^0.1.0",
     "body-parser": "^1.20.0",
+    "concurrently": "^7.2.2",
     "cookie-parser": "^1.4.6",
     "crypto": "^1.0.1",
     "dotenv": "^16.0.1",
     "ejs": "^3.1.8",
     "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "gravatar": "^1.8.2",
     "node-fetch": "^2.6.7",
     "nodemon": "^2.0.19",
     "webpack": "^5.73.0"

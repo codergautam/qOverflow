@@ -5,12 +5,25 @@ const express = require('express')
 const app = express()
 const port = 3000
 
-require('dotenv').config
+require('dotenv').config()
 const Api = require('./api')
 const passwordUtils = require('./utils/password')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-// const api = Api(process.env.key)
+
+
+ const api = new Api(process.env.key)
+ var gravatar = require('gravatar');
+
+ function gravatarGen(email) {
+  return gravatar.url(email, {s: '200', r: 'x'}, true);
+ }
+
+var session = require('express-session')
+const sqlite = require("better-sqlite3");
+
+const SqliteStore = require("better-sqlite3-session-store")(session)
+const db = new sqlite("sessions.db");
 
 app.use(cookieParser())
 app.use(bodyParser.urlencoded())
@@ -19,18 +32,29 @@ app.use(bodyParser.json())
 app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 
-<<<<<<< Updated upstream
-=======
 app.use(session({
   secret: process.env.secret,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: { secure: false },
+  store: app.use(
+    session({
+      store: new SqliteStore({
+        client: db, 
+        expired: {
+          clear: true,
+          intervalMs: 900000 //ms = 15min
+        }
+      }),
+      secret: "keyboard cat",
+      resave: false,
+    })
+  )
 }))
 
 app.get('/', (req, res) => { //Homepage
   console.log(req.session)
-  res.render('index', { //(condition) ? result1 <!--true : result2 <!--false
+  res.render('index', {
     loggedIn: req.session.loggedIn ?? false,
     user: req.session.user
   })
@@ -173,8 +197,10 @@ app.post("/auth/login", async (req,res) => {
 }
 
 });
+app.get("/buffet", (req, res) => {
+  api.getQuestions().then(data => {
+    res.send(JSON.stringify(data))
+  });
+});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
-
->>>>>>> Stashed changes
