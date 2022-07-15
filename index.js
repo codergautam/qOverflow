@@ -10,6 +10,8 @@ const Api = require('./api')
 const passwordUtils = require('./utils/password')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+
+
  const api = new Api(process.env.key)
  var gravatar = require('gravatar');
 
@@ -18,6 +20,10 @@ const cookieParser = require('cookie-parser')
  }
 
 var session = require('express-session')
+const sqlite = require("better-sqlite3");
+
+const SqliteStore = require("better-sqlite3-session-store")(session)
+const db = new sqlite("sessions.db");
 
 app.use(cookieParser())
 app.use(bodyParser.urlencoded())
@@ -30,7 +36,20 @@ app.use(session({
   secret: process.env.secret,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: { secure: false },
+  store: app.use(
+    session({
+      store: new SqliteStore({
+        client: db, 
+        expired: {
+          clear: true,
+          intervalMs: 900000 //ms = 15min
+        }
+      }),
+      secret: "keyboard cat",
+      resave: false,
+    })
+  )
 }))
 
 app.get('/', (req, res) => { //Homepage
@@ -141,6 +160,12 @@ app.post("/auth/login", async (req,res) => {
   })
 }
 
+});
+
+app.get("/buffet", (req, res) => {
+  api.getQuestions().then(data => {
+    res.send(JSON.stringify(data))
+  });
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
