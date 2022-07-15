@@ -62,10 +62,46 @@ app.get('/', (req, res) => { //Homepage
 
 app.get('/dashboard', (req, res) => {
     console.log(req.session)
-    res.render('dashboard', {
-        loggedIn: req.session.loggedIn,
-        user: req.session.user
-    })
+    if(req.session.user) {
+        let userPoints = parseInt(req.session.user.points)
+        let _level
+        console.log(userPoints)
+        let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
+        for(let i = 0; i < levelMinimums.length; i++) {
+          if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
+            console.log("Less than " + levelMinimums[i])
+            _level = i + 2;
+            break;
+          } else if(i == 0) {
+            if(userPoints < levelMinimums[0]) {
+              console.log("Less than " + levelMinimums[0])
+              _level = i + 1;
+              break;
+            }
+          } else if(i == levelMinimums.length - 1) {
+            if(userPoints > levelMinimums[i]) {
+              console.log("Less than " + levelMinimums[i])
+              _level = levelMinimums.length + 1;
+              break;
+            }
+          }
+        }
+        let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
+        let _abilities = allAbilities.splice(0, _level)
+        let user = req.session.user
+        user.points = userPoints
+        user.level = _level
+        user.abilities = _abilities
+        req.session.user = user
+        console.log(`You are Level ${_level}`)
+        console.log(`You can: ` + _abilities)
+        res.render('dashboard', {
+            loggedIn: req.session.loggedIn,
+            user: req.session.user,
+        })
+    } else {
+        res.redirect('/auth/login')
+    }
 })
 
 
@@ -161,7 +197,6 @@ app.post("/auth/login", async (req,res) => {
 }
 
 });
-
 app.get("/buffet", (req, res) => {
   api.getQuestions().then(data => {
     res.send(JSON.stringify(data))
@@ -169,5 +204,3 @@ app.get("/buffet", (req, res) => {
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
-

@@ -8,12 +8,51 @@
     <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <div class="grid grid-cols-4">
-        <div class="relative col-span-4">
-            <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
-        </div>
-        <div class="col-span-2 bg-white h-screen">
-            <div class="relative flex pr-24">
+    <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
+    <div class="grid relative grid-cols-4 bg-gray-50/75">
+        <div class="relative col-span-2 col-start-2 h-screen grid grid-cols-2">
+            <div class="ml-4 z-10">
+                <div class="text-4xl font-semibold text-gray-600 mt-9">
+                    Welcome,
+                </div>
+            </div>
+            <div class="col-span-2 hover:-translate-y-1 hover:scale-105 transition delay-75 duration-300 ease-in-out shadow-lg shadow-blue-100/50 hover:shadow-blue-100 rounded-lg w-full px-4 pt-2 bg-white">
+                <div class="ml-2 flex pt-4">
+                    <div class="text-4xl font-bold text-gray-700">
+                        <%= user.username %> 
+                    </div>
+                </div>
+                <div class="flex justify-between">
+                    <div class="ml-3 inline-block py-2 items-baseline">
+                        <div class="text-3xl font-bebas text-gray-700">
+                            Level <%= user.level %> 
+                        </div>
+                        <div class="text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
+                            <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
+                        </div>
+                    </div>
+                    <div class="ml-3 inline-flex overflow-hidden align-baseline self-end mb-2">
+                        <div class="text-md inline-flex italic font-semibold text-gray-300">
+                            "The future depends on what we do in the present.” -Mahatma Gandhi
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-2 hover:-translate-y-1 hover:scale-105 transition delay-75 duration-300 ease-in-out shadow-lg shadow-blue-100/50 hover:shadow-blue-100 bg-white mt-4 shadow-lg rounded-lg w-full px-4 pt-2">
+                <div class="ml-2 inline-block py-4">
+                    <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
+                        You Can...
+                    </div>
+                    <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
+                        <% if(user.abilities) { %> 
+                            <% user.abilities.map((ability) => { %> 
+                                <li><%= ability %></li>
+                            <% }) %> 
+                        <% } %> 
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="relajtive flex pr-24">
                 <% if(user.img) { %>
                     <img src="<%= user.img %> " alt="" class="z-10 w-48 h-48 rounded-full ml-4 mt-6">
                 <% } else { %> 
@@ -28,26 +67,17 @@
                     </p>
                 </div>
                 <div class="bg-gray-50 absolute z-0 top-3 left-2 h-56 w-11/12 rounded-lg"></div>
-            </div>
-            <div class="ml-6">
-                <div class="text-4xl font-helvet text-gray-700 mt-8">
-                    Welcome,
-                </div>
-                <div class="text-3xl font-helvet text-gray-500 mt-2">
-                    Random
-                </div>
-                <div class="text-xl font-bold font-helvet mt-8 text-teal-500">
-                    Email:
-                </div>
-                <div class="text-xl font-bold font-helvet mt-2 text-teal-500">
-                    Joined:
-                </div>
-                <div class="text-xl font-bold font-helvet mt-2 text-teal-500">
-                    First Post:
+            </div>-->
+            <div class="ml-4 z-10 col-span-1">
+                <div class="w-1/2 text-4xl font-semibold text-gray-600 mt-8 border-b-2">
+                    Questions
                 </div>
             </div>
-
-
+            <div class="ml-4 z-10 col-span-1">
+                <div class="w-1/2 text-4xl font-semibold text-gray-600 mt-8 border-b-2">
+                    Answer
+                </div>
+            </div>
         </div>
         <div class="col-span-2 bg-gray-50 h-screen">
 
