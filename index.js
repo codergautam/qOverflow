@@ -1,3 +1,10 @@
+// let myQueryObject = {
+//   "creator": "elizabethWarren"
+// }
+
+// let myQuery = encodeURIComponent(JSON.stringify(myQueryObject))
+
+// console.log(myQuery)
 let msg = "World, Programmed To Learn And Not To Feeeel (Melismatic Singing) \n-Louie Zong (https://youtu.be/Yw6u6YkTgQ4)"
 console.log("Hello " + msg)
 
@@ -60,7 +67,7 @@ app.get('/', (req, res) => { //Homepage
   })
 });
 
-app.get('/dashboard', (req, res) => {
+app.get('/dashboard', async (req, res) => {
     console.log(req.session)
     if(req.session.user) {
         let userPoints = parseInt(req.session.user.points)
@@ -95,6 +102,11 @@ app.get('/dashboard', (req, res) => {
         req.session.user = user
         console.log(`You are Level ${_level}`)
         console.log(`You can: ` + _abilities)
+        let myQueryObject = {
+          "creator": user.username
+        }
+        let userQuestions = await api.getQuestions(null, null, myQueryObject, null);
+        console.log(userQuestions);
         res.render('dashboard', {
             loggedIn: req.session.loggedIn,
             user: req.session.user,
