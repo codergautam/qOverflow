@@ -9,24 +9,24 @@
 </head>
 <body>
     <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
-    <div class="grid relative grid-cols-4 bg-gray-50/75">
-        <div class="relative col-span-2 col-start-2 h-screen grid grid-cols-2">
-            <div class="absolute rounded-2xl bg-gray-100 w-full h-24 z-10 top-2">
+    <div class="grid relative grid-cols-6 bg-gray-100">
+        <div class="relative flex-col col-span-2 bg-white h-full">
+            <div class="absolute bg-gray-50 left-6 top-4 w-1/2 h-20 z-0 rounded-md">
 
             </div>
-            <div class="ml-4 z-10">
+            <div class="relative ml-8 z-10">
                 <div class="text-4xl font-semibold text-gray-600 mt-9">
                     Welcome,
                 </div>
             </div>
-            <div class="z-10 col-span-2 hover:-translate-y-1 hover:scale-105 transition delay-75 duration-300 ease-in-out shadow-lg shadow-blue-100/50 hover:shadow-blue-100 rounded-lg w-full px-4 pt-2 bg-white">
-                <div class="ml-2 flex pt-4">
+            <div class="ml-8 relative z-10 pt-2">
+                <div class="flex pt-4">
                     <div class="text-4xl font-bold text-gray-700">
                         <%= user.username %> 
                     </div>
                 </div>
                 <div class="flex justify-between">
-                    <div class="ml-3 inline-block py-2 items-baseline">
+                    <div class="inline-block py-2 items-baseline">
                         <div class="text-3xl font-bebas text-gray-700">
                             Level <%= user.level %> 
                         </div>
@@ -34,14 +34,9 @@
                             <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
                         </div>
                     </div>
-                    <div class="ml-3 inline-flex overflow-hidden align-baseline self-end mb-2">
-                        <div class="text-md inline-flex italic font-semibold text-gray-300">
-                            "The future depends on what we do in the present.” -Mahatma Gandhi
-                        </div>
-                    </div>
                 </div>
             </div>
-            <div class="z-10 col-span-2 hover:-translate-y-1 hover:scale-105 transition delay-75 duration-300 ease-in-out shadow-lg shadow-blue-100/50 hover:shadow-blue-100 bg-white mt-4 rounded-lg w-full px-4 pt-2">
+            <div class="ml-2 z-10 col-span-2 bg-white mt-4 rounded-lg w-full px-4 pt-2">
                 <div class="ml-2 inline-block py-4">
                     <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
                         You Can...
@@ -55,17 +50,6 @@
                     </div>
                 </div>
             </div>
-            <div class="ml-4 z-10 col-span-1">
-                <div class="w-1/2 text-4xl font-semibold text-gray-600 mt-8 border-b-2">
-                    Questions
-                </div>
-            </div>
-            <div class="ml-4 z-10 col-span-1">
-                <div class="w-1/2 text-4xl font-semibold text-gray-600 mt-8 border-b-2">
-                    Answer
-                </div>
-            </div>
-
         </div>
         <div class="col-span-2 bg-gray-50 h-screen">
 

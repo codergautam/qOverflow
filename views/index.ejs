@@ -12,18 +12,7 @@
 <body>  
    <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
 <div class="flex items-center justify-center flex-col px-[30px]">
-   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-    <div class="px-4 py-4 ">
-      <div class="font-bold text-xl mb-2">What's the meaning of life?</div>
-      <p class="text-gray-700 text-base">
-        I wonder what it is can some one answer pls thanks
-      </p>
-    </div>
-    <div class="px-6 pt-4 pb-2 ">
-      <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: Your mom</span>
-      <span class="badge font-semibold text-gray-700 mr-2 mb-2">2 hours ago</span>
-    </div>
-  </div>
+  <%- include('../views/questionCard.ejs', {title: "What's the meaning of life", msg: 'I wonder what it is can some one answer pls thanks', author: 'Your Mom', timeElapsed: '2 hours'}); %> <!--What would be best is if we had a quesiton class-->
   <div class="my-5 rounded overflow-hidden shadow-lg min-w-full">
     <div class="px-4 py-4 ">
       <div class="font-bold text-xl mb-2">What's the meaning of lififififififififi?</div>
