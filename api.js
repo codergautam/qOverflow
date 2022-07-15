@@ -18,6 +18,7 @@ class Api {
       }
     })
     var text= await req.text()
+    console.log(text)
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
@@ -73,6 +74,28 @@ class Api {
 
   async getUser(username) {
     return this.sendRequest('/users/'+username, 'GET');
+  }
+
+  async getQuestions(sort, regex, match, after) {
+    var params =  {
+      sort: sort,
+      regexMatch: regex ? encodeURIComponent(JSON.stringify(regex)) : undefined ,
+      match: match ? encodeURIComponent(JSON.stringify(match)): undefined,
+      after: after
+    };
+  
+    
+
+    var urlEncodedParams = new URLSearchParams();
+    for (var key in params) {
+     if(params[key]) urlEncodedParams.append(key, params[key]);
+    }
+    console.log('/questions/search?'+urlEncodedParams)
+
+
+    
+    return await this.sendRequest('/questions/search?'+urlEncodedParams, 'GET');
+    
   }
 
   makeid(length) {
