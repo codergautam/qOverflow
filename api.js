@@ -104,7 +104,7 @@ class Api {
     for (var key in params) {
      if(params[key]) urlEncodedParams.append(key, params[key]);
     }
-    console.log('/questions/search?'+urlEncodedParams.toString())
+    console.log('/questions/search?'+urlEncodedParams)
 
 
     
