@@ -48,7 +48,39 @@
     questions.innerHTML = '';
   }
 
+  function msToTime(duration) {
+    const portions = [];
+      const msInDay = 1000 * 60 * 60 * 24;
+    const days = Math.trunc(duration / msInDay);
+    if (days > 0) {
+      portions.push(days + 'd');
+      duration = duration - (days * msInDay);
+    }
+  
+    const msInHour = 1000 * 60 * 60;
+    const hours = Math.trunc(duration / msInHour);
+    if (hours > 0) {
+      portions.push(hours + 'h');
+      duration = duration - (hours * msInHour);
+    }
+  
+    const msInMinute = 1000 * 60;
+    const minutes = Math.trunc(duration / msInMinute);
+    if (minutes > 0) {
+      portions.push(minutes + 'm');
+      duration = duration - (minutes * msInMinute);
+    }
+  
+    const seconds = Math.trunc(duration / 1000);
+    if (seconds > 0) {
+      portions.push(seconds + 's');
+    }
+  
+    return portions[0];
+  }
+
   function appendQuestion(data) {
+    console.log(data);
     var question = `<div class="flex items-center justify-center flex-col px-[30px]">
    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
     <div class="px-4 ">
@@ -56,7 +88,7 @@
     </div>
     <div class="px-6 pt-4 pb-2 ">
       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">By: ${data.creator}</span>
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">2 hours ago</span>
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
     </div>
   </div>
 </div> 
