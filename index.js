@@ -84,7 +84,14 @@ app.get('/', (req, res) => { //Homepage
 app.get('/dashboard', async (req, res) => {
     console.log(req.session)
     if(req.session.user) {
-        let userPoints = parseInt(req.session.user.points)
+        let userPoints = await api.getUser(req.session.user.username).then(
+          data => {
+            if(data.success) {
+              return data.user.points
+            }
+          }
+        )
+        userPoints = parseInt(userPoints)
         let _level
         console.log(userPoints)
         let levelMinimums = [15, 50, 125, 1000, 3000, 10000]

@@ -1,14 +1,13 @@
 <html>
+  <div class="flex items-center justify-center flex-col px-[30px]">
     <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-        <div class="px-4 py-4 ">
-          <div class="font-bold text-xl mb-2"><%= title %> </div>
-          <p class="text-gray-700 text-base">
-            <%= msg %> 
-          </p>
-        </div>
-        <div class="px-6 pt-4 pb-2 ">
-          <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= author %></span>
-          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= timeElapsed%> ago</span>
-        </div>
-      </div>
+     <div class="px-4 ">
+       <div class="font-bold text-xl mb-2"><%= data.user %> </div>
+     </div>
+     <div class="px-6 pt-4 pb-2 ">
+       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %></span>
+       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed  %> ago</span>
+     </div>
+   </div>
+ </div> 
 </html>

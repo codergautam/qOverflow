@@ -21,20 +21,6 @@
      </div>
     </div>
    </div>
-<!-- <div class="flex items-center justify-center flex-col px-[30px]">
-   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-    <div class="px-4 py-4 ">
-      <div class="font-bold text-xl mb-2">What's the meaning of life?</div>
-      <p class="text-gray-700 text-base">
-        I wonder what it is can some one answer pls thanks
-      </p>
-    </div>
-    <div class="px-6 pt-4 pb-2 ">
-      <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: Your mom</span>
-      <span class="badge font-semibold text-gray-700 mr-2 mb-2">2 hours ago</span>
-    </div>
-  </div>
-</div> -->
 
 <script>
   async function getQuestions() {
@@ -81,18 +67,8 @@
 
   function appendQuestion(data) {
     console.log(data);
-    var question = `<div class="flex items-center justify-center flex-col px-[30px]">
-   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-    <div class="px-4 ">
-      <div class="font-bold text-xl mb-2">${data.title}</div>
-    </div>
-    <div class="px-6 pt-4 pb-2 ">
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">By: ${data.creator}</span>
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
-    </div>
-  </div>
-</div> 
-`
+    data.timeElapsed = msToTime(Date.now() - data.createdAt);
+    var question = `<%- include('../views/questionCard', ${data})%>`
     document.getElementById('questions').innerHTML += question;
   }
 
@@ -100,7 +76,6 @@
     clearQuestions();
     if(data.success) {
       data.questions.forEach(appendQuestion);
-
     } else {
       alert(data.message);
     }
