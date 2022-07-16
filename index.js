@@ -61,6 +61,11 @@ app.get('/auth/signup', (req, res) => {
   res.render('signup', {})
 });
 
+app.get('/question', (req, res) => {
+  res.render('question', {})
+});
+
+
 app.post("/auth/signup", (req,res) => {
   // get form daata
   const { username, password, email } = req.body
