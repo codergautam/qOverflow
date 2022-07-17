@@ -19,32 +19,36 @@
             <form>
                 <div class="flex">
                     <div class="flex-1 items-center pb-6">
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center mb-15">
-                            <label class="text-2xl font-bold block">Title:</label>
+                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center mb-15 items-center">
+                            <label class="text-2xl font-extrabold block">Title:</label>
                             <input maxlength="150" type="text" id="text150"
                                 class="text-xl outline-black rounded outline outline-4 text-center font-bold block h-10 w-full md:h-12 md:w-96" />
                         </div>
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
-                            <label class="text-2xl font-bold">Sub-Title:</label>
+                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center items-center">
+                            <label class="text-2xl font-extrabold">Sub-Title:</label>
                             <input maxlength="200" type="text" id="text200"
                                 class="text-2xl outline-black rounded outline outline-4 text-center font-bold block h-10 w-full md:h-12 md:w-96">
                         </div>
-                        <div class='flex-none md:flex md:grid md:grid-cols-2 md:divide-x-0'>
+                        <div class='flex-none md:flex md:grid md:grid-cols-2 md:divide-x-0 items-center'>
                             <div class='flex flex-wrap mb-10 space-x-4 left-0 m-3'>
                                 <label class='text-2xl font-bold'>Content:</label>
                                 <textarea id='text3000' maxlength='3000' type='text' onkeyup='val(this);'
                                     class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full'></textarea>
                             </div>
-                            <div class='flex flex-wrap mb-10 space-x-4 right-0 m-3'>
+                            <div class='flex flex-wrap mb-10 space-x-4 right-0 m-3' id='viewer'>
                                 <label class='text-2xl font-bold'>View:</label>
-                                <textarea readonly id='viewer'
+                                <textarea readonly
                                     class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-center font-bold block h-48 w-full md:h-80 md:w-full'></textarea>
                             </div>
                         </div>
                         <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
                             <label class="text-2xl font-bold">Send To:</label>
                             <textarea
-                                class="p-3 text-2xl  outline-black rounded outline outline-4 text-left font-bold block h-16 w-full md:h-20 md:w-96"></textarea>
+                                class="p-3 text-2xl  outline-black rounded outline outline-4 text-left font-bold block h-16 w-full md:h-20 md:w-96"></textarea><br>
+                        </div>
+                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
+                            <input type="checkbox" id="pub" class="h-5 w-5 rounded ">
+                            <label for="pub"><u><b>Public</b></u></label>
                         </div>
                     </div>
             </form>
@@ -88,7 +92,8 @@
         function val(e) {
             ghf = e.value;
             console.log(marked.parse(ghf))
-            codeblock = "<label class='text-2xl font-bold'>View:</label><textarea readonly id='viewer' class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-center font-bold block h-48 w-full md:h-80 md:w-full'>"+marked.parse(ghf)+"</textarea>";
+            codeblock = marked.parse(ghf);
+            s = "<label class='text-2xl font-bold'>View:</label><textarea readonly class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-center font-bold block h-48 w-full md:h-80 md:w-full'>"
             document.getElementById("viewer").innerHTML = codeblock;
         }
         $("#viewer").load(location.href + " #viewer");
