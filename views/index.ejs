@@ -12,14 +12,7 @@
 <body>  
    <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
    <div id="questions">
-    <div class="flex items-center justify-center flex-col px-[30px]">
-      <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-       <div class="px-4 py-4 ">
-         <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
-    
-       </div>
-     </div>
-    </div>
+
    </div>
 <!-- <div class="flex items-center justify-center flex-col px-[30px]">
    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
@@ -37,8 +30,32 @@
 </div> -->
 
 <script>
+   lastQuestionId = undefined;
+  var pageSize = 7;
+
+  function isUndefined(variable) {
+    return typeof variable === 'undefined';
+  }
+  var send = true;
   async function getQuestions() {
-    var data = await fetch('/buffet').then(res => res.json());
+    if(!send) return;
+    console.log(lastQuestionId);
+    var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
+      <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+       <div class="px-4 py-4 ">
+         <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+    
+       </div>
+     </div>
+    </div>`;
+    send = false;
+    
+    document.getElementById("questions").insertAdjacentHTML('beforeend', loader);
+
+    var data = await fetch('/buffet'+((!isUndefined(lastQuestionId))?`?after=${lastQuestionId}`:"")).then(res => res.json());
+    clearLastQuestion();
+   if(data.questions.length > 0) send = true;
+    
     return data;
 
   }
@@ -46,6 +63,11 @@
   function clearQuestions() {
     var questions = document.getElementById('questions');
     questions.innerHTML = '';
+  }
+
+  function clearLastQuestion() {
+    var questions = document.getElementById('questions');
+    questions.removeChild(questions.lastChild);
   }
 
   function msToTime(duration) {
@@ -79,8 +101,13 @@
     return portions[0];
   }
 
-  function appendQuestion(data) {
+
+   appendQuestion = (data, i) => {
     console.log(data);
+    if(i >= pageSize) return;
+    lastQuestionId = data.question_id;
+    // console.log(data.id)
+
     var question = `<div class="flex items-center justify-center flex-col px-[30px]">
    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
     <div class="px-4 ">
@@ -95,9 +122,8 @@
 `
     document.getElementById('questions').innerHTML += question;
   }
-
-  getQuestions().then((data) => {
-    clearQuestions();
+function yo() {
+  getQuestions().then((data,i) => {
     if(data.success) {
       data.questions.forEach(appendQuestion);
 
@@ -105,7 +131,14 @@
       alert(data.message);
     }
   });
-  
+}
+
+window.onscroll = function(ev) {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+        yo();
+    }
+};
+yo();
 </script>
 </body>
 </html>

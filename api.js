@@ -18,7 +18,6 @@ class Api {
       }
     })
     var text= await req.text()
-    console.log(text)
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
@@ -99,15 +98,15 @@ class Api {
     };
   
     
-    console.log(params.match);
     var urlEncodedParams = new URLSearchParams();
     for (var key in params) {
      if(params[key]) urlEncodedParams.append(key, params[key]);
     }
+    console.log(urlEncodedParams.toString())
 
 
     
-    return await this.sendRequest('/questions/search?'+urlEncodedParams.toString, 'GET');
+    return await this.sendRequest('/questions/search?'+urlEncodedParams, 'GET');
     
   }
 

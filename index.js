@@ -210,7 +210,8 @@ app.post("/auth/login", async (req,res) => {
 
 });
 app.get("/buffet", (req, res) => {
-  api.getQuestions().then(data => {
+  
+  api.getQuestions(undefined, undefined, undefined, req.query.after ?? undefined).then(data => {
     res.send(JSON.stringify(data))
   });
 });
