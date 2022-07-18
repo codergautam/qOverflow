@@ -6,10 +6,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create a Question</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        [contentEditable=true]:empty:not(:focus):before{
+            content:attr(data-text)
+        }
+
+        #preview h1 {
+            font-size:116px;
+            line-height: 1.2;
+        }
+        #preview h2 {
+            font-size:58.39px;
+            line-height: 1.2;
+        }
+        #preview h3 {
+            font-size:53.59px;
+            line-height: 1.2;
+        }
+        #preview h4 {
+            font-size: 48.8px;
+            line-height: 1.2;
+        }
+        #preview h5 {
+            font-size: 44px;
+            line-height: 1.2;
+        }
+        #preview h6 {
+            font-size:39.19px;
+            line-height: 1.2;
+        }
+        #preview p {
+            font-size:30px;
+            line-height: 1.2;
+        }
+    </style>
 </head>
 
 <body class="bg-gray-200">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 
     <div class="m-5 bg-white shadow-md rounded-lg hover:shadow-xl text-4xl">
         <div class="m-4">
@@ -30,15 +63,15 @@
                                 class="text-2xl outline-black rounded outline outline-4 text-center font-bold block h-10 w-full md:h-12 md:w-96">
                         </div>
                         <div class='flex-none md:flex md:grid md:grid-cols-2 md:divide-x-0 items-center'>
-                            <div class='flex flex-wrap mb-10 space-x-4 left-0 m-3'>
+                            <div class='flex flex-wrap mb-10 space-x-4 left-0 m-3' id="editor">
                                 <label class='text-2xl font-bold'>Content:</label>
                                 <textarea id='text3000' maxlength='3000' type='text' onkeyup='val(this);'
-                                    class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full'></textarea>
+                                    class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full' placeholder="Enter Markdown content..."></textarea>
                             </div>
-                            <div class='flex flex-wrap mb-10 space-x-4 right-0 m-3' id='viewer'>
-                                <label class='text-2xl font-bold'>View:</label>
-                                <textarea readonly
-                                    class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-center font-bold block h-48 w-full md:h-80 md:w-full'></textarea>
+                            <div class='flex flex-1 flex-wrap mb-10 space-x-4 right-0 m-3' id='viewer'>
+                                <label class='text-2xl font-bold'>View/Editor:</label>
+                                <div id="preview" data-text="Output of Markdown shown here..." contenteditable="false" 
+                                    class='break-words md:break-words md:overflow-scroll overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80 md:min-w-full'></div>
                             </div>
                         </div>
                         <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
@@ -54,7 +87,11 @@
             </form>
         </div class="">
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
+
         $(document).ready(function () {
             $("#text150").keypress(function (e) {
                 var length = this.value.length;
@@ -86,17 +123,27 @@
 
         });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    
     <script>
         function val(e) {
             ghf = e.value;
             console.log(marked.parse(ghf))
             codeblock = marked.parse(ghf);
-            s = "<label class='text-2xl font-bold'>View:</label><textarea readonly class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-center font-bold block h-48 w-full md:h-80 md:w-full'>"
-            document.getElementById("viewer").innerHTML = codeblock;
+            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View/Editor:</label><div id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</div>";
         }
+        // function qwerty(e) {
+        //     ghf = e.value;
+        //     console.log(ghf);
+        //     codeblock = ghf;
+        //     document.getElementById("viewer").innerHTML = "<label class='text-xl font-bold'>View:</label><div id='preview' contentEditable=true data-text='Output of Markdown shown here...'class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</div>";
+        // }
         $("#viewer").load(location.href + " #viewer");
+        $("#editer").load(location.href + " #editor");
+        // var textArea = document.getElementById('preview');
+
+        // textArea.addEventListener('input', function (event) {
+        //     console.log(event.target.value);
+        // });
     </script>
 </body>
 
