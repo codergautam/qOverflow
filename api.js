@@ -3,7 +3,7 @@ const passwordUtils = require('./utils/password');
 
 class Api {
   constructor(key) {
-    this.baseUrl = 'https://qoverflow.api.hscc.bdpa.org/v1';
+    this.baseUrl = 'https://qOverflow.api.hscc.bdpa.org/v1';
     this.key = key
     console.log(this.key)
   }
@@ -18,6 +18,7 @@ class Api {
       }
     })
     var text= await req.text()
+    console.log(text)
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
@@ -73,6 +74,46 @@ class Api {
 
   async getUser(username) {
     return this.sendRequest('/users/'+username, 'GET');
+  }
+
+  async getQuestions(sort, regex, match, after) {
+    //Sort param: ---------
+    //u responds with the first element (most upvotes)
+    //uvc responds with the first element (most upvotes, views and comments)
+    //uvac responds with the first element (most upvotes, views, answers and comments)
+    //No sort responds with most recent first
+
+    //RegexMatch param: ---------
+    //Create regexMatch query objects, that kind correspond with api response
+
+    //Match param: ---------
+    //Create query objects, see API Documentation for an exampel
+    
+    //After param: ---------
+    //Just get whatever questions are after the question_id put in
+    var params =  {
+      sort: sort,
+      regexMatch: regex ? encodeURIComponent(JSON.stringify(regex)) : undefined ,
+      match: match ? encodeURIComponent(JSON.stringify(match)): undefined,
+      after: after
+    };
+  
+    
+    var urlEncodedParams = new URLSearchParams();
+    for (var key in params) {
+     if(params[key]) urlEncodedParams.append(key, params[key]);
+    }
+
+
+    // console.log('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"));
+    return await this.sendRequest('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"), 'GET');
+    
+  }
+
+  async getUserQuestionsAnswers(username) {
+    let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
+    let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
+    return [ userQuestions, userAnswers ]
   }
 
   makeid(length) {

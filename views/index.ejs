@@ -11,6 +11,84 @@
 
 <body>  
    <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
-   <%= loggedIn ? user.username : "Not logged in" %>
+   <div id="questions">
+    <div class="flex items-center justify-center flex-col px-[30px]">
+      <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+       <div class="px-4 py-4 ">
+         <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+    
+       </div>
+     </div>
+    </div>
+   </div>
+  <script>
+    async function getQuestions() {
+      var data = await fetch('/buffet').then(res => res.json());
+      return data;
+    }
+
+    function clearQuestions() {
+      var questions = document.getElementById('questions');
+      questions.innerHTML = '';
+    }
+
+    function msToTime(duration) {
+      const portions = [];
+        const msInDay = 1000 * 60 * 60 * 24;
+      const days = Math.trunc(duration / msInDay);
+      if (days > 0) {
+        portions.push(days + 'd');
+        duration = duration - (days * msInDay);
+      }
+    
+      const msInHour = 1000 * 60 * 60;
+      const hours = Math.trunc(duration / msInHour);
+      if (hours > 0) {
+        portions.push(hours + 'h');
+        duration = duration - (hours * msInHour);
+      }
+    
+      const msInMinute = 1000 * 60;
+      const minutes = Math.trunc(duration / msInMinute);
+      if (minutes > 0) {
+        portions.push(minutes + 'm');
+        duration = duration - (minutes * msInMinute);
+      }
+    
+      const seconds = Math.trunc(duration / 1000);
+      if (seconds > 0) {
+        portions.push(seconds + 's');
+      }
+    
+      return portions[0];
+    }
+
+    function appendQuestion(data) {
+      console.log(data);
+      data.timeElapsed = msToTime(Date.now() - data.createdAt);
+      var question = `<div class="flex items-center justify-center flex-col px-[30px]">
+    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+     <div class="px-4 ">
+       <div class="font-bold text-xl mb-2">${data.title}</div>
+     </div>
+     <div class="px-6 pt-4 pb-2 ">
+       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">By: ${data.creator}</span>
+       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.timeElapsed} ago</span>
+     </div>
+   </div>
+ </div>`
+      document.getElementById('questions').innerHTML += question;
+    }
+
+    getQuestions().then((data) => {
+      clearQuestions();
+      if(data.success) {
+        data.questions.forEach(appendQuestion);
+      } else {
+        alert(data.message);
+      }
+    });
+    
+  </script>
 </body>
 </html>

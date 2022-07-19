@@ -1,3 +1,24 @@
+// const { response } = require("express");
+
+// let array = [1,2,3,4,5,6,7,8,9,10,11,12,13];
+
+// function paginate(arr, chunkSize) {
+//   const res = [];
+//   for (let i = 0; i < arr.length; i += chunkSize) {
+//       const chunk = arr.slice(i, i + chunkSize);
+//       res.push(chunk);
+//   }
+//   return res;
+// }
+
+
+// let myQueryObject = {
+//   "creator": "elizabethWarren"
+// }
+
+// let myQuery = encodeURIComponent(JSON.stringify(myQueryObject))
+
+// console.log(myQuery)
 let msg = "World, Programmed To Learn And Not To Feeeel (Melismatic Singing) \n-Louie Zong (https://youtu.be/Yw6u6YkTgQ4)"
 console.log("Hello " + msg)
 
@@ -11,8 +32,11 @@ const port = 3000
 require('dotenv').config()
 const Api = require('./api')
 const passwordUtils = require('./utils/password')
+const msToTime = require('./msToTime')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
+
+
  const api = new Api(process.env.key)
  var gravatar = require('gravatar');
 
@@ -21,6 +45,10 @@ const cookieParser = require('cookie-parser')
  }
 
 var session = require('express-session')
+const sqlite = require("better-sqlite3");
+
+const SqliteStore = require("better-sqlite3-session-store")(session)
+const db = new sqlite("sessions.db");
 
 app.use(cookieParser())
 app.use(bodyParser.urlencoded())
@@ -33,7 +61,20 @@ app.use(session({
   secret: process.env.secret,
   resave: false,
   saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: { secure: false },
+  store: app.use(
+    session({
+      store: new SqliteStore({
+        client: db, 
+        expired: {
+          clear: true,
+          intervalMs: 900000 //ms = 15min
+        }
+      }),
+      secret: "keyboard cat",
+      resave: false,
+    })
+  )
 }))
 
 app.get('/', (req, res) => { //Homepage
@@ -44,14 +85,121 @@ app.get('/', (req, res) => { //Homepage
   })
 });
 
-app.get('/dashboard', (req, res) => {
+app.get('/dashboard', async (req, res) => {
     console.log(req.session)
-    res.render('dashboard', {
-        loggedIn: req.session.loggedIn,
-        user: req.session.user
-    })
+    if(Object.keys(req.session.user).length != 0) {
+        let user = await api.getUser(req.session.user.username).then(
+          (data) => {
+            if(data.success) {
+              return data.user
+            }
+          }
+        )
+        let userPoints = parseInt(user.points)
+        let _level
+        console.log(userPoints)
+        let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
+        for(let i = 0; i < levelMinimums.length; i++) {
+          if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
+            console.log("Less than " + levelMinimums[i])
+            _level = i + 2;
+            break;
+          } else if(i == 0) {
+            if(userPoints < levelMinimums[0]) {
+              console.log("Less than " + levelMinimums[0])
+              _level = i + 1;
+              break;
+            }
+          } else if(i == levelMinimums.length - 1) {
+            if(userPoints > levelMinimums[i]) {
+              console.log("Less than " + levelMinimums[i])
+              _level = levelMinimums.length + 1;
+              break;
+            }
+          }
+        }
+        let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
+        let _abilities = allAbilities.splice(0, _level)
+        user.points = userPoints
+        user.level = _level
+        user.abilities = _abilities
+        console.log(`You are Level ${_level}`)
+        console.log(`You can: ` + _abilities.join(', '))
+        let myQueryObject = {
+          "creator": user.username
+        }
+        const [ questionData, answerData ] = await api.getUserQuestionsAnswers(user.username)
+        let questionFeed = (questionData.success) ? questionData.questions : null
+        let answerFeed = (answerData.success) ? answerData.answers : null
+        questionFeed.forEach((question) => {
+          let timeElapsed = msToTime(Date.now() - question.createdAt)
+          question.timeElapsed = timeElapsed
+        })
+        user.img = gravatarGen(user.email)
+        req.session.user = user
+        console.log(user)
+        res.render('dashboard', {
+            loggedIn: req.session.loggedIn,
+            questionFeed: questionFeed,
+            answerFeed: answerFeed,
+            user: req.session.user,
+        })
+    } else {
+        req.session.loggedIn = false
+        res.redirect('/auth/login')
+    }
 })
 
+app.post('/email', (req, res) => {
+  const { username } = req.body
+  res.render('changeEmail', {username: username})
+})
+
+app.post('/password', (req, res) => {
+  const { username } = req.body
+  res.render('changePassword', {username: username})
+})
+
+app.post('/emailChange', async (req, res) => {
+  const { username, newEmail } = req.body
+  let data = await api.sendRequest("/users/" + username, "PATCH", {
+    email: newEmail
+  }).then((data) => {
+    if(data.success) {
+      return data
+    }
+  })
+  if(data.success) res.redirect("/dashboard")
+})
+
+app.get('/logout', async (req, res) => {
+  req.session.user = {}
+  req.session.loggedIn = false
+  res.redirect('/')
+})
+
+app.post('/passwordChange', async (req, res) => {
+  const { username, newPassword } = req.body
+  const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
+  let data = await api.sendRequest("/users/" + username, "PATCH", {
+    key: keyString,
+    salt: saltString
+  }).then((data) => {
+    if(data.success) {
+      console.log("Password Changed!")
+      return data
+    }
+  })
+  if(data.success) res.redirect("/dashboard")
+
+})
+app.post('/deleteAccount', async (req, res) => {
+  const { username } = req.body
+  req.session.user = {}
+  req.session.loggedIn = false
+  let data = await api.sendRequest("/users/" + username, 'DELETE')
+  (data.success) ? res.redirect('/') : res.redirect('/dashboard')
+})
 
 app.get('/auth/login', (req, res) => {
   if(req.session.loggedIn) return res.redirect('/')
@@ -150,7 +298,10 @@ app.post("/auth/login", async (req,res) => {
 }
 
 });
+app.get("/buffet", (req, res) => {
+  api.getQuestions().then(data => {
+    res.send(JSON.stringify(data))
+  });
+});
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
-
