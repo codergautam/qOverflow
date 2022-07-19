@@ -11,6 +11,14 @@
 
 <body>  
    <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
+   <div class="px-9 py-3">
+   <% var possible = ["recent", "best", "interesting", "hottest"] %>
+   <% for (var i = 0; i < possible.length; i++) { %>
+     <a href="/?sort=<%= possible[i] %>" class="inline-block px-3 <%= sort == possible[i] ? 'bg-green-200' : '' %> py-2 text-sm leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
+       <%= possible[i] %>
+     </a>
+    <% } %>
+</div>
    <div id="questions">
 
    </div>
@@ -31,7 +39,9 @@
 
 <script>
    lastQuestionId = undefined;
-  var pageSize = 7;
+  var pageSize = 6;
+  var questionsShown = 0;
+  var remaining = [];
 
   function isUndefined(variable) {
     return typeof variable === 'undefined';
@@ -52,7 +62,7 @@
     
     document.getElementById("questions").insertAdjacentHTML('beforeend', loader);
 
-    var data = await fetch('/buffet'+((!isUndefined(lastQuestionId))?`?after=${lastQuestionId}`:"")).then(res => res.json());
+    var data = await fetch('/buffet?sort=<%= sort %>'+((!isUndefined(lastQuestionId))?`&after=${lastQuestionId}`:"")).then(res => res.json());
     clearLastQuestion();
    if(data.questions.length > 0) send = true;
     
@@ -105,36 +115,41 @@
    appendQuestion = (data, i) => {
     console.log(data);
     if(i >= pageSize) return;
+
     lastQuestionId = data.question_id;
+    if(questionsShown >= 100) return;
+    questionsShown++;
     // console.log(data.id)
 
     var question = `<div class="flex items-center justify-center flex-col px-[30px]">
    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
     <div class="px-4 ">
-      <div class="font-bold text-xl mb-2">${data.title}</div>
+      <div class="font-bold text-xl mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.title}</div>
     </div>
     <div class="px-6 pt-4 pb-2 ">
       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">By: ${data.creator}</span>
       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.answers} answers</span>
     </div>
   </div>
 </div> 
 `
     document.getElementById('questions').innerHTML += question;
   }
-function yo() {
-  getQuestions().then((data,i) => {
-    if(data.success) {
-      data.questions.forEach(appendQuestion);
-
-    } else {
-      alert(data.message);
-    }
-  });
+async function yo() {
+  if(remaining.length <= 0 && questionsShown == 0) {
+    var data = await getQuestions();
+    if(data.success) remaining = data.questions<%-sort == "hottest" ? `.filter(q=>!q.hasAcceptedAnswer)` : ""%>
+  }
+  for(var i = 0; i < pageSize; i++) {
+    if(remaining.length <= 0) break;
+    var data = remaining.shift();
+    appendQuestion(data, i);
+  }
 }
 
 window.onscroll = function(ev) {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && questionsShown < 100) {
         yo();
     }
 };

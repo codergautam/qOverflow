@@ -61,9 +61,14 @@ app.use(session({
 
 app.get('/', (req, res) => { //Homepage
   console.log(req.session)
+  var sort = req.query.sort ?? "recent";
+  console.log(sort)
+  var possible = ["recent", "best", "interesting", "hottest"];
+  if(!possible.includes(sort)) sort = "recent";
   res.render('index', {
     loggedIn: req.session.loggedIn ?? false,
-    user: req.session.user
+    user: req.session.user,
+    sort
   })
 });
 
@@ -210,8 +215,11 @@ app.post("/auth/login", async (req,res) => {
 
 });
 app.get("/buffet", (req, res) => {
-  
-  api.getQuestions(undefined, undefined, undefined, req.query.after ?? undefined).then(data => {
+  var sort;
+  if(req.query.sort) {
+    sort = req.query.sort == "recent" ? undefined : req.query.sort == "best" ? "u" : req.query.sort == "interesting" ? "uvc" : req.query.sort == "hottest" ? "uvac" : undefined
+  }
+  api.getQuestions(sort, undefined, req.query.sort ? req.query.sort == "interesting" ? {"answers": {"$lte": 0}} : undefined : undefined, req.query.after ?? undefined).then(data => {
     res.send(JSON.stringify(data))
   });
 });

@@ -90,10 +90,11 @@ class Api {
     
     //After param: ---------
     //Just get whatever questions are after the question_id put in
+    console.log(match)
     var params =  {
       sort: sort,
-      regexMatch: regex ? encodeURIComponent(JSON.stringify(regex)) : undefined ,
-      match: match ? encodeURIComponent(JSON.stringify(match)): undefined,
+      regexMatch: regex ? JSON.stringify(regex) : undefined ,
+      match: match ? JSON.stringify(match): undefined,
       after: after
     };
   
