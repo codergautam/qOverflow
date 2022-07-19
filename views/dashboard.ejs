@@ -29,10 +29,10 @@
                 </div>
                 <div class="flex justify-between">
                     <div class="inline-block py-2 items-baseline">
-                        <div class="text-3xl font-bebas text-gray-700">
+                        <div class="text-3xl font-bebas text-gray-700 hover:translate-x-1/4 transition-transform delay-75 duration-300 ease-in-out">
                             Level <%= user.level %> 
                         </div>
-                        <div class="text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
+                        <div class=" hover:translate-x-1/4 transition-transform delay-75 duration-300 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
                             <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
                         </div>
                     </div>
@@ -123,18 +123,6 @@
                                           </svg>
                                     </span>
                             <% } %>   
-                        <!-- <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg min-w-full">
-                            <div class="px-4 py-4 ">
-                              <div class="font-semibold text-base mb-2">What's the meaning of lififififififififi?</div>
-                              <p class="text-gray-800 text-2xl font-bold w-5/6">
-                                Well, a wise man once answered this existential question with a profound response, "42"
-                              </p>
-                            </div>
-                            <div class="px-6 pt-4 pb-2 ">
-                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: Your dog</span>
-                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">1 hour ago</span>
-                            </div>
-                        </div> -->
                     </div>
                 </div>
             </div>
@@ -159,7 +147,7 @@
                     </form>
                     <form action="./deleteAccount" method="POST" class="flex group mt-2 justify-end mr-6">
                         <input type="hidden" name="username" value="<%= user.username %> ">
-                        <input value="Delete Account" type="submit" class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out"/>
+                        <input value="Delete Account" type="submit" class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out hover:ring-2 hover:ring-red-400 hover:ring-offset-1"/>
                     </form>
                 </div>
             </div>
