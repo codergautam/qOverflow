@@ -99,17 +99,21 @@ class Api {
     };
   
     
-    console.log(params.match);
     var urlEncodedParams = new URLSearchParams();
     for (var key in params) {
      if(params[key]) urlEncodedParams.append(key, params[key]);
     }
-    console.log('/questions/search?'+urlEncodedParams)
 
 
+    // console.log('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"));
+    return await this.sendRequest('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"), 'GET');
     
-    return await this.sendRequest('/questions/search?'+urlEncodedParams.toString, 'GET');
-    
+  }
+
+  async getUserQuestionsAnswers(username) {
+    let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
+    let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
+    return [ userQuestions, userAnswers ]
   }
 
   makeid(length) {
