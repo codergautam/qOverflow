@@ -192,12 +192,14 @@ app.post('/passwordChange', async (req, res) => {
 })
 app.post('/deleteAccount', (req, res) => {
   const { username } = req.body
-  let data = await api.sendRequest("/users/" + username, 'DELETE').then(
+  let data = await api.sendRequest("/users/" + username, 'DELETE').then((data) => {
     if(data.success) {
       console.log("Deleted Account of " + username)
       return data
     }
+  }
   )
+  if(data.success) ? res.redirect('/') : res.redirect('/dashboard')
 })
 
 app.get('/auth/login', (req, res) => {
