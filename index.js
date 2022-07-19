@@ -1,3 +1,17 @@
+// const { response } = require("express");
+
+// let array = [1,2,3,4,5,6,7,8,9,10,11,12,13];
+
+// function paginate(arr, chunkSize) {
+//   const res = [];
+//   for (let i = 0; i < arr.length; i += chunkSize) {
+//       const chunk = arr.slice(i, i + chunkSize);
+//       res.push(chunk);
+//   }
+//   return res;
+// }
+
+
 // let myQueryObject = {
 //   "creator": "elizabethWarren"
 // }
@@ -15,6 +29,7 @@ const port = 3000
 require('dotenv').config()
 const Api = require('./api')
 const passwordUtils = require('./utils/password')
+const msToTime = require('./msToTime')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 
@@ -74,8 +89,15 @@ app.get('/', (req, res) => { //Homepage
 
 app.get('/dashboard', async (req, res) => {
     console.log(req.session)
-    if(req.session.user) {
-        let userPoints = parseInt(req.session.user.points)
+    if(Object.keys(req.session.user).length != 0) {
+        let user = await api.getUser(req.session.user.username).then(
+          (data) => {
+            if(data.success) {
+              return data.user
+            }
+          }
+        )
+        let userPoints = parseInt(user.points)
         let _level
         console.log(userPoints)
         let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
@@ -100,27 +122,86 @@ app.get('/dashboard', async (req, res) => {
         }
         let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
         let _abilities = allAbilities.splice(0, _level)
-        let user = req.session.user
         user.points = userPoints
         user.level = _level
         user.abilities = _abilities
-        req.session.user = user
         console.log(`You are Level ${_level}`)
-        console.log(`You can: ` + _abilities)
+        console.log(`You can: ` + _abilities.join(', '))
         let myQueryObject = {
           "creator": user.username
         }
-        let userQuestions = await api.getQuestions(null, null, myQueryObject, null);
-        console.log(userQuestions);
+        const [ questionData, answerData ] = await api.getUserQuestionsAnswers(user.username)
+        let questionFeed = (questionData.success) ? questionData.questions : null
+        let answerFeed = (answerData.success) ? answerData.answers : null
+        questionFeed.forEach((question) => {
+          let timeElapsed = msToTime(Date.now() - question.createdAt)
+          question.timeElapsed = timeElapsed
+        })
+        user.img = gravatarGen(user.email)
+        req.session.user = user
+        console.log(user)
         res.render('dashboard', {
             loggedIn: req.session.loggedIn,
+            questionFeed: questionFeed,
+            answerFeed: answerFeed,
             user: req.session.user,
         })
     } else {
+        req.session.loggedIn = false
         res.redirect('/auth/login')
     }
 })
 
+app.post('/email', (req, res) => {
+  const { username } = req.body
+  res.render('changeEmail', {username: username})
+})
+
+app.post('/password', (req, res) => {
+  const { username } = req.body
+  res.render('changePassword', {username: username})
+})
+
+app.post('/emailChange', async (req, res) => {
+  const { username, newEmail } = req.body
+  let data = await api.sendRequest("/users/" + username, "PATCH", {
+    email: newEmail
+  }).then((data) => {
+    if(data.success) {
+      return data
+    }
+  })
+  if(data.success) res.redirect("/dashboard")
+})
+
+app.get('/logout', async (req, res) => {
+  req.session.user = {}
+  req.session.loggedIn = false
+  res.redirect('/')
+})
+
+app.post('/passwordChange', async (req, res) => {
+  const { username, newPassword } = req.body
+  const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
+  let data = await api.sendRequest("/users/" + username, "PATCH", {
+    key: keyString,
+    salt: saltString
+  }).then((data) => {
+    if(data.success) {
+      console.log("Password Changed!")
+      return data
+    }
+  })
+  if(data.success) res.redirect("/dashboard")
+
+})
+app.post('/deleteAccount', async (req, res) => {
+  const { username } = req.body
+  req.session.user = {}
+  req.session.loggedIn = false
+  let data = await api.sendRequest("/users/" + username, 'DELETE')
+  (data.success) ? res.redirect('/') : res.redirect('/dashboard')
+})
 
 app.get('/auth/login', (req, res) => {
   if(req.session.loggedIn) return res.redirect('/')
