@@ -32,7 +32,7 @@
                         <div class="text-3xl font-bebas text-gray-700 hover:translate-x-1/4 transition-transform delay-75 duration-300 ease-in-out">
                             Level <%= user.level %> 
                         </div>
-                        <div class=" hover:translate-x-1/4 transition-transform delay-75 duration-300 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
+                        <div class=" hover:translate-x-1/4 hover:scale-110 transition-transform delay-75 duration-300 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
                             <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
                         </div>
                     </div>
