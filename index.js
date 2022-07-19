@@ -190,7 +190,7 @@ app.post('/passwordChange', async (req, res) => {
   if(data.success) res.redirect("/dashboard")
 
 })
-app.post('/deleteAccount', (req, res) => {
+app.post('/deleteAccount', async (req, res) => {
   const { username } = req.body
   let data = await api.sendRequest("/users/" + username, 'DELETE').then((data) => {
     if(data.success) {
@@ -199,7 +199,7 @@ app.post('/deleteAccount', (req, res) => {
     }
   }
   )
-  if(data.success) ? res.redirect('/') : res.redirect('/dashboard')
+  (data.success) ? res.redirect('/') : res.redirect('/dashboard')
 })
 
 app.get('/auth/login', (req, res) => {
