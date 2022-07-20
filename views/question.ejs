@@ -49,44 +49,34 @@
             <h1 class="p-3 text-center text-3xl font-extrabold md:text-5xl">Create a question</h1>
         </div>
         <div class="m-5">
-            <form>
+            <form action="/questions" method="POST">
                 <div class="flex">
-                    <div class="flex-1 items-center pb-6">
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center mb-15 items-center">
+                    <div class="flex-1 items-center justify-center pb-8">
+                        <input type="hidden" name="username" value="<% username %> ">
+                        <div class="flex mb-10 space-x-4 mb-15 items-center justify-center">
                             <label class="text-2xl font-extrabold block">Title:</label>
-                            <input maxlength="150" type="text" id="text150"
+                            <input maxlength="150" type="text" id="text150" name="title"
                                 class="text-xl outline-black rounded outline outline-4 text-center font-bold block h-10 w-full md:h-12 md:w-96" />
-                        </div>
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center items-center">
-                            <label class="text-2xl font-extrabold">Sub-Title:</label>
-                            <input maxlength="200" type="text" id="text200"
-                                class="text-2xl outline-black rounded outline outline-4 text-center font-bold block h-10 w-full md:h-12 md:w-96">
                         </div>
                         <div class='flex-none md:flex md:grid md:grid-cols-2 md:divide-x-0 items-center'>
                             <div class='flex flex-wrap mb-10 space-x-4 left-0 m-3' id="editor">
                                 <label class='m-2 text-2xl font-bold'>Content:</label>
-                                <textarea id='text3000' maxlength='3000' type='text' onkeyup='val(this);'
+                                <textarea id='text3000' maxlength='3000' type='text' name="text" onkeyup='val(this);'
                                     class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full' placeholder="Enter Markdown content..."></textarea>
                             </div>
                             <div class='flex flex-1 flex-wrap mb-10 space-x-4 right-0 m-3' id='viewer'>
                                 <label class='m-2 text-2xl font-bold'>View/Editor:</label>
-                                <div id="preview" data-text="Output of Markdown shown here..." contenteditable="false" 
-                                    class='break-words md:break-words md:overflow-scroll overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80 md:min-w-full'></div>
+                                <article id="preview" data-text="Output of Markdown shown here..." contenteditable="false" 
+                                    class=' break-words md:break-words md:overflow-scroll overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80 md:min-w-full'>
+                                </article>
                             </div>
                         </div>
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
-                            <label class="text-2xl font-bold">Send To:</label>
-                            <textarea
-                                class="p-3 text-2xl  outline-black rounded outline outline-4 text-left font-bold block h-16 w-full md:h-20 md:w-96"></textarea><br>
+                        <div class="flex justify-center">
+                            <input type="submit" class="cursor-pointer rounded-lg bg-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-2 font-semibold text-2xl text-gray-700" value="Create Question">
                         </div>
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
-                            <input type="checkbox" id="pub" class="h-5 w-5 rounded ">
-                            <label for="pub"><u><b>Public</b></u></label>
-                        </div>
-
                     </div>
             </form>
-        </div class="">
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
@@ -130,7 +120,7 @@
             ghf = e.value;
             console.log(marked.parse(ghf))
             codeblock = marked.parse(ghf);
-            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View/Editor:</label><div id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</div>";
+            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View/Editor:</label><article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='prose prose-h1:text-red-500  break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
         }
         // function qwerty(e) {
         //     ghf = e.value;

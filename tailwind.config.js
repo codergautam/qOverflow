@@ -3,7 +3,11 @@ module.exports = {
   content: ['./*/*.ejs','./*/*.css','./*/*.js'],
   theme: {
 
-    extend: {    screens: {
+    extend: {    
+      rotate: {
+        '360': '360deg'
+      },
+      screens: {
 
       'sm': '360px',
       // => @media (min-width: 640px) { ... }
@@ -34,6 +38,7 @@ module.exports = {
   },
   plugins: [    
     require('@tailwindcss/line-clamp'),
+    require('@tailwindcss/typography')
 ],
 }
 

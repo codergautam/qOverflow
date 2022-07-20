@@ -178,6 +178,27 @@ app.get('/logout', async (req, res) => {
   res.redirect('/')
 })
 
+app.post('/questionEditor', async (req, res) => {
+  const { username } = req.body
+  console.log("User: " + username)
+  res.render('question', {username: username})
+})
+
+app.post('/questions',  async (req, res) => {
+  let {username, title, text } = req.body 
+  username = (username != " ") ? username : req.session.user.username
+  if(username != " ") {
+    console.log(`User ${username}, making Question [Title: ${title}, Text ${text.slice(0, 16)}]`)
+    let data = await api.createQuestion(username, title, text)
+    console.log(data)
+    (data.success) ? res.redirect('/') : res.redirect('/questionEditor', {username: username})
+  } else {
+     req.session.loggedIn = false
+     res.redirect('/')
+  }
+  // res.redirect('/')
+})
+
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
   const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
