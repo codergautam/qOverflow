@@ -21,6 +21,8 @@
 // console.log(myQuery)
 let msg = "World, Programmed To Learn And Not To Feeeel (Melismatic Singing) \n-Louie Zong (https://youtu.be/Yw6u6YkTgQ4)"
 console.log("Hello " + msg)
+let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
+
 
 const express = require('express')
 const app = express()
@@ -97,10 +99,9 @@ app.get('/dashboard', async (req, res) => {
             }
           }
         )
-        let userPoints = parseInt(user.points)
+        let userPoints = parseInt(user.points);
         let _level
         console.log(userPoints)
-        let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
         for(let i = 0; i < levelMinimums.length; i++) {
           if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
             console.log("Less than " + levelMinimums[i])
@@ -304,5 +305,53 @@ app.get("/buffet", (req, res) => {
     res.send(JSON.stringify(data))
   });
 });
+var basicDataCache = {};
+app.get("/getBasicData", (req, res) => {
+  if(req.query.user && typeof req.query.user == "string") {
+    if(basicDataCache.hasOwnProperty(req.query.user) && Date.now() - basicDataCache[req.query.user].time < 1000 * 60 * 5) {
+      res.send({success:true, ...basicDataCache[req.query.user].data})
+
+    } else {
+      api.getUser(req.query.user).then(data => {
+        if(data.success) {
+        var userPoints = data.user.points;
+        console.log(data)
+        let _level;
+        for(let i = 0; i < levelMinimums.length; i++) {
+          if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
+            console.log("Less than " + levelMinimums[i])
+            _level = i + 2;
+            break;
+          } else if(i == 0) {
+            if(userPoints < levelMinimums[0]) {
+              console.log("Less than " + levelMinimums[0])
+              _level = i + 1;
+              break;
+            }
+          } else if(i == levelMinimums.length - 1) {
+            if(userPoints > levelMinimums[i]) {
+              console.log("Less than " + levelMinimums[i])
+              _level = levelMinimums.length + 1;
+              break;
+            }
+          }
+        }
+        console.log("Level: " + _level)
+        var needed = {
+          time: Date.now(),
+          data: {
+            pfp: gravatarGen(data.user.email),
+            level: _level,
+          }
+        }
+        basicDataCache[req.query.user] = needed;
+        res.send({success:true, ...needed.data})
+      } else {
+        res.send(JSON.stringify({success: false}))
+      }
+      });
+    }
+  } else res.send(JSON.stringify({success: false}))
+})
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
