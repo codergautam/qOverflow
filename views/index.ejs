@@ -120,8 +120,8 @@
     // console.log(data.id)
 fetch('/getBasicData?user='+data.creator).then((e) => e.json()).then((e) => {  
    
-    var question = `<div class="flex items-center justify-center flex-col px-[30px]">
-   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+    var question = `<div class="flex items-center justify-center flex-col  px-[30px]" >
+   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full cursor-pointer"  onclick="location.href = '/question/${data.question_id}'">
     <div class="px-4 ">
       <div class="font-bold text-xl mb-2 ">${data.title}</div>
     </div>

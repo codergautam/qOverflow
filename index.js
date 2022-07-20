@@ -305,6 +305,32 @@ app.get("/buffet", (req, res) => {
     res.send(JSON.stringify(data))
   });
 });
+app.get("/question/:id", (req, res) => {
+  var id= req.params.id;
+  if(!id) {
+    res.send("Invalid question id")
+    return
+  }
+  api.getQuestion(id).then(data => {
+    if(!data.success) {
+      res.send("Invalid question id")
+      return;
+    }
+    api.getAnswers(id, data.answers).then(data2 => {
+    if(!data2.success) {
+      res.send("Something wen't wrong.. Please try again")
+      return;
+    }
+    res.render('question', {
+      question: data.question,
+      user: req.session.user,
+      loggedIn: req.session.loggedIn,
+      answers: data2.answers
+    })
+  });
+
+  });
+});
 var basicDataCache = {};
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {

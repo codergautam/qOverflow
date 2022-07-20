@@ -746,6 +746,10 @@ video {
   height: 2rem;
 }
 
+.h-auto {
+  height: auto;
+}
+
 .h-4 {
   height: 1rem;
 }
@@ -754,8 +758,8 @@ video {
   height: 4rem;
 }
 
-.h-auto {
-  height: auto;
+.h-96 {
+  height: 24rem;
 }
 
 .min-h-full {
@@ -814,12 +818,16 @@ video {
   max-width: 28rem;
 }
 
+.max-w-full {
+  max-width: 100%;
+}
+
 .max-w-7xl {
   max-width: 80rem;
 }
 
-.max-w-full {
-  max-width: 100%;
+.max-w-5xl {
+  max-width: 64rem;
 }
 
 .flex-1 {
@@ -879,14 +887,6 @@ video {
 
 .content-center {
   align-content: center;
-}
-
-.content-start {
-  align-content: flex-start;
-}
-
-.content-end {
-  align-content: flex-end;
 }
 
 .items-center {
@@ -957,6 +957,10 @@ video {
   border-radius: 9999px;
 }
 
+.rounded-lg {
+  border-radius: 0.5rem;
+}
+
 .rounded-t-md {
   border-top-left-radius: 0.375rem;
   border-top-right-radius: 0.375rem;
@@ -987,6 +991,10 @@ video {
   border-top-width: 4px;
 }
 
+.border-solid {
+  border-style: solid;
+}
+
 .border-red-400 {
   --tw-border-opacity: 1;
   border-color: rgb(248 113 113 / var(--tw-border-opacity));
@@ -1009,6 +1017,11 @@ video {
 .border-white {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+
+.border-gray-200 {
+  --tw-border-opacity: 1;
+  border-color: rgb(229 231 235 / var(--tw-border-opacity));
 }
 
 .bg-red-100 {
@@ -1123,6 +1136,26 @@ video {
 .px-\[30px\] {
   padding-left: 30px;
   padding-right: 30px;
+}
+
+.py-6 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
+.py-5 {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}
+
+.py-\[12px\] {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .pb-2 {
@@ -1577,6 +1610,16 @@ video {
     padding-right: 1.5rem;
   }
 
+  .sm\:px-0 {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .sm\:px-\[46px\] {
+    padding-left: 46px;
+    padding-right: 46px;
+  }
+
   .sm\:pr-0 {
     padding-right: 0px;
   }
@@ -1595,6 +1638,11 @@ video {
   .lg\:px-8 {
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+
+  .lg\:px-\[46px\] {
+    padding-left: 46px;
+    padding-right: 46px;
   }
 }
 

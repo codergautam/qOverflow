@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= question.title %></title>
+  <link rel="stylesheet" href="/index.css">
+</head>
+<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+  h1 {
+    font-size: 2em;
+    font-weight: normal;
+    margin: 0.67em 0;
+  }
+  h2 {
+    font-size: 1.5em;
+    font-weight: normal;
+    margin: 0.83em 0;
+  }
+  h3 {
+    font-size: 1.17em;
+    font-weight: normal;
+    margin: 1em 0;
+  }
+  h4 {
+    font-size: 1em;
+    font-weight: normal;
+    margin: 1.33em 0;
+  }
+  h5 {
+    font-size: 0.83em;
+    font-weight: normal;
+    margin: 1.67em 0;
+  }
+  h6 {
+    font-size: 0.67em;
+    font-weight: normal;
+    margin: 2.33em 0;
+  }
+  
+</style>
+<body>  
+  <div class="flex flex-col h-screen">
+    <div class="py-0">
+      <%-  include('../views/navbar.ejs', {signup: false, loggedIn}); %>
+    </div>
+    <!-- <div class="flex justify-center items-center flex-grow"> -->
+      <div class="min-h-full">
+      
+
+          <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+              <div class="">
+               <p class="text-4xl text-center py-5"><%= question.title %></p> 
+               <p id="questionText" class="text-center ">
+
+               </p>
+              </div>
+            </div>
+          </div>
+          
+          <% for (var answer of answers) { %>
+          <div class="max-w-5xl mx-auto py-[12px] sm:px-[46px] lg:px-[46px]">
+            <div class="px-8 py-[12px] sm:px-0">
+              <div class="border-4 border-solid border-gray-200 rounded-lg h-96">
+
+              </div>
+            </div>
+          </div>
+          <% } %>
+      </div>
+  <!-- </div> -->
+</div>
+</div>
+    <script>
+    document.getElementById('questionText').innerHTML =
+      marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
+  </script>
+</body>
+</html>

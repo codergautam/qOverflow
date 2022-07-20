@@ -118,6 +118,18 @@ class Api {
     return [ userQuestions, userAnswers ]
   }
 
+  getQuestion(questionId) {
+    return this.sendRequest('/questions/' + questionId, 'GET');
+  }
+
+  getAnswers(questionId, count=Infinity) {
+  if(count > 0)  return this.sendRequest('/questions/' + questionId + '/answers', 'GET');
+  else return new Promise((resolve, reject) => {
+    // if count is 0, return an empty array
+    resolve([]);
+  });
+  }
+
   makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
