@@ -90,7 +90,7 @@ app.get('/dashboard', async (req, res) => {
     if(Object.keys(req.session.user).length != 0) {
         let data = await api.getUser(req.session.user.username).then(
           (data) => {
-            if(data.success) {
+            if(data && data.success) {
               return data
             } else {
               return false
@@ -137,6 +137,7 @@ app.get('/dashboard', async (req, res) => {
           const [ questionData, answerData ] = await api.getUserQuestionsAnswers(user.username)
           let questionFeed = (questionData.success) ? questionData.questions : null
           let answerFeed = (answerData.success) ? answerData.answers : null
+          console.log(answerFeed)
           questionFeed.forEach((question) => {
             let timeElapsed = msToTime(Date.now() - question.createdAt)
             question.timeElapsed = timeElapsed
@@ -320,7 +321,8 @@ app.post("/auth/login", async (req,res) => {
   }
 
   var user = await api.getUser(username);
-  if(user.success) {
+  console.log(user)
+  if(user.success && user) {
     // login user
     var salt = user.user.salt;
     api.loginUser(username, password, salt).then(data => {

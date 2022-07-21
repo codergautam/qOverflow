@@ -107,16 +107,31 @@
                                 </span>
                             <% } %>
                         </div>  
-                        <div class="flex-col overflow-y-scroll h-72 mt-6" id="questionFeed">
+                        <div class="flex-col overflow-y-auto h-72 mt-6" id="questionFeed">
                         </div>   
                     </div>
                     <div class="flex-col">
                         <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
                             Answers
                         </p>
+                        <div class="hidden" id="answers">
                             <% if(answerFeed.length != 0) { %>
-                                <div class="flex-col">
-                                </div>
+                                <% answerFeed.forEach((data) => { %> 
+                                    <div class="flex-col">
+                                    <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                                        <div class="px-4 py-4 ">
+                                          <div class="font-bold text-base mb-2"><%= data.title %> </div>
+                                          <p class="text-gray-700 text-lg font-bold w-5/6">
+                                            <%= data.text %> 
+                                          </p>
+                                        </div>
+                                        <div class="pl-3 pr-6 pt-4 pb-2 ">
+                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
+                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
+                                        </div>
+                                    </div>
+                                    </div>
+                                <% }) %> 
                             <% } else { %>
                                 <div class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
                                     You Have No Answers Right Now
@@ -126,7 +141,10 @@
                                         <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
                                       </svg>
                                 </span>
-                            <% } %>   
+                            <% } %>
+                        </div>  
+                        <div class="flex-col overflow-y-auto h-72 mt-6" id="answerFeed">
+                        </div>  
                     </div>
                 </div>
             </div>
@@ -221,6 +239,67 @@
                     console.log(questionFeed)
 
                     implementLoader(questionFeed.length, document.getElementById("questions").children.length)
+                } else {
+                    return
+                }
+            }
+
+            let childrenA = document.getElementById("answers").innerHTML
+            document.getElementById("answerFeed").innerHTML = childrenA
+            console.log("Length: " + children.length)
+            let answerFeed = document.getElementById("answerFeed").children
+            chunkSize = standard
+            let indexA = answerFeed.length - 1
+
+            while(answerFeed.length > chunkSize) {
+                answerFeed.item(index).remove()
+                index--
+            }
+            console.log(answerFeed.length + " " + children.length )
+
+            implementLoader(answerFeed.length, document.getElementById("answers").children.length)
+
+            function loadMoreAnswers() {
+                let childrenA = document.getElementById("answers").innerHTML
+                document.getElementById("answerFeed").innerHTML = children
+
+                console.log("Length: " + children.length)
+
+                let answerFeed = document.getElementById("answerFeed").children
+                console.log(answerFeed)
+                chunkSize += standard
+                let index = answerFeed.length - 1
+
+                while(answerFeed.length > chunkSize) {
+                    answerFeed.item(index).remove()
+                    index--
+                }
+
+                console.log(answerFeed)
+
+                implementLoader(answerFeed.length, document.getElementById("answers").children.length)
+            }
+
+            function loadLessAnswers() {
+                if((chunkSize - standard) > 0) {
+                    let childrenA = document.getElementById("answers").innerHTML
+                    document.getElementById("answerFeed").innerHTML = children
+
+                    console.log("Length: " + children.length)
+
+                    let answerFeed = document.getElementById("answerFeed").children
+                    console.log(answerFeed)
+                    chunkSize -= standard
+                    let index = answerFeed.length - 1
+
+                    while(answerFeed.length > chunkSize) {
+                        answerFeed.item(index).remove()
+                        index--
+                    }
+
+                    console.log(answerFeed)
+
+                    implementLoader(answerFeed.length, document.getElementById("answers").children.length)
                 } else {
                     return
                 }
