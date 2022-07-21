@@ -18,7 +18,6 @@ class Api {
       }
     })
     var text= await req.text()
-    console.log(text)
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
