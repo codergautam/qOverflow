@@ -97,8 +97,8 @@
                                     </div>
                                 <% }) %> 
                             <% } else { %>
-                                <div class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                    You Have No Answers Right Now
+                                <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                    You Have No Questions Right Now
                                 </div>
                                 <span class="ml-6 mt-1 text-gray-500 badge w-min">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -133,7 +133,7 @@
                                     </div>
                                 <% }) %> 
                             <% } else { %>
-                                <div class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
                                     You Have No Answers Right Now
                                 </div>
                                 <span class="ml-6 mt-1 text-gray-500 badge w-min">
@@ -182,30 +182,37 @@
             
             let children = document.getElementById("questions").innerHTML
             document.getElementById("questionFeed").innerHTML = children
-            console.log("Length: " + children.length)
             let questionFeed = document.getElementById("questionFeed").children
-            console.log(questionFeed)
             chunkSize = standard
             let index = questionFeed.length - 1
 
-            console.log(questionFeed)
 
             while(questionFeed.length > chunkSize) {
                 questionFeed.item(index).remove()
                 index--
             }
-            console.log(questionFeed.length + " " + children.length )
 
-            implementLoader(questionFeed.length, document.getElementById("questions").children.length)
+
+            let emptyElemQ = `<div class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                    You Have No Answers Right Now
+                                </div>
+                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                      </svg>
+                                </span>`
+
+            if(!document.getElementById("noQuestions")) {
+                implementLoader(questionFeed.length, document.getElementById("questions").children.length)
+            }
+
 
             function loadMoreQuestions() {
                 let children = document.getElementById("questions").innerHTML
                 document.getElementById("questionFeed").innerHTML = children
 
-                console.log("Length: " + children.length)
 
                 let questionFeed = document.getElementById("questionFeed").children
-                console.log(questionFeed)
                 chunkSize += standard
                 let index = questionFeed.length - 1
 
@@ -214,7 +221,6 @@
                     index--
                 }
 
-                console.log(questionFeed)
 
                 implementLoader(questionFeed.length, document.getElementById("questions").children.length)
             }
@@ -224,10 +230,8 @@
                     let children = document.getElementById("questions").innerHTML
                     document.getElementById("questionFeed").innerHTML = children
 
-                    console.log("Length: " + children.length)
 
                     let questionFeed = document.getElementById("questionFeed").children
-                    console.log(questionFeed)
                     chunkSize -= standard
                     let index = questionFeed.length - 1
 
@@ -236,7 +240,6 @@
                         index--
                     }
 
-                    console.log(questionFeed)
 
                     implementLoader(questionFeed.length, document.getElementById("questions").children.length)
                 } else {
@@ -246,7 +249,6 @@
 
             let childrenA = document.getElementById("answers").innerHTML
             document.getElementById("answerFeed").innerHTML = childrenA
-            console.log("Length: " + children.length)
             let answerFeed = document.getElementById("answerFeed").children
             chunkSize = standard
             let indexA = answerFeed.length - 1
@@ -255,18 +257,26 @@
                 answerFeed.item(index).remove()
                 index--
             }
-            console.log(answerFeed.length + " " + children.length )
 
-            implementLoader(answerFeed.length, document.getElementById("answers").children.length)
+
+            let emptyElem = `<div class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                    You Have No Answers Right Now
+                                </div>
+                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                      </svg>
+                                </span>`
+            if(!document.getElementById("noAnswers")) {
+                implementLoaderA(answerFeed.length, document.getElementById("answers").children.length)
+            }
 
             function loadMoreAnswers() {
                 let childrenA = document.getElementById("answers").innerHTML
                 document.getElementById("answerFeed").innerHTML = children
 
-                console.log("Length: " + children.length)
 
                 let answerFeed = document.getElementById("answerFeed").children
-                console.log(answerFeed)
                 chunkSize += standard
                 let index = answerFeed.length - 1
 
@@ -275,9 +285,8 @@
                     index--
                 }
 
-                console.log(answerFeed)
 
-                implementLoader(answerFeed.length, document.getElementById("answers").children.length)
+                implementLoaderA(answerFeed.length, document.getElementById("answers").children.length)
             }
 
             function loadLessAnswers() {
@@ -285,10 +294,8 @@
                     let childrenA = document.getElementById("answers").innerHTML
                     document.getElementById("answerFeed").innerHTML = children
 
-                    console.log("Length: " + children.length)
 
                     let answerFeed = document.getElementById("answerFeed").children
-                    console.log(answerFeed)
                     chunkSize -= standard
                     let index = answerFeed.length - 1
 
@@ -297,9 +304,8 @@
                         index--
                     }
 
-                    console.log(answerFeed)
 
-                    implementLoader(answerFeed.length, document.getElementById("answers").children.length)
+                    implementLoaderA(answerFeed.length, document.getElementById("answers").children.length)
                 } else {
                     return
                 }
@@ -320,7 +326,8 @@
                                     </button>
                                 </span>
                             </div>`
-                    document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
+                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
+                        return
                     } else {
                         let loader = `
                                     <div class="flex mt-4">
@@ -330,7 +337,40 @@
                                             </button>
                                         </span>
                                     </div>`
-                            document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
+                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
+                        return
+                    }
+            }
+
+            function implementLoaderA(qLength, cLength) {
+                let emptyElem = ``
+                if(qLength < cLength) {
+                    let loader = `
+                            <div class="flex mt-4">
+                                <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                      <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreQuestions()">
+                                          Load More
+                                      </button>
+                                </span>
+                                <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
+                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
+                                        Load Less
+                                    </button>
+                                </span>
+                            </div>`
+                        document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
+                        return
+                    } else {
+                        let loader = `
+                                    <div class="flex mt-4">
+                                        <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
+                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
+                                                Load Less
+                                            </button>
+                                        </span>
+                                    </div>`
+                        document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
+                        return
                     }
             }
         </script>
