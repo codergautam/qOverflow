@@ -100,33 +100,13 @@ app.get('/dashboard', async (req, res) => {
         if(data.success) {
           let user = data.user
           let userPoints = parseInt(user.points)
-          let _level
-          console.log(userPoints)
-          let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
-          for(let i = 0; i < levelMinimums.length; i++) {
-            if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
-              console.log("Less than " + levelMinimums[i])
-              _level = i + 2;
-              break;
-            } else if(i == 0) {
-              if(userPoints < levelMinimums[0]) {
-                console.log("Less than " + levelMinimums[0])
-                _level = i + 1;
-                break;
-              }
-            } else if(i == levelMinimums.length - 1) {
-              if(userPoints > levelMinimums[i]) {
-                console.log("Less than " + levelMinimums[i])
-                _level = levelMinimums.length + 1;
-                break;
-              }
-            }
-          }
+          let _level = levelCalculation(userPoints)
           let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
           let _abilities = allAbilities.splice(0, _level)
           user.points = userPoints
           user.level = _level
           let nextLevel = _level + 1
+          let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
           let nextLevelPoints = levelMinimums[_level - 1]
           user.abilities = _abilities
           console.log(`You are Level ${_level}`)
@@ -312,6 +292,28 @@ app.post("/auth/signup", (req,res) => {
 
 })
 
+app.get('/mail', async (req, res) => {
+  if(req.session.loggedIn) {
+    username = req.session.user.username
+    user = req.session.user
+    userPoints = user.points
+    user.level = levelCalculation(userPoints)
+    user.nextLevel = user.level + 1
+    let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
+    user.nextLevelPoints = levelMinimums[user.nextLevel - 1]
+    console.log("Username: " + username)
+    let mailData = await api.sendRequest('/mail/' + username, 'GET')
+    console.log(mailData)
+    res.render('mail', {
+      loggedIn: req.session.loggedIn,
+      user: user,
+      messageFeed: mailData.messages,
+      messageCount: mailData.messages.length
+    })
+  }
+})
+
+
 app.post("/auth/login", async (req,res) => {
   // get form data
   const { username, password } = req.body
@@ -364,4 +366,30 @@ modifyPoints = async (amount, username) => {
     operation: operation,
     amount: amount
   })
+}
+
+levelCalculation = (userPoints) => {
+  let _level
+  let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
+  for(let i = 0; i < levelMinimums.length; i++) {
+    if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
+      console.log("Less than " + levelMinimums[i])
+      _level = i + 2;
+      break;
+    } else if(i == 0) {
+      if(userPoints < levelMinimums[0]) {
+        console.log("Less than " + levelMinimums[0])
+        _level = i + 1;
+        break;
+      }
+    } else if(i == levelMinimums.length - 1) {
+      if(userPoints > levelMinimums[i]) {
+        console.log("Less than " + levelMinimums[i])
+        _level = levelMinimums.length + 1;
+        break;
+      }
+    }
+  }
+
+  return _level
 }

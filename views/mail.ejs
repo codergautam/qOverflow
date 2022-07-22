@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div class="grid grid-cols-12 bg-white">
+        <div class="col-span-12">
+            <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
+        </div>
+        <div class="relative flex justify-center col-span-6 bg-white h-screen ">
+                <div class="flex-col w-1/2 ">
+                    <div class="flex justify-between">
+                        <div class="flex-1">
+                            <div class="text-4xl font-semibold text-gray-600 mt-9">
+                                Welcome,
+                            </div>
+                            <div class="text-4xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
+                                <%= user.username %> 
+                            </div>
+                        </div>
+                        <img src="<%= user.img %>" alt="" class="rounded-full w-14 h-14 mt-6 border-4 border-gray-50 hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">        
+                    </div>
+                    <div class="flex">
+                        <div class="hover:translate-x-4 text-xl font-semibold text-gray-400 transition-all ease-in-out delay-75 duration-300">
+                            You have <%= messageCount %> messages
+                        </div>
+                    </div>
+                    <div class="bg-scroll mt-6 inline-block items-baseline pl-4 pr-6 py-4 rounded-lg" style = "background-image: url(https://images.unsplash.com/photo-1529912701468-62734a2b74da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80)">
+                        <div class="group flex text-2xl font-bebas text-white hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
+                            Level <%= user.level %> <div class="text-transparent group-hover:text-slate-500 ml-2 text-lg transition-all delay-75 duration-500 ease-in-out">Level <%= user.nextLevel %> (<%= user.nextLevelPoints %> pts.) </div>
+                        </div>
+                        <div class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-xl font-staat text-slate-200">
+                            <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="mt-2 relative z-10">
+                <div class="flex">
+                    <div class="mx-auto hover:translate-x-4 text-2xl font-extralight font-staat text-gray-500 transition-all ease-in-out delay-75 duration-300">
+                        Messages: <%= messageCount %> 
+                    </div>
+                </div>
+            </div>
+            <div class="ml-8 flex justify-between">
+                <div class="inline-block py-2 items-baseline">
+                    <div class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
+                        Level <%= user.level %> <div class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">Level <%= user.nextLevel %> (<%= user.nextLevelPoints %> pts.) </div>
+                    </div>
+                    <div class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
+                        <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
+                    </div>
+                </div>
+            </div> -->
+    </div>
+</body>
+</html>
