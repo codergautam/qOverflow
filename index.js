@@ -43,6 +43,8 @@ const io = new Server(server, {
   cors: { origin: "*" },
 });
 
+var forgotTokens = {};
+
  const api = new Api(process.env.key)
  var gravatar = require('gravatar');
 
@@ -52,6 +54,7 @@ const io = new Server(server, {
 
 var session = require('express-session')
 const sqlite = require("better-sqlite3");
+const { randomUUID } = require('crypto')
 
 const SqliteStore = require("better-sqlite3-session-store")(session)
 const db = new sqlite("sessions.db");
@@ -398,6 +401,125 @@ app.get("/getBasicData", (req, res) => {
       });
     }
   } else res.send(JSON.stringify({success: false}))
+})
+
+app.get("/forgot", (req, res) => {
+  if(req.session.loggedIn) req.redirect('/')
+  res.render('forgot', {
+  });
+})
+
+app.post("/forgot", (req, res) => {
+  var username = req.body.username;
+  var email = req.body.email;
+  if(!username || !email) {
+    res.render('forgot', {
+      error: {msg: "Please fill in all fields"}
+    })
+    return
+  };
+  api.getUser(username).then(data => {
+    if(data.success) {
+      if(data.user.email == email) {
+        var token = randomUUID();
+        forgotTokens[token] = {
+          username: username,
+          time: Date.now()
+        };
+        res.send("<b>One more step</b><br>We haven't sent you an email, But if we had, we wouldv'e send the below link <br> Please click the link below to reset your password.<br>Please be quick, as the link expires in 5 minutes<br/><br><a href='/reset/" + token + "'>Click here to reset your password</a>");
+      } else {
+        res.render('forgot', {
+          error: {msg: "Email doesn't match"}
+        })
+        return
+      }
+    } else {
+      res.render('forgot', {
+        error: {msg: "Invalid username or email"}
+      })
+      return
+    }
+  }).catch(err => {
+    console.log(err)
+    res.render('forgot', {
+      error: {msg: "Something went wrong.. Please try again"}
+    })
+  });
+
+});
+
+app.get("/reset/:token", (req, res) => {
+  if(req.params.token) {
+    if(forgotTokens.hasOwnProperty(req.params.token)) {
+      if(Date.now() - forgotTokens[req.params.token].time < 1000 * 60 * 5) {
+        res.render('reset', {
+          username: forgotTokens[req.params.token].username
+        })
+      } else {
+        res.render('forgot', {
+          error: {msg: "Link expired, please try again"}
+        });
+      }
+    } else {
+      res.render('forgot', {
+        error: {msg: "Invalid link, please try again"}
+      });
+    }
+  } else {
+    res.render('forgot', {
+      error: {msg: "Bad link, please try again"}
+    });
+  }
+})
+
+app.post("/reset/:token", (req, res) => {
+  if(req.params.token) {
+    if(forgotTokens.hasOwnProperty(req.params.token)) {
+      if(Date.now() - forgotTokens[req.params.token].time < 1000 * 60 * 5) {
+        var username = forgotTokens[req.params.token].username;
+        var password = req.body.password;
+        if(!password) {
+          res.render('reset', {
+            username: username,
+            error: {msg: "Please fill in all fields"}
+          })
+          return
+        }
+        api.resetPassword(username, password).then(data => {
+          if(data.success) {
+            res.render('login', {
+              username: username,
+              success: {msg: "Password reset successfully"}
+            })
+          } else {
+            res.render('reset', {
+              username: username,
+              error: {msg: "Something went wrong.. Please try again"}
+            })
+          }
+        }).catch(err => {
+          console.log(err)
+          res.render('reset', {
+            username: username,
+            error: {msg: "Something went wrong.. Please try again"}
+          })
+        }
+        );
+      } else {
+        res.render('forgot', {
+          error: {msg: "Link expired, please try again"}
+        });
+      }
+    } else {
+      res.render('forgot', {
+        error: {msg: "Invalid link, please try again"}
+      });
+    }
+  } else {
+    res.render('forgot', {
+      error: {msg: "Bad link, please try again"}
+    });
+  }
 })
 
 

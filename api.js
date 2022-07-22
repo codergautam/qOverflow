@@ -19,7 +19,6 @@ class Api {
     })
     var text= await req.text()
    
-    // console.log(text)
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
@@ -114,6 +113,7 @@ class Api {
     return await this.sendRequest('/questions/search?'+urlEncodedParams, 'GET');
   }
 
+  
   async getUserQuestionsAnswers(username) {
     let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
     let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
@@ -153,6 +153,21 @@ class Api {
     });
     return req;
   }
+
+  async updateUser(username, salt, key, email, points) {
+    return this.sendRequest('/users/' + username, 'PATCH', {
+      salt: salt,
+      key: key,
+      email: email,
+      points: points
+    });
+  }
+
+  async resetPassword(username, password) {
+    const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(password);
+    return this.updateUser(username, saltString, keyString, undefined, undefined);
+  }
+    
 
   getAnswers(questionId, count=Infinity) {
   if(count > 0)  return this.sendRequest('/questions/' + questionId + '/answers', 'GET');
