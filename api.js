@@ -18,6 +18,7 @@ class Api {
       }
     })
     var text= await req.text()
+   
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
@@ -112,10 +113,68 @@ class Api {
     return await this.sendRequest('/questions/search?'+urlEncodedParams, 'GET');
   }
 
+  
   async getUserQuestionsAnswers(username) {
     let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
     let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
     return [ userQuestions, userAnswers ]
+  }
+
+  getQuestion(questionId) {
+    return this.sendRequest('/questions/' + questionId, 'GET');
+  }
+
+  hasUserVoted(questionId, username) {
+    if(username) {
+    return new Promise((resolve, reject) => {
+    this.sendRequest('/questions/' + questionId + '/vote/' + username, 'GET').then(data => {
+      console.log(data)
+      if(data.success) {
+        if(data.error) resolve({voted: false, error: data.error})
+        else resolve({voted: true, vote: data.vote})
+      }
+      else resolve({voted: false});
+    }).catch(err => {
+      reject(err)
+    });
+  });
+} else {
+  return new Promise((resolve, reject) => {
+    resolve(false)
+  });
+}
+  }
+
+  async voteQuestion(questionId, username, target, action) {
+    console.log(questionId, username, target, action)
+    var req = this.sendRequest('/questions/' + questionId + '/vote/' + username, 'PATCH', {
+      operation: action,
+      target
+    });
+    return req;
+  }
+
+  async updateUser(username, salt, key, email, points) {
+    return this.sendRequest('/users/' + username, 'PATCH', {
+      salt: salt,
+      key: key,
+      email: email,
+      points: points
+    });
+  }
+
+  async resetPassword(username, password) {
+    const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(password);
+    return this.updateUser(username, saltString, keyString, undefined, undefined);
+  }
+    
+
+  getAnswers(questionId, count=Infinity) {
+  if(count > 0)  return this.sendRequest('/questions/' + questionId + '/answers', 'GET');
+  else return new Promise((resolve, reject) => {
+    // if count is 0, return an empty array
+    resolve([]);
+  });
   }
 
   makeid(length) {

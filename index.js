@@ -21,10 +21,14 @@
 // console.log(myQuery)
 let msg = "World, Programmed To Learn And Not To Feeeel (Melismatic Singing) \n-Louie Zong (https://youtu.be/Yw6u6YkTgQ4)"
 console.log("Hello " + msg)
+let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
+
 
 const express = require('express')
+const http = require('http')
 const app = express()
 const port = 3000
+const server = http.createServer(app)
 
 require('dotenv').config()
 const Api = require('./api')
@@ -33,6 +37,13 @@ const msToTime = require('./msToTime')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 
+const { Server } = require("socket.io");
+
+const io = new Server(server, {
+  cors: { origin: "*" },
+});
+
+var forgotTokens = {};
 
  const api = new Api(process.env.key)
  var gravatar = require('gravatar');
@@ -43,6 +54,7 @@ const cookieParser = require('cookie-parser')
 
 var session = require('express-session')
 const sqlite = require("better-sqlite3");
+const { randomUUID } = require('crypto')
 
 const SqliteStore = require("better-sqlite3-session-store")(session)
 const db = new sqlite("sessions.db");
@@ -97,10 +109,9 @@ app.get('/dashboard', async (req, res) => {
             }
           }
         )
-        let userPoints = parseInt(user.points)
+        let userPoints = parseInt(user.points);
         let _level
         console.log(userPoints)
-        let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
         for(let i = 0; i < levelMinimums.length; i++) {
           if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
             console.log("Less than " + levelMinimums[i])
@@ -304,5 +315,241 @@ app.get("/buffet", (req, res) => {
     res.send(JSON.stringify(data))
   });
 });
+app.get("/question/:id", (req, res) => {
+  var id= req.params.id;
+  if(!id) {
+    res.send("Invalid question id")
+    return
+  }
+  api.getQuestion(id).then(data => {
+    if(!data.success) {
+      res.send("Invalid question id")
+      return;
+    }
+    api.getAnswers(id, data.answers).then(data2 => {
+    if(!data2.success) {
+      res.send("Something wen't wrong.. Please try again")
+      return;
+    }
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+    api.hasUserVoted(id, req.session.user?.username).then(data3 => {
+    res.render('question', {
+      question: data.question,
+      user: req.session.user,
+      loggedIn: req.session.loggedIn,
+      answers: data2.answers,
+      voted: data3
+    })
+  }).catch(err => {
+    console.log(err)
+    res.render('question', {
+      question: data.question,
+      user: req.session.user,
+      loggedIn: req.session.loggedIn,
+      answers: data2.answers,
+      voted: {voted: false}
+    })
+  });
+  });
+
+  });
+});
+var basicDataCache = {};
+app.get("/getBasicData", (req, res) => {
+  if(req.query.user && typeof req.query.user == "string") {
+    if(basicDataCache.hasOwnProperty(req.query.user) && Date.now() - basicDataCache[req.query.user].time < 1000 * 60 * 5) {
+      res.send({success:true, ...basicDataCache[req.query.user].data})
+
+    } else {
+      api.getUser(req.query.user).then(data => {
+        if(data.success) {
+        var userPoints = data.user.points;
+        console.log(data)
+        let _level;
+        for(let i = 0; i < levelMinimums.length; i++) {
+          if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
+            console.log("Less than " + levelMinimums[i])
+            _level = i + 2;
+            break;
+          } else if(i == 0) {
+            if(userPoints < levelMinimums[0]) {
+              console.log("Less than " + levelMinimums[0])
+              _level = i + 1;
+              break;
+            }
+          } else if(i == levelMinimums.length - 1) {
+            if(userPoints > levelMinimums[i]) {
+              console.log("Less than " + levelMinimums[i])
+              _level = levelMinimums.length + 1;
+              break;
+            }
+          }
+        }
+        console.log("Level: " + _level)
+        var needed = {
+          time: Date.now(),
+          data: {
+            pfp: gravatarGen(data.user.email),
+            level: _level,
+          }
+        }
+        basicDataCache[req.query.user] = needed;
+        res.send({success:true, ...needed.data})
+      } else {
+        res.send(JSON.stringify({success: false}))
+      }
+      });
+    }
+  } else res.send(JSON.stringify({success: false}))
+})
+
+app.get("/forgot", (req, res) => {
+  if(req.session.loggedIn) req.redirect('/')
+  res.render('forgot', {
+  });
+})
+
+app.post("/forgot", (req, res) => {
+  var username = req.body.username;
+  var email = req.body.email;
+  if(!username || !email) {
+    res.render('forgot', {
+      error: {msg: "Please fill in all fields"}
+    })
+    return
+  };
+  api.getUser(username).then(data => {
+    if(data.success) {
+      if(data.user.email == email) {
+        var token = randomUUID();
+        forgotTokens[token] = {
+          username: username,
+          time: Date.now()
+        };
+        res.send("<b>One more step</b><br>We haven't sent you an email, But if we had, we wouldv'e send the below link <br> Please click the link below to reset your password.<br>Please be quick, as the link expires in 5 minutes<br/><br><a href='/reset/" + token + "'>Click here to reset your password</a>");
+      } else {
+        res.render('forgot', {
+          error: {msg: "Email doesn't match"}
+        })
+        return
+      }
+    } else {
+      res.render('forgot', {
+        error: {msg: "Invalid username or email"}
+      })
+      return
+    }
+  }).catch(err => {
+    console.log(err)
+    res.render('forgot', {
+      error: {msg: "Something went wrong.. Please try again"}
+    })
+  });
+
+});
+
+app.get("/reset/:token", (req, res) => {
+  if(req.params.token) {
+    if(forgotTokens.hasOwnProperty(req.params.token)) {
+      if(Date.now() - forgotTokens[req.params.token].time < 1000 * 60 * 5) {
+        res.render('reset', {
+          username: forgotTokens[req.params.token].username
+        })
+      } else {
+        res.render('forgot', {
+          error: {msg: "Link expired, please try again"}
+        });
+      }
+    } else {
+      res.render('forgot', {
+        error: {msg: "Invalid link, please try again"}
+      });
+    }
+  } else {
+    res.render('forgot', {
+      error: {msg: "Bad link, please try again"}
+    });
+  }
+})
+
+app.post("/reset/:token", (req, res) => {
+  if(req.params.token) {
+    if(forgotTokens.hasOwnProperty(req.params.token)) {
+      if(Date.now() - forgotTokens[req.params.token].time < 1000 * 60 * 5) {
+        var username = forgotTokens[req.params.token].username;
+        var password = req.body.password;
+        if(!password) {
+          res.render('reset', {
+            username: username,
+            error: {msg: "Please fill in all fields"}
+          })
+          return
+        }
+        api.resetPassword(username, password).then(data => {
+          if(data.success) {
+            res.render('login', {
+              username: username,
+              success: {msg: "Password reset successfully"}
+            })
+          } else {
+            res.render('reset', {
+              username: username,
+              error: {msg: "Something went wrong.. Please try again"}
+            })
+          }
+        }).catch(err => {
+          console.log(err)
+          res.render('reset', {
+            username: username,
+            error: {msg: "Something went wrong.. Please try again"}
+          })
+        }
+        );
+      } else {
+        res.render('forgot', {
+          error: {msg: "Link expired, please try again"}
+        });
+      }
+    } else {
+      res.render('forgot', {
+        error: {msg: "Invalid link, please try again"}
+      });
+    }
+  } else {
+    res.render('forgot', {
+      error: {msg: "Bad link, please try again"}
+    });
+  }
+})
+
+
+app.post("/api/question/:id/:type", (req,res) => {
+  var id = req.params.id;
+  var type = req.params.type;
+  var action = req.body.action;
+  console.log(action, type, id)
+  if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
+    res.send("Invalid question id or type")
+    return
+  }
+  type += "s";
+  api.voteQuestion(id, req.session.user?.username, type, action).then(data => {
+    res.send(JSON.stringify(data))
+    var dir = action == "increment" ? 1 : -1;
+    dir *= type == "upvotes" ? 1 : -1;
+    if(data.success) {
+      io.emit("voteQ", [id, dir])
+    }
+  });
+
+
+})
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+server.listen(port, () => console.log(`Example app listening on port ${port}!`))
