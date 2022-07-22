@@ -107,10 +107,15 @@
                                 </span>
                             <% } %>
                         </div>  
-                        <div class="flex-col overflow-y-auto h-72 mt-6" id="questionFeed">
-                        </div>   
+                        <% if(questionFeed.length != 0)  { %> 
+                            <div class="flex-col overflow-y-auto h-72 items-start" id="questionFeed">
+                            </div>   
+                        <% } else { %>
+                            <div class="flex-col" id="questionFeed">
+                            </div>   
+                        <% } %>  
                     </div>
-                    <div class="flex-col">
+                    <div class="flex-col mt-12">
                         <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
                             Answers
                         </p>
@@ -143,8 +148,14 @@
                                 </span>
                             <% } %>
                         </div>  
-                        <div class="flex-col overflow-y-auto h-72 mt-6" id="answerFeed">
-                        </div>  
+                        
+                        <% if(answerFeed.length != 0)  { %> 
+                            <div class="flex-col overflow-y-auto h-72 items-start" id="answerFeed">
+                            </div>   
+                        <% } else { %>
+                            <div class="flex-col" id="answerFeed">
+                            </div>   
+                        <% } %>  
                     </div>
                 </div>
             </div>
@@ -193,8 +204,8 @@
             }
 
 
-            let emptyElemQ = `<div class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                    You Have No Answers Right Now
+            let emptyElemQ = `<div class="ml-6 mt-2 text-gray-500 font-semibold text-xl">
+                                    You Have No Questions Right Now
                                 </div>
                                 <span class="ml-6 mt-1 text-gray-500 badge w-min">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -259,7 +270,7 @@
             }
 
 
-            let emptyElem = `<div class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+            let emptyElem = `<div class="ml-6 mt-2 text-gray-500 font-semibold text-xl">
                                     You Have No Answers Right Now
                                 </div>
                                 <span class="ml-6 mt-1 text-gray-500 badge w-min">

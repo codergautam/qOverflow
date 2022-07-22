@@ -8,15 +8,29 @@
     <link rel="stylesheet" href="/index.css">
 </head>
 <body>
+    <div class="rounded-xl group fixed right-4 bottom-4 overflow-hidden flex items-center hover:px-2 hover:py-2 hover:bg-gray-100 transition-all ease-in-out delay-75 duration-300">
+        <form action="/createMessage" method="POST">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-14 w-14 stroke-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            <input type="hidden" name="username" value="<%= user.username %> ">
+            <input type="submit" value="Write Message" class="text-3xl text-gray-700 font-semibold group-hover:text-gray-900 transition-all ease-in-out delay-75 duration-300">
+        </form>
+    </div>
     <div class="grid grid-cols-12 bg-white">
         <div class="col-span-12">
             <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
         </div>
-        <div class="relative flex justify-center col-span-6 bg-white h-screen ">
-                <div class="flex-col w-1/2 ">
+        <div class="relative flex justify-center col-span-4">
+                <div class="flex-col w-5/6 ml-2 ">
+                    <div class="flex text-5xl text-gray-700 font-bold mt-4">
+                        <div class="text-start border-b-2 pb-2">
+                            INBOX
+                        </div>
+                    </div>
                     <div class="flex justify-between">
                         <div class="flex-1">
-                            <div class="text-4xl font-semibold text-gray-600 mt-9">
+                            <div class="text-4xl font-semibold text-gray-600 mt-6">
                                 Welcome,
                             </div>
                             <div class="text-4xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
@@ -30,9 +44,9 @@
                             You have <%= messageCount %> messages
                         </div>
                     </div>
-                    <div class="bg-scroll mt-6 inline-block items-baseline pl-4 pr-6 py-4 rounded-lg" style = "background-image: url(https://images.unsplash.com/photo-1529912701468-62734a2b74da?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80)">
+                    <div class="bg-scroll bg-cover mt-6 pb-12 inline-block items-baseline pl-4 pr-8 pt-4 rounded-lg" style = "background-image: url(https://images.unsplash.com/photo-1509023464722-18d996393ca8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80)">
                         <div class="group flex text-2xl font-bebas text-white hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
-                            Level <%= user.level %> <div class="text-transparent group-hover:text-slate-500 ml-2 text-lg transition-all delay-75 duration-500 ease-in-out">Level <%= user.nextLevel %> (<%= user.nextLevelPoints %> pts.) </div>
+                            Level <%= user.level %> <div class="text-transparent group-hover:text-slate-100 ml-2 text-lg transition-all delay-75 duration-500 ease-in-out">Level <%= user.nextLevel %> (<%= user.nextLevelPoints %> pts.) </div>
                         </div>
                         <div class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-xl font-staat text-slate-200">
                             <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
@@ -40,23 +54,41 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="mt-2 relative z-10">
-                <div class="flex">
-                    <div class="mx-auto hover:translate-x-4 text-2xl font-extralight font-staat text-gray-500 transition-all ease-in-out delay-75 duration-300">
-                        Messages: <%= messageCount %> 
+            <div class="col-span-3 relative flex overflow-hidden">
+                <% if(messageCount > 0) { %>
+                <% } else { %>
+                    <div class="flex-col w-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto z-10 relative h-28 w-28 mt-4 stroke-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"o d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+                        </svg>
+                        <div class="absolute h-24 w-96 top-12 bg-gray-100 z-0">
+
+                        </div>
+                        
+                        <p class="text-center relative z-10 mt-4 text-xl text-gray-500 font-semibold">
+                            You Have an Empty Inbox
+                        </p>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-6 w-6 stroke-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                          </svg>
+                    </div>
+                <% } %>   
+            </div>
+            <div class="col-span-5 relative flex">
+                <div class="flex-col">
+                    <p class="text-5xl text-stone-900 text-start font-staat ml-4 mt-4 border-b-2 w-min">
+                        Preview
+                    </p>
+                    <div id="messagePreview">
+                        <p class="text-3xl text-gray-700 text-start font-bold ml-4 mt-2">
+                            No Current Message
+                        </p>
+                        <p class="text-xl text-gray-500 text-start font-semibold ml-4">
+                            Message Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do....
+                        </p>
                     </div>
                 </div>
             </div>
-            <div class="ml-8 flex justify-between">
-                <div class="inline-block py-2 items-baseline">
-                    <div class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
-                        Level <%= user.level %> <div class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">Level <%= user.nextLevel %> (<%= user.nextLevelPoints %> pts.) </div>
-                    </div>
-                    <div class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
-                        <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
-                    </div>
-                </div>
-            </div> -->
     </div>
 </body>
 </html>
