@@ -25,8 +25,10 @@ let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
 
 
 const express = require('express')
+const http = require('http')
 const app = express()
 const port = 3000
+const server = http.createServer(app)
 
 require('dotenv').config()
 const Api = require('./api')
@@ -35,6 +37,11 @@ const msToTime = require('./msToTime')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 
+const { Server } = require("socket.io");
+
+const io = new Server(server, {
+  cors: { origin: "*" },
+});
 
  const api = new Api(process.env.key)
  var gravatar = require('gravatar');
@@ -321,12 +328,25 @@ app.get("/question/:id", (req, res) => {
       res.send("Something wen't wrong.. Please try again")
       return;
     }
+
+    api.hasUserVoted(id, req.session.user?.username).then(data3 => {
     res.render('question', {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
-      answers: data2.answers
+      answers: data2.answers,
+      voted: data3
     })
+  }).catch(err => {
+    console.log(err)
+    res.render('question', {
+      question: data.question,
+      user: req.session.user,
+      loggedIn: req.session.loggedIn,
+      answers: data2.answers,
+      voted: {voted: false}
+    })
+  });
   });
 
   });
@@ -380,4 +400,34 @@ app.get("/getBasicData", (req, res) => {
   } else res.send(JSON.stringify({success: false}))
 })
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
+app.post("/api/question/:id/:type", (req,res) => {
+  var id = req.params.id;
+  var type = req.params.type;
+  var action = req.body.action;
+  console.log(action, type, id)
+  if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
+    res.send("Invalid question id or type")
+    return
+  }
+  type += "s";
+  api.voteQuestion(id, req.session.user?.username, type, action).then(data => {
+    res.send(JSON.stringify(data))
+    var dir = action == "increment" ? 1 : -1;
+    dir *= type == "upvotes" ? 1 : -1;
+    if(data.success) {
+      io.emit("voteQ", [id, dir])
+    }
+  });
+
+
+})
+
+io.on('connection', (socket) => {
+  console.log('a user connected');
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+});
+
+server.listen(port, () => console.log(`Example app listening on port ${port}!`))

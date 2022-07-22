@@ -18,6 +18,8 @@ class Api {
       }
     })
     var text= await req.text()
+   
+    // console.log(text)
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
@@ -120,6 +122,36 @@ class Api {
 
   getQuestion(questionId) {
     return this.sendRequest('/questions/' + questionId, 'GET');
+  }
+
+  hasUserVoted(questionId, username) {
+    if(username) {
+    return new Promise((resolve, reject) => {
+    this.sendRequest('/questions/' + questionId + '/vote/' + username, 'GET').then(data => {
+      console.log(data)
+      if(data.success) {
+        if(data.error) resolve({voted: false, error: data.error})
+        else resolve({voted: true, vote: data.vote})
+      }
+      else resolve({voted: false});
+    }).catch(err => {
+      reject(err)
+    });
+  });
+} else {
+  return new Promise((resolve, reject) => {
+    resolve(false)
+  });
+}
+  }
+
+  async voteQuestion(questionId, username, target, action) {
+    console.log(questionId, username, target, action)
+    var req = this.sendRequest('/questions/' + questionId + '/vote/' + username, 'PATCH', {
+      operation: action,
+      target
+    });
+    return req;
   }
 
   getAnswers(questionId, count=Infinity) {

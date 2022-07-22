@@ -6,43 +6,107 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= question.title %></title>
   <link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
 </head>
 <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+<script>
+        window.odometerOptions = {
+  duration: 1, // Change how long the javascript expects the CSS animation to take
+};
+</script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
+<script src="http://github.hubspot.com/odometer/odometer.js"></script>
 <style>
   h1 {
     font-size: 2em;
     font-weight: normal;
+    text-align: center;
     margin: 0.67em 0;
   }
   h2 {
     font-size: 1.5em;
     font-weight: normal;
+    text-align: center;
     margin: 0.83em 0;
   }
   h3 {
     font-size: 1.17em;
     font-weight: normal;
+    text-align: center;
     margin: 1em 0;
   }
   h4 {
     font-size: 1em;
     font-weight: normal;
     margin: 1.33em 0;
+    text-align: center;
   }
   h5 {
     font-size: 0.83em;
     font-weight: normal;
     margin: 1.67em 0;
+    text-align: center;
   }
   h6 {
     font-size: 0.67em;
     font-weight: normal;
     margin: 2.33em 0;
+    text-align: center;
   }
-  
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    outline: solid;
+    width: 100%;
+  }
+  a {
+    color: #0366d6;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+}
+  ul {
+    margin: 1.33em 0;
+    padding: 0.5em 1em;
+
+
+    list-style: disc;
+    text-align: center;
+
+list-style-position: inside;
+  }
+  ol {
+    margin: 1.33em 0;
+    padding: 0.5em 1em;
+    list-style: decimal;
+    text-align: center;
+    list-style-position: inside;
+  }
+  li {
+    margin-bottom: 0.33em;
+  }
+  code {
+    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-size: 0.83em;
+  }
+  img {
+    max-width: 50%;
+  }
 </style>
 <body>  
+  <script src="/socket.io/socket.io.js"></script>
   <div class="flex flex-col h-screen">
     <div class="py-0">
       <%-  include('../views/navbar.ejs', {signup: false, loggedIn}); %>
@@ -52,12 +116,21 @@
       
 
           <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <div class="px-4 py-6 sm:px-0">
-              <div class="">
-               <p class="text-4xl text-center py-5"><%= question.title %></p> 
-               <p id="questionText" class="text-center ">
-
-               </p>
+            <div class="px-4 py-6 sm:px-0 rounded overflow-hidden shadow-lg">
+              <div class="flex flex-row">
+                <div class="flex content-center flex-col w-1/12">
+                  <img class="rounded-lg cursor-pointer" id="questionUp" style="width: 50%; margin-left: auto; margin-right: auto;" src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                  <p class="text-center odometer" id="voteQ"><%= question.upvotes - question.downvotes %></p>
+                  <img class="rounded-lg rotate-180 cursor-pointer" id="questionDown" style="width: 50%; margin-left: auto; margin-right: auto;"  src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                </div>
+                <div></div>
+                <div class="flex-grow">
+                  <p class="text-4xl text-center py-5 "><b><%= question.title %></b></p> 
+                  <hr/>
+                  <p id="questionText" class="text-center ">
+   
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -78,6 +151,54 @@
     <script>
     document.getElementById('questionText').innerHTML =
       marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
+   hljs.highlightAll();
+   
+      document.getElementById("questionUp").addEventListener("click", () => {
+        var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+        fetch('/api/question/<%= question.question_id %>/upvote', {
+          method: 'POST',
+          body: JSON.stringify({
+            action
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json()).then((j) => {
+          if(j.success) {
+            document.getElementById("questionUp").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+            // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+          }
+        })
+      })
+
+      document.getElementById("questionDown").addEventListener("click", () => {
+        var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+        fetch('/api/question/<%= question.question_id %>/downvote', {
+          method: 'POST',
+          body: JSON.stringify({
+            action
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json()).then((j) => {
+          if(j.success) {
+            document.getElementById("questionDown").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+            // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+          }
+        })
+      })
+
+
+      var curVotes = <%= question.upvotes - question.downvotes %>;
+  const socket = io();
+  socket.on("voteQ", ([id, dir]) => {
+    if(id == "<%= question.question_id %>") {
+      curVotes += dir;
+      console.log(curVotes);
+      document.getElementById("voteQ").innerHTML = curVotes;
+    }
+  })
   </script>
 </body>
 </html>
