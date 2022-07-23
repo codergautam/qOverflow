@@ -238,7 +238,7 @@ app.get('/logout', async (req, res) => {
 app.post('/questionEditor', async (req, res) => {
   const { username } = req.body
   console.log("User: " + username)
-  res.render('question', {username: username})
+  res.render('questionEditor', {username: username})
 })
 
 app.post('/questions',  async (req, res) => {

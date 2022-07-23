@@ -2502,6 +2502,10 @@ video {
   width: 1.5rem;
 }
 
+.w-12 {
+  width: 3rem;
+}
+
 .w-1\/2 {
   width: 50%;
 }
@@ -2520,10 +2524,6 @@ video {
 
 .w-1\/12 {
   width: 8.333333%;
-}
-
-.w-12 {
-  width: 3rem;
 }
 
 .min-w-full {
