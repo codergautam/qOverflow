@@ -1777,3 +1777,8 @@ video {
   }
 }
 
+  .lg\:px-\[46px\] {
+    padding-left: 46px;
+    padding-right: 46px;
+  }
+}
