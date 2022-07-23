@@ -1,20 +1,3 @@
-// function paginate(arr, chunkSize) {
-//   const res = [];
-//   for (let i = 0; i < arr.length; i += chunkSize) {
-//       const chunk = arr.slice(i, i + chunkSize);
-//       res.push(chunk);
-//   }
-//   return res;
-// }
-
-
-// let myQueryObject = {
-//   "creator": "elizabethWarren"
-// }
-
-// let myQuery = encodeURIComponent(JSON.stringify(myQueryObject))
-
-// console.log(myQuery)
 let msg = "World, Programmed To Learn And Not To Feeeel (Melismatic Singing) \n-Louie Zong (https://youtu.be/Yw6u6YkTgQ4)"
 console.log("Hello " + msg)
 let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
@@ -144,7 +127,7 @@ app.get('/dashboard', async (req, res) => {
           }
         }
         basicDataCache[req.query.user] = needed;
-        
+
         res.render('dashboard', {
             loggedIn: req.session.loggedIn,
             questionFeed: questionFeed,
@@ -163,156 +146,6 @@ app.get('/dashboard', async (req, res) => {
   }
 })
 
-
-
-app.get("/forgot", (req, res) => {
-  if(req.session.loggedIn) req.redirect('/')
-  res.render('forgot', {
-  });
-})
-
-app.post("/forgot", (req, res) => {
-  var username = req.body.username;
-  var email = req.body.email;
-  if(!username || !email) {
-    res.render('forgot', {
-      error: {msg: "Please fill in all fields"}
-    })
-    return
-  };
-  api.getUser(username).then(data => {
-    if(data.success) {
-      if(data.user.email == email) {
-        var token = randomUUID();
-        forgotTokens[token] = {
-          username: username,
-          time: Date.now()
-        };
-        res.send("<b>One more step</b><br>We haven't sent you an email, But if we had, we wouldv'e send the below link <br> Please click the link below to reset your password.<br>Please be quick, as the link expires in 5 minutes<br/><br><a href='/reset/" + token + "'>Click here to reset your password</a>");
-      } else {
-        res.render('forgot', {
-          error: {msg: "Email doesn't match"}
-        })
-        return
-      }
-    } else {
-      res.render('forgot', {
-        error: {msg: "Invalid username or email"}
-      })
-      return
-    }
-  }).catch(err => {
-    console.log(err)
-    res.render('forgot', {
-      error: {msg: "Something went wrong.. Please try again"}
-    })
-  });
-
-});
-
-app.get("/reset/:token", (req, res) => {
-  if(req.params.token) {
-    if(forgotTokens.hasOwnProperty(req.params.token)) {
-      if(Date.now() - forgotTokens[req.params.token].time < 1000 * 60 * 5) {
-        res.render('reset', {
-          username: forgotTokens[req.params.token].username
-        })
-      } else {
-        res.render('forgot', {
-          error: {msg: "Link expired, please try again"}
-        });
-      }
-    } else {
-      res.render('forgot', {
-        error: {msg: "Invalid link, please try again"}
-      });
-    }
-  } else {
-    res.render('forgot', {
-      error: {msg: "Bad link, please try again"}
-    });
-  }
-})
-
-app.post("/reset/:token", (req, res) => {
-  if(req.params.token) {
-    if(forgotTokens.hasOwnProperty(req.params.token)) {
-      if(Date.now() - forgotTokens[req.params.token].time < 1000 * 60 * 5) {
-        var username = forgotTokens[req.params.token].username;
-        var password = req.body.password;
-        if(!password) {
-          res.render('reset', {
-            username: username,
-            error: {msg: "Please fill in all fields"}
-          })
-          return
-        }
-        api.resetPassword(username, password).then(data => {
-          if(data.success) {
-            res.render('login', {
-              username: username,
-              success: {msg: "Password reset successfully"}
-            })
-          } else {
-            res.render('reset', {
-              username: username,
-              error: {msg: "Something went wrong.. Please try again"}
-            })
-          }
-        }).catch(err => {
-          console.log(err)
-          res.render('reset', {
-            username: username,
-            error: {msg: "Something went wrong.. Please try again"}
-          })
-        }
-        );
-      } else {
-        res.render('forgot', {
-          error: {msg: "Link expired, please try again"}
-        });
-      }
-    } else {
-      res.render('forgot', {
-        error: {msg: "Invalid link, please try again"}
-      });
-    }
-  } else {
-    res.render('forgot', {
-      error: {msg: "Bad link, please try again"}
-    });
-  }
-})
-
-
-app.post("/api/question/:id/:type", (req,res) => {
-  var id = req.params.id;
-  var type = req.params.type;
-  var action = req.body.action;
-  console.log(action, type, id)
-  if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
-    res.send("Invalid question id or type")
-    return
-  }
-  type += "s";
-  api.voteQuestion(id, req.session.user?.username, type, action).then(data => {
-    res.send(JSON.stringify(data))
-    var dir = action == "increment" ? 1 : -1;
-    dir *= type == "upvotes" ? 1 : -1;
-    if(data.success) {
-      io.emit("voteQ", [id, dir])
-    }
-  });
-
-
-})
-
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-});
 
 ///------------------------------------- Questions Stuff --------------------------------
 
@@ -621,6 +454,7 @@ app.get("/buffet", (req, res) => {
     res.send(JSON.stringify(data))
   });
 });
+
 app.get("/question/:id", (req, res) => {
   var id= req.params.id;
   if(!id) {
@@ -660,6 +494,7 @@ app.get("/question/:id", (req, res) => {
 
   });
 });
+
 var basicDataCache = {};
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
@@ -708,6 +543,8 @@ app.get("/getBasicData", (req, res) => {
     }
   } else res.send(JSON.stringify({success: false}))
 })
+
+
 
 app.get("/forgot", (req, res) => {
   if(req.session.loggedIn) req.redirect('/')
@@ -857,6 +694,7 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
 });
+
 
 server.listen(port, () => console.log(`Example app listening on port ${port}!`))
 

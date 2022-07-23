@@ -105,20 +105,26 @@
                                 <span class="text-gray-500 font-semibold">From</span> <span id="previewAuthor">Anonymous</span>
                             </p>
                         </div>
-                        <p class="text-xl text-gray-500 text-start font-semibold ml-4" id="previewText">
+                        <p class="text-xl text-gray-500 text-start ml-4" id="previewText">
                             Message Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do....
                         </p>
                     </div>
                 </div>
             </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
         function preview(message) {
             console.log(message)
-            message = JSON.parse(message)
-            document.getElementById("previewAuthor").innerText = message.sender
-            document.getElementById("previewSubject").innerText = message.subject
-            document.getElementById("previewText").innerText = message.text
+            let finalMsg = message.replace(/\s+/g, " ")
+            console.log(finalMsg)
+            message = JSON.parse(finalMsg)
+            message.text = marked.parse(message.text)
+            document.getElementById("previewAuthor").innerHTML = message.sender
+            document.getElementById("previewSubject").innerHTML = message.subject
+            document.getElementById("previewText").innerHTML = message.text
         }
     </script>
 </body>
