@@ -236,7 +236,7 @@ app.get('/logout', async (req, res) => {
 })
 
 app.get('/questionEditor', async (req, res) => {
-  username = req.session.username
+  username = req.session.user.username
   console.log("User: " + username)
   res.render('questionEditor', {username: username})
 })
