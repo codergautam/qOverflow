@@ -72,6 +72,14 @@ class Api {
     });
   }
 
+  async createQuestion(username, title, text) {
+    return this.sendRequest('/questions', 'POST', {
+      creator: username,
+      title: title,
+      text: text
+    })
+  }
+
   async getUser(username) {
     return this.sendRequest('/users/'+username, 'GET');
   }
