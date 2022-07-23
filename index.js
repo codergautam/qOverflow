@@ -236,7 +236,7 @@ app.get('/logout', async (req, res) => {
 })
 
 app.get('/questionEditor', async (req, res) => {
-  username = req.session.user.username
+  let username = req.session.username
   console.log("User: " + username)
   res.render('questionEditor', {username: username})
 })
@@ -376,8 +376,8 @@ app.get('/mail', async (req, res) => {
 })
 
 
-app.get("/messageEditor", async (req, res) => {
-  username = req.session.user.username
+app.post("/messageEditor", async (req, res) => {
+  let username = req.session.user.username
   console.log(username)
   username = (username) ? username : req.session.user.username
   res.render('messageEditor', {
