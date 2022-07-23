@@ -18,6 +18,7 @@ class Api {
       }
     })
     var text= await req.text()
+   
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
@@ -98,10 +99,11 @@ class Api {
     
     //After param: ---------
     //Just get whatever questions are after the question_id put in
+    console.log(match)
     var params =  {
       sort: sort,
-      regexMatch: regex ? encodeURIComponent(JSON.stringify(regex)) : undefined ,
-      match: match ? encodeURIComponent(JSON.stringify(match)): undefined,
+      regexMatch: regex ? JSON.stringify(regex) : undefined ,
+      match: match ? JSON.stringify(match): undefined,
       after: after
     };
   
@@ -110,19 +112,21 @@ class Api {
     for (var key in params) {
      if(params[key]) urlEncodedParams.append(key, params[key]);
     }
+    console.log(urlEncodedParams.toString())
 
 
     // console.log('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"));
-    return await this.sendRequest('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"), 'GET');
+    // return await this.sendRequest('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"), 'GET');
     
+    return await this.sendRequest('/questions/search?'+urlEncodedParams, 'GET');
   }
 
+  
   async getUserQuestionsAnswers(username) {
     let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
     let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
     return [ userQuestions, userAnswers ]
   }
-
 
   getQuestion(questionId) {
     return this.sendRequest('/questions/' + questionId, 'GET');
@@ -171,7 +175,7 @@ class Api {
     const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(password);
     return this.updateUser(username, saltString, keyString, undefined, undefined);
   }
-
+    
 
   getAnswers(questionId, count=Infinity) {
   if(count > 0)  return this.sendRequest('/questions/' + questionId + '/answers', 'GET');

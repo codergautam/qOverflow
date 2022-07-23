@@ -11,147 +11,164 @@
 
 <body>  
    <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
-   <% if(loggedIn) { %>
-    <div class="fixed bottom-4 right-4 group  px-2 py-2 bg-gray-200 bg-opacity-75 rounded-3xl flex items-center hover:bg-opacity-90 hover:-translate-x-1/4 transition-all delay-75 duration-700 ease-in-out">
-       <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 stroke-gray-700 transition-all duration-500 " fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-         <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-       </svg>
-       <form action="/questionEditor" method="POST">
-        <input type="hidden" name="username" value="<%= user.username %> ">
-        <input value="Create a Question" type="submit" class="text-2xl cursor-pointer text-gray-700 mr-2 font-semibold inline-block transition-all delay-150">
-       </form>
-    </div>
-   <% } %>  
+   <div class="px-9 py-3">
+   <% var possible = ["recent", "best", "interesting", "hottest"] %>
+   <% for (var i = 0; i < possible.length; i++) { %>
+     <a href="/?sort=<%= possible[i] %>" class="inline-block px-3 <%= sort == possible[i] ? 'bg-green-200' : '' %> py-2 text-sm leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
+       <%= possible[i] %>
+     </a>
+    <% } %>
+</div>
    <div id="questions">
-    <div class="flex items-center justify-center flex-col px-[30px]">
+
+   </div>
+<!-- <div class="flex items-center justify-center flex-col px-[30px]">
+   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+    <div class="px-4 py-4 ">
+      <div class="font-bold text-xl mb-2">What's the meaning of life?</div>
+      <p class="text-gray-700 text-base">
+        I wonder what it is can some one answer pls thanks
+      </p>
+    </div>
+    <div class="px-6 pt-4 pb-2 ">
+      <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: Your mom</span>
+      <span class="badge font-semibold text-gray-700 mr-2 mb-2">2 hours ago</span>
+    </div>
+  </div>
+</div> -->
+
+<script>
+   lastQuestionId = undefined;
+  var pageSize = 6;
+  var questionsShown = 0;
+  var remaining = [];
+
+  function isUndefined(variable) {
+    return typeof variable === 'undefined';
+  }
+  var send = true;
+  async function getQuestions() {
+    if(!send) return;
+    console.log(lastQuestionId);
+    var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
       <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
        <div class="px-4 py-4 ">
          <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
     
        </div>
      </div>
-    </div>
-   </div>
-   <script>
-    lastQuestionId = undefined;
-   var pageSize = 6;
-   var questionsShown = 0;
-   var remaining = [];
-   function isUndefined(variable) {
-     return typeof variable === 'undefined';
-   }
-   var send = true;
-   async function getQuestions() {
-     if(!send) return;
-     console.log(lastQuestionId);
-     var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
-       <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-        <div class="px-4 py-4 ">
-          <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
-     
-        </div>
-      </div>
-     </div>`;
-     send = false;
-     
-     document.getElementById("questions").insertAdjacentHTML('beforeend', loader);
-     var data = await fetch('/buffet?sort=<%= sort %>'+((!isUndefined(lastQuestionId))?`&after=${lastQuestionId}`:"")).then(res => res.json());
-     clearLastQuestion();
-    if(data.questions.length > 0) send = true;
-     
-     return data;
-   }
-   function clearQuestions() {
-     var questions = document.getElementById('questions');
-     questions.innerHTML = '';
-   }
-   function clearLastQuestion() {
-     var questions = document.getElementById('questions');
-     questions.removeChild(questions.lastChild);
-   }
-   function msToTime(duration) {
-       const portions = [];
-         const msInDay = 1000 * 60 * 60 * 24;
-       const days = Math.trunc(duration / msInDay);
-       if (days > 0) {
-         portions.push(days + 'd');
-         duration = duration - (days * msInDay);
-       }
-     
-       const msInHour = 1000 * 60 * 60;
-       const hours = Math.trunc(duration / msInHour);
-       if (hours > 0) {
-         portions.push(hours + 'h');
-         duration = duration - (hours * msInHour);
-       }
-     
-       const msInMinute = 1000 * 60;
-       const minutes = Math.trunc(duration / msInMinute);
-       if (minutes > 0) {
-         portions.push(minutes + 'm');
-         duration = duration - (minutes * msInMinute);
-       }
-     
-       const seconds = Math.trunc(duration / 1000);
-       if (seconds > 0) {
-         portions.push(seconds + 's');
-       }
-     
-       return portions[0];
-     }
-    appendQuestion = (data, i) => {
-     console.log(data);
-     if(i >= pageSize) return;
-     lastQuestionId = data.question_id;
-     if(questionsShown >= 100) return;
-     questionsShown++;
-     // console.log(data.id)
+    </div>`;
+    send = false;
     
-     var question = `<div class="flex items-center justify-center flex-col  px-[30px]" >
-    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full cursor-pointer"  onclick="location.href = '/question/${data.question_id}'">
-     <div class="px-4 ">
-       <div class="font-bold text-xl mb-2 ">${data.title}</div>
-     </div>
-     <div class="px-6 pt-4 pb-2">
-      <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${data.creator}</p> <img src='' style="opacity:0%" width="50" height="50" id="${data.question_id+"pfp"}" class="max-w-full h-auto rounded-full"><p id="${data.question_id+"levelText"}"></p></center></span>
-       <br>
-       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
-       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.upvotes - data.downvotes} points</span>
-       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.views} views</span>
-       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.answers} answers</span>
-     </div>
-   </div>
- </div> 
- `
-     document.getElementById('questions').innerHTML += question;
-     fetch('/getBasicData?user='+data.creator).then((e) => e.json()).then((e) => {  
-       if(e.success) {
-         document.getElementById(data.question_id+"pfp").src = e.pfp;
-         // pfp opacity 0% to 100%
-         var pfp = document.getElementById(data.question_id+"pfp");
-         pfp.style.opacity = "1";
-         pfp.style.transition = "opacity 0.5s";
-         document.getElementById(data.question_id+"levelText").innerHTML = "Level "+e.level;
-       }
- });
-   }
- async function yo() {
-   if(remaining.length <= 0 && questionsShown == 0) {
-     var data = await getQuestions();
-     if(data.success) remaining = data.questions<%-sort == "hottest" ? `.filter(q=>!q.hasAcceptedAnswer)` : ""%>
-   }
-   for(var i = 0; i < pageSize; i++) {
-     if(remaining.length <= 0) break;
-     var data = remaining.shift();
-     appendQuestion(data, i);
-   }
- }
- window.onscroll = function(ev) {
-     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && questionsShown < 100) {
-         yo();
-     }
- };
- yo();
- </script>
+    document.getElementById("questions").insertAdjacentHTML('beforeend', loader);
+
+    var data = await fetch('/buffet?sort=<%= sort %>'+((!isUndefined(lastQuestionId))?`&after=${lastQuestionId}`:"")).then(res => res.json());
+    clearLastQuestion();
+   if(data.questions.length > 0) send = true;
+    
+    return data;
+
+  }
+
+  function clearQuestions() {
+    var questions = document.getElementById('questions');
+    questions.innerHTML = '';
+  }
+
+  function clearLastQuestion() {
+    var questions = document.getElementById('questions');
+    questions.removeChild(questions.lastChild);
+  }
+
+  function msToTime(duration) {
+      const portions = [];
+        const msInDay = 1000 * 60 * 60 * 24;
+      const days = Math.trunc(duration / msInDay);
+      if (days > 0) {
+        portions.push(days + 'd');
+        duration = duration - (days * msInDay);
+      }
+    
+      const msInHour = 1000 * 60 * 60;
+      const hours = Math.trunc(duration / msInHour);
+      if (hours > 0) {
+        portions.push(hours + 'h');
+        duration = duration - (hours * msInHour);
+      }
+    
+      const msInMinute = 1000 * 60;
+      const minutes = Math.trunc(duration / msInMinute);
+      if (minutes > 0) {
+        portions.push(minutes + 'm');
+        duration = duration - (minutes * msInMinute);
+      }
+    
+      const seconds = Math.trunc(duration / 1000);
+      if (seconds > 0) {
+        portions.push(seconds + 's');
+      }
+    
+      return portions[0];
+    }
+   appendQuestion = (data, i) => {
+    console.log(data);
+    if(i >= pageSize) return;
+
+    lastQuestionId = data.question_id;
+    if(questionsShown >= 100) return;
+    questionsShown++;
+    // console.log(data.id)
+
+   
+    var question = `<div class="flex items-center justify-center flex-col  px-[30px]" >
+   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full cursor-pointer"  onclick="location.href = '/question/${data.question_id}'">
+    <div class="px-4 ">
+      <div class="font-bold text-xl mb-2 ">${data.title}</div>
+    </div>
+    <div class="px-6 pt-4 pb-2">
+     <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${data.creator}</p> <img src='' style="opacity:0%" width="50" height="50" id="${data.question_id+"pfp"}" class="max-w-full h-auto rounded-full"><p id="${data.question_id+"levelText"}"></p></center></span>
+      <br>
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.upvotes - data.downvotes} points</span>
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.views} views</span>
+
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.answers} answers</span>
+    </div>
+  </div>
+</div> 
+`
+    document.getElementById('questions').innerHTML += question;
+    fetch('/getBasicData?user='+data.creator).then((e) => e.json()).then((e) => {  
+      if(e.success) {
+        document.getElementById(data.question_id+"pfp").src = e.pfp;
+        // pfp opacity 0% to 100%
+        var pfp = document.getElementById(data.question_id+"pfp");
+        pfp.style.opacity = "1";
+        pfp.style.transition = "opacity 0.5s";
+
+        document.getElementById(data.question_id+"levelText").innerHTML = "Level "+e.level;
+
+      }
+});
+  }
+async function yo() {
+  if(remaining.length <= 0 && questionsShown == 0) {
+    var data = await getQuestions();
+    if(data.success) remaining = data.questions<%-sort == "hottest" ? `.filter(q=>!q.hasAcceptedAnswer)` : ""%>
+  }
+  for(var i = 0; i < pageSize; i++) {
+    if(remaining.length <= 0) break;
+    var data = remaining.shift();
+    appendQuestion(data, i);
+  }
+}
+
+window.onscroll = function(ev) {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && questionsShown < 100) {
+        yo();
+    }
+};
+yo();
+</script>
 </body>
 </html>
