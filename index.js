@@ -94,56 +94,76 @@ app.get('/', (req, res) => { //Homepage
     sort
   })
 });
-
 app.get('/dashboard', async (req, res) => {
-    console.log(req.session)
-    if(Object.keys(req.session.user).length != 0) {
-        let user = await api.getUser(req.session.user.username).then(
-          (data) => {
-            if(data.success) {
-              return data.user
-            }
-          }
-        )
-        let userPoints = parseInt(user.points);
-        let _level
-        console.log(userPoints)
-        for(let i = 0; i < levelMinimums.length; i++) {
-          if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
-            console.log("Less than " + levelMinimums[i])
-            _level = i + 2;
-            break;
-          } else if(i == 0) {
-            if(userPoints < levelMinimums[0]) {
-              console.log("Less than " + levelMinimums[0])
-              _level = i + 1;
-              break;
-            }
-          } else if(i == levelMinimums.length - 1) {
-            if(userPoints > levelMinimums[i]) {
-              console.log("Less than " + levelMinimums[i])
-              _level = levelMinimums.length + 1;
-              break;
-            }
+  console.log(req.session)
+  if(Object.keys(req.session.user).length != 0) {
+      let data = await api.getUser(req.session.user.username).then(
+        (data) => {
+          if(data && data.success) {
+            return data
+          } else {
+            return false
           }
         }
-        console.log("Level: " + _level)
+      )
+      if(data.success) {
+        let user = data.user
+        let userPoints = parseInt(user.points)
+        let _level = levelCalculation(userPoints)
+        let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
+        let _abilities = allAbilities.splice(0, _level)
+        user.points = userPoints
+        user.level = _level
+        let nextLevel = _level + 1
+        let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
+        let nextLevelPoints = levelMinimums[_level - 1]
+        user.abilities = _abilities
+        console.log(`You are Level ${_level}`)
+        console.log(`You can: ` + _abilities.join(', '))
+        let myQueryObject = {
+          "creator": user.username
+        }
+        const [ questionData, answerData ] = await api.getUserQuestionsAnswers(user.username)
+        let questionFeed = (questionData.success) ? questionData.questions : null
+        let answerFeed = (answerData.success) ? answerData.answers : null
+        console.log(answerFeed)
+        questionFeed.forEach((question) => {
+          let timeElapsed = msToTime(Date.now() - question.createdAt)
+          question.timeElapsed = timeElapsed
+        })
+        user.img = gravatarGen(user.email)
+        req.session.user = user
+        console.log(user)
+        console.log(questionFeed.length)
+        
         var needed = {
           time: Date.now(),
           data: {
-            pfp: gravatarGen(data.user.email),
+            pfp: gravatarGen(user.email),
             level: _level,
           }
         }
         basicDataCache[req.query.user] = needed;
-        res.send({success:true, ...needed.data})
+        
+        res.render('dashboard', {
+            loggedIn: req.session.loggedIn,
+            questionFeed: questionFeed,
+            answerFeed: answerFeed,
+            user: req.session.user,
+            nextLevel: nextLevel,
+            nextLevelPoints: nextLevelPoints
+        })
       } else {
-        res.send(JSON.stringify({success: false}))
+        req.session.loggedIn = false
+        res.redirect('/auth/login')
       }
-      });
-    }
-  } else res.send(JSON.stringify({success: false}))
+  } else {
+      req.session.loggedIn = false
+      res.redirect('/auth/login')
+  }
 })
+
+
 
 app.get("/forgot", (req, res) => {
   if(req.session.loggedIn) req.redirect('/')
@@ -839,3 +859,36 @@ io.on('connection', (socket) => {
 });
 
 server.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
+modifyPoints = async (amount, username) => {
+  let operation = (Math.sign(amount) > 0) ? "increment" : "decrement"
+  return await api.sendRequest("/users/" + username + "/points", "PATCH", {
+    operation: operation,
+    amount: amount
+  })
+}
+
+levelCalculation = (userPoints) => {
+  let _level
+  for(let i = 0; i < levelMinimums.length; i++) {
+    if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
+      console.log("Less than " + levelMinimums[i])
+      _level = i + 2;
+      break;
+    } else if(i == 0) {
+      if(userPoints < levelMinimums[0]) {
+        console.log("Less than " + levelMinimums[0])
+        _level = i + 1;
+        break;
+      }
+    } else if(i == levelMinimums.length - 1) {
+      if(userPoints > levelMinimums[i]) {
+        console.log("Less than " + levelMinimums[i])
+        _level = levelMinimums.length + 1;
+        break;
+      }
+    }
+  }
+
+  return _level
+}
