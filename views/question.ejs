@@ -1,151 +1,204 @@
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create a Question</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        [contentEditable=true]:empty:not(:focus):before{
-            content:attr(data-text)
-        }
-
-        #preview h1 {
-            font-size:116px;
-            line-height: 1.2;
-        }
-        #preview h2 {
-            font-size:58.39px;
-            line-height: 1.2;
-        }
-        #preview h3 {
-            font-size:53.59px;
-            line-height: 1.2;
-        }
-        #preview h4 {
-            font-size: 48.8px;
-            line-height: 1.2;
-        }
-        #preview h5 {
-            font-size: 44px;
-            line-height: 1.2;
-        }
-        #preview h6 {
-            font-size:39.19px;
-            line-height: 1.2;
-        }
-        #preview p {
-            font-size:30px;
-            line-height: 1.2;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= question.title %></title>
+  <link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
 </head>
+<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+<script>
+        window.odometerOptions = {
+  duration: 1, // Change how long the javascript expects the CSS animation to take
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
+<script src="http://github.hubspot.com/odometer/odometer.js"></script>
+<style>
+  h1 {
+    font-size: 2em;
+    font-weight: normal;
+    text-align: center;
+    margin: 0.67em 0;
+  }
+  h2 {
+    font-size: 1.5em;
+    font-weight: normal;
+    text-align: center;
+    margin: 0.83em 0;
+  }
+  h3 {
+    font-size: 1.17em;
+    font-weight: normal;
+    text-align: center;
+    margin: 1em 0;
+  }
+  h4 {
+    font-size: 1em;
+    font-weight: normal;
+    margin: 1.33em 0;
+    text-align: center;
+  }
+  h5 {
+    font-size: 0.83em;
+    font-weight: normal;
+    margin: 1.67em 0;
+    text-align: center;
+  }
+  h6 {
+    font-size: 0.67em;
+    font-weight: normal;
+    margin: 2.33em 0;
+    text-align: center;
+  }
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    outline: solid;
+    width: 100%;
+  }
+  a {
+    color: #0366d6;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+}
+  ul {
+    margin: 1.33em 0;
+    padding: 0.5em 1em;
 
-<body class="bg-gray-200">
 
-    <div class="m-5 bg-white shadow-md rounded-lg hover:shadow-xl text-4xl">
-        <div class="m-4">
-            <h1 class="p-3 text-center text-3xl font-extrabold md:text-5xl">Create a question</h1>
-        </div>
-        <div class="m-5">
-            <form>
-                <div class="flex">
-                    <div class="flex-1 items-center pb-6">
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center mb-15 items-center">
-                            <label class="text-2xl font-extrabold block">Title:</label>
-                            <input maxlength="150" type="text" id="text150"
-                                class="text-xl outline-black rounded outline outline-4 text-center font-bold block h-10 w-full md:h-12 md:w-96" />
-                        </div>
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center items-center">
-                            <label class="text-2xl font-extrabold">Sub-Title:</label>
-                            <input maxlength="200" type="text" id="text200"
-                                class="text-2xl outline-black rounded outline outline-4 text-center font-bold block h-10 w-full md:h-12 md:w-96">
-                        </div>
-                        <div class='flex-none md:flex md:grid md:grid-cols-2 md:divide-x-0 items-center'>
-                            <div class='flex flex-wrap mb-10 space-x-4 left-0 m-3' id="editor">
-                                <label class='m-2 text-2xl font-bold'>Content:</label>
-                                <textarea id='text3000' maxlength='3000' type='text' onkeyup='val(this);'
-                                    class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full' placeholder="Enter Markdown content..."></textarea>
-                            </div>
-                            <div class='flex flex-1 flex-wrap mb-10 space-x-4 right-0 m-3' id='viewer'>
-                                <label class='m-2 text-2xl font-bold'>View/Editor:</label>
-                                <div id="preview" data-text="Output of Markdown shown here..." contenteditable="false" 
-                                    class='break-words md:break-words md:overflow-scroll overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80 md:min-w-full'></div>
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
-                            <label class="text-2xl font-bold">Send To:</label>
-                            <textarea
-                                class="p-3 text-2xl  outline-black rounded outline outline-4 text-left font-bold block h-16 w-full md:h-20 md:w-96"></textarea><br>
-                        </div>
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
-                            <input type="checkbox" id="pub" class="h-5 w-5 rounded ">
-                            <label for="pub"><u><b>Public</b></u></label>
-                        </div>
+    list-style: disc;
+    text-align: center;
 
-                    </div>
-            </form>
-        </div class="">
+list-style-position: inside;
+  }
+  ol {
+    margin: 1.33em 0;
+    padding: 0.5em 1em;
+    list-style: decimal;
+    text-align: center;
+    list-style-position: inside;
+  }
+  li {
+    margin-bottom: 0.33em;
+  }
+  code {
+    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-size: 0.83em;
+  }
+  img {
+    max-width: 50%;
+  }
+</style>
+<body>  
+  <script src="/socket.io/socket.io.js"></script>
+  <div class="flex flex-col h-screen">
+    <div class="py-0">
+      <%-  include('../views/navbar.ejs', {signup: false, loggedIn}); %>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <!-- <div class="flex justify-center items-center flex-grow"> -->
+      <div class="min-h-full">
+      
+
+          <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0 rounded overflow-hidden shadow-lg">
+              <div class="flex flex-row">
+                <div class="flex content-center flex-col w-1/12">
+                  <img class="rounded-lg cursor-pointer" id="questionUp" style="width: 50%; margin-left: auto; margin-right: auto;" src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                  <p class="text-center odometer" id="voteQ"><%= question.upvotes - question.downvotes %></p>
+                  <img class="rounded-lg rotate-180 cursor-pointer" id="questionDown" style="width: 50%; margin-left: auto; margin-right: auto;"  src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                </div>
+                <div></div>
+                <div class="flex-grow">
+                  <p class="text-4xl text-center py-5 "><b><%= question.title %></b></p> 
+                  <hr/>
+                  <p id="questionText" class="text-center ">
+   
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <% for (var answer of answers) { %>
+          <div class="max-w-5xl mx-auto py-[12px] sm:px-[46px] lg:px-[46px]">
+            <div class="px-8 py-[12px] sm:px-0">
+              <div class="border-4 border-solid border-gray-200 rounded-lg h-96">
+
+              </div>
+            </div>
+          </div>
+          <% } %>
+      </div>
+  <!-- </div> -->
+</div>
+</div>
     <script>
+    document.getElementById('questionText').innerHTML =
+      marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
+   hljs.highlightAll();
+   
+      document.getElementById("questionUp").addEventListener("click", () => {
+        var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+        fetch('/api/question/<%= question.question_id %>/upvote', {
+          method: 'POST',
+          body: JSON.stringify({
+            action
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json()).then((j) => {
+          if(j.success) {
+            document.getElementById("questionUp").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+            // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+          }
+        })
+      })
 
-        $(document).ready(function () {
-            $("#text150").keypress(function (e) {
-                var length = this.value.length;
-                if (length >= 150) {
-                    e.preventDefault();
-                    alert("More than 150 characters not allowed in the Title");
-                }
-            });
+      document.getElementById("questionDown").addEventListener("click", () => {
+        var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+        fetch('/api/question/<%= question.question_id %>/downvote', {
+          method: 'POST',
+          body: JSON.stringify({
+            action
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json()).then((j) => {
+          if(j.success) {
+            document.getElementById("questionDown").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+            // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+          }
+        })
+      })
 
-        });
-        $(document).ready(function () {
-            $("#text3000").keypress(function (e) {
-                var length = this.value.length;
-                if (length >= 3000) {
-                    e.preventDefault();
-                    alert("More than 3000 characters not allowed in the Body");
-                }
-            });
 
-        });
-        $(document).ready(function () {
-            $("#text200").keypress(function (e) {
-                var length = this.value.length;
-                if (length >= 200) {
-                    e.preventDefault();
-                    alert("More than 200 characters not allowed in the Sub Title");
-                }
-            });
-
-        });
-    </script>
-    
-    <script>
-        function val(e) {
-            ghf = e.value;
-            console.log(marked.parse(ghf))
-            codeblock = marked.parse(ghf);
-            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View/Editor:</label><div id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</div>";
-        }
-        // function qwerty(e) {
-        //     ghf = e.value;
-        //     console.log(ghf);
-        //     codeblock = ghf;
-        //     document.getElementById("viewer").innerHTML = "<label class='text-xl font-bold'>View:</label><div id='preview' contentEditable=true data-text='Output of Markdown shown here...'class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</div>";
-        // }
-        $("#viewer").load(location.href + " #viewer");
-        $("#editer").load(location.href + " #editor");
-        // var textArea = document.getElementById('preview');
-
-        // textArea.addEventListener('input', function (event) {
-        //     console.log(event.target.value);
-        // });
-    </script>
+      var curVotes = <%= question.upvotes - question.downvotes %>;
+  const socket = io();
+  socket.on("voteQ", ([id, dir]) => {
+    if(id == "<%= question.question_id %>") {
+      curVotes += dir;
+      console.log(curVotes);
+      document.getElementById("voteQ").innerHTML = curVotes;
+    }
+  })
+  </script>
 </body>
-
 </html>

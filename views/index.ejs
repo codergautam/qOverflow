@@ -11,28 +11,76 @@
 
 <body>  
    <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
+   <div class="px-9 py-3">
+   <% var possible = ["recent", "best", "interesting", "hottest"] %>
+   <% for (var i = 0; i < possible.length; i++) { %>
+     <a href="/?sort=<%= possible[i] %>" class="inline-block px-3 <%= sort == possible[i] ? 'bg-green-200' : '' %> py-2 text-sm leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
+       <%= possible[i] %>
+     </a>
+    <% } %>
+</div>
    <div id="questions">
-    <div class="flex items-center justify-center flex-col px-[30px]">
+
+   </div>
+<!-- <div class="flex items-center justify-center flex-col px-[30px]">
+   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+    <div class="px-4 py-4 ">
+      <div class="font-bold text-xl mb-2">What's the meaning of life?</div>
+      <p class="text-gray-700 text-base">
+        I wonder what it is can some one answer pls thanks
+      </p>
+    </div>
+    <div class="px-6 pt-4 pb-2 ">
+      <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: Your mom</span>
+      <span class="badge font-semibold text-gray-700 mr-2 mb-2">2 hours ago</span>
+    </div>
+  </div>
+</div> -->
+
+<script>
+   lastQuestionId = undefined;
+  var pageSize = 6;
+  var questionsShown = 0;
+  var remaining = [];
+
+  function isUndefined(variable) {
+    return typeof variable === 'undefined';
+  }
+  var send = true;
+  async function getQuestions() {
+    if(!send) return;
+    console.log(lastQuestionId);
+    var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
       <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
        <div class="px-4 py-4 ">
          <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
     
        </div>
      </div>
-    </div>
-   </div>
-  <script>
-    async function getQuestions() {
-      var data = await fetch('/buffet').then(res => res.json());
-      return data;
-    }
+    </div>`;
+    send = false;
+    
+    document.getElementById("questions").insertAdjacentHTML('beforeend', loader);
 
-    function clearQuestions() {
-      var questions = document.getElementById('questions');
-      questions.innerHTML = '';
-    }
+    var data = await fetch('/buffet?sort=<%= sort %>'+((!isUndefined(lastQuestionId))?`&after=${lastQuestionId}`:"")).then(res => res.json());
+    clearLastQuestion();
+   if(data.questions.length > 0) send = true;
+    
+    return data;
 
-    function msToTime(duration) {
+  }
+
+  function clearQuestions() {
+    var questions = document.getElementById('questions');
+    questions.innerHTML = '';
+  }
+
+  function clearLastQuestion() {
+    var questions = document.getElementById('questions');
+    questions.removeChild(questions.lastChild);
+  }
+
+  function msToTime(duration) {
       const portions = [];
         const msInDay = 1000 * 60 * 60 * 24;
       const days = Math.trunc(duration / msInDay);
@@ -62,33 +110,65 @@
     
       return portions[0];
     }
+   appendQuestion = (data, i) => {
+    console.log(data);
+    if(i >= pageSize) return;
 
-    function appendQuestion(data) {
-      console.log(data);
-      data.timeElapsed = msToTime(Date.now() - data.createdAt);
-      var question = `<div class="flex items-center justify-center flex-col px-[30px]">
-    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-     <div class="px-4 ">
-       <div class="font-bold text-xl mb-2">${data.title}</div>
-     </div>
-     <div class="px-6 pt-4 pb-2 ">
-       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">By: ${data.creator}</span>
-       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.timeElapsed} ago</span>
-     </div>
-   </div>
- </div>`
-      document.getElementById('questions').innerHTML += question;
-    }
+    lastQuestionId = data.question_id;
+    if(questionsShown >= 100) return;
+    questionsShown++;
+    // console.log(data.id)
 
-    getQuestions().then((data) => {
-      clearQuestions();
-      if(data.success) {
-        data.questions.forEach(appendQuestion);
-      } else {
-        alert(data.message);
+   
+    var question = `<div class="flex items-center justify-center flex-col  px-[30px]" >
+   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full cursor-pointer"  onclick="location.href = '/question/${data.question_id}'">
+    <div class="px-4 ">
+      <div class="font-bold text-xl mb-2 ">${data.title}</div>
+    </div>
+    <div class="px-6 pt-4 pb-2">
+     <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${data.creator}</p> <img src='' style="opacity:0%" width="50" height="50" id="${data.question_id+"pfp"}" class="max-w-full h-auto rounded-full"><p id="${data.question_id+"levelText"}"></p></center></span>
+      <br>
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.upvotes - data.downvotes} points</span>
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.views} views</span>
+
+      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.answers} answers</span>
+    </div>
+  </div>
+</div> 
+`
+    document.getElementById('questions').innerHTML += question;
+    fetch('/getBasicData?user='+data.creator).then((e) => e.json()).then((e) => {  
+      if(e.success) {
+        document.getElementById(data.question_id+"pfp").src = e.pfp;
+        // pfp opacity 0% to 100%
+        var pfp = document.getElementById(data.question_id+"pfp");
+        pfp.style.opacity = "1";
+        pfp.style.transition = "opacity 0.5s";
+
+        document.getElementById(data.question_id+"levelText").innerHTML = "Level "+e.level;
+
       }
-    });
-    
-  </script>
+});
+  }
+async function yo() {
+  if(remaining.length <= 0 && questionsShown == 0) {
+    var data = await getQuestions();
+    if(data.success) remaining = data.questions<%-sort == "hottest" ? `.filter(q=>!q.hasAcceptedAnswer)` : ""%>
+  }
+  for(var i = 0; i < pageSize; i++) {
+    if(remaining.length <= 0) break;
+    var data = remaining.shift();
+    appendQuestion(data, i);
+  }
+}
+
+window.onscroll = function(ev) {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight && questionsShown < 100) {
+        yo();
+    }
+};
+yo();
+</script>
 </body>
 </html>
