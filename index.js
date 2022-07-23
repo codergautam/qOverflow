@@ -314,6 +314,37 @@ app.get('/mail', async (req, res) => {
 })
 
 
+app.post("/messageEditor", async (req, res) => {
+  let { username } = req.body 
+  console.log(username)
+  username = (username) ? username : req.session.user.username
+  res.render('messageEditor', {
+    username: username
+  })
+})
+
+app.post("/messages", async (req, res) => {
+  let { username, receiver, subject, text } = req.body 
+  username = (username) ? username : req.session.user.username
+  console.log(`Reciever: ${receiver}, Sender: ${username}`)
+  console.log(username)
+  let data = await api.sendRequest("/mail", 'POST', {
+    sender: username,
+    receiver: receiver,
+    subject: subject,
+    text: text
+  })
+  console.log(data)
+  console.log(data.success)
+  if(data.success) {
+    res.redirect('/mail')
+  } else {
+    res.redirect('/messageEditor', {
+      username: username
+    })
+  }
+})
+
 app.post("/auth/login", async (req,res) => {
   // get form data
   const { username, password } = req.body
