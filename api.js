@@ -176,6 +176,19 @@ class Api {
     return this.updateUser(username, saltString, keyString, undefined, undefined);
   }
     
+  async increaseViews(questionId) {
+    try {
+    var send = await this.sendRequest('/questions/' + questionId , 'PATCH', {
+      views: "increment"
+    });
+    if(send.success) return true;
+    else return false;
+  } catch (error) {
+    console.log(error)
+    return false;
+  }
+}
+
 
   getAnswers(questionId, count=Infinity) {
   if(count > 0)  return this.sendRequest('/questions/' + questionId + '/answers', 'GET');

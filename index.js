@@ -461,40 +461,48 @@ app.get("/question/:id", (req, res) => {
     res.send("Invalid question id")
     return
   }
+  console.time("getQuestion")
   api.getQuestion(id).then(data => {
+  console.timeEnd("getQuestion")
+  console.time("getAnswers")
+
     if(!data.success) {
       res.send("Invalid question id")
       return;
     }
-    api.getAnswers(id, data.answers).then(data2 => {
-    if(!data2.success) {
-      res.send("Something wen't wrong.. Please try again")
-      return;
-    }
 
+
+      console.time("increaseViews")
+
+    api.increaseViews(id).then(data4 => {
+      console.timeEnd("increaseViews")
+      console.time("checkVote")
+      
+      console.log(data4)
+      data.question.views ++;
     api.hasUserVoted(id, req.session.user?.username).then(data3 => {
+      console.timeEnd("checkVote")
+      // console.timeEnd("getQuestion")
     res.render('question', {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
-      answers: data2.answers,
       voted: data3
     })
   }).catch(err => {
+    console.timeEnd("getQuestion")
     console.log(err)
     res.render('question', {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
-      answers: data2.answers,
       voted: {voted: false}
     })
   });
   });
-
-  });
 });
 
+  });
 var basicDataCache = {};
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
@@ -532,6 +540,7 @@ app.get("/getBasicData", (req, res) => {
           data: {
             pfp: gravatarGen(data.user.email),
             level: _level,
+            points: userPoints,
           }
         }
         basicDataCache[req.query.user] = needed;

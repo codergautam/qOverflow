@@ -17,8 +17,40 @@
 };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
-<script src="http://github.hubspot.com/odometer/odometer.js"></script>
+<!-- <link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
+<script src="http://github.hubspot.com/odometer/odometer.js"></script> -->
+<% 
+function msToTime(duration) {
+  const portions = [];
+    const msInDay = 1000 * 60 * 60 * 24;
+  const days = Math.trunc(duration / msInDay);
+  if (days > 0) {
+    portions.push(days + 'd');
+    duration = duration - (days * msInDay);
+  }
+
+  const msInHour = 1000 * 60 * 60;
+  const hours = Math.trunc(duration / msInHour);
+  if (hours > 0) {
+    portions.push(hours + 'h');
+    duration = duration - (hours * msInHour);
+  }
+
+  const msInMinute = 1000 * 60;
+  const minutes = Math.trunc(duration / msInMinute);
+  if (minutes > 0) {
+    portions.push(minutes + 'm');
+    duration = duration - (minutes * msInMinute);
+  }
+
+  const seconds = Math.trunc(duration / 1000);
+  if (seconds > 0) {
+    portions.push(seconds + 's');
+  }
+
+  return portions[0];
+}
+%>
 <style>
   h1 {
     font-size: 2em;
@@ -119,9 +151,9 @@ list-style-position: inside;
             <div class="px-4 py-6 sm:px-0 rounded overflow-hidden shadow-lg">
               <div class="flex flex-row">
                 <div class="flex content-center flex-col w-1/12">
-                  <img class="rounded-lg cursor-pointer" id="questionUp" style="width: 50%; margin-left: auto; margin-right: auto;" src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                  <img class="rounded-lg cursor-pointer min-w-[30px]" id="questionUp" style="width: 50%; margin-left: auto; margin-right: auto;" src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
                   <p class="text-center odometer" id="voteQ"><%= question.upvotes - question.downvotes %></p>
-                  <img class="rounded-lg rotate-180 cursor-pointer" id="questionDown" style="width: 50%; margin-left: auto; margin-right: auto;"  src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                  <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px]" id="questionDown" style="width: 50%; margin-left: auto; margin-right: auto;"  src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
                 </div>
                 <div></div>
                 <div class="flex-grow">
@@ -130,28 +162,59 @@ list-style-position: inside;
                   <p id="questionText" class="text-center ">
    
                   </p>
+                  <div class="px-6 pt-4 pb-2 text-right">
+                    <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: <%= question.creator%> </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp" class="max-w-full h-auto rounded-full"><p id="levelText"></p></center></span>
+                     <br>
+                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= msToTime(Date.now() - question.createdAt) %> ago</span>
+                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= question.views %> views</span>
+               
+                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}"><%= question.answers %> answers</span>
+                   </div>
+                  
                 </div>
               </div>
             </div>
           </div>
-          
-          <% for (var answer of answers) { %>
-          <div class="max-w-5xl mx-auto py-[12px] sm:px-[46px] lg:px-[46px]">
-            <div class="px-8 py-[12px] sm:px-0">
-              <div class="border-4 border-solid border-gray-200 rounded-lg h-96">
+          <div id="answers">
 
-              </div>
-            </div>
           </div>
-          <% } %>
       </div>
   <!-- </div> -->
 </div>
 </div>
     <script>
+      function msToTime(duration) {
+  const portions = [];
+    const msInDay = 1000 * 60 * 60 * 24;
+  const days = Math.trunc(duration / msInDay);
+  if (days > 0) {
+    portions.push(days + 'd');
+    duration = duration - (days * msInDay);
+  }
+
+  const msInHour = 1000 * 60 * 60;
+  const hours = Math.trunc(duration / msInHour);
+  if (hours > 0) {
+    portions.push(hours + 'h');
+    duration = duration - (hours * msInHour);
+  }
+
+  const msInMinute = 1000 * 60;
+  const minutes = Math.trunc(duration / msInMinute);
+  if (minutes > 0) {
+    portions.push(minutes + 'm');
+    duration = duration - (minutes * msInMinute);
+  }
+
+  const seconds = Math.trunc(duration / 1000);
+  if (seconds > 0) {
+    portions.push(seconds + 's');
+  }
+
+  return portions[0];
+}
     document.getElementById('questionText').innerHTML =
       marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
-   hljs.highlightAll();
    
       document.getElementById("questionUp").addEventListener("click", () => {
         var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
@@ -199,6 +262,61 @@ list-style-position: inside;
       document.getElementById("voteQ").innerHTML = curVotes;
     }
   })
+
+  fetch("/getBasicData?user=<%= question.creator %>").then(response => response.json()).then((j) => {
+    if(j.success) {
+      document.getElementById("qPfp").src = j.pfp;
+      document.getElementById("qPfp").style.opacity = 1;
+      document.getElementById("levelText").innerHTML = "Level "+j.level
+    }
+  })
+  
+
+
+async function appendAnswer(answer) {
+  var id = answer.answer_id;
+
+  var t= `<div class="max-w-5xl mx-auto py-[12px] rounded overflow-hidden shadow-lg">
+            <div class="flex flex-row">
+              <div class="flex content-center flex-col w-1/12">
+                <img class="rounded-lg cursor-pointer min-w-[30px]" id="answerUp<${id}" style="width: 50%; margin-left: auto; margin-right: auto;" src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                <p class="text-center odometer" id="vote${ answer.answer_id }">${ answer.upvotes - answer.downvotes }</p>
+                <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px]" id="answerDown${ answer.answer_id }" style="width: 50%; margin-left: auto; margin-right: auto;"  src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+              </div>
+
+              <div class="flex-grow">
+            <div class=" py-[12px] sm:px-[46px] lg:px-[46px] ">
+              <div class="h-auto px-8">
+                <p id="${ answer.answer_id }Text"> </p>
+
+              </div>
+            </div>
+            <div class="px-6 pt-4 pb-2 text-right">
+              <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${ answer.creator} </p> <img src='' style="opacity:0%" width="50" height="50" id="aPfp${ answer.answer_id }" class="max-w-full h-auto rounded-full"><p id="levelText${ answer.answer_id }"></p></center></span>
+               <br>
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${ msToTime(Date.now() - answer.createdAt) } ago</span>
+                               </div>
+          </div>
+        </div>
+        </div> `
+        document.getElementById("answers").innerHTML += t;
+  document.getElementById(answers[i].answer_id+"Text").innerHTML = marked.parse(decodeURIComponent(answers[i].text));
+  var userData = await fetch("/getBasicData?user="+answers[i].creator)
+    userData = await userData.json();
+    if(userData.success) {
+      document.getElementById("aPfp"+answers[i].answer_id).src = userData.pfp;
+      document.getElementById("aPfp"+answers[i].answer_id).style.opacity = 1;
+      document.getElementById("levelText"+answers[i].answer_id).innerHTML = "Level "+userData.level
+    }
+    hljs.highlightAll();
+    return;
+  }
+
+  f
+
+  
+
+    </script>
   </script>
 </body>
 </html>
