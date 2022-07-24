@@ -165,7 +165,7 @@
 async function yo() {
   if(remaining.length <= 0 && questionsShown == 0) {
     var data = await getQuestions();
-    if(data.success) remaining = data.questions<%-sort == "hottest" ? `.filter(q=>!q.hasAcceptedAnswer)` : ""%>
+    if(data.success) remaining = data.questions<% -sort == "hottest" ? `.filter(q=>!q.hasAcceptedAnswer)` : "" %>
   }
   for(var i = 0; i < pageSize; i++) {
     if(remaining.length <= 0) break;
