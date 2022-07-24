@@ -46,7 +46,13 @@
 
     <div class="m-5 bg-white shadow-md rounded-lg hover:shadow-xl text-4xl">
         <div class="m-4">
-            <h1 class="p-3 text-center text-3xl font-extrabold md:text-5xl">Create a question</h1>
+            <h1 class="p-3 text-center text-3xl font-extrabold md:text-5xl decoration-gray-300 underline underline-offset-1">Create a message</h1>
+            
+            <div class="flex justify-center">
+                <div class="cursor-pointer rounded-lg bg-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-1 font-semibold text-2xl text-gray-700">
+                    <a href="./mail">Go Back</a>
+                </div>
+            </div>
         </div>
         <div class="m-5">
             <form action="/messages" method="POST">
@@ -55,13 +61,13 @@
                         <input type="hidden" name="username" value="<%= username %>">
                         <div class="flex mb-10 space-x-4 mb-15 items-center justify-center">
                             <label class="text-2xl font-extrabold block">Title:</label>
-                            <input maxlength="150" type="text" id="text150" name="subject"
+                            <input required maxlength="75" type="text" id="text75" name="subject"
                                 class="text-xl outline-black rounded outline outline-4 text-center font-bold block h-10 w-full md:h-12 md:w-96" />
                         </div>
                         <div class='flex-none md:flex md:divide-x-0 items-center w-5/6 mx-auto'>
                             <div class='flex flex-wrap mb-10 space-x-4 left-0 m-3' id="editor">
                                 <label class='m-2 text-2xl font-bold'>Content:</label>
-                                <textarea id='text3000' maxlength='3000' type='text' name="text" onkeyup='val(this);'
+                                <textarea required id='text150' maxlength='150' type='text' name="text" onkeyup='val(this);'
                                     class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full' placeholder="Enter Markdown content..."></textarea>
                             </div>
                             <div class='flex flex-1 flex-wrap mb-10 space-x-4 right-0 m-3' id='viewer'>
@@ -73,7 +79,7 @@
                         </div>
                         <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
                             <label class="text-2xl font-bold">Send To:</label>
-                            <textarea name="receiver"
+                            <textarea required name="receiver"
                                 class="p-3 text-2xl  outline-black rounded outline outline-4 text-left font-bold block h-16 w-full md:h-20 md:w-96"></textarea><br>
                         </div>
                         <div class="flex justify-center">
@@ -89,21 +95,21 @@
     <script>
 
         $(document).ready(function () {
-            $("#text150").keypress(function (e) {
+            $("#text75").keypress(function (e) {
                 var length = this.value.length;
-                if (length >= 150) {
+                if (length >= 75) {
                     e.preventDefault();
-                    alert("More than 150 characters not allowed in the Title");
+                    alert("More than 75 characters not allowed in the Title");
                 }
             });
 
         });
         $(document).ready(function () {
-            $("#text3000").keypress(function (e) {
+            $("#text150").keypress(function (e) {
                 var length = this.value.length;
-                if (length >= 3000) {
+                if (length >= 150) {
                     e.preventDefault();
-                    alert("More than 3000 characters not allowed in the Body");
+                    alert("More than 150 characters not allowed in the Body");
                 }
             });
 
