@@ -109,16 +109,42 @@ class Api {
     return await this.sendRequest('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"), 'GET');
     
   }
-
-<<<<<<< Updated upstream
-  async getUserQuestionsAnswers(username) {
-=======
+   
   
   async getUserQuestions(username) {
->>>>>>> Stashed changes
     let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
-    let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
     return userQuestions
+  }
+
+  async getUserAnswers(username) {
+    let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
+    return userAnswers
+  }
+
+  getQuestion(questionId) {
+    return this.sendRequest('/questions/' + questionId, 'GET');
+  }
+
+  hasUserVoted(questionId, username) {
+    if(username) {
+    return new Promise((resolve, reject) => {
+    this.sendRequest('/questions/' + questionId + '/vote/' + username, 'GET').then(data => {
+      console.log(data)
+      if(data.success) {
+        if(data.error) resolve({voted: false, error: data.error})
+        else resolve({voted: true, vote: data.vote})
+      }
+      else resolve({voted: false});
+    }).catch(err => {
+      reject(err)
+    });
+  });
+} else {
+  return new Promise((resolve, reject) => {
+    resolve(false)
+  });
+}
+
   }
 
   async getUserAnswers(username) {
