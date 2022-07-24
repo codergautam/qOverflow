@@ -235,8 +235,8 @@ app.get('/logout', async (req, res) => {
   res.redirect('/')
 })
 
-app.post('/questionEditor', async (req, res) => {
-  const { username } = req.body
+app.get('/questionEditor', async (req, res) => {
+  let username = req.session.username
   console.log("User: " + username)
   res.render('questionEditor', {username: username})
 })
@@ -377,7 +377,7 @@ app.get('/mail', async (req, res) => {
 
 
 app.post("/messageEditor", async (req, res) => {
-  let { username } = req.body 
+  let username = req.session.user.username
   console.log(username)
   username = (username) ? username : req.session.user.username
   res.render('messageEditor', {
