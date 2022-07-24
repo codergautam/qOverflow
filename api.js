@@ -18,7 +18,7 @@ class Api {
       }
     })
     var text= await req.text()
-    console.log(text)
+   
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
@@ -72,6 +72,14 @@ class Api {
     });
   }
 
+  async createQuestion(username, title, text) {
+    return this.sendRequest('/questions', 'POST', {
+      creator: username,
+      title: title,
+      text: text
+    })
+  }
+
   async getUser(username) {
     return this.sendRequest('/users/'+username, 'GET');
   }
@@ -91,10 +99,11 @@ class Api {
     
     //After param: ---------
     //Just get whatever questions are after the question_id put in
+    console.log(match)
     var params =  {
       sort: sort,
-      regexMatch: regex ? encodeURIComponent(JSON.stringify(regex)) : undefined ,
-      match: match ? encodeURIComponent(JSON.stringify(match)): undefined,
+      regexMatch: regex ? JSON.stringify(regex) : undefined ,
+      match: match ? JSON.stringify(match): undefined,
       after: after
     };
   
@@ -103,11 +112,13 @@ class Api {
     for (var key in params) {
      if(params[key]) urlEncodedParams.append(key, params[key]);
     }
+    console.log(urlEncodedParams.toString())
 
 
     // console.log('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"));
-    return await this.sendRequest('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"), 'GET');
+    // return await this.sendRequest('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"), 'GET');
     
+    return await this.sendRequest('/questions/search?'+urlEncodedParams, 'GET');
   }
    
   
@@ -147,9 +158,105 @@ class Api {
 
   }
 
-  async getUserAnswers(username) {
-    let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
-    return userAnswers
+  getQuestion(questionId) {
+    return this.sendRequest('/questions/' + questionId, 'GET');
+  }
+
+  hasUserVotedAnswer(questionId, answerId, username) {
+    if( username) {
+
+      return new Promise((resolve, reject) => {
+        this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/vote/' + username, 'GET').then(data => {
+          if(data.success) {
+            if(data.error) resolve({success:true, voted: false, error: data.error})
+            else resolve({success: true, voted: true, vote: data.vote})
+          }
+          else resolve({voted: false});
+        }).catch(err => {
+          reject(err)
+        });
+      });
+    } else {
+      return new Promise((resolve, reject) => {
+        resolve(false)
+      });
+    }
+  }
+
+  hasUserVoted(questionId, username) {
+    if(username) {
+    return new Promise((resolve, reject) => {
+    this.sendRequest('/questions/' + questionId + '/vote/' + username, 'GET').then(data => {
+      console.log(data)
+      if(data.success) {
+        if(data.error) resolve({voted: false, error: data.error})
+        else resolve({voted: true, vote: data.vote})
+      }
+      else resolve({voted: false});
+    }).catch(err => {
+      reject(err)
+    });
+  });
+} else {
+  return new Promise((resolve, reject) => {
+    resolve(false)
+  });
+}
+  }
+
+  async voteQuestion(questionId, username, target, action) {
+    console.log(questionId, username, target, action)
+    var req = this.sendRequest('/questions/' + questionId + '/vote/' + username, 'PATCH', {
+      operation: action,
+      target
+    });
+    return req;
+  }
+
+  async voteAnswer(questionId, answerId, username, target, action) {
+    console.log(questionId, answerId, username, target, action)
+    console.log(action)
+    var req = this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/vote/' + username, 'PATCH', {
+      operation: action,
+      target
+    });
+    return req;
+  }
+
+  async updateUser(username, salt, key, email, points) {
+    return this.sendRequest('/users/' + username, 'PATCH', {
+      salt: salt,
+      key: key,
+      email: email,
+      points: points
+    });
+  }
+
+  async resetPassword(username, password) {
+    const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(password);
+    return this.updateUser(username, saltString, keyString, undefined, undefined);
+  }
+    
+  async increaseViews(questionId) {
+    try {
+    var send = await this.sendRequest('/questions/' + questionId , 'PATCH', {
+      views: "increment"
+    });
+    if(send.success) return true;
+    else return false;
+  } catch (error) {
+    console.log(error)
+    return false;
+  }
+}
+
+
+  getAnswers(questionId, count=Infinity) {
+  if(count > 0)  return this.sendRequest('/questions/' + questionId + '/answers', 'GET');
+  else return new Promise((resolve, reject) => {
+    // if count is 0, return an empty array
+    resolve([]);
+  });
   }
 
   makeid(length) {

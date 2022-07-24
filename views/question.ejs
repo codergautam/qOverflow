@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= question.title %></title>
+  <link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+</head>
+<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+<script>
+        window.odometerOptions = {
+  duration: 1, // Change how long the javascript expects the CSS animation to take
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- <link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
+<script src="http://github.hubspot.com/odometer/odometer.js"></script> -->
+<% 
+function msToTime(duration) {
+  const portions = [];
+    const msInDay = 1000 * 60 * 60 * 24;
+  const days = Math.trunc(duration / msInDay);
+  if (days > 0) {
+    portions.push(days + 'd');
+    duration = duration - (days * msInDay);
+  }
+
+  const msInHour = 1000 * 60 * 60;
+  const hours = Math.trunc(duration / msInHour);
+  if (hours > 0) {
+    portions.push(hours + 'h');
+    duration = duration - (hours * msInHour);
+  }
+
+  const msInMinute = 1000 * 60;
+  const minutes = Math.trunc(duration / msInMinute);
+  if (minutes > 0) {
+    portions.push(minutes + 'm');
+    duration = duration - (minutes * msInMinute);
+  }
+
+  const seconds = Math.trunc(duration / 1000);
+  if (seconds > 0) {
+    portions.push(seconds + 's');
+  }
+
+  return portions[0];
+}
+%>
+<style>
+  h1 {
+    font-size: 2em;
+    font-weight: normal;
+    text-align: center;
+    margin: 0.67em 0;
+  }
+  h2 {
+    font-size: 1.5em;
+    font-weight: normal;
+    text-align: center;
+    margin: 0.83em 0;
+  }
+  h3 {
+    font-size: 1.17em;
+    font-weight: normal;
+    text-align: center;
+    margin: 1em 0;
+  }
+  h4 {
+    font-size: 1em;
+    font-weight: normal;
+    margin: 1.33em 0;
+    text-align: center;
+  }
+  h5 {
+    font-size: 0.83em;
+    font-weight: normal;
+    margin: 1.67em 0;
+    text-align: center;
+  }
+  h6 {
+    font-size: 0.67em;
+    font-weight: normal;
+    margin: 2.33em 0;
+    text-align: center;
+  }
+  table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    outline: solid;
+    width: 100%;
+  }
+  a {
+    color: #0366d6;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+  blockquote {
+  background: #f9f9f9;
+  border-left: 10px solid #ccc;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+}
+  ul {
+    margin: 1.33em 0;
+    padding: 0.5em 1em;
+
+
+    list-style: disc;
+    text-align: center;
+
+list-style-position: inside;
+  }
+  ol {
+    margin: 1.33em 0;
+    padding: 0.5em 1em;
+    list-style: decimal;
+    text-align: center;
+    list-style-position: inside;
+  }
+  li {
+    margin-bottom: 0.33em;
+  }
+  code {
+    font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+    font-size: 0.83em;
+  }
+  img {
+    max-width: 50%;
+  }
+</style>
+<body>  
+  <script src="/socket.io/socket.io.js"></script>
+  <div class="flex flex-col h-screen">
+    <div class="py-0">
+      <%-  include('../views/navbar.ejs', {signup: false, loggedIn}); %>
+    </div>
+    <!-- <div class="flex justify-center items-center flex-grow"> -->
+      <div class="min-h-full">
+      
+
+          <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0 rounded overflow-hidden shadow-lg">
+              <div class="flex flex-row">
+                <div class="flex content-center flex-col w-1/12">
+                  <img class="rounded-lg cursor-pointer min-w-[30px]" id="questionUp" style="width: 50%; margin-left: auto; margin-right: auto;" src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                  <p class="text-center odometer" id="voteQ"><%= question.upvotes - question.downvotes %></p>
+                  <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px]" id="questionDown" style="width: 50%; margin-left: auto; margin-right: auto;"  src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                </div>
+                <div></div>
+                <div class="flex-grow">
+                  <p class="text-4xl text-center py-5 "><b><%= question.title %></b></p> 
+                  <hr/>
+                  <p id="questionText" class="text-center ">
+   
+                  </p>
+                  <div class="px-6 pt-4 pb-2 text-right">
+                    <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: <%= question.creator%> </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp" class="max-w-full h-auto rounded-full"><p id="levelText"></p></center></span>
+                     <br>
+                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= msToTime(Date.now() - question.createdAt) %> ago</span>
+                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= question.views %> views</span>
+               
+                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}"><%= question.answers %> answers</span>
+                   </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="answers">
+
+          </div>
+      </div>
+  <!-- </div> -->
+</div>
+</div>
+    <script>
+      function msToTime(duration) {
+  const portions = [];
+    const msInDay = 1000 * 60 * 60 * 24;
+  const days = Math.trunc(duration / msInDay);
+  if (days > 0) {
+    portions.push(days + 'd');
+    duration = duration - (days * msInDay);
+  }
+
+  const msInHour = 1000 * 60 * 60;
+  const hours = Math.trunc(duration / msInHour);
+  if (hours > 0) {
+    portions.push(hours + 'h');
+    duration = duration - (hours * msInHour);
+  }
+
+  const msInMinute = 1000 * 60;
+  const minutes = Math.trunc(duration / msInMinute);
+  if (minutes > 0) {
+    portions.push(minutes + 'm');
+    duration = duration - (minutes * msInMinute);
+  }
+
+  const seconds = Math.trunc(duration / 1000);
+  if (seconds > 0) {
+    portions.push(seconds + 's');
+  }
+
+  return portions[0];
+}
+    document.getElementById('questionText').innerHTML =
+      marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
+   
+      document.getElementById("questionUp").addEventListener("click", () => {
+        var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+        fetch('/api/question/<%= question.question_id %>/upvote', {
+          method: 'POST',
+          body: JSON.stringify({
+            action
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json()).then((j) => {
+          if(j.success) {
+            document.getElementById("questionUp").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+            // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+          }
+        })
+      })
+
+      document.getElementById("questionDown").addEventListener("click", () => {
+        var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+        fetch('/api/question/<%= question.question_id %>/downvote', {
+          method: 'POST',
+          body: JSON.stringify({
+            action
+          }),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        }).then(response => response.json()).then((j) => {
+          if(j.success) {
+            document.getElementById("questionDown").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+            // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+          }
+        })
+      })
+
+
+      var curVotes = <%= question.upvotes - question.downvotes %>;
+  const socket = io();
+  socket.on("voteQ", ([id, dir]) => {
+    if(id == "<%= question.question_id %>") {
+      curVotes += dir;
+      console.log(curVotes);
+      document.getElementById("voteQ").innerHTML = curVotes;
+    }
+  })
+  socket.on("voteA", ([q, id, dir]) => {
+    if(q == "<%= question.question_id %>") {
+      var curNum = Number(document.getElementById("voteA"+id).innerHTML)
+      curNum += dir;
+      document.getElementById("voteA"+id).innerHTML = curNum;
+    }
+  })
+
+  fetch("/getBasicData?user=<%= question.creator %>").then(response => response.json()).then((j) => {
+    if(j.success) {
+      document.getElementById("qPfp").src = j.pfp;
+      document.getElementById("qPfp").style.opacity = 1;
+      document.getElementById("levelText").innerHTML = "Level "+j.level
+    }
+  })
+  
+
+
+async function appendAnswer(answer) {
+  var id = answer.answer_id;
+
+  var t= `<div class="max-w-5xl mx-auto px-9 py-[12px] rounded overflow-hidden shadow-lg">
+            <div class="flex flex-row">
+              <div class="flex content-center flex-col w-1/12">
+                <img class="rounded-lg cursor-pointer min-w-[30px]" id="answerUp${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                <p class="text-center odometer" id="voteA${ answer.answer_id }">${ answer.upvotes - answer.downvotes }</p>
+                <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px]" id="answerDown${ answer.answer_id }" style="width: 50%; margin-left: auto; margin-right: auto;"  src="/vote.png" alt="">
+              </div>
+
+              <div class="flex-grow">
+            <div class=" py-[12px] sm:px-[46px] lg:px-[46px] ">
+              <div class="h-auto px-8">
+                <p id="${ answer.answer_id }Text"> </p>
+
+              </div>
+            </div>
+            <div class="px-6 pt-4 pb-2 text-right">
+              <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${ answer.creator} </p> <img src='' style="opacity:0%" width="50" height="50" id="aPfp${ answer.answer_id }" class="max-w-full h-auto rounded-full"><p id="levelText${ answer.answer_id }"></p></center></span>
+               <br>
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${ msToTime(Date.now() - answer.createdAt) } ago</span>
+                               </div>
+          </div>
+        </div>
+        </div> `
+        document.getElementById("answers").innerHTML += t;
+  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(decodeURIComponent(answer.text));
+  var userData = await fetch("/getBasicData?user="+answer.creator)
+    userData = await userData.json();
+    if(userData.success) {
+      document.getElementById("aPfp"+answer.answer_id).src = userData.pfp;
+      document.getElementById("aPfp"+answer.answer_id).style.opacity = 1;
+      document.getElementById("levelText"+answer.answer_id).innerHTML = "Level "+userData.level
+    }
+    hljs.highlightAll();
+    fetch('/hasUserVotedAnswer?answer='+answer.answer_id+"&question=<%= question.question_id %>").then(response => response.json()).then((j) => {
+      console.log("dfgdfgg", answer.answer_id);
+    
+      if(j.success) {
+      console.log("dfgg", answer.answer_id);
+
+      if(j.voted) {
+        console.log("ffff", answer.answer_id);
+
+        if(j.vote == "upvoted") {
+          document.getElementById("answerUp"+answer.answer_id).src = "/voteSelected.png";
+          console.log("upvoted", answer.answer_id);
+        } else {
+          document.getElementById("answerDown"+answer.answer_id).src = "/voteSelected.png";
+          console.log("upvoted", answer.answer_id);
+
+        }
+      }
+    }
+  });
+
+  document.getElementById("answerUp"+answer.answer_id).addEventListener("click", () => {
+    var action = document.getElementById("answerUp"+answer.answer_id).src.split("/")[document.getElementById("answerUp"+answer.answer_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+    fetch('/api/answer/'+answer.answer_id+'/upvote', {
+      method: 'POST',
+      body: JSON.stringify({
+        action,
+        question: "<%= question.question_id %>"
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()).then((j) => {
+      if(j.success) {
+        document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+        // document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
+      }
+    });
+  });
+  document.getElementById("answerDown"+answer.answer_id).addEventListener("click", () => {
+    var action = document.getElementById("answerDown"+answer.answer_id).src.split("/")[document.getElementById("answerDown"+answer.answer_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+    fetch('/api/answer/'+answer.answer_id+'/downvote', {
+      method: 'POST',
+      body: JSON.stringify({
+        action,
+        question: "<%= question.question_id %>"
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()).then((j) => {
+      if(j.success) {
+        document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+        // document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
+      }
+    });
+  
+    return;
+  });
+};
+  fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then((j) => {
+    if(j.success) {
+      j.answers.forEach((answer) => {
+        appendAnswer(answer);
+      })
+    }
+  })
+
+
+    </script>
+  </script>
+</body>
+</html>
