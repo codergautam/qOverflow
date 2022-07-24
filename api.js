@@ -229,6 +229,13 @@ class Api {
   });
   }
 
+  addAnswer(questionId, username, text) {
+    return this.sendRequest('/questions/' + questionId + '/answers', 'POST', {
+      creator: username,
+      text: text
+    });
+  }
+
   makeid(length) {
     var result           = '';
     var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

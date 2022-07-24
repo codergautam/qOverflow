@@ -388,6 +388,9 @@ app.get('/getAnswers', async (req, res) => {
   var id = req.query.question;
   api.getAnswers(id).then(data => {
     if(data.success) {
+      data.answers = data.answers.sort ((a, b) => {
+        return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes)
+      });
       res.send({answers: data.answers, success: true})
     } else {
       res.send({success: false})
@@ -417,6 +420,21 @@ app.post("/messages", async (req, res) => {
       username: username
     })
   }
+})
+
+app.post('/api/answer', (req, res) => {
+  if(!req.session.loggedIn) return res.send({success: false})
+  let { question, text } = req.body
+  let username = req.session.user.username
+  console.log(`Question: ${question}, Answer: ${text}`);
+  api.addAnswer(question, username, text).then(data => {
+    console.log(data)
+    if(data.success) {
+      res.send({success: true, answer: data.answer})
+    } else {
+      res.send({success: false})
+    }
+  });
 })
 
 app.post("/auth/login", async (req,res) => {
@@ -508,6 +526,7 @@ app.get("/question/:id", (req, res) => {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
+      username: req.session.user.username,
       voted: data3
     })
   }).catch(err => {
@@ -517,6 +536,7 @@ app.get("/question/:id", (req, res) => {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
+      username: req.session.user.username,
       voted: {voted: false}
     })
   });
@@ -567,6 +587,7 @@ app.get("/getBasicData", (req, res) => {
         basicDataCache[req.query.user] = needed;
         res.send({success:true, ...needed.data})
       } else {
+        console.log(data.error)
         res.send(JSON.stringify({success: false}))
       }
       });

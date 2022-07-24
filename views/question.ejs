@@ -55,38 +55,32 @@ function msToTime(duration) {
   h1 {
     font-size: 2em;
     font-weight: normal;
-    text-align: center;
     margin: 0.67em 0;
   }
   h2 {
     font-size: 1.5em;
     font-weight: normal;
-    text-align: center;
     margin: 0.83em 0;
   }
   h3 {
     font-size: 1.17em;
     font-weight: normal;
-    text-align: center;
     margin: 1em 0;
   }
   h4 {
     font-size: 1em;
     font-weight: normal;
     margin: 1.33em 0;
-    text-align: center;
   }
   h5 {
     font-size: 0.83em;
     font-weight: normal;
     margin: 1.67em 0;
-    text-align: center;
   }
   h6 {
     font-size: 0.67em;
     font-weight: normal;
     margin: 2.33em 0;
-    text-align: center;
   }
   table {
     border-collapse: collapse;
@@ -115,7 +109,6 @@ function msToTime(duration) {
 
 
     list-style: disc;
-    text-align: center;
 
 list-style-position: inside;
   }
@@ -123,7 +116,6 @@ list-style-position: inside;
     margin: 1.33em 0;
     padding: 0.5em 1em;
     list-style: decimal;
-    text-align: center;
     list-style-position: inside;
   }
   li {
@@ -165,7 +157,7 @@ list-style-position: inside;
                   <div class="px-6 pt-4 pb-2 text-right">
                     <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: <%= question.creator%> </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp" class="max-w-full h-auto rounded-full"><p id="levelText"></p></center></span>
                      <br>
-                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= msToTime(Date.now() - question.createdAt) %> ago</span>
+                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= msToTime(Date.now() - question.createdAt) ?? "just now" %> ago</span>
                      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= question.views %> views</span>
                
                      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}"><%= question.answers %> answers</span>
@@ -176,11 +168,51 @@ list-style-position: inside;
             </div>
           </div>
           <div id="answers">
-
+            <div class="flex items-center justify-center flex-col px-[30px]">
+              <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                <% if(question.answers) { %>
+               <div class="px-4 py-4 ">
+                 <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+            
+               </div>
+               <% } %>
+             </div>
+            </div>
           </div>
+          <!-- create answer -->
+          <div class="flex items-center justify-center flex-col px-[30px]" id="createDiv" style="display: none;">
+            <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+              <div class="px-4 py-4 ">
+                <p> Know the solution? Then create an answer!</p>
+              <br>
+              <form id="createAnswerForm">
+                <div class="flex flex-col">
+                  <label class="text-gray-700 text-sm font-bold mb-2" for="answer">Your Answer</label>
+                  <textarea wrap="hard" maxlength="3000" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="answerText" name="answer" rows="3"></textarea>
+                </div>
+                <br/>
+                <div id="preview">
+                  <div class="flex flex-col">
+                    <label class="text-gray-700 text-sm font-bold mb-2" for="answer">Preview</label>
+                    <div class="flex flex-col">
+                      <p  class="text-gray-700 text-sm font-bold mb-2 border border-spacing-2 border-solid" id="previewText"></p>
+                    </div>
+
+                  </div>
+                </div>
+
+                </form>
+                <br/>
+                <!-- btn -->
+                <div class="flex flex-col">
+                  <button class="bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" disabled type="button" id="createAnswer">
+                    Create Answer
+                  </button>
+              </div>
+            </div>
       </div>
   <!-- </div> -->
-</div>
+  <!-- create answer form-->
 </div>
     <script>
       function msToTime(duration) {
@@ -301,7 +333,7 @@ async function appendAnswer(answer) {
             <div class="px-6 pt-4 pb-2 text-right">
               <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${ answer.creator} </p> <img src='' style="opacity:0%" width="50" height="50" id="aPfp${ answer.answer_id }" class="max-w-full h-auto rounded-full"><p id="levelText${ answer.answer_id }"></p></center></span>
                <br>
-               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${ msToTime(Date.now() - answer.createdAt) } ago</span>
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${ msToTime(Date.now() - answer.createdAt) ?? "just now" } ago</span>
                                </div>
           </div>
         </div>
@@ -376,13 +408,70 @@ async function appendAnswer(answer) {
     return;
   });
 };
-  fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then((j) => {
+  fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
     if(j.success) {
-      j.answers.forEach((answer) => {
-        appendAnswer(answer);
-      })
+      document.getElementById("answers").innerHTML = "";
+      // j.answers.forEach((answer) => {
+      //   appendAnswer(answer);
+      // })
+      var alreadyAnswered=  false
+      for (answer of j.answers) {
+        await appendAnswer(answer);
+        if(answer.creator =="<%= loggedIn ? username : "" %>") {
+          alreadyAnswered = true
+        }
+      }
+      console.log("alreadyAnswered", alreadyAnswered);
+      if(!alreadyAnswered) {
+        document.getElementById("createDiv").style.display = "block";
+      }
+      
     }
   })
+
+  document.getElementById("answerText").addEventListener("keyup", () => {
+    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value);
+
+    if(document.getElementById("answerText").value.length == 0) {
+      document.getElementById("createAnswer").disabled = true;
+
+      document.getElementById("createAnswer").classList.add("bg-gray-500");
+
+      document.getElementById("createAnswer").classList.remove("bg-blue-500");
+      document.getElementById("createAnswer").classList.remove("hover:bg-blue-700");
+
+    } else {
+      document.getElementById("createAnswer").disabled = false;
+
+      document.getElementById("createAnswer").classList.remove("bg-gray-500");
+
+
+      document.getElementById("createAnswer").classList.add("bg-blue-500");
+      document.getElementById("createAnswer").classList.add("hover:bg-blue-700");
+    }
+  })
+
+  document.getElementById("createAnswer").addEventListener("click", () => {
+    fetch('/api/answer', {
+      method: 'POST',
+      body: JSON.stringify({
+        text: document.getElementById("answerText").value,
+        question: "<%= question.question_id %>"
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()).then((j) => {
+      if(j.success) {
+        document.getElementById("answerText").value = "";
+        document.getElementById("previewText").innerHTML = "";
+        document.getElementById("createDiv").style.display = "none";
+        appendAnswer(j.answer);
+      }
+    });
+  });
+
+
 
 
     </script>
