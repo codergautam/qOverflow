@@ -110,10 +110,20 @@ class Api {
     
   }
 
+<<<<<<< Updated upstream
   async getUserQuestionsAnswers(username) {
+=======
+  
+  async getUserQuestions(username) {
+>>>>>>> Stashed changes
     let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
     let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
-    return [ userQuestions, userAnswers ]
+    return userQuestions
+  }
+
+  async getUserAnswers(username) {
+    let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
+    return userAnswers
   }
 
   makeid(length) {

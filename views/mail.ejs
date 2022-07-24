@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div class="grid grid-cols-12 bg-white">
+        <div class="col-span-12">
+            <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
+        </div>
+        <div class="relative flex justify-center col-span-4">
+                <div class="flex-col w-5/6 ml-2 ">
+                    <div class="flex text-5xl text-gray-700 font-bold mt-4">
+                        <div class="text-start border-b-2 pb-2">
+                            INBOX
+                        </div>
+                    </div>
+                    <div class="flex justify-between">
+                        <div class="flex-1">
+                            <div class="text-4xl font-semibold text-gray-600 mt-6">
+                                Welcome,
+                            </div>
+                            <div class="text-4xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
+                                <%= user.username %> 
+                            </div>
+                        </div>
+                        <img src="<%= user.img %>" alt="" class="rounded-full w-14 h-14 mt-6 border-4 border-gray-50 hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">        
+                    </div>
+                    <div class="flex">
+                        <div class="hover:translate-x-4 text-xl font-semibold text-gray-400 transition-all ease-in-out delay-75 duration-300">
+                            You have <%= messageCount %> messages
+                        </div>
+                    </div>
+                    <div class="bg-scroll bg-cover mt-6 pb-12 inline-block items-baseline pl-4 pr-8 pt-4 rounded-lg" style = "background-image: url(https://images.unsplash.com/photo-1509023464722-18d996393ca8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=870&q=80)">
+                        <div class="group flex text-2xl font-bebas text-white hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
+                            Level <%= user.level %> <div class="text-transparent group-hover:text-slate-100 ml-2 text-lg transition-all delay-75 duration-500 ease-in-out">Level <%= user.nextLevel %> (<%= user.nextLevelPoints %> pts.) </div>
+                        </div>
+                        <div class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-xl font-staat text-slate-200">
+                            <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
+                        </div>
+                    </div>
+                    <form action="/messageEditor" method="GET" class="items-center rounded-xl group hover:px-2 hover:py-2 hover:bg-gray-100 transition-all ease-in-out delay-75 duration-300 flex cursor-pointer mt-2">
+                            <input type="hidden" name="username" value="<%= user.username %>">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 stroke-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                              </svg>
+                            <input type="submit" value="Write Message" class="cursor-pointer text-3xl text-gray-700 font-semibold group-hover:text-gray-900">
+                    </form>
+                </div>
+            </div>
+            <div class="col-span-3 relative flex overflow-hidden bg-gray-100 h-screen bg-fixed">
+                <% if(messageCount > 0) { %>
+                    <div class="flex-col w-11/12 mx-auto overflow-y-auto h-screen">
+                        <% messageFeed.forEach((message, index) => { %>
+                            <div onclick="preview(`<%=message.sender%>`, `<%=message.subject%>`, `<%=message.text%>`)" class="group cursor-pointer mt-4 flex-col px-2 pl-2 pb-2 rounded-lg bg-white hover:scale-105 transition-all ease-in-out duration-300 delay-75">
+                                <div class="flex justify-between items-baseline">
+                                    <p class=" text-base text-gray-400 font-bold mb-0">
+                                        <%= message.sender %> 
+                                    </p>
+                                    <p class="text-sm text-gray-700 font-semibold mt-1 badge">
+                                        <%=message.timeElapsed%>
+                                    </p>
+                                </div>
+                                <div class="flex">
+                                    <p class="mt text-2xl text-gray-700 font-semibold">
+                                        <%= message.subject %> 
+                                    </p>
+                                </div>
+                            </div>
+                        <% }) %>  
+                    </div>
+                <% } else { %>
+                    <div class="flex-col w-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto z-10 relative h-28 w-28 mt-4 stroke-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"o d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
+                        </svg>
+                        <div class="absolute h-24 w-96 top-12 bg-gray-100 z-0">
+
+                        </div>
+                        
+                        <p class="text-center relative z-10 mt-4 text-xl text-gray-500 font-semibold">
+                            You Have an Empty Inbox
+                        </p>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-6 w-6 stroke-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+                          </svg>
+                    </div>
+                <% } %>   
+            </div>
+            <div class="col-span-5 relative flex">
+                <div class="flex-col">
+                    <p class="text-5xl text-stone-900 text-start font-staat ml-4 mt-4 border-b-2 w-min">
+                        Preview
+                    </p>
+                    <div>
+                        <div class="flex justify-between items-baseline">
+                            <p class="text-3xl text-gray-700 text-start font-bold ml-4 mt-2" id="previewSubject">
+                                No Current Message
+                            </p>
+                            <p class="text-lg text-gray-700 text-start font-bold ml-4 mt-2 mr-2" id="previewSubject">
+                                <span class="text-gray-500 font-semibold">From</span> <span id="previewAuthor">Anonymous</span>
+                            </p>
+                        </div>
+                        <p class="text-xl text-gray-500 text-start ml-4" id="previewText">
+                            Message Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do....
+                        </p>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        function preview(author, subject, messageText) {
+            let parsedText = marked.parse(messageText)
+            console.log(parsedText)
+            // console.log(message)
+            // console.log(text)
+            // let finalMsg = message.replace(/\n/g, "<br>")
+            // console.log(finalMsg)
+            // let correct = JSON.parse(finalMsg)
+            // console.log(correct)
+            // message.text = marked.parse(message.text)
+            // console.log(message.text)
+            document.getElementById("previewAuthor").innerHTML = author
+            document.getElementById("previewSubject").innerHTML = subject
+            document.getElementById("previewText").innerHTML = parsedText
+        }
+    </script>
+</body>
+</html>

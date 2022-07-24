@@ -125,22 +125,109 @@ app.get('/dashboard', async (req, res) => {
         let myQueryObject = {
           "creator": user.username
         }
-        const [ questionData, answerData ] = await api.getUserQuestionsAnswers(user.username)
+        const questionData = await api.getUserQuestions(user.username)
+        const answerData = await api.getUserAnswers(user.username)
         let questionFeed = (questionData.success) ? questionData.questions : null
         let answerFeed = (answerData.success) ? answerData.answers : null
         questionFeed.forEach((question) => {
           let timeElapsed = msToTime(Date.now() - question.createdAt)
           question.timeElapsed = timeElapsed
         })
+        answerFeed.forEach((answer) => {
+          let timeElapsed = msToTime(Date.now() - answer.createdAt)
+          answer.timeElapsed = timeElapsed
+        })
         user.img = gravatarGen(user.email)
         req.session.user = user
+<<<<<<< Updated upstream
         console.log(user)
+=======
+        console.log(answerFeed)
+        var needed = {
+          time: Date.now(),
+          data: {
+            pfp: gravatarGen(user.email),
+            level: _level,
+          }
+        }
+        basicDataCache[req.query.user] = needed;
+
+>>>>>>> Stashed changes
         res.render('dashboard', {
             loggedIn: req.session.loggedIn,
             questionFeed: questionFeed,
             answerFeed: answerFeed,
             user: req.session.user,
         })
+<<<<<<< Updated upstream
+=======
+      } else {
+        req.session.loggedIn = false
+        res.redirect('/auth/login')
+      }
+  } else {
+      req.session.loggedIn = false
+      res.redirect('/auth/login')
+  }
+})
+
+///------------------------------------- Questions Stuff --------------------------------
+
+app.get('/dashboard', async (req, res) => {
+    console.log(req.session)
+    if(Object.keys(req.session.user).length != 0) {
+        let data = await api.getUser(req.session.user.username).then(
+          (data) => {
+            if(data && data.success) {
+              return data
+            } else {
+              return false
+            }
+          }
+        )
+        if(data.success) {
+          let user = data.user
+          let userPoints = parseInt(user.points)
+          let _level = levelCalculation(userPoints)
+          let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
+          let _abilities = allAbilities.splice(0, _level)
+          user.points = userPoints
+          user.level = _level
+          let nextLevel = _level + 1
+          let nextLevelPoints = levelMinimums[_level - 1]
+          user.abilities = _abilities
+          console.log(`You are Level ${_level}`)
+          console.log(`You can: ` + _abilities.join(', '))
+          let myQueryObject = {
+            "creator": user.username
+          }
+
+          let questionData = await api.getUserQuestions(user.username)
+          let answerData = await api.getUserAnswers(user.username)
+          let questionFeed = (questionData.success) ? questionData.questions : null
+          let answerFeed = (answerData.success) ? answerData.answers : null
+          console.log(answerFeed)
+          questionFeed.forEach((question) => {
+            let timeElapsed = msToTime(Date.now() - question.createdAt)
+            question.timeElapsed = timeElapsed
+          })
+          user.img = gravatarGen(user.email)
+          req.session.user = user
+          console.log(user)
+          console.log(questionFeed.length)
+          res.render('dashboard', {
+              loggedIn: req.session.loggedIn,
+              questionFeed: questionFeed,
+              answerFeed: answerFeed,
+              user: req.session.user,
+              nextLevel: nextLevel,
+              nextLevelPoints: nextLevelPoints
+          })
+        } else {
+          req.session.loggedIn = false
+          res.redirect('/auth/login')
+        }
+>>>>>>> Stashed changes
     } else {
         req.session.loggedIn = false
         res.redirect('/auth/login')
@@ -252,6 +339,64 @@ app.post("/auth/signup", (req,res) => {
 
 })
 
+<<<<<<< Updated upstream
+=======
+app.get('/mail', async (req, res) => {
+  if(req.session.loggedIn) {
+    username = req.session.user.username
+    user = req.session.user
+    userPoints = user.points
+    user.level = levelCalculation(userPoints)
+    user.nextLevel = user.level + 1
+    user.nextLevelPoints = levelMinimums[user.nextLevel - 1]
+    console.log("Username: " + username)
+    let mailData = await api.sendRequest('/mail/' + username, 'GET')
+    mailData.messages.forEach((message => {
+      message.timeElapsed = msToTime(Date.now() - message.createdAt)
+    }))
+    console.log(mailData)
+    res.render('mail', {
+      loggedIn: req.session.loggedIn,
+      user: user,
+      messageFeed: mailData.messages,
+      messageCount: mailData.messages.length
+    })
+  }
+})
+
+
+app.get("/messageEditor", async (req, res) => {
+  let username = req.session.user.username
+  console.log(username)
+  username = (username) ? username : req.session.user.username
+  res.render('messageEditor', {
+    username: username
+  })
+})
+
+app.post("/messages", async (req, res) => {
+  let { username, receiver, subject, text } = req.body 
+  username = (username) ? username : req.session.user.username
+  console.log(`Reciever: ${receiver}, Sender: ${username}`)
+  console.log(username)
+  let data = await api.sendRequest("/mail", 'POST', {
+    sender: username,
+    receiver: receiver,
+    subject: subject,
+    text: text
+  })
+  console.log(data)
+  console.log(data.success)
+  if(data.success) {
+    res.redirect('/mail')
+  } else {
+    res.redirect('/messageEditor', {
+      username: username
+    })
+  }
+})
+
+>>>>>>> Stashed changes
 app.post("/auth/login", async (req,res) => {
   // get form data
   const { username, password } = req.body
