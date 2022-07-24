@@ -384,7 +384,19 @@ app.post("/messageEditor", async (req, res) => {
     username: username
   })
 })
-
+app.get('/getAnswers', async (req, res) => {
+  var id = req.query.question;
+  api.getAnswers(id).then(data => {
+    if(data.success) {
+      res.send({answers: data.answers, success: true})
+    } else {
+      res.send({success: false})
+    }
+  }).catch(err => {
+    console.log(err)
+    res.send({success: false});
+    });
+});
 app.post("/messages", async (req, res) => {
   let { username, receiver, subject, text } = req.body 
   username = (username) ? username : req.session.user.username
@@ -455,46 +467,63 @@ app.get("/buffet", (req, res) => {
   });
 });
 
+app.get("/hasUserVotedAnswer", (req, res) => {
+  var user = req.session.user.username;
+  var answer = req.query.answer;
+  var question = req.query.question;
+  api.hasUserVotedAnswer(question, answer, user).then(data => {
+    res.send(JSON.stringify(data))
+  });
+})
+
 app.get("/question/:id", (req, res) => {
   var id= req.params.id;
   if(!id) {
     res.send("Invalid question id")
     return
   }
+  console.time("getQuestion")
   api.getQuestion(id).then(data => {
+  console.timeEnd("getQuestion")
+  console.time("getAnswers")
+
     if(!data.success) {
       res.send("Invalid question id")
       return;
     }
-    api.getAnswers(id, data.answers).then(data2 => {
-    if(!data2.success) {
-      res.send("Something wen't wrong.. Please try again")
-      return;
-    }
 
+
+      console.time("increaseViews")
+
+    api.increaseViews(id).then(data4 => {
+      console.timeEnd("increaseViews")
+      console.time("checkVote")
+      
+      console.log(data4)
+      data.question.views ++;
     api.hasUserVoted(id, req.session.user?.username).then(data3 => {
+      console.timeEnd("checkVote")
+      // console.timeEnd("getQuestion")
     res.render('question', {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
-      answers: data2.answers,
       voted: data3
     })
   }).catch(err => {
+    console.timeEnd("getQuestion")
     console.log(err)
     res.render('question', {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
-      answers: data2.answers,
       voted: {voted: false}
     })
   });
   });
-
-  });
 });
 
+  });
 var basicDataCache = {};
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
@@ -532,6 +561,7 @@ app.get("/getBasicData", (req, res) => {
           data: {
             pfp: gravatarGen(data.user.email),
             level: _level,
+            points: userPoints,
           }
         }
         basicDataCache[req.query.user] = needed;
@@ -687,6 +717,27 @@ app.post("/api/question/:id/:type", (req,res) => {
 
 
 })
+
+app.post("/api/answer/:id/:type", (req,res) => {
+  var id = req.params.id;
+  var type = req.params.type;
+  var action = req.body.action;
+  var  question = req.body.question;
+  console.log(action, type, id)
+  if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
+    res.send("Invalid answer id or type")
+    return
+  }
+  type += "s";
+  api.voteAnswer( question , id, req.session.user?.username, type, action).then(data => {
+    res.send(JSON.stringify(data))
+    var dir = action == "increment" ? 1 : -1;
+    dir *= type == "upvotes" ? 1 : -1;
+    if(data.success) {
+      io.emit("voteA", [question, id, dir])
+    }
+  });
+});
 
 io.on('connection', (socket) => {
   console.log('a user connected');
