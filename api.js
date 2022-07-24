@@ -132,6 +132,27 @@ class Api {
     return this.sendRequest('/questions/' + questionId, 'GET');
   }
 
+  hasUserVotedAnswer(questionId, answerId, username) {
+    if( username) {
+
+      return new Promise((resolve, reject) => {
+        this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/vote/' + username, 'GET').then(data => {
+          if(data.success) {
+            if(data.error) resolve({success:true, voted: false, error: data.error})
+            else resolve({success: true, voted: true, vote: data.vote})
+          }
+          else resolve({voted: false});
+        }).catch(err => {
+          reject(err)
+        });
+      });
+    } else {
+      return new Promise((resolve, reject) => {
+        resolve(false)
+      });
+    }
+  }
+
   hasUserVoted(questionId, username) {
     if(username) {
     return new Promise((resolve, reject) => {
@@ -156,6 +177,16 @@ class Api {
   async voteQuestion(questionId, username, target, action) {
     console.log(questionId, username, target, action)
     var req = this.sendRequest('/questions/' + questionId + '/vote/' + username, 'PATCH', {
+      operation: action,
+      target
+    });
+    return req;
+  }
+
+  async voteAnswer(questionId, answerId, username, target, action) {
+    console.log(questionId, answerId, username, target, action)
+    console.log(action)
+    var req = this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/vote/' + username, 'PATCH', {
       operation: action,
       target
     });

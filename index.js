@@ -238,7 +238,7 @@ app.get('/logout', async (req, res) => {
 app.post('/questionEditor', async (req, res) => {
   const { username } = req.body
   console.log("User: " + username)
-  res.render('question', {username: username})
+  res.render('questionEditor', {username: username})
 })
 
 app.post('/questions',  async (req, res) => {
@@ -384,7 +384,19 @@ app.post("/messageEditor", async (req, res) => {
     username: username
   })
 })
-
+app.get('/getAnswers', async (req, res) => {
+  var id = req.query.question;
+  api.getAnswers(id).then(data => {
+    if(data.success) {
+      res.send({answers: data.answers, success: true})
+    } else {
+      res.send({success: false})
+    }
+  }).catch(err => {
+    console.log(err)
+    res.send({success: false});
+    });
+});
 app.post("/messages", async (req, res) => {
   let { username, receiver, subject, text } = req.body 
   username = (username) ? username : req.session.user.username
@@ -454,6 +466,15 @@ app.get("/buffet", (req, res) => {
     res.send(JSON.stringify(data))
   });
 });
+
+app.get("/hasUserVotedAnswer", (req, res) => {
+  var user = req.session.user.username;
+  var answer = req.query.answer;
+  var question = req.query.question;
+  api.hasUserVotedAnswer(question, answer, user).then(data => {
+    res.send(JSON.stringify(data))
+  });
+})
 
 app.get("/question/:id", (req, res) => {
   var id= req.params.id;
@@ -696,6 +717,27 @@ app.post("/api/question/:id/:type", (req,res) => {
 
 
 })
+
+app.post("/api/answer/:id/:type", (req,res) => {
+  var id = req.params.id;
+  var type = req.params.type;
+  var action = req.body.action;
+  var  question = req.body.question;
+  console.log(action, type, id)
+  if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
+    res.send("Invalid answer id or type")
+    return
+  }
+  type += "s";
+  api.voteAnswer( question , id, req.session.user?.username, type, action).then(data => {
+    res.send(JSON.stringify(data))
+    var dir = action == "increment" ? 1 : -1;
+    dir *= type == "upvotes" ? 1 : -1;
+    if(data.success) {
+      io.emit("voteA", [question, id, dir])
+    }
+  });
+});
 
 io.on('connection', (socket) => {
   console.log('a user connected');
