@@ -111,7 +111,7 @@ app.get('/dashboard', async (req, res) => {
           "creator": user.username
         }
         const questionData = await api.getUserQuestions(user.username)
-        const answerData = await api.getUsers(user.username)
+        const answerData = await api.getUserAnswers(user.username)
         let questionFeed = (questionData.success) ? questionData.questions : null
         let answerFeed = (answerData.success) ? answerData.answers : null
         questionFeed.forEach((question) => {
@@ -310,6 +310,9 @@ app.get('/mail', async (req, res) => {
     user.nextLevelPoints = levelMinimums[user.nextLevel - 1]
     console.log("Username: " + username)
     let mailData = await api.sendRequest('/mail/' + username, 'GET')
+    mailData.messages.forEach((message) => {
+      message.timeElapsed = msToTime(Date.now() - message.createdAt)
+    })
     console.log(mailData)
     res.render('mail', {
       loggedIn: req.session.loggedIn,

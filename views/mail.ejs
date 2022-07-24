@@ -52,9 +52,9 @@
                     </form>
                 </div>
             </div>
-            <div class="col-span-3 relative flex overflow-hidden bg-gray-100 h-screen bg-fixed">
+            <div class="col-span-3 relative flex overflow-hiddenoverflow-y-auto  bg-gray-100 h-screen bg-fixed">
                 <% if(messageCount > 0) { %>
-                    <div class="flex-col w-11/12 mx-auto overflow-y-auto h-screen">
+                    <div class="flex-col w-11/12 mx-auto h-screen">
                         <% messageFeed.forEach((message, index) => { %>
                             <div onclick="preview(`<%=message.sender%>`, `<%=message.subject%>`, `<%=message.text%>`)" class="group cursor-pointer mt-4 flex-col px-2 pl-2 pb-2 rounded-lg bg-white hover:scale-105 transition-all ease-in-out duration-300 delay-75">
                                 <div class="flex justify-between items-baseline">

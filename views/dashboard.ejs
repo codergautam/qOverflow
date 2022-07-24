@@ -78,17 +78,18 @@
                         <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
                             Questions
                         </p>
-                        <div class="flex-col">
+                        <div class="hidden" id="questions">
                             <% if(questionFeed.length != 0) { %>
                                 <% questionFeed.forEach((data) => { %> 
-                                    <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg min-w-full">
-                                    <div class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5" onclick="location.href = '/question/<%=data.question_id%>'">
+                                    <div class="flex-col">
+                                    <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                         <div class="px-4 py-4 ">
-                                          <div class="font-bold text-lg mb-2 border-b-2 border-spacing-1"><%= data.title %> </div>
+                                          <div class="font-bold text-lg mb-2"><%= data.title %> </div>
                                         </div>
-                                        <div class="pl-3 pr-6 pt-2 pb-2 ">
+                                        <div class="pl-3 pr-6 pt-4 pb-2 ">
                                           <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
                                           <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
+                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.upvotes - data.downvotes %> pts.</span>
                                         </div>
                                     </div>
                                     </div>
@@ -110,9 +111,8 @@
                         <% } else { %>
                             <div class="flex-col" id="questionFeed">
                             </div>   
-                        <% } %>  
-                    </div>
-                    </div>
+                        <% } %> 
+                        </div>  
                     <div class="flex-col mt-12">
                         <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
                             Answers
@@ -156,6 +156,7 @@
                             </div>   
                         <% } %>  
                     </div>
+                </div>
             </div>
         </div>
         <div class="col-span-1 relative h-screen">
