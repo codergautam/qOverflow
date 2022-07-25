@@ -78,8 +78,11 @@ app.get('/', (req, res) => { //Homepage
   })
 });
 
-
-///------------------------------------- Questions Stuff --------------------------------
+app.post('/search', async (req, res) => {
+  let { searchQuery  } = req.body
+  console.log(searchQuery)
+  res.send("Your search query was \"" + searchQuery + "\"")
+})
 
 app.get('/dashboard', async (req, res) => {
   console.log(req.session)
@@ -405,6 +408,8 @@ app.post("/auth/login", async (req,res) => {
 }
 
 });
+
+
 app.get("/buffet", (req, res) => {
   var sort;
   if(req.query.sort) {
