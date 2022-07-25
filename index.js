@@ -45,6 +45,7 @@ app.use(bodyParser.json())
 app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 
+
 app.use(session({
   secret: process.env.secret,
   resave: false,
