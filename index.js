@@ -77,6 +77,10 @@ app.get('/', (req, res) => { //Homepage
     sort
   })
 });
+
+
+///------------------------------------- Questions Stuff --------------------------------
+
 app.get('/dashboard', async (req, res) => {
   console.log(req.session)
   if(Object.keys(req.session.user).length != 0) {
@@ -106,19 +110,21 @@ app.get('/dashboard', async (req, res) => {
         let myQueryObject = {
           "creator": user.username
         }
-        const [ questionData, answerData ] = await api.getUserQuestionsAnswers(user.username)
+        const questionData = await api.getUserQuestions(user.username)
+        const answerData = await api.getUserAnswers(user.username)
         let questionFeed = (questionData.success) ? questionData.questions : null
         let answerFeed = (answerData.success) ? answerData.answers : null
-        console.log(answerFeed)
         questionFeed.forEach((question) => {
           let timeElapsed = msToTime(Date.now() - question.createdAt)
           question.timeElapsed = timeElapsed
         })
+        answerFeed.forEach((answer) => {
+          let timeElapsed = msToTime(Date.now() - answer.createdAt)
+          answer.timeElapsed = timeElapsed
+        })
         user.img = gravatarGen(user.email)
         req.session.user = user
-        console.log(user)
-        console.log(questionFeed.length)
-        
+        console.log(answerFeed)
         var needed = {
           time: Date.now(),
           data: {
@@ -144,67 +150,6 @@ app.get('/dashboard', async (req, res) => {
       req.session.loggedIn = false
       res.redirect('/auth/login')
   }
-})
-
-
-///------------------------------------- Questions Stuff --------------------------------
-
-app.get('/dashboard', async (req, res) => {
-    console.log(req.session)
-    if(Object.keys(req.session.user).length != 0) {
-        let data = await api.getUser(req.session.user.username).then(
-          (data) => {
-            if(data && data.success) {
-              return data
-            } else {
-              return false
-            }
-          }
-        )
-        if(data.success) {
-          let user = data.user
-          let userPoints = parseInt(user.points)
-          let _level = levelCalculation(userPoints)
-          let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
-          let _abilities = allAbilities.splice(0, _level)
-          user.points = userPoints
-          user.level = _level
-          let nextLevel = _level + 1
-          let nextLevelPoints = levelMinimums[_level - 1]
-          user.abilities = _abilities
-          console.log(`You are Level ${_level}`)
-          console.log(`You can: ` + _abilities.join(', '))
-          let myQueryObject = {
-            "creator": user.username
-          }
-          const [ questionData, answerData ] = await api.getUserQuestionsAnswers(user.username)
-          let questionFeed = (questionData.success) ? questionData.questions : null
-          let answerFeed = (answerData.success) ? answerData.answers : null
-          console.log(answerFeed)
-          questionFeed.forEach((question) => {
-            let timeElapsed = msToTime(Date.now() - question.createdAt)
-            question.timeElapsed = timeElapsed
-          })
-          user.img = gravatarGen(user.email)
-          req.session.user = user
-          console.log(user)
-          console.log(questionFeed.length)
-          res.render('dashboard', {
-              loggedIn: req.session.loggedIn,
-              questionFeed: questionFeed,
-              answerFeed: answerFeed,
-              user: req.session.user,
-              nextLevel: nextLevel,
-              nextLevelPoints: nextLevelPoints
-          })
-        } else {
-          req.session.loggedIn = false
-          res.redirect('/auth/login')
-        }
-    } else {
-        req.session.loggedIn = false
-        res.redirect('/auth/login')
-    }
 })
 
 app.post('/email', (req, res) => {
@@ -365,6 +310,9 @@ app.get('/mail', async (req, res) => {
     user.nextLevelPoints = levelMinimums[user.nextLevel - 1]
     console.log("Username: " + username)
     let mailData = await api.sendRequest('/mail/' + username, 'GET')
+    mailData.messages.forEach((message) => {
+      message.timeElapsed = msToTime(Date.now() - message.createdAt)
+    })
     console.log(mailData)
     res.render('mail', {
       loggedIn: req.session.loggedIn,
@@ -376,7 +324,7 @@ app.get('/mail', async (req, res) => {
 })
 
 
-app.post("/messageEditor", async (req, res) => {
+app.get("/messageEditor", async (req, res) => {
   let username = req.session.user.username
   console.log(username)
   username = (username) ? username : req.session.user.username

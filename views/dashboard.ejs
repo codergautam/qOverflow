@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/index.css">
 </head>
 <body>
-    <div class="grid relative grid-cols-6 bg-gray-50">
+    <div class="grid relative grid-cols-6 bg-gray-50 bg-fixed">
         <div class="col-span-6">
             <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
         </div>
@@ -66,7 +66,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-span-3 h-screen">
+        <div class="col-span-3 bg-gray-50 bg-fixed">
             <div class="relative flex-col">
                 <div class="mt-6 flex-col z-10">
                     <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
@@ -85,13 +85,11 @@
                                     <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                         <div class="px-4 py-4 ">
                                           <div class="font-bold text-lg mb-2"><%= data.title %> </div>
-                                          <p class="text-gray-700 text-base w-5/6">
-                                            <%= data.text %> 
-                                          </p>
                                         </div>
                                         <div class="pl-3 pr-6 pt-4 pb-2 ">
                                           <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
                                           <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
+                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.upvotes - data.downvotes %> pts.</span>
                                         </div>
                                     </div>
                                     </div>
@@ -113,8 +111,8 @@
                         <% } else { %>
                             <div class="flex-col" id="questionFeed">
                             </div>   
-                        <% } %>  
-                    </div>
+                        <% } %> 
+                        </div>  
                     <div class="flex-col mt-12">
                         <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
                             Answers
@@ -123,18 +121,19 @@
                             <% if(answerFeed.length != 0) { %>
                                 <% answerFeed.forEach((data) => { %> 
                                     <div class="flex-col">
-                                    <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
-                                        <div class="px-4 py-4 ">
-                                          <div class="font-bold text-base mb-2"><%= data.title %> </div>
-                                          <p class="text-gray-700 text-lg font-bold w-5/6">
-                                            <%= data.text %> 
-                                          </p>
+                                        <div class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5" onclick="location.href = '/question/<%=data.question_id%>'">
+                                            <div class="px-4 py-4 ">
+                                              <div class="text-base font-semibold mb-2">ACCEPTED: <span class="font-bold <% if(!data.accepted) { %> text-red-500 <% } else { %> text-green-500 <% } %>"><%= data.accepted %></span></div>
+                                              <p class="font-bold text-gray-700 text-lg w-5/6">
+                                                <%= data.text %> 
+                                              </p>
+                                            </div>
+                                            <div class="pl-3 pr-6 pt-4 pb-2 ">
+                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
+                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
+                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.upvotes - data.downvotes %> pts.</span>
+                                            </div>
                                         </div>
-                                        <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
-                                        </div>
-                                    </div>
                                     </div>
                                 <% }) %> 
                             <% } else { %>
@@ -147,13 +146,13 @@
                                       </svg>
                                 </span>
                             <% } %>
-                        </div>  
+                        </div>
                         
                         <% if(answerFeed.length != 0)  { %> 
-                            <div class="flex-col overflow-y-auto h-72 items-start" id="answerFeed">
+                            <div class="flex-col mt-2 overflow-y-auto h-72 items-start" id="answerFeed">
                             </div>   
                         <% } else { %>
-                            <div class="flex-col" id="answerFeed">
+                            <div class="flex-col pb-8" id="answerFeed">
                             </div>   
                         <% } %>  
                     </div>
@@ -196,104 +195,78 @@
             let questionFeed = document.getElementById("questionFeed").children
             chunkSize = standard
             let index = questionFeed.length - 1
-
-
             while(questionFeed.length > chunkSize) {
                 questionFeed.item(index).remove()
                 index--
             }
-
-
-            let emptyElemQ = `<div class="ml-6 mt-2 text-gray-500 font-semibold text-xl">
-                                    You Have No Questions Right Now
-                                </div>
-                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                      </svg>
-                                </span>`
-
+             
             if(!document.getElementById("noQuestions")) {
                 implementLoader(questionFeed.length, document.getElementById("questions").children.length)
             }
-
-
             function loadMoreQuestions() {
                 let children = document.getElementById("questions").innerHTML
                 document.getElementById("questionFeed").innerHTML = children
-
-
                 let questionFeed = document.getElementById("questionFeed").children
                 chunkSize += standard
                 let index = questionFeed.length - 1
-
                 while(questionFeed.length > chunkSize) {
                     questionFeed.item(index).remove()
                     index--
                 }
-
-
                 implementLoader(questionFeed.length, document.getElementById("questions").children.length)
             }
-
             function loadLessQuestions() {
                 if((chunkSize - standard) > 0) {
                     let children = document.getElementById("questions").innerHTML
                     document.getElementById("questionFeed").innerHTML = children
-
-
                     let questionFeed = document.getElementById("questionFeed").children
                     chunkSize -= standard
                     let index = questionFeed.length - 1
-
                     while(questionFeed.length > chunkSize) {
                         questionFeed.item(index).remove()
                         index--
                     }
-
-
                     implementLoader(questionFeed.length, document.getElementById("questions").children.length)
                 } else {
                     return
                 }
             }
 
+            let chunkSizeA
             let childrenA = document.getElementById("answers").innerHTML
             document.getElementById("answerFeed").innerHTML = childrenA
             let answerFeed = document.getElementById("answerFeed").children
-            chunkSize = standard
+            chunkSizeA = standard
             let indexA = answerFeed.length - 1
 
-            while(answerFeed.length > chunkSize) {
-                answerFeed.item(index).remove()
-                index--
+            while(answerFeed.length > chunkSizeA) {
+                answerFeed.item(indexA).remove()
+                indexA--
             }
 
 
-            let emptyElem = `<div class="ml-6 mt-2 text-gray-500 font-semibold text-xl">
-                                    You Have No Answers Right Now
-                                </div>
-                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path>
-                                      </svg>
-                                </span>`
+            
             if(!document.getElementById("noAnswers")) {
                 implementLoaderA(answerFeed.length, document.getElementById("answers").children.length)
             }
 
             function loadMoreAnswers() {
                 let childrenA = document.getElementById("answers").innerHTML
-                document.getElementById("answerFeed").innerHTML = children
+                document.getElementById("answerFeed").innerHTML = childrenA
+
+                console.log(childrenA)
 
 
                 let answerFeed = document.getElementById("answerFeed").children
-                chunkSize += standard
-                let index = answerFeed.length - 1
+                chunkSizeA += standard
+                let indexA = answerFeed.length - 1
 
-                while(answerFeed.length > chunkSize) {
-                    answerFeed.item(index).remove()
-                    index--
+                console.log(answerFeed)
+                console.log(answerFeed.length)
+
+                while(answerFeed.length > chunkSizeA) {
+                    answerFeed.item(indexA).remove()
+                    indexA--
                 }
 
 
@@ -301,20 +274,19 @@
             }
 
             function loadLessAnswers() {
-                if((chunkSize - standard) > 0) {
+                if((chunkSizeA - standard) > 0) {
                     let childrenA = document.getElementById("answers").innerHTML
-                    document.getElementById("answerFeed").innerHTML = children
+                    document.getElementById("answerFeed").innerHTML = childrenA
 
 
                     let answerFeed = document.getElementById("answerFeed").children
-                    chunkSize -= standard
-                    let index = answerFeed.length - 1
+                    chunkSizeA -= standard
+                    let indexA = answerFeed.length - 1
 
-                    while(answerFeed.length > chunkSize) {
-                        answerFeed.item(index).remove()
-                        index--
+                    while(answerFeed.length > chunkSizeA) {
+                        answerFeed.item(indexA).remove()
+                        indexA--
                     }
-
 
                     implementLoaderA(answerFeed.length, document.getElementById("answers").children.length)
                 } else {
@@ -323,48 +295,37 @@
             }
 
             function implementLoader(qLength, cLength) {
-                if(qLength < cLength) {
-                    let loader = `
-                            <div class="flex mt-4">
-                                <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                      <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreQuestions()">
-                                          Load More
-                                      </button>
-                                </span>
-                                <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
-                                        Load Less
-                                    </button>
-                                </span>
-                            </div>`
-                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    } else {
+                    if(qLength < cLength) {
                         let loader = `
-                                    <div class="flex mt-4">
-                                        <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
-                                                Load Less
-                                            </button>
-                                        </span>
-                                    </div>`
-                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    }
+                                <div class="flex mt-4">
+                                    <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                        <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreQuestions()">
+                                            Load More
+                                        </button>
+                                    </span>
+                                    <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
+                                        <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
+                                            Load Less
+                                        </button>
+                                    </span>
+                                </div>`
+                    document.getElementById('questionFeed').innerHTML += questionFeed;
+                }
             }
 
             function implementLoaderA(qLength, cLength) {
+                console.log(qLength + " " + cLength)
                 let emptyElem = ``
                 if(qLength < cLength) {
                     let loader = `
                             <div class="flex mt-4">
                                 <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                      <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreQuestions()">
+                                      <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreAnswers()">
                                           Load More
                                       </button>
                                 </span>
                                 <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
+                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadLessAnswers()">
                                         Load Less
                                     </button>
                                 </span>
@@ -375,7 +336,7 @@
                         let loader = `
                                     <div class="flex mt-4">
                                         <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
+                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessAnswers()">
                                                 Load Less
                                             </button>
                                         </span>

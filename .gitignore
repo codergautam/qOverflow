@@ -64,6 +64,7 @@ typings/
 .rts2_cache_umd/
 
 sessions.db
+public/index.css
 
 # Optional REPL history
 .node_repl_history
