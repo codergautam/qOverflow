@@ -595,6 +595,71 @@ app.get("/getBasicData", (req, res) => {
   } else res.send(JSON.stringify({success: false}))
 })
 
+app.get("/questionComments", (req, res) => {
+  var question = req.query.question;
+  api.getQuestionComments(question).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+app.post("/answerComments", (req, res) => {
+  var answer = req.body.answer;
+  var question = req.body.question;
+  console.log(req.body)
+  api.getAnswerComments(question, answer).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+app.post("/addCommentQuestion", (req, res) => {
+  var question = req.body.question;
+  var comment = req.body.text;
+  var user = req.session.user.username;
+  console.log(question, comment, user)
+  if(!user || !question || !comment) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  
+  if(comment.length > 150) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  api.addCommentQuestion(question, user, comment).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+app.post("/addCommentAnswer", (req, res) => {
+  var answer = req.body.answer;
+  var comment = req.body.text;
+  var user = req.session.user.username;
+  var question = req.body.question;
+  console.log(answer, comment, user, question)
+  if(!user || !answer || !comment || !question) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  if(comment.length > 150) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  api.addCommentAnswer(question, answer, user, comment).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
 
 
 app.get("/forgot", (req, res) => {

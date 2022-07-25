@@ -132,6 +132,29 @@ class Api {
     return this.sendRequest('/questions/' + questionId, 'GET');
   }
 
+  getQuestionComments(questionId) {
+    return this.sendRequest('/questions/' + questionId + '/comments', 'GET');
+  }
+
+  getAnswerComments(questionId, answerId) {
+    return this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/comments', 'GET');
+  }
+
+  addCommentQuestion(questionId, username, text) {
+    return this.sendRequest('/questions/' + questionId + '/comments', 'POST', {
+      creator: username,
+      text: text
+    });
+  }
+
+  addCommentAnswer(questionId, answerId, username, text) {
+    return this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/comments', 'POST', {
+      creator: username,
+      text: text
+    });
+  }
+  
+
   hasUserVotedAnswer(questionId, answerId, username) {
     if( username) {
 
