@@ -82,7 +82,7 @@
                             <% if(questionFeed.length != 0) { %>
                                 <% questionFeed.forEach((data) => { %> 
                                     <div class="flex-col">
-                                    <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                                    <div  onclick="location.href = '/question/<%=data.question_id%>'" class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                         <div class="px-4 py-4 ">
                                           <div class="font-bold text-lg mb-2"><%= data.title %> </div>
                                         </div>
@@ -95,14 +95,12 @@
                                     </div>
                                 <% }) %> 
                             <% } else { %>
-                                <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                    You Have No Questions Right Now
+                                <div class="flex-col">
+                                    <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
+                                        You Have No Questions Right Now
+                                        <br>...
+                                    </div>
                                 </div>
-                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                      </svg>
-                                </span>
                             <% } %>
                         </div>  
                         <% if(questionFeed.length != 0)  { %> 
@@ -295,22 +293,36 @@
             }
 
             function implementLoader(qLength, cLength) {
-                    if(qLength < cLength) {
+                console.log(qLength + " " + cLength)
+                let emptyElem = ``
+                if(qLength < cLength) {
+                    let loader = `
+                            <div class="flex mt-4">
+                                <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                      <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreAnswers()">
+                                          Load More
+                                      </button>
+                                </span>
+                                <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
+                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadLessAnswers()">
+                                        Load Less
+                                    </button>
+                                </span>
+                            </div>`
+                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
+                        return
+                    } else {
                         let loader = `
-                                <div class="flex mt-4">
-                                    <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                        <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreQuestions()">
-                                            Load More
-                                        </button>
-                                    </span>
-                                    <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                        <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
-                                            Load Less
-                                        </button>
-                                    </span>
-                                </div>`
-                    document.getElementById('questionFeed').innerHTML += questionFeed;
-                }
+                                    <div class="flex mt-4">
+                                        <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
+                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessAnswers()">
+                                                Load Less
+                                            </button>
+                                        </span>
+                                    </div>`
+                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
+                        return
+                    }
             }
 
             function implementLoaderA(qLength, cLength) {

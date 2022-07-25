@@ -2,7 +2,6 @@ let msg = "World, Programmed To Learn And Not To Feeeel (Melismatic Singing) \n-
 console.log("Hello " + msg)
 let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
 
-
 const express = require('express')
 const http = require('http')
 const app = express()
@@ -78,10 +77,104 @@ app.get('/', (req, res) => { //Homepage
   })
 });
 
-app.post('/search', async (req, res) => {
-  let { searchQuery  } = req.body
+app.get('/search', async (req, res) => {
+  let { searchQuery, sort, loggedIn } = req.query
+  sort = ((sort == undefined) || (sort == null)) ? "title" : sort
+  loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
   console.log(searchQuery)
-  res.send("Your search query was \"" + searchQuery + "\"")
+  let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  if(sort == "Creation") {
+    // matchQuery = {
+    //   "createdAt": //Some functino taht returns epoch time based on data
+    // }
+  } else if(sort == "Author") {
+    matchQuery = {
+      "creator": searchQuery
+    }
+  }
+  let regexQuery = ((sort == "Title") || (sort == "Text")) ? {} : null
+  if(sort == "Title") {
+    newQ = replaceCharacters(searchQuery)
+    regexQuery = {
+      "title": ` ${newQ} `
+    }
+    console.log(regexQuery.title)
+  } else if(sort == "Text") {
+    newQ = replaceCharacters(searchQuery)
+    regexQuery = {
+      "text": ` ${newQ} `
+    }
+    console.log(regexQuery.text)
+  }
+  console.log(matchQuery)
+  let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+  let questions = (data.success) ? data.questions : null
+  console.log(questions)
+  if(questions) {
+    questions.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: questions
+    })
+  } else {
+    res.render('/', {
+      loggedIn: req.session.loggedIn
+    })
+  }
+})
+
+app.post('/search', async (req, res) => {
+  let { searchQuery, sort, loggedIn } = req.body
+  sort = ((sort == undefined) || (sort == null)) ? "Title" : sort
+  loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
+  console.log(searchQuery)
+  let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  if(sort == "Creation") {
+    // matchQuery = {
+    //   "createdAt": //Some functino taht returns epoch time based on data
+    // }
+  } else if(sort == "Author") {
+    matchQuery = {
+      "creator": searchQuery
+    }
+  }
+  let regexQuery = ((sort == "Title") || (sort == "Text")) ? {} : null
+  if(sort == "Title") {
+    newQ = replaceCharacters(searchQuery)
+    regexQuery = {
+      "title": `${newQ} `
+    }
+    console.log(regexQuery.title)
+  } else if(sort == "Text") {
+    newQ = replaceCharacters(searchQuery)
+    regexQuery = {
+      "text": `${newQ} `
+    }
+    console.log(regexQuery.text)
+  }
+  console.log(matchQuery)
+  let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+  let questions = (data.success) ? data.questions : null
+  console.log(questions)
+  if(questions) {
+    questions.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: questions
+    })
+  } else {
+    res.render('/', {
+      loggedIn: req.session.loggedIn
+    })
+  }
 })
 
 app.get('/dashboard', async (req, res) => {
@@ -708,6 +801,15 @@ modifyPoints = async (amount, username) => {
     operation: operation,
     amount: amount
   })
+}
+
+replaceCharacters = (str) => {
+  let newQ = str
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
+  newQ = newQ.replace(/why/gmi, " ").replace(/where/gmi, " ").replace(/how/gmi, " ").replace(/what/gmi, " ").replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
+  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, "").replace(/\s/gmi, '')
+  return newQ
 }
 
 levelCalculation = (userPoints) => {
