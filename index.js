@@ -373,7 +373,7 @@ app.post('/questions',  async (req, res) => {
         return data
       }
     })
-    let pointsData = await modifyPoints(username, 15).then((data) => {
+    let pointsData = await modifyPoints(username, 1).then((data) => {
       if(data.success) {
         return data
       }
