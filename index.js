@@ -2,7 +2,6 @@ let msg = "World, Programmed To Learn And Not To Feeeel (Melismatic Singing) \n-
 console.log("Hello " + msg)
 let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
 
-
 const express = require('express')
 const http = require('http')
 const app = express()
@@ -79,8 +78,153 @@ app.get('/', (req, res) => { //Homepage
   })
 });
 
+app.get('/search', async (req, res) => {
+  let { searchQuery, sort, loggedIn } = req.query
+  sort = ((sort == undefined) || (sort == null)) ? "title" : sort
+  loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
+  console.log(searchQuery)
+  let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  let regexQuery = ((sort == "Title") || (sort == "Text") || (sort == "Author")) ? {} : null
+  if(sort == "Creation") {
+    console.log(searchQuery)
+    let day = 1000 * 60 * 60 * 24
+    matchQuery = {
+      "createdAt": {
+        "$gte":(new Date(searchQuery + " 00:00:00")).getTime() - day/2,
+        "$lte": (new Date(searchQuery + " 24:00:00")).getTime() + day/2
+      }
+    }
+  } else if(sort == "Author") {
+    matchQuery = {
+      "creator": searchQuery
+    }
+    regexQuery = {
+      "creator": `(${searchQuery})`
+    }
+  }
+  if(sort == "Title") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "title": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  } else if(sort == "Text") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "text": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  }
+  console.log(matchQuery)
+  let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+  let questions = (data.success) ? data.questions : null
+  console.log(questions)
+  if(questions) {
+    questions.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: questions
+    })
+  } else {
+    res.redirect('/')
+  }
+})
 
-///------------------------------------- Questions Stuff --------------------------------
+app.post('/search', async (req, res) => {
+  let { searchQuery, sort, loggedIn } = req.body
+  sort = ((sort == undefined) || (sort == null)) ? "Title" : sort
+  loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
+  console.log(searchQuery)
+  let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  let regexQuery = ((sort == "Title") || (sort == "Text") || (sort == "Author")) ? {} : null
+  if(sort == "Creation") {
+    console.log(searchQuery)
+    let day = 1000 * 60 * 60 * 24
+    matchQuery = {
+      "createdAt": {
+        "$gte":(new Date(searchQuery + " 00:00:00")).getTime() - day/2,
+        "$lte": (new Date(searchQuery + " 24:00:00")).getTime() + day/2
+      }
+    }
+  } else if(sort == "Author") {
+    matchQuery = {
+      "creator": searchQuery
+    }
+    regexQuery = {
+      "creator": `(${searchQuery})`
+    }
+  }
+  if(sort == "Title") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "title": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  } else if(sort == "Text") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "text": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  }
+  console.log(matchQuery)
+  let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+  let questions = (data.success) ? data.questions : null
+  console.log(questions)
+  if(questions) {
+    questions.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: questions
+    })
+  } else {
+    res.redirect('/')
+  }
+})
 
 app.get('/dashboard', async (req, res) => {
   console.log(req.session)
@@ -424,6 +568,8 @@ app.post("/auth/login", async (req,res) => {
 }
 
 });
+
+
 app.get("/buffet", (req, res) => {
   var sort;
   if(req.query.sort) {
@@ -832,6 +978,15 @@ modifyPoints = async (amount, username) => {
     operation: operation,
     amount: amount
   })
+}
+
+replaceCharacters = (str) => {
+  let newQ = str
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
+  newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
+  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
+  return newQ
 }
 
 levelCalculation = (userPoints) => {

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="/index.css">
+</head>
+<body>
+    <div class="grid grid-cols-12 bg-white">
+        <div class="col-span-12">
+            <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
+        </div>
+        <div class="flex-col mt-6 col-start-5 col-span-4 items-center relative">
+            <div class="flex-col">
+                <p class="mx-auto text-5xl text-center font-bold border-b-4 pb-2 border-gray-200">
+                    Search Results  
+                </p>
+                <p class="mx-auto text-lg text-center font-semibold text-gray-500">
+                    Dates should be put:
+                    <span class="underline decoration-2 decoration-gray-300 underline-offset-1">MM/DD/YY</span> or 
+                    <span class="underline decoration-2 decoration-gray-300 underline-offset-1">Month Day Year</span>
+                </p>
+            </div>
+            <p class="mt-2 text-2xl text-center font-bold text-gray-300">
+                for  
+            </p>
+            <p class="mt-2 text-3xl text-center font-bold">
+                "<%= searchQuery %>"  
+            </p>
+            <div class="flex mt-4 w-2/3 mx-auto">
+                <p class="text-2xl font-bold mr-2">By: </p>
+                <% var possible = ["Title", "Text", "Author", "Creation"] %>
+                <% for (var i = 0; i < possible.length; i++) { %>
+                    <a href="/search/?sort=<%= possible[i] %>&searchQuery=<%= searchQuery %>&loggedIn=<%= loggedIn %>" class="h-min inline-block px-3 <%= sort == possible[i] ? 'bg-green-200' : '' %> py-2 text-sm leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
+                        <%= possible[i] %>
+                    </a>
+                <% } %>
+            </div>
+        </div>
+        <div class="col-start-2 col-span-10 relative mt-10">
+                <div class="hidden" id="questions">
+                    <% if(searchFeed.length != 0) { %>
+                        <% searchFeed.forEach((data) => { %> 
+                            <div class="flex-col mx-auto">
+                            <div onclick="location.href = '/question/<%=data.question_id%>'" class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                                <div class="px-4 py-4 ">
+                                <div class="font-bold text-lg mb-2"><%= data.title %> </div>
+                                </div>
+                                <div class="pl-3 pr-6 pt-4 pb-2 ">
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.upvotes - data.downvotes %> pts.</span>
+                                </div>
+                            </div>
+                            </div>
+                        <% }) %>
+                    <% } %> 
+                    <% if(searchFeed.length <= 0) { %>
+                        <div class="flex-col">
+                            <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
+                                You Have No Questions Right Now
+                                <br>...
+                            </div>
+                        </div>
+                    <% } %> 
+                </div>
+            <div class="flex-col pb-8" id="searchFeed">
+
+            </div>
+        </div>
+    </div>
+    <script>
+            let chunkSize
+            let standard = 6
+            
+            let children = document.getElementById("questions").innerHTML
+            document.getElementById("searchFeed").innerHTML = children
+            let questionFeed = document.getElementById("searchFeed").children
+            chunkSize = standard
+            let index = questionFeed.length - 1
+            while(questionFeed.length > chunkSize) {
+                questionFeed.item(index).remove()
+                index--
+            }
+             
+            if(!document.getElementById("noQuestions")) {
+                implementLoader(questionFeed.length, document.getElementById("questions").children.length)
+            }
+            function loadMoreQuestions() {
+                let children = document.getElementById("questions").innerHTML
+                document.getElementById("searchFeed").innerHTML = children
+                let questionFeed = document.getElementById("searchFeed").children
+                chunkSize += standard
+                let index = questionFeed.length - 1
+                while(questionFeed.length > chunkSize) {
+                    questionFeed.item(index).remove()
+                    index--
+                }
+                implementLoader(questionFeed.length, document.getElementById("questions").children.length)
+            }
+            function loadLessQuestions() {
+                if((chunkSize - standard) > 0) {
+                    let children = document.getElementById("questions").innerHTML
+                    document.getElementById("searchFeed").innerHTML = children
+                    let questionFeed = document.getElementById("searchFeed").children
+                    chunkSize -= standard
+                    let index = questionFeed.length - 1
+                    while(questionFeed.length > chunkSize) {
+                        questionFeed.item(index).remove()
+                        index--
+                    }
+                    implementLoader(questionFeed.length, document.getElementById("questions").children.length)
+                } else {
+                    return
+                }
+            }
+            
+            function implementLoader(qLength, cLength) {
+                console.log(qLength + " " + cLength)
+                let emptyElem = ``
+                if(qLength < cLength) {
+                    let loader = `
+                            <div class="flex mt-4">
+                                <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                      <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreQuestions()">
+                                          Load More
+                                      </button>
+                                </span>
+                                <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
+                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
+                                        Load Less
+                                    </button>
+                                </span>
+                            </div>`
+                        document.getElementById("searchFeed").insertAdjacentHTML("beforeend", loader)
+                        return
+                    } else {
+                        let loader = `
+                                    <div class="flex mt-4">
+                                        <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
+                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
+                                                Load Less
+                                            </button>
+                                        </span>
+                                    </div>`
+                        document.getElementById("searchFeed").insertAdjacentHTML("beforeend", loader)
+                        return
+                    }
+            }
+
+
+        </script>
+</body>
+</html>
