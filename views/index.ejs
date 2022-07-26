@@ -12,9 +12,11 @@
 <body>  
    <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
    <div class="px-9 py-3">
-   <% var possible = ["recent", "best", "interesting", "hottest"] %>
+   <% var possible = ["Recent", "Best", "Interesting", "Hottest"] %>
+   <!-- <p class="px-3">Sort Order: </p> -->
    <% for (var i = 0; i < possible.length; i++) { %>
-     <a href="/?sort=<%= possible[i] %>" class="inline-block px-3 <%= sort == possible[i] ? 'bg-green-200' : '' %> py-2 text-sm leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
+    
+     <a href="/?sort=<%= possible[i] %>" class="inline-block px-3 <%= sort.toLowerCase() == possible[i].toLowerCase() ? 'bg-green-200' : '' %> py-2 text-lg leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
        <%= possible[i] %>
      </a>
     <% } %>

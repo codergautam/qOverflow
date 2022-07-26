@@ -180,12 +180,13 @@ list-style-position: inside;
          
                  
                
-
+                    <% if(loggedIn) { %>
                       <div class="flex flex-col justify-center items-center w-[50%]">
 
                         <textarea maxlength="150" rows="2" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500" id="commentText" type="text" placeholder="Comment"></textarea>
-                        <button class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded" id="postComment">Post comment</button>
+                        <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded" id="postComment">Post comment</button>
                       </div>
+                      <% } %>
                  
                   
                 </div>
@@ -205,6 +206,7 @@ list-style-position: inside;
             </div>
           </div>
           <!-- create answer -->
+          <% if(loggedIn) { %>
           <div class="flex items-center justify-center flex-col px-[30px]" id="createDiv" style="display: none;">
             <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
               <div class="px-4 py-4 ">
@@ -235,6 +237,7 @@ list-style-position: inside;
                   </button>
               </div>
             </div>
+            <% } %>
       </div>
   <!-- </div> -->
   <!-- create answer form-->
@@ -365,7 +368,7 @@ list-style-position: inside;
 async function appendAnswer(answer) {
   var id = answer.answer_id;
   var answerComments = answer.comments;
-
+  var loggedIn = <% if(loggedIn) { %>true<% } else { %>false<% } %>;
   var t= `<div class="max-w-5xl mx-auto px-9 py-[12px] rounded overflow-hidden shadow-lg">
             <div class="flex flex-row">
               <div class="flex content-center flex-col w-1/12">
@@ -399,15 +402,16 @@ async function appendAnswer(answer) {
                       post comment
                     -->
          
-                 
+              
                
-
-                      <div class="flex flex-col justify-center items-center w-[50%]">
+${ loggedIn ? `
+                      <div class="flex flex-col justify-center items-center w-[50%]  ">
 
                         <textarea maxlength="150" rows="2" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500" id="commentText${id}" type="text" placeholder="Comment"></textarea>
-                        <button class="bg-green-500 hover:bg-green-700 text-white py-2 px-4 rounded" id="postComment${id}">Post comment</button>
+                        <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded" id="postComment${id}">Post comment</button>
                       </div>
-                 
+                      ` : ""}
+                      
                   
                 </div>
           </div>
@@ -617,6 +621,7 @@ hideThisCommentList();
   }
   }
 
+  <% if(loggedIn) { %>
   document.getElementById("postComment"+answer.answer_id).onclick = () => {
     var comment = document.getElementById("commentText"+answer.answer_id).value;
 
@@ -660,6 +665,8 @@ hideThisCommentList();
     }
   }
 
+  <% } %>
+
 
 };
   fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
@@ -677,12 +684,15 @@ hideThisCommentList();
       }
       console.log("alreadyAnswered", alreadyAnswered);
       if(!alreadyAnswered) {
+        <% if(loggedIn) { %>
         document.getElementById("createDiv").style.display = "block";
+        <% } %>
       }
       
     }
   })
 
+  <% if(loggedIn) { %>
   document.getElementById("answerText").addEventListener("keyup", () => {
     document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value);
 
@@ -717,13 +727,17 @@ hideThisCommentList();
       }
     }).then(response => response.json()).then((j) => {
       if(j.success) {
+        <% if(loggedIn) { %>
+
         document.getElementById("answerText").value = "";
         document.getElementById("previewText").innerHTML = "";
         document.getElementById("createDiv").style.display = "none";
+        <% } %>
         appendAnswer(j.answer);
       }
     });
   });
+  <% } %>
 
    var appendComment =async  (comment, where="") => {
     document.getElementById("commentsList"+where).insertAdjacentHTML('beforeend',"</br>")
@@ -964,6 +978,7 @@ var remainingComments = [];
     }
   });
 
+  <% if(loggedIn) { %>
   document.getElementById("postComment").addEventListener("click", () => {
     document.getElementById("postComment").disabled = true;
     fetch('/addCommentQuestion', {
@@ -993,6 +1008,7 @@ var remainingComments = [];
       document.getElementById("postComment").disabled = false;
     });
   });
+  <% } %>
 
 
 
