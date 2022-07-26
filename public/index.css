@@ -2642,6 +2642,12 @@ video {
   width: 16rem;
 }
 
+.w-fit {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .w-1\/2 {
   width: 50%;
 }
@@ -2664,12 +2670,6 @@ video {
 
 .w-\[50\%\] {
   width: 50%;
-}
-
-.w-fit {
-  width: -webkit-fit-content;
-  width: -moz-fit-content;
-  width: fit-content;
 }
 
 .w-2\/3 {

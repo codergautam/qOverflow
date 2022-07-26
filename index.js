@@ -145,10 +145,17 @@ app.get('/search', async (req, res) => {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
-      searchFeed: questions
+      searchFeed: questions,
+      user: req.session.user
     })
   } else {
-    res.redirect('/')
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: [],
+      user: req.session.user
+    })
   }
 })
 
@@ -239,10 +246,17 @@ app.post('/search', async (req, res) => {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
-      searchFeed: questions
+      searchFeed: questions,
+      user: req.session.user
     })
   } else {
-    res.redirect('/')
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: [],
+      user: req.session.user
+    })
   }
 })
 
