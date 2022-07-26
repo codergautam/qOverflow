@@ -162,7 +162,7 @@ app.get('/search', async (req, res) => {
 app.get('/userMail/:mail_id', async (req, res) => {
   let username = req.session.user.username
   let mailId = req.params.mail_id
-  let data = await api.sendRequest('/mail/' + username, 'GET')
+  let data = await api.getUserMail(username)
   let messages = data.messages
   let correctMsg
   messages.forEach((data) => {
@@ -343,9 +343,7 @@ app.post('/password', (req, res) => {
 
 app.post('/emailChange', async (req, res) => {
   const { username, newEmail } = req.body
-  let data = await api.sendRequest("/users/" + username, "PATCH", {
-    email: newEmail
-  }).then((data) => {
+  let data = await api.changeEmailOf(username).then((data) => {
     if(data.success) {
       return data
     }
@@ -375,7 +373,7 @@ app.post('/questions',  async (req, res) => {
         return data
       }
     })
-    let pointsData = await modifyPoints(15, username).then((data) => {
+    let pointsData = await modifyPoints(username, 15).then((data) => {
       if(data.success) {
         return data
       }
@@ -398,10 +396,7 @@ app.post('/questions',  async (req, res) => {
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
   const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
-  let data = await api.sendRequest("/users/" + username, "PATCH", {
-    key: keyString,
-    salt: saltString
-  }).then((data) => {
+  let data = await api.changePasswordOf(username, keyString, saltString).then((data) => {
     if(data.success) {
       console.log("Password Changed!")
       return data
@@ -412,7 +407,7 @@ app.post('/passwordChange', async (req, res) => {
 })
 app.post('/deleteAccount', async (req, res) => {
   const { username } = req.body
-  let data = await api.sendRequest("/users/" + username, 'DELETE').then((data) => {
+  let data = await api.deleteUser(username).then((data) => {
     if(data.success) {
       return data
     } else {
@@ -488,7 +483,7 @@ app.get('/mail', async (req, res) => {
     user.nextLevel = user.level + 1
     user.nextLevelPoints = levelMinimums[user.nextLevel - 1]
     console.log("Username: " + username)
-    let mailData = await api.sendRequest('/mail/' + username, 'GET')
+    let mailData = await api.getUserMail(username)
     mailData.messages.forEach((message) => {
       message.timeElapsed = msToTime(Date.now() - message.createdAt)
     })
@@ -532,12 +527,7 @@ app.post("/messages", async (req, res) => {
   username = (username) ? username : req.session.user.username
   console.log(`Reciever: ${receiver}, Sender: ${username}`)
   console.log(username)
-  let data = await api.sendRequest("/mail", 'POST', {
-    sender: username,
-    receiver: receiver,
-    subject: subject,
-    text: text
-  })
+  let data = await api.sendMessage(username, receiver, subject, text)
   console.log(data)
   console.log(data.success)
   if(data.success) {
@@ -1006,12 +996,8 @@ io.on('connection', (socket) => {
 
 server.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
-modifyPoints = async (amount, username) => {
-  let operation = (Math.sign(amount) > 0) ? "increment" : "decrement"
-  return await api.sendRequest("/users/" + username + "/points", "PATCH", {
-    operation: operation,
-    amount: amount
-  })
+modifyPoints = async (username, amount) => {
+  return await api.modifyPoints(username, amount)
 }
 
 replaceCharacters = (str) => {

@@ -137,7 +137,43 @@ class Api {
     return await this.sendRequest('/questions/search?'+urlEncodedParams, 'GET');
   }
    
+  async getUserMail(username) {
+    return await this.sendRequest('/mail/' + username, 'GET')
+  }
+
+  async modifyPoints(username, amount) {
+    let operation = (Math.sign(amount) > 0) ? "increment" : "decrement"
+    return await this.sendRequest("/users/" + username + "/points", "PATCH", {
+      operation: operation,
+      amount: amount
+    })
+  }
+
+  async deleteUser(username) {
+    return await this.sendRequest("/users/" + username, 'DELETE')
+  }
+
+  async changePasswordOf(username, keyString, saltString) {
+    return await this.sendRequest("/users/" + username, "PATCH", {
+      key: keyString,
+      salt: saltString
+    })
+  }
+
+  async changeEmailOf(username) {
+    return await this.sendRequest("/users/" + username, "PATCH", {
+      email: newEmail
+    })
+  }
   
+  async sendMessage(sender, receiver, subject, text) {
+    return await this.sendRequest("/mail", 'POST', {
+      sender: sender,
+      receiver: receiver,
+      subject: subject,
+      text: text
+    })
+  }
   async getUserQuestions(username) {
     let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
     return userQuestions
