@@ -374,6 +374,7 @@ app.post('/api/answer', (req, res) => {
     console.log(data)
     if(data.success) {
       res.send({success: true, answer: data.answer})
+      io.emit('newAnswer', question);
     } else {
       res.send({success: false})
     }
@@ -454,7 +455,7 @@ app.get("/question/:id", (req, res) => {
     }
 
 
-      console.time("increaseViews")
+  
 
     api.increaseViews(id).then(data4 => {
       console.timeEnd("increaseViews")
@@ -463,7 +464,7 @@ app.get("/question/:id", (req, res) => {
       console.log(data4)
       data.question.views ++;
     api.hasUserVoted(id, req.session.user?.username).then(data3 => {
-      console.timeEnd("checkVote")
+      io.emit("increaseView", id)
       // console.timeEnd("getQuestion")
     res.render('question', {
       question: data.question,

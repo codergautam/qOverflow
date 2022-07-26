@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/index.css">
 </head>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="/socket.io/socket.io.js"></script>
 
 <body>  
    <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
@@ -142,10 +143,10 @@
      <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${data.creator}</p> <img src='' style="opacity:0%" width="50" height="50" id="${data.question_id+"pfp"}" class="max-w-full h-auto rounded-full"><p id="${data.question_id+"levelText"}"></p></center></span>
       <br>
       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.upvotes - data.downvotes} points</span>
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.views} views</span>
+      <span id="points${data.question_id}" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.upvotes - data.downvotes} points</span>
+      <span id="views${data.question_id}" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.views} views</span>
 
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.answers} answers</span>
+      <span  id="answers${data.question_id}" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.answers} answers</span>
     </div>
   </div>
 </div> 
@@ -182,6 +183,46 @@ window.onscroll = function(ev) {
     }
 };
 yo();
+
+
+const socket = io();
+
+function domIdExists(id) {
+  return document.getElementById(id) != null;
+}
+
+socket.on("voteQ", ([id, dir]) => {
+    if(domIdExists("points"+id)) {
+      console.log("increase view");
+
+      var points = document.getElementById("points"+id);
+      var pointsVal = parseInt(points.innerHTML);
+      pointsVal += dir;
+      points.innerHTML = pointsVal+" points";
+      
+    }
+  })
+
+  socket.on("newAnswer", (q) => {
+    if(domIdExists("answers"+q)) {
+      console.log("increase view");
+
+      var answers = document.getElementById("answers"+q);
+      var answersVal = parseInt(answers.innerHTML);
+      answersVal++;
+      answers.innerHTML = answersVal+" answers";
+    }
+  })
+  socket.on("increaseView", (q) => {
+    if(domIdExists("views"+q)) {
+      console.log("increase view");
+      var views = document.getElementById("views"+q);
+      var viewsVal = parseInt(views.innerHTML);
+      viewsVal++;
+      views.innerHTML = viewsVal+" views";
+    }
+  })
+
 </script>
 </body>
 </html>

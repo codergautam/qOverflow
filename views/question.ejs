@@ -159,9 +159,9 @@ list-style-position: inside;
                     <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: <%= question.creator%> </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp" class="max-w-full h-auto rounded-full"><p id="levelText"></p></center></span>
                      <br>
                      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= msToTime(Date.now() - question.createdAt) ?? "just now" %> ago</span>
-                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= question.views %> views</span>
+                     <span id="viewCount" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= question.views %> views</span>
                
-                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}"><%= question.answers %> answers</span>
+                     <span id="answerCount" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}"><%= question.answers %> answers</span>
                    </div>
                    <!-- show comments btn -->
                 
@@ -352,6 +352,23 @@ list-style-position: inside;
       var curNum = Number(document.getElementById("voteC"+id).innerHTML)
       curNum += dir;
       document.getElementById("voteC"+id).innerHTML = curNum;
+    }
+  })
+
+  socket.on("newAnswer", (q) => {
+    if(q == "<%= question.question_id %>") {
+      //update answer count
+      var curNum = parseInt(document.getElementById("answerCount").innerHTML)
+      curNum += 1;
+      document.getElementById("answerCount").innerHTML = curNum + " answers";
+    }
+  })
+  socket.on("increaseView", (q) => {
+    if(q == "<%= question.question_id %>") {
+      //update answer count
+      var curNum = parseInt(document.getElementById("viewCount").innerHTML)
+      curNum += 1;
+      document.getElementById("viewCount").innerHTML = curNum + " views";
     }
   })
 
