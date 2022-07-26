@@ -83,28 +83,54 @@ app.get('/search', async (req, res) => {
   loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
   console.log(searchQuery)
   let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  let regexQuery = ((sort == "Title") || (sort == "Text") || (sort == "Author")) ? {} : null
   if(sort == "Creation") {
-    // matchQuery = {
-    //   "createdAt": //Some functino taht returns epoch time based on data
-    // }
+    console.log(searchQuery)
+    let day = 1000 * 60 * 60 * 24
+    matchQuery = {
+      "createdAt": {
+        "$gte":(new Date(searchQuery + " 00:00:00")).getTime() - day/2,
+        "$lte": (new Date(searchQuery + " 24:00:00")).getTime() + day/2
+      }
+    }
   } else if(sort == "Author") {
     matchQuery = {
       "creator": searchQuery
     }
-  }
-  let regexQuery = ((sort == "Title") || (sort == "Text")) ? {} : null
-  if(sort == "Title") {
-    newQ = replaceCharacters(searchQuery)
     regexQuery = {
-      "title": ` ${newQ} `
+      "creator": `(${searchQuery})`
+    }
+  }
+  if(sort == "Title") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "title": `(${q.join(")|(")})`
     }
     console.log(regexQuery.title)
   } else if(sort == "Text") {
-    newQ = replaceCharacters(searchQuery)
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
     regexQuery = {
-      "text": ` ${newQ} `
+      "text": `(${q.join(")|(")})`
     }
-    console.log(regexQuery.text)
+    console.log(regexQuery.title)
   }
   console.log(matchQuery)
   let data = await api.getQuestions(null, regexQuery, matchQuery, null)
@@ -121,9 +147,7 @@ app.get('/search', async (req, res) => {
       searchFeed: questions
     })
   } else {
-    res.render('/', {
-      loggedIn: req.session.loggedIn
-    })
+    res.redirect('/')
   }
 })
 
@@ -133,28 +157,54 @@ app.post('/search', async (req, res) => {
   loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
   console.log(searchQuery)
   let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  let regexQuery = ((sort == "Title") || (sort == "Text") || (sort == "Author")) ? {} : null
   if(sort == "Creation") {
-    // matchQuery = {
-    //   "createdAt": //Some functino taht returns epoch time based on data
-    // }
+    console.log(searchQuery)
+    let day = 1000 * 60 * 60 * 24
+    matchQuery = {
+      "createdAt": {
+        "$gte":(new Date(searchQuery + " 00:00:00")).getTime() - day/2,
+        "$lte": (new Date(searchQuery + " 24:00:00")).getTime() + day/2
+      }
+    }
   } else if(sort == "Author") {
     matchQuery = {
       "creator": searchQuery
     }
-  }
-  let regexQuery = ((sort == "Title") || (sort == "Text")) ? {} : null
-  if(sort == "Title") {
-    newQ = replaceCharacters(searchQuery)
     regexQuery = {
-      "title": `${newQ} `
+      "creator": `(${searchQuery})`
+    }
+  }
+  if(sort == "Title") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "title": `(${q.join(")|(")})`
     }
     console.log(regexQuery.title)
   } else if(sort == "Text") {
-    newQ = replaceCharacters(searchQuery)
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
     regexQuery = {
-      "text": `${newQ} `
+      "text": `(${q.join(")|(")})`
     }
-    console.log(regexQuery.text)
+    console.log(regexQuery.title)
   }
   console.log(matchQuery)
   let data = await api.getQuestions(null, regexQuery, matchQuery, null)
@@ -171,9 +221,7 @@ app.post('/search', async (req, res) => {
       searchFeed: questions
     })
   } else {
-    res.render('/', {
-      loggedIn: req.session.loggedIn
-    })
+    res.redirect('/')
   }
 })
 
@@ -806,9 +854,9 @@ modifyPoints = async (amount, username) => {
 replaceCharacters = (str) => {
   let newQ = str
   // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
-  newQ = newQ.replace(/why/gmi, " ").replace(/where/gmi, " ").replace(/how/gmi, " ").replace(/what/gmi, " ").replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ")
+  newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
   // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
-  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, "").replace(/\s/gmi, '')
+  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
   return newQ
 }
 
