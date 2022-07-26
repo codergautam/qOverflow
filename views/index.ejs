@@ -17,7 +17,7 @@
    <!-- <p class="px-3">Sort Order: </p> -->
    <% for (var i = 0; i < possible.length; i++) { %>
     
-     <a href="/?sort=<%= possible[i] %>" class="inline-block px-3 <%= sort.toLowerCase() == possible[i].toLowerCase() ? 'bg-green-200' : '' %> py-2 text-lg leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
+     <a href="/?sort=<%= possible[i].toLowerCase() %>" class="inline-block px-3 <%= sort.toLowerCase() == possible[i].toLowerCase() ? 'bg-green-200' : '' %> py-2 text-lg leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
        <%= possible[i] %>
      </a>
     <% } %>
@@ -76,7 +76,8 @@
     
     document.getElementById("questions").insertAdjacentHTML('beforeend', loader);
 
-    var data = await fetch('/buffet?sort=<%= sort %>'+((!isUndefined(lastQuestionId))?`&after=${lastQuestionId}`:"")).then(res => res.json());
+    var data = await fetch('/buffet?sort=<%= sort %>'+((!isUndefined(lastQuestionId))?`&after=${lastQuestionId}`:""));
+    data = await data.json();
     clearLastQuestion();
    if(data.questions.length > 0) send = true;
     
@@ -134,7 +135,7 @@
     // console.log(data.id)
 
    
-    var question = `<div class="flex items-center justify-center flex-col  px-[30px]" >
+    var question = `<div class="flex items-center justify-center flex-col px-[30px]" id="${data.question_id}" >
    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full cursor-pointer"  onclick="location.href = '/question/${data.question_id}'">
     <div class="px-4 ">
       <div class="font-bold text-xl mb-2 ">${data.title}</div>
@@ -191,38 +192,88 @@ function domIdExists(id) {
   return document.getElementById(id) != null;
 }
 
-socket.on("voteQ", ([id, dir]) => {
-    if(domIdExists("points"+id)) {
-      console.log("increase view");
+function isElementInViewport (el) {
 
-      var points = document.getElementById("points"+id);
-      var pointsVal = parseInt(points.innerHTML);
-      pointsVal += dir;
-      points.innerHTML = pointsVal+" points";
-      
-    }
-  })
+// Special bonus for those using jQuery
+if (typeof jQuery === "function" && el instanceof jQuery) {
+    el = el[0];
+}
 
-  socket.on("newAnswer", (q) => {
-    if(domIdExists("answers"+q)) {
-      console.log("increase view");
+var rect = el.getBoundingClientRect();
 
-      var answers = document.getElementById("answers"+q);
-      var answersVal = parseInt(answers.innerHTML);
-      answersVal++;
-      answers.innerHTML = answersVal+" answers";
+return (
+    rect.top >= -130 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight * 1.3 || document.documentElement.clientHeight * 1.3) && /* or $(window).height() */
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
+);
+}
+
+function getQuestionsOnScreen() {
+  // find questions shown on screen
+  var questionsElem = document.getElementById('questions');
+  var questions = questionsElem.getElementsByClassName('flex');
+  var questionsOnScreen = [];
+  for(var i = 0; i < questions.length; i++) {
+    if(isElementInViewport(questions[i]) && questions[i].getAttribute('id')) {
+      questionsOnScreen.push(questions[i].getAttribute('id'));
     }
-  })
-  socket.on("increaseView", (q) => {
-    if(domIdExists("views"+q)) {
-      console.log("increase view");
-      var views = document.getElementById("views"+q);
-      var viewsVal = parseInt(views.innerHTML);
-      viewsVal++;
-      views.innerHTML = viewsVal+" views";
-    }
-  })
+  }
+  return questionsOnScreen;
+}
+
+setInterval(() => {
+
+  getQuestionsOnScreen().forEach((e) => {
+    socket.emit("getVotes", e);
+  });
+}, 5000);
+
+setInterval(() => {
+
+getQuestionsOnScreen().forEach((e) => {
+  socket.emit("getAnswerCount", e);
+});
+}, 4500);
+
+setInterval(() => {
+
+getQuestionsOnScreen().forEach((e) => {
+  socket.emit("getViews", e);
+});
+}, 5500);
+
+
+
+
+socket.on("questionViews", (cnt, id) => {
+
+  if(domIdExists(id)) {
+    console.log(id);
+    document.getElementById("views"+id).innerHTML = cnt + " views";
+  }
+})
+
+socket.on("questionAnswerCount", (cnt, id) => {
+
+  if(domIdExists(id)) {
+    document.getElementById("answers"+id).innerHTML = cnt + " answers";
+  }
+})
+
+socket.on("questionVotes", (cnt, id) => {
+
+  if(domIdExists(id)) {
+    document.getElementById("points"+id).innerHTML = (cnt.upvotes - cnt.downvotes) + " points";
+  }
+})
+
 
 </script>
+<% if(loggedIn) { %>
+  <script>
+  localStorage.setItem("attemptsLeft",3)
+</script>
+  <% } %>
 </body>
 </html>

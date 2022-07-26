@@ -276,7 +276,10 @@ list-style-position: inside;
     document.getElementById('questionText').innerHTML =
       marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
 
+      var actiongoing = false;
     async function questionUp() {
+      try {
+       actiongoing = true;
       var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
        var f = await fetch('/api/question/<%= question.question_id %>/upvote', {
           method: 'POST',
@@ -288,14 +291,32 @@ list-style-position: inside;
           }
         })
         var j = await f.json();
-     
+        setTimeout(() => {
+            actiongoing = false;
+          }, 3000);
           if(j.success) {
             document.getElementById("questionUp").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
             // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+            var curVotes = document.getElementById("voteQ").innerHTML;
+            if(action === "increment") {
+              document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
+            } else {
+              document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
+            }
           }
+        } catch(e) {
+          console.log(e);
+          setTimeout(() => {
+            actiongoing = false;
+          }, 3000);
+        }
+
     }
 
     async function questionDown() {
+      
+      actiongoing = true;
+      try {
       var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
       var f = await  fetch('/api/question/<%= question.question_id %>/downvote', {
           method: 'POST',
@@ -307,11 +328,26 @@ list-style-position: inside;
           }
         })
         var j = await f.json();
-
+        setTimeout(() => {
+            actiongoing = false;
+          }, 3000);
           if(j.success) {
             document.getElementById("questionDown").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
             // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+            var curVotes = document.getElementById("voteQ").innerHTML;
+            if(action === "increment") {
+              document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
+            } else {
+              document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
+            }
           }
+        } catch(e) {
+          console.log(e);
+        
+          setTimeout(() => {
+            actiongoing = false;
+          }, 3000);
+        }
       
     }
    
@@ -332,43 +368,74 @@ list-style-position: inside;
 
       var curVotes = <%= question.upvotes - question.downvotes %>;
   const socket = io();
-  socket.on("voteQ", ([id, dir]) => {
-    if(id == "<%= question.question_id %>") {
-      curVotes += dir;
-      console.log(curVotes);
-      document.getElementById("voteQ").innerHTML = curVotes;
+  // socket.on("voteQ", ([id, dir]) => {
+  //   if(id == "<%= question.question_id %>") {
+  //     curVotes += dir;
+  //     console.log(curVotes);
+  //     document.getElementById("voteQ").innerHTML = curVotes;
+  //   }
+  // })
+  // socket.on("voteA", ([q, id, dir]) => {
+  //   if(q == "<%= question.question_id %>") {
+  //     var curNum = Number(document.getElementById("voteA"+id).innerHTML)
+  //     curNum += dir;
+  //     document.getElementById("voteA"+id).innerHTML = curNum;
+  //   }
+  // })
+  // socket.on("voteC", ([q, id, dir]) => {
+  //   console.log(q, id, dir, document.getElementById("voteC"+id) != null);
+  //   if(q == "<%= question.question_id %>" && document.getElementById("voteC"+id) != null) {
+  //     var curNum = Number(document.getElementById("voteC"+id).innerHTML)
+  //     curNum += dir;
+  //     document.getElementById("voteC"+id).innerHTML = curNum;
+  //   }
+  // })
+
+  // socket.on("newAnswer", (q) => {
+  //   if(q == "<%= question.question_id %>") {
+  //     //update answer count
+  //     var curNum = parseInt(document.getElementById("answerCount").innerHTML)
+  //     curNum += 1;
+  //     document.getElementById("answerCount").innerHTML = curNum + " answers";
+  //   }
+  // })
+  // socket.on("increaseView", (q) => {
+  //   if(q == "<%= question.question_id %>") {
+  //     //update answer count
+  //     var curNum = parseInt(document.getElementById("viewCount").innerHTML)
+  //     curNum += 1;
+  //     document.getElementById("viewCount").innerHTML = curNum + " views";
+  //   }
+  // })
+
+  setInterval(() => {
+
+    socket.emit("getViews", "<%= question.question_id %>");
+    socket.emit("getAnswerCount", "<%= question.question_id %>");
+   
+
+  }, 5000);
+  setInterval(() => {
+    socket.emit("getVotes", "<%= question.question_id %>");
+  }, 1000);
+
+  socket.on("questionViews", (cnt, id) => {
+    if(!(id == "<%= question.question_id %>")) {
+      return;
     }
-  })
-  socket.on("voteA", ([q, id, dir]) => {
-    if(q == "<%= question.question_id %>") {
-      var curNum = Number(document.getElementById("voteA"+id).innerHTML)
-      curNum += dir;
-      document.getElementById("voteA"+id).innerHTML = curNum;
-    }
-  })
-  socket.on("voteC", ([q, id, dir]) => {
-    console.log(q, id, dir, document.getElementById("voteC"+id) != null);
-    if(q == "<%= question.question_id %>" && document.getElementById("voteC"+id) != null) {
-      var curNum = Number(document.getElementById("voteC"+id).innerHTML)
-      curNum += dir;
-      document.getElementById("voteC"+id).innerHTML = curNum;
-    }
+    document.getElementById("viewCount").innerHTML = cnt + " views";
   })
 
-  socket.on("newAnswer", (q) => {
-    if(q == "<%= question.question_id %>") {
-      //update answer count
-      var curNum = parseInt(document.getElementById("answerCount").innerHTML)
-      curNum += 1;
-      document.getElementById("answerCount").innerHTML = curNum + " answers";
+  socket.on("questionVotes", (data, id) => {
+    if(!(id == "<%= question.question_id %>")) {
+      return;
     }
+    if(!actiongoing) document.getElementById("voteQ").innerHTML = data.upvotes - data.downvotes;
   })
-  socket.on("increaseView", (q) => {
-    if(q == "<%= question.question_id %>") {
-      //update answer count
-      var curNum = parseInt(document.getElementById("viewCount").innerHTML)
-      curNum += 1;
-      document.getElementById("viewCount").innerHTML = curNum + " views";
+
+  socket.on("answerCount", (cnt, id) => {
+    if(id == "<%= question.question_id %>") {
+      document.getElementById("answerCount").innerHTML = cnt + " answers";
     }
   })
 
@@ -385,6 +452,9 @@ list-style-position: inside;
 async function appendAnswer(answer) {
   var id = answer.answer_id;
   var answerComments = answer.comments;
+  var hasAcceptedAnswer = <%= question.hasAcceptedAnswer %>
+  var owner = <%= loggedIn && question.creator == user.username ? "true" : "false" %>;
+  
   var loggedIn = <% if(loggedIn) { %>true<% } else { %>false<% } %>;
   var t= `<div class="max-w-5xl mx-auto px-9 py-[12px] rounded overflow-hidden shadow-lg">
             <div class="flex flex-row">
@@ -392,7 +462,10 @@ async function appendAnswer(answer) {
                 <img class="rounded-lg cursor-pointer min-w-[30px]" id="answerUp${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                 <p class="text-center odometer" id="voteA${ answer.answer_id }">${ answer.upvotes - answer.downvotes }</p>
                 <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px]" id="answerDown${ answer.answer_id }" style="width: 50%; margin-left: auto; margin-right: auto;"  src="/vote.png" alt="">
-              </div>
+              <hr/>
+              ${answer.accepted?"<p class='text-sky-800'>Accepted Answer</p>":`<p class='text-sky-800 opacity-0' id='hiddenAccept${answer.answer_id}'>Accepted Answer</p>`}
+              ${!hasAcceptedAnswer && owner ? `                        <button class='bg-sky-600 hover:bg-sky-800 text-white py-2 min-w-[60px] rounded' id='acceptAnswer${answer.answer_id}'>Accept Answer</button>` : ""}
+                </div>
 
               <div class="flex-grow">
             <div class=" py-[12px] sm:px-[46px] lg:px-[46px] ">
@@ -440,6 +513,32 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
 
         document.getElementById("answers").appendChild(doc.body.firstChild);
   document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(decodeURIComponent(answer.text));
+
+if( document.getElementById("acceptAnswer"+answer.answer_id)) {
+  document.getElementById("acceptAnswer"+answer.answer_id).onclick = () => {
+  fetch("/acceptAnswer", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      answerId: answer.answer_id,
+      questionId: "<%= question.question_id %>"
+    })
+  }).then(response => response.json()).then((j) => {
+      if(j.success) {
+        const elements1 = document.querySelectorAll(`[id^="acceptAnswer"]`);
+        [...elements1].forEach(element => {
+          element.remove();
+        });
+        document.getElementById("hiddenAccept"+answer.answer_id).classList.remove("opacity-0");
+
+      }
+  })
+}
+}
+
+
   var userData = await fetch("/getBasicData?user="+answer.creator)
     userData = await userData.json();
     if(userData.success) {
@@ -461,9 +560,12 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
         if(j.vote == "upvoted") {
           document.getElementById("answerUp"+answer.answer_id).src = "/voteSelected.png";
           console.log("upvoted", answer.answer_id);
+   
+
         } else {
           document.getElementById("answerDown"+answer.answer_id).src = "/voteSelected.png";
           console.log("upvoted", answer.answer_id);
+
 
         }
       }
@@ -491,6 +593,16 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
 
       if(j.success) {
         document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+
+                  // set vote count
+                  var curVoteCount = Number(document.getElementById("voteA"+answer.answer_id).innerHTML);
+          console.log("upvoted", curVoteCount);
+          if(action === "increment") {
+            document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount + 1;
+          } else {
+            document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount - 1;
+          }
+
         // document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
       }
   }
@@ -514,6 +626,14 @@ j =await j.json();
   if(j.success) {
     document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/voteSelected.png" : "/vote.png";
     // document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
+
+    var curVoteCount = Number(document.getElementById("voteA"+answer.answer_id).innerHTML);
+          console.log("downvotedvoted", curVoteCount);
+          if(action === "increment") {
+            document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount - 1;
+          } else {
+            document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount + 1;
+          }
   }
 
 return;
@@ -536,10 +656,12 @@ return;
   var remainingComments = [];
 
   function recursiveShowMoreComments() {
+    // ANSWER COMMENTS
+    var lastAppended = undefined;
     console.log("remainingComments", remainingComments);
-    document.getElementById("showMore"+id).remove();
+    document.getElementById("showMore"+id)?.remove();
     for(var i = 0; i < remainingComments.length; i++) {
-      if(i >= 5) {
+      if(i >= 3) {
    
         break;
       } else {
@@ -547,6 +669,7 @@ return;
      // get comment and remove it from array
      var comment = remainingComments.shift();
      appendComment(comment, id);
+     lastAppended = comment.comment_id;
      console.log(remainingComments.length);
 
       
@@ -567,6 +690,17 @@ return;
 
             document.getElementById("showMore"+id).onclick = recursiveShowMoreComments;
             console.log("remaining", remainingComments);
+    } else {
+      if(lastAppended) {
+         fetch('/answerComments', {method: 'POST', body: JSON.stringify({answer: id, question: "<%= question.question_id %>", after: lastAppended}),         headers: {
+          'Content-Type': 'application/json'
+        }}).then((s) => s.json()).then((j) => {
+          if(j.comments.length > 0) {
+            remainingComments = j.comments;
+            recursiveShowMoreComments();
+          }
+        })
+      }
     }
   } 
 
@@ -622,6 +756,7 @@ try {
   }
 
   function hideThisCommentList() {
+    remainingComments = [];
     document.getElementById("commentsList"+id).innerHTML = "";
     document.getElementById("showComments"+id).innerHTML = "Show comments ("+answerComments+")";
   }
@@ -641,7 +776,7 @@ hideThisCommentList();
   <% if(loggedIn) { %>
   document.getElementById("postComment"+answer.answer_id).onclick = () => {
     var comment = document.getElementById("commentText"+answer.answer_id).value;
-
+    if(comment.trim().length == 0) return;
     //disable button
     document.getElementById("postComment"+answer.answer_id).disabled = true;
     if(comment.length > 0) {
@@ -843,11 +978,16 @@ var commenty = htmlDoc.body.firstChild;
       j = await j.json()
    
         if(j.success) {
+          var curVoteCount = Number(document.getElementById("voteC"+comment.comment_id).innerHTML);
+          console.log("upvoted", curVoteCount);
+         
           if(action == "increment") {
             document.getElementById("commentUp"+comment.comment_id).src = "/voteSelected.png";
         
+            document.getElementById("voteC"+comment.comment_id).innerHTML = curVoteCount + 1;
           } else {
             document.getElementById("commentUp"+comment.comment_id).src = "/vote.png";
+            document.getElementById("voteC"+comment.comment_id).innerHTML = curVoteCount - 1;
             
           }
         }
@@ -870,11 +1010,18 @@ var commenty = htmlDoc.body.firstChild;
       j = await j.json()
    
         if(j.success) {
+          var curVoteCount = Number(document.getElementById("voteC"+comment.comment_id).innerHTML);
+          console.log("downvoted", curVoteCount);
+         
           if(action == "increment") {
             document.getElementById("commentDown"+comment.comment_id).src = "/voteSelected.png";
-        
+            document.getElementById("voteC"+comment.comment_id).innerHTML = curVoteCount - 1;
+            
           } else {
             document.getElementById("commentDown"+comment.comment_id).src = "/vote.png";
+            document.getElementById("voteC"+comment.comment_id).innerHTML = curVoteCount + 1;
+
+            
             
           }
         }
@@ -906,16 +1053,19 @@ var commenty = htmlDoc.body.firstChild;
   var mainCommentsCnt = <%= question.comments %>;
 var remainingComments = [];
   function hideComments(where="") {
+    remainingComments = [];
     document.getElementById("commentsList"+where).innerHTML = "";
       document.getElementById("showComments"+where).innerHTML = `Show Comments (${mainCommentsCnt})`;
   }
   
   function showComments(where="") {
     function recursiveShowMoreComments() {
+      var lastAppended = undefined;
+      // QUESTION COMMENTS
     console.log("remainingComments", remainingComments);
-    document.getElementById("showMore").remove();
+    document.getElementById("showMore")?.remove();
     for(var i = 0; i < remainingComments.length; i++) {
-      if(i >= 5) {
+      if(i >= 3) {
    
         break;
       } else {
@@ -923,6 +1073,7 @@ var remainingComments = [];
      // get comment and remove it from array
      var comment = remainingComments.shift();
      appendComment(comment);
+     lastAppended = comment.comment_id
      console.log(remainingComments.length);
 
       
@@ -943,7 +1094,14 @@ var remainingComments = [];
 
             document.getElementById("showMore").onclick = recursiveShowMoreComments;
             console.log("remaining", remainingComments);
-    }
+    } else if(lastAppended && remainingComments.length <= 0) {
+            fetch("/questionComments?question=<%= question.question_id %>&after="+lastAppended).then(response => response.json()).then(async (j) => {
+              if(j.success && j.comments.length > 0) {
+                remainingComments = j.comments;
+                recursiveShowMoreComments();
+              }
+            });
+          }
   } 
     document.getElementById("showComments"+where).innerHTML = `Hide Comments (${mainCommentsCnt})`;
       document.getElementById("showComments"+where).disabled = true;
