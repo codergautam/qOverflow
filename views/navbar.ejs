@@ -51,13 +51,36 @@
                   <a href="/dashboard">
                     <!--Dashboard Icon-->
                     <div class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
-                      </svg>
-                      <h2 class="wavy-hover overflow-hidden text-2xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">Dashboard</h2>
+                      <div class="flex flex-col">
+                      <!-- profile img-->
+                      <div class="flex flex-row">
+                      <img class="h-8 w-8 rounded-full" src="<%= user.img %>" alt="">
+                      <h2 class="wavy-hover overflow-hidden text-2xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out"><%= user.username %> </h2>
                     </div>
+                      <!-- user level and points text-->
+                      <div class="group shadow-purple-900 flex align-middle rounded-fullpy-1">
+                        <h4 class=" overflow-hidden group-hover:visible text-l my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out" id="user-level">Level: <%= user.level %> </h2>
+                        &nbsp;
+                        <h4 class="overflow-hidden group-hover:visible text-l my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out" id="user-points">Points: <%= user.points %> </h2>
+                      </div>
+                      </div>
+                
+                    </div>
+                    <!-- Level + points-->
+     
+            
                   </a>
                 </div>
+
+                <script>
+                  fetch('/getBasicData?user=<%= user.username %>')
+                    .then(response => response.json())
+                    .then(data => {
+                      console.log(data);
+                      document.querySelector('#user-level').innerHTML = "Level: "+data.level;
+                      document.querySelector('#user-points').innerHTML = "Points: "+data.points;
+                    });
+                </script>
           
               <% } else { %>
               <% if (typeof login == "undefined" || !login) { %>

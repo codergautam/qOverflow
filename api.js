@@ -6,8 +6,16 @@ class Api {
     this.baseUrl = 'https://qOverflow.api.hscc.bdpa.org/v1';
     this.key = key
     console.log(this.key)
+    this.requestsThisSecond = 0;
+    this.lockAfter = 8;
+    setInterval(() => {
+      console.log(this.requestsThisSecond)
+      this.requestsThisSecond = 0;
+    }, 1000);
   }
    async sendRequest(endpoint, method, data) {
+    if(this.requestsThisSecond <= this.lockAfter) {
+      this.requestsThisSecond++;
     try {
     var req = await fetch(this.baseUrl+endpoint, {
       method: method,
@@ -24,6 +32,14 @@ class Api {
     // TODO: handle error
     console.log(error)
   }
+} else {
+  return new Promise((resolve, reject) => {
+    console.log("WOAH WOHA SLOW DOWN MY FIRNED")
+    resolve({success: false, error: "Too many requests"})
+  }
+  )
+
+}
   }
 
   async findUsernameFromEmail(userEmail) {
@@ -158,9 +174,62 @@ class Api {
 
   }
 
+  hasUserVotedComment(questionId,  commentId, username, answerId=undefined) {
+if(answerId == "undefined") {
+  answerId = undefined
+}
+
+    if(!username) {
+      return new Promise((resolve, reject) => {
+        resolve(false)
+      });
+    }
+
+    if(answerId) var endpoint = '/questions/' + questionId + '/answers/' + answerId + '/comments/' + commentId + '/vote/' + username;
+    else var endpoint = '/questions/' + questionId + '/comments/' + commentId + '/vote/' + username;
+
+    console.log(endpoint)
+
+    return new Promise((resolve, reject) => {
+      this.sendRequest(endpoint, 'GET').then(data => {
+        if(data.success) {
+          if(data.error) resolve({voted: false, error: data.error})
+          else resolve({voted: true, vote: data.vote})
+        }
+        else resolve({voted: false});
+      }).catch(err => {
+        reject(err)
+      });
+    });
+   
+  };
+
   getQuestion(questionId) {
     return this.sendRequest('/questions/' + questionId, 'GET');
   }
+
+  getQuestionComments(questionId) {
+    return this.sendRequest('/questions/' + questionId + '/comments', 'GET');
+  }
+
+  getAnswerComments(questionId, answerId) {
+    return this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/comments', 'GET');
+  }
+
+  addCommentQuestion(questionId, username, text) {
+    return this.sendRequest('/questions/' + questionId + '/comments', 'POST', {
+      creator: username,
+      text: text
+    });
+  }
+
+  addCommentAnswer(questionId, answerId, username, text) {
+    return this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/comments', 'POST', {
+      creator: username,
+      text: text
+    });
+  }
+  
 
   hasUserVotedAnswer(questionId, answerId, username) {
     if( username) {
@@ -223,6 +292,17 @@ class Api {
     return req;
   }
 
+  async voteComment(user, commentId, target, action, questionId, answerId=undefined) {
+    if(answerId) var endpoint = '/questions/' + questionId + '/answers/' + answerId + '/comments/' + commentId + '/vote/' + user;
+    else var endpoint = '/questions/' + questionId + '/comments/' + commentId + '/vote/' + user;
+    var req = this.sendRequest(endpoint, 'PATCH', {
+      operation: action,
+      target
+    });
+    return req;
+  }
+
+
   async updateUser(username, salt, key, email, points) {
     return this.sendRequest('/users/' + username, 'PATCH', {
       salt: salt,
@@ -257,6 +337,13 @@ class Api {
     // if count is 0, return an empty array
     resolve([]);
   });
+  }
+
+  addAnswer(questionId, username, text) {
+    return this.sendRequest('/questions/' + questionId + '/answers', 'POST', {
+      creator: username,
+      text: text
+    });
   }
 
   makeid(length) {

@@ -44,6 +44,7 @@ app.use(bodyParser.json())
 app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 
+
 app.use(session({
   secret: process.env.secret,
   resave: false,
@@ -480,6 +481,9 @@ app.get('/getAnswers', async (req, res) => {
   var id = req.query.question;
   api.getAnswers(id).then(data => {
     if(data.success) {
+      data.answers = data.answers.sort ((a, b) => {
+        return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes)
+      });
       res.send({answers: data.answers, success: true})
     } else {
       res.send({success: false})
@@ -509,6 +513,21 @@ app.post("/messages", async (req, res) => {
       username: username
     })
   }
+})
+
+app.post('/api/answer', (req, res) => {
+  if(!req.session.loggedIn) return res.send({success: false})
+  let { question, text } = req.body
+  let username = req.session.user.username
+  console.log(`Question: ${question}, Answer: ${text}`);
+  api.addAnswer(question, username, text).then(data => {
+    console.log(data)
+    if(data.success) {
+      res.send({success: true, answer: data.answer})
+    } else {
+      res.send({success: false})
+    }
+  });
 })
 
 app.post("/auth/login", async (req,res) => {
@@ -602,6 +621,7 @@ app.get("/question/:id", (req, res) => {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
+      username: req.session.user.username,
       voted: data3
     })
   }).catch(err => {
@@ -611,6 +631,7 @@ app.get("/question/:id", (req, res) => {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
+      username: req.session.user.username,
       voted: {voted: false}
     })
   });
@@ -661,6 +682,7 @@ app.get("/getBasicData", (req, res) => {
         basicDataCache[req.query.user] = needed;
         res.send({success:true, ...needed.data})
       } else {
+        console.log(data.error)
         res.send(JSON.stringify({success: false}))
       }
       });
@@ -668,6 +690,86 @@ app.get("/getBasicData", (req, res) => {
   } else res.send(JSON.stringify({success: false}))
 })
 
+app.get("/questionComments", (req, res) => {
+  var question = req.query.question;
+  api.getQuestionComments(question).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+app.post("/answerComments", (req, res) => {
+  var answer = req.body.answer;
+  var question = req.body.question;
+  console.log(req.body)
+  api.getAnswerComments(question, answer).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+app.post("/addCommentQuestion", (req, res) => {
+  var question = req.body.question;
+  var comment = req.body.text;
+  var user = req.session.user.username;
+  console.log(question, comment, user)
+  if(!user || !question || !comment) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  
+  if(comment.length > 150) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  api.addCommentQuestion(question, user, comment).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+app.get("/hasUserVotedComment", (req, res) => {
+  var comment = req.query.comment;
+  var user = req.session.user.username;
+  var question = req.query.question;
+  var answer = req.query.answer;
+  console.log(comment, user, question, answer)
+  api.hasUserVotedComment(question,comment,user,answer).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+
+app.post("/addCommentAnswer", (req, res) => {
+  var answer = req.body.answer;
+  var comment = req.body.text;
+  var user = req.session.user.username;
+  var question = req.body.question;
+  console.log(answer, comment, user, question)
+  if(!user || !answer || !comment || !question) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  if(comment.length > 150) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  api.addCommentAnswer(question, answer, user, comment).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
 
 
 app.get("/forgot", (req, res) => {
@@ -829,6 +931,33 @@ app.post("/api/answer/:id/:type", (req,res) => {
     dir *= type == "upvotes" ? 1 : -1;
     if(data.success) {
       io.emit("voteA", [question, id, dir])
+    }
+  });
+});
+
+app.post("/api/comment/:id/:type", (req,res) => {
+  var id = req.params.id;
+  var type = req.params.type;
+  var action = req.body.action;
+  var  question = req.body.question;
+  var answer = req.body.answer;
+  var user = req.session.user?.username;
+  if(!user) {
+    res.send({success: false, msg: "You must be logged in to comment"})
+    return
+  }
+  console.log("vote comment", action, type, id, question, answer);
+  if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement") || !question) {
+    res.send("Invalid answer id or type")
+    return
+  }
+  type += "s";
+  api.voteComment( user, id, type, action, question, answer).then(data => {
+    res.send(JSON.stringify(data))
+    var dir = action == "increment" ? 1 : -1;
+    dir *= type == "upvotes" ? 1 : -1;
+    if(data.success) {
+      io.emit("voteC", [question, id, dir, answer])
     }
   });
 });
