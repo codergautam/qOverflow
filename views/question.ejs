@@ -152,7 +152,7 @@ list-style-position: inside;
                 <div class="flex-grow">
                   <p class="text-4xl text-center py-5 "><b><%= question.title %></b></p> 
                   <hr/>
-                  <p id="questionText" class="text-center ">
+                  <p id="questionText" class="text-center break-all ">
    
                   </p>
                   <div class="px-6 pt-4 pb-2 text-right">
@@ -239,7 +239,7 @@ list-style-position: inside;
   <!-- </div> -->
   <!-- create answer form-->
 </div>
-    <script>
+    <script defer>
       function msToTime(duration) {
   const portions = [];
     const msInDay = 1000 * 60 * 60 * 24;
@@ -272,10 +272,10 @@ list-style-position: inside;
 }
     document.getElementById('questionText').innerHTML =
       marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
-   
-      document.getElementById("questionUp").addEventListener("click", () => {
-        var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
-        fetch('/api/question/<%= question.question_id %>/upvote', {
+
+    async function questionUp() {
+      var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+       var f = await fetch('/api/question/<%= question.question_id %>/upvote', {
           method: 'POST',
           body: JSON.stringify({
             action
@@ -283,17 +283,18 @@ list-style-position: inside;
           headers: {
             'Content-Type': 'application/json'
           }
-        }).then(response => response.json()).then((j) => {
+        })
+        var j = await f.json();
+     
           if(j.success) {
             document.getElementById("questionUp").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
             // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
           }
-        })
-      })
+    }
 
-      document.getElementById("questionDown").addEventListener("click", () => {
-        var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
-        fetch('/api/question/<%= question.question_id %>/downvote', {
+    async function questionDown() {
+      var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+      var f = await  fetch('/api/question/<%= question.question_id %>/downvote', {
           method: 'POST',
           body: JSON.stringify({
             action
@@ -301,12 +302,28 @@ list-style-position: inside;
           headers: {
             'Content-Type': 'application/json'
           }
-        }).then(response => response.json()).then((j) => {
+        })
+        var j = await f.json();
+
           if(j.success) {
             document.getElementById("questionDown").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
             // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
           }
-        })
+      
+    }
+   
+      document.getElementById("questionUp").addEventListener("click",async () => {
+       if (document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] == "voteSelected.png") {
+        await questionDown();
+        }
+        questionUp();
+      })
+
+      document.getElementById("questionDown").addEventListener("click",async () => {
+        if (document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] == "voteSelected.png") {
+          await questionUp();
+        }
+        questionDown();
       })
 
 
@@ -324,6 +341,14 @@ list-style-position: inside;
       var curNum = Number(document.getElementById("voteA"+id).innerHTML)
       curNum += dir;
       document.getElementById("voteA"+id).innerHTML = curNum;
+    }
+  })
+  socket.on("voteC", ([q, id, dir]) => {
+    console.log(q, id, dir, document.getElementById("voteC"+id) != null);
+    if(q == "<%= question.question_id %>" && document.getElementById("voteC"+id) != null) {
+      var curNum = Number(document.getElementById("voteC"+id).innerHTML)
+      curNum += dir;
+      document.getElementById("voteC"+id).innerHTML = curNum;
     }
   })
 
@@ -352,7 +377,7 @@ async function appendAnswer(answer) {
               <div class="flex-grow">
             <div class=" py-[12px] sm:px-[46px] lg:px-[46px] ">
               <div class="h-auto px-8">
-                <p id="${ answer.answer_id }Text"> </p>
+                <p id="${ answer.answer_id }Text" class="break-all"> </p>
 
               </div>
             </div>
@@ -425,10 +450,11 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
 
 
   console.log("register", answer.answer_id);
-  document.getElementById("answerUp"+answer.answer_id).onclick = () => {
+
+  async function answerUp() {
     console.log("upvoted", answer.answer_id);
     var action = document.getElementById("answerUp"+answer.answer_id).src.split("/")[document.getElementById("answerUp"+answer.answer_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
-    fetch('/api/answer/'+answer.answer_id+'/upvote', {
+    var j = await fetch('/api/answer/'+answer.answer_id+'/upvote', {
       method: 'POST',
       body: JSON.stringify({
         action,
@@ -437,37 +463,91 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then(response => response.json()).then((j) => {
+    })
+
+    j = await j.json();
+    
+
       if(j.success) {
         document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/voteSelected.png" : "/vote.png";
         // document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
       }
-    });
-  };
-  document.getElementById("answerDown"+answer.answer_id).onclick =  () => {
+  }
+
+  async function answerDown() {
     console.log("upvoted", answer.answer_id);
 
-    var action = document.getElementById("answerDown"+answer.answer_id).src.split("/")[document.getElementById("answerDown"+answer.answer_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
-    fetch('/api/answer/'+answer.answer_id+'/downvote', {
-      method: 'POST',
-      body: JSON.stringify({
-        action,
-        question: "<%= question.question_id %>"
-      }),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => response.json()).then((j) => {
-      if(j.success) {
-        document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/voteSelected.png" : "/vote.png";
-        // document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
-      }
-    });
-  
-    return;
+var action = document.getElementById("answerDown"+answer.answer_id).src.split("/")[document.getElementById("answerDown"+answer.answer_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+var j = await fetch('/api/answer/'+answer.answer_id+'/downvote', {
+  method: 'POST',
+  body: JSON.stringify({
+    action,
+    question: "<%= question.question_id %>"
+  }),
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+j =await j.json();
+  if(j.success) {
+    document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+    // document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
+  }
+
+return;
+  }
+
+  document.getElementById("answerUp"+answer.answer_id).onclick = async () => {
+    if( document.getElementById("answerDown"+answer.answer_id).src.split("/")[document.getElementById("answerDown"+answer.answer_id).src.split("/").length-1] == "voteSelected.png") {
+      await answerDown();
+    }
+    await answerUp();
+  };
+  document.getElementById("answerDown"+answer.answer_id).onclick = async () => {
+    if( document.getElementById("answerUp"+answer.answer_id).src.split("/")[document.getElementById("answerUp"+answer.answer_id).src.split("/").length-1] == "voteSelected.png") {
+      await answerUp();
+    }
+    await answerDown();
   };
 
   var toggled = false;
+  var remainingComments = [];
+
+  function recursiveShowMoreComments() {
+    console.log("remainingComments", remainingComments);
+    document.getElementById("showMore"+id).remove();
+    for(var i = 0; i < remainingComments.length; i++) {
+      if(i >= 5) {
+   
+        break;
+      } else {
+      
+     // get comment and remove it from array
+     var comment = remainingComments.shift();
+     appendComment(comment, id);
+     console.log(remainingComments.length);
+
+      
+      }
+    }
+    if(remainingComments.length > 0) {
+      var btn = `<div class="flex justify-center items-center">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
+                Show more comments
+              </button>
+            </div>`
+            // dom parser
+            var parser = new DOMParser();
+            var btnDom = parser.parseFromString(btn, "text/html");
+            var commentsList = document.getElementById("commentsList"+id);
+            commentsList.appendChild(btnDom.body.firstChild);
+            
+
+            document.getElementById("showMore"+id).onclick = recursiveShowMoreComments;
+            console.log("remaining", remainingComments);
+    }
+  } 
 
  async function showThisCommentList() {
     document.getElementById("showComments"+id).innerHTML = "Hide comments ("+answerComments+")";
@@ -487,10 +567,34 @@ try {
         var commentsList = document.getElementById("commentsList"+id);
         commentsList.innerHTML = "";
         for(var i = 0; i < comments.length; i++) {
-          await appendComment(comments[i], id);
+          if(i >= 5) {
+            remainingComments.push(comments[i]);
+            if(i == 5) {
+              //  append Button in tailwind that says show more
+             
+              var btn = `<div class="flex justify-center items-center">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
+                Show more comments
+              </button>
+            </div>`
+            // dom parser
+            var parser = new DOMParser();
+            var btnDom = parser.parseFromString(btn, "text/html");
+            commentsList.appendChild(btnDom.body.firstChild);
+
+            document.getElementById("showMore"+id).onclick = recursiveShowMoreComments;
+         
+    
+
+          
+            }
+          } else  {
+            await appendComment(comments[i], id);
         }
       }
-    } catch {
+      }
+    } catch(e) {
+      console.log(e);
     document.getElementById("showComments"+id).disabled = true;
 
     }
@@ -515,6 +619,9 @@ hideThisCommentList();
 
   document.getElementById("postComment"+answer.answer_id).onclick = () => {
     var comment = document.getElementById("commentText"+answer.answer_id).value;
+
+    //disable button
+    document.getElementById("postComment"+answer.answer_id).disabled = true;
     if(comment.length > 0) {
       fetch('/addCommentAnswer', {
         method: 'POST',
@@ -527,6 +634,8 @@ hideThisCommentList();
           'Content-Type': 'application/json'
         }
       }).then(response => response.json()).then(async(j) => {
+        //enable button
+        document.getElementById("postComment"+answer.answer_id).disabled = false;
         if(j.success) {
           answerComments++;
           
@@ -542,7 +651,12 @@ hideThisCommentList();
           document.getElementById("commentText"+answer.answer_id).value = "";
 
         }
-      });
+      }).catch(err => {
+        //enable button
+        document.getElementById("postComment"+answer.answer_id).disabled = false;
+        console.log(err);
+      }
+      );
     }
   }
 
@@ -611,49 +725,226 @@ hideThisCommentList();
     });
   });
 
-  async function appendComment(comment, where="") {
-    document.getElementById("commentsList"+where).innerHTML+="</br>"
-    var commentDiv = document.createElement("div");
-    commentDiv.classList.add("flex", "flex-col", "items-center", "justify-between", "w-full", "bg-white", "rounded-lg");
-    commentDiv.id = "comment"+comment.comment_id;
-    var commentText = document.createElement("div");
-    commentText.classList.add("flex", "flex-col", "items-center", "justify-between", "w-full", "bg-white", "rounded-lg");
-    commentText.innerHTML = "<b>"+comment.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   var appendComment =async  (comment, where="") => {
+    document.getElementById("commentsList"+where).insertAdjacentHTML('beforeend',"</br>")
+
+   var commentt = "<b>"+comment.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
    return '&#'+i.charCodeAt(0)+';';
 })+"</b>";
-    commentDiv.appendChild(commentText);
-    var commentFooter = document.createElement("div");
-    commentFooter.classList.add("flex", "flex-col", "items-center", "justify-between", "w-full", "bg-white",  "rounded-lg");
-    var commentFooterText = document.createElement("div");
-    commentFooterText.classList.add("flex", "flex-col", "items-center", "justify-between", "w-full", "bg-white", "rounded-lg");
-    commentFooterText.innerHTML = "Created by "+comment.creator+", "+(msToTime(Date.now() - comment.createdAt) ?? "just now") +" ago";
-    commentFooter.appendChild(commentFooterText);
-    commentDiv.appendChild(commentFooter);
+  
 
+console.log(comment.comment_id)
+
+
+    var html = `
+    
+    <div class= "flex flex-row">
+      <div class="flex flex-col items-center justify-between   rounded-lg">
+    <img class="rounded-lg cursor-pointer min-w-[10px]"  id="commentUp${comment.comment_id}"style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                  <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
+                  <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px]" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;"  src="/vote.png" alt="">
+                </div>
+                
+    <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
+   <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5"${commentt} - ${comment.creator}</div>
     
 
+                </div>
+   </div>
+</div>
+`
+console.log("WTF")
 
-    document.getElementById("commentsList"+where).innerHTML+=(commentDiv.innerHTML);
+
+// dom parser
+var parser = new DOMParser();
+var htmlDoc = parser.parseFromString(html, "text/html");
+var commenty = htmlDoc.body.firstChild;
+
+
+
+    document.getElementById("commentsList"+where).appendChild(commenty);
+
+
+    //comment upvote and downvote
+   
+    var sendProps = {
+      comment: comment.comment_id,
+      question: "<%= question.question_id %>",
+      answer: where == "" ? undefined : where
+    }
+    var urlEncodedProps = Object.keys(sendProps).map(key => key + "=" + sendProps[key]).join("&");
+    console.log(comment.comment_id, comment.text, '<%= question.question_id %>', where);
+    fetch('/hasUserVotedComment?'+urlEncodedProps, {
+      method: 'GET'
+    }).then(response => response.json()).then((j) => {
+     
+        if(j.voted) {
+          if(j.vote == "upvoted") {
+            document.getElementById("commentUp"+comment.comment_id).src = "/voteSelected.png";
+          } else {
+            document.getElementById("commentDown"+comment.comment_id).src = "/voteSelected.png";
+          }
+        } else {
+          document.getElementById("commentUp"+comment.comment_id).src = "/vote.png";
+          document.getElementById("commentDown"+comment.comment_id).src = "/vote.png";
+        }
+      
+    }).catch(err => {
+      console.log(err);
+    }
+    );
+
+    var upvoteComment = async () => {
+      var action = document.getElementById("commentUp"+comment.comment_id).src.split("/")[document.getElementById("commentUp"+comment.comment_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+
+      var j = await fetch('/api/comment/'+comment.comment_id+'/upvote', {
+        method: 'POST',
+        body: JSON.stringify({
+          question: "<%= question.question_id %>",
+          answer: where == "" ? undefined : where,
+          action
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      j = await j.json()
+   
+        if(j.success) {
+          if(action == "increment") {
+            document.getElementById("commentUp"+comment.comment_id).src = "/voteSelected.png";
+        
+          } else {
+            document.getElementById("commentUp"+comment.comment_id).src = "/vote.png";
+            
+          }
+        }
+      
+    }
+    var downvoteComment = async () => {
+      var action = document.getElementById("commentDown"+comment.comment_id).src.split("/")[document.getElementById("commentDown"+comment.comment_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+
+      var j = await fetch('/api/comment/'+comment.comment_id+'/downvote', {
+        method: 'POST',
+        body: JSON.stringify({
+          question: "<%= question.question_id %>",
+          answer: where == "" ? undefined : where,
+          action
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      j = await j.json()
+   
+        if(j.success) {
+          if(action == "increment") {
+            document.getElementById("commentDown"+comment.comment_id).src = "/voteSelected.png";
+        
+          } else {
+            document.getElementById("commentDown"+comment.comment_id).src = "/vote.png";
+            
+          }
+        }
+      
+    }
+
+   console.log( document.getElementById("commentDown"+comment.comment_id));
+
+ document.getElementById("commentUp"+comment.comment_id).addEventListener("click", async () => {
+  if(document.getElementById("commentDown"+comment.comment_id).src.split("/")[document.getElementById("commentDown"+comment.comment_id).src.split("/").length-1] === "voteSelected.png") {
+    await downvoteComment();
+  }
+  await upvoteComment();
+  
+ });
+  document.getElementById("commentDown"+comment.comment_id).addEventListener("click", async () => {
+    if(document.getElementById("commentUp"+comment.comment_id).src.split("/")[document.getElementById("commentUp"+comment.comment_id).src.split("/").length-1] === "voteSelected.png") {
+    await upvoteComment();
+  }
+  await downvoteComment();
+  });
+    
+
    
   }
 
+
   var commentsToggle = false;
   var mainCommentsCnt = <%= question.comments %>;
-
+var remainingComments = [];
   function hideComments(where="") {
     document.getElementById("commentsList"+where).innerHTML = "";
       document.getElementById("showComments"+where).innerHTML = `Show Comments (${mainCommentsCnt})`;
   }
+  
   function showComments(where="") {
+    function recursiveShowMoreComments() {
+    console.log("remainingComments", remainingComments);
+    document.getElementById("showMore").remove();
+    for(var i = 0; i < remainingComments.length; i++) {
+      if(i >= 5) {
+   
+        break;
+      } else {
+      
+     // get comment and remove it from array
+     var comment = remainingComments.shift();
+     appendComment(comment);
+     console.log(remainingComments.length);
+
+      
+      }
+    }
+    if(remainingComments.length > 0) {
+      var btn = `<div class="flex justify-center items-center">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
+                Show more comments
+              </button>
+            </div>`
+            // dom parser
+            var parser = new DOMParser();
+            var btnDom = parser.parseFromString(btn, "text/html");
+            var commentsList = document.getElementById("commentsList");
+            commentsList.appendChild(btnDom.body.firstChild);
+            
+
+            document.getElementById("showMore").onclick = recursiveShowMoreComments;
+            console.log("remaining", remainingComments);
+    }
+  } 
     document.getElementById("showComments"+where).innerHTML = `Hide Comments (${mainCommentsCnt})`;
       document.getElementById("showComments"+where).disabled = true;
 
       fetch("/questionComments?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
       document.getElementById("showComments"+where).disabled = false;
+    
         
         if(j.success) {
-          for(comment of j.comments) {
-            await appendComment(comment, where);
+          for (var i = 0; i < j.comments.length; i++) {
+            if(i > 4) {
+              remainingComments.push(j.comments[i]);
+              console.log(i)
+              if(i == 5) {
+                             //  append Button in tailwind that says show more
+             
+              var btn = `<div class="flex justify-center items-center">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
+                Show more comments
+              </button>
+            </div>`
+            // dom parser
+            var parser = new DOMParser();
+            var btnDom = parser.parseFromString(btn, "text/html");
+            var commentsList = document.getElementById("commentsList");
+            commentsList.appendChild(btnDom.body.firstChild);
+            console.log("FFFF")
+            document.getElementById("showMore").onclick = recursiveShowMoreComments;
+         
+    
+              }
+            } else await appendComment(j.comments[i], where);
           }
         }
       }).catch(err => {console.log(err)
