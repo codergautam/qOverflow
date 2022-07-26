@@ -2326,6 +2326,16 @@ video {
   margin-bottom: auto;
 }
 
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.-mx-\[90px\] {
+  margin-left: -90px;
+  margin-right: -90px;
+}
+
 .mt-8 {
   margin-top: 2rem;
 }
@@ -2548,6 +2558,10 @@ video {
   height: min-content;
 }
 
+.h-64 {
+  height: 16rem;
+}
+
 .min-h-full {
   min-height: 100%;
 }
@@ -2648,6 +2662,16 @@ video {
   width: 8.333333%;
 }
 
+.w-\[50\%\] {
+  width: 50%;
+}
+
+.w-fit {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
 .w-2\/3 {
   width: 66.666667%;
 }
@@ -2662,6 +2686,10 @@ video {
 
 .min-w-\[30px\] {
   min-width: 30px;
+}
+
+.min-w-\[10px\] {
+  min-width: 10px;
 }
 
 .max-w-md {
@@ -2711,6 +2739,12 @@ video {
 .border-spacing-1 {
   --tw-border-spacing-x: 0.25rem;
   --tw-border-spacing-y: 0.25rem;
+  border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y);
+}
+
+.border-spacing-2 {
+  --tw-border-spacing-x: 0.5rem;
+  --tw-border-spacing-y: 0.5rem;
   border-spacing: var(--tw-border-spacing-x) var(--tw-border-spacing-y);
 }
 
@@ -2790,6 +2824,10 @@ video {
 
 .cursor-not-allowed {
   cursor: not-allowed;
+}
+
+.resize-none {
+  resize: none;
 }
 
 .resize {
@@ -2954,6 +2992,10 @@ video {
   overflow-wrap: break-word;
 }
 
+.break-all {
+  word-break: break-all;
+}
+
 .rounded-full {
   border-radius: 9999px;
 }
@@ -3012,6 +3054,10 @@ video {
 
 .border-0 {
   border-width: 0px;
+}
+
+.border-2 {
+  border-width: 2px;
 }
 
 .border-b-2 {
@@ -3211,6 +3257,11 @@ video {
 .bg-gray-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+}
+
+.bg-gray-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-75 {
@@ -3418,6 +3469,10 @@ video {
   padding-bottom: 1rem;
 }
 
+.pb-24 {
+  padding-bottom: 6rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -3533,6 +3588,10 @@ video {
 
 .leading-9 {
   line-height: 2.25rem;
+}
+
+.leading-tight {
+  line-height: 1.25;
 }
 
 .text-red-700 {
@@ -4043,9 +4102,19 @@ video {
   border-color: rgb(147 197 253 / var(--tw-border-opacity));
 }
 
+.focus\:border-blue-500:focus {
+  --tw-border-opacity: 1;
+  border-color: rgb(59 130 246 / var(--tw-border-opacity));
+}
+
 .focus\:bg-gray-50:focus {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
+}
+
+.focus\:bg-white:focus {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
 .focus\:text-gray-900:focus {

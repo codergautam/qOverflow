@@ -152,6 +152,26 @@ app.get('/search', async (req, res) => {
   }
 })
 
+app.get('/userMail/:mail_id', async (req, res) => {
+  let username = req.session.user.username
+  let mailId = req.params.mail_id
+  let data = await api.sendRequest('/mail/' + username, 'GET')
+  let messages = data.messages
+  let correctMsg
+  messages.forEach((data) => {
+    // console.log("Mail Id:" + mailId)
+    // console.log("Data Id:" + data.mail_id)
+    // console.log(mailId == data.mail_id)
+    if(data.mail_id == mailId) {
+      console.log(data)
+      correctMsg = data
+    }
+  })
+  console.log("Correct Message:")
+  console.log(correctMsg)
+  res.send(JSON.stringify(correctMsg))
+})
+
 app.post('/search', async (req, res) => {
   let { searchQuery, sort, loggedIn } = req.body
   sort = ((sort == undefined) || (sort == null)) ? "Title" : sort
