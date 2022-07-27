@@ -52,11 +52,11 @@
                     </form>
                 </div>
             </div>
-            <div class="col-span-3 relative flex overflow-hiddenoverflow-y-auto  bg-gray-100 h-screen bg-fixed">
+            <div class="col-span-3 relative flex overflow-hidden overflow-y-auto  bg-gray-100 h-screen bg-fixed">
                 <% if(messageCount > 0) { %>
                     <div class="flex-col w-11/12 mx-auto h-screen">
                         <% messageFeed.forEach((message, index) => { %>
-                            <div onclick="preview(`<%=message.sender%>`, `<%=message.subject%>`, `<%=message.text%>`)" class="group cursor-pointer mt-4 flex-col px-2 pl-2 pb-2 rounded-lg bg-white hover:scale-105 transition-all ease-in-out duration-300 delay-75">
+                            <div onclick="preview('<%=message.mail_id%>')" class="group cursor-pointer mt-4 flex-col px-2 pl-2 pb-2 rounded-lg bg-white hover:scale-105 transition-all ease-in-out duration-300 delay-75">
                                 <div class="flex justify-between items-baseline">
                                     <p class=" text-base text-gray-400 font-bold mb-0">
                                         <%= message.sender %> 
@@ -101,8 +101,8 @@
                             <p class="text-3xl text-gray-700 text-start font-bold ml-4 mt-2" id="previewSubject">
                                 No Current Message
                             </p>
-                            <p class="text-lg text-gray-700 text-start font-bold ml-4 mt-2 mr-2" id="previewSubject">
-                                <span class="text-gray-500 font-semibold">From</span> <span id="previewAuthor">Anonymous</span>
+                            <p id="previewAuthor" class="text-lg text-gray-700 text-start font-bold ml-4 mt-2 mr-2" id="previewSubject">
+                                <span class="text-gray-500 font-semibold">From</span> Anonymous
                             </p>
                         </div>
                         <p class="text-xl text-gray-500 text-start ml-4" id="previewText">
@@ -116,7 +116,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
-        function preview(author, subject, messageText) {
+        async function preview(mailId) {
+            document.getElementById("previewAuthor").innerHTML = ""
+            document.getElementById("previewSubject").innerHTML = "Loading..."
+            document.getElementById("previewText").innerHTML = "Your message will appear soon."
+            console.log("Previewing")
+            let message = await fetch('/userMail/' + mailId).then(res => res.json())
+            console.log(message)
+            let author = message.sender
+            let subject = message.subject
+            let messageText = message.text
             let parsedText = marked.parse(messageText)
             console.log(parsedText)
             // console.log(message)
@@ -127,7 +136,7 @@
             // console.log(correct)
             // message.text = marked.parse(message.text)
             // console.log(message.text)
-            document.getElementById("previewAuthor").innerHTML = author
+            document.getElementById("previewAuthor").innerHTML = `<span class="text-gray-500 font-semibold">From</span> ${author}`
             document.getElementById("previewSubject").innerHTML = subject
             document.getElementById("previewText").innerHTML = parsedText
         }

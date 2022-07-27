@@ -1,6 +1,5 @@
 let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
 
-
 const express = require('express')
 const http = require('http')
 const app = express()
@@ -125,6 +124,187 @@ var levelCalculation = (userPoints) => {
   return _level
 }
 ///------------------------------------- Questions Stuff --------------------------------
+app.get('/search', async (req, res) => {
+  let { searchQuery, sort, loggedIn } = req.query
+  sort = ((sort == undefined) || (sort == null)) ? "title" : sort
+  loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
+  console.log(searchQuery)
+  let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  let regexQuery = ((sort == "Title") || (sort == "Text") || (sort == "Author")) ? {} : null
+  if(sort == "Creation") {
+    console.log(searchQuery)
+    let day = 1000 * 60 * 60 * 24
+    matchQuery = {
+      "createdAt": {
+        "$gte":(new Date(searchQuery + " 00:00:00")).getTime() - day/2,
+        "$lte": (new Date(searchQuery + " 24:00:00")).getTime() + day/2
+      }
+    }
+  } else if(sort == "Author") {
+    matchQuery = {
+      "creator": searchQuery
+    }
+    regexQuery = {
+      "creator": `(${searchQuery})`
+    }
+  }
+  if(sort == "Title") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "title": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  } else if(sort == "Text") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "text": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  }
+  console.log(matchQuery)
+  let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+  let questions = (data.success) ? data.questions : null
+  console.log(questions)
+  if(questions) {
+    questions.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: questions,
+      user: req.session.user
+    })
+  } else {
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: [],
+      user: req.session.user
+    })
+  }
+})
+
+app.get('/userMail/:mail_id', async (req, res) => {
+  let username = req.session.user.username
+  let mailId = req.params.mail_id
+  let data = await api.getUserMail(username)
+  let messages = data.messages
+  let correctMsg
+  messages.forEach((data) => {
+    // console.log("Mail Id:" + mailId)
+    // console.log("Data Id:" + data.mail_id)
+    // console.log(mailId == data.mail_id)
+    if(data.mail_id == mailId) {
+      console.log(data)
+      correctMsg = data
+    }
+  })
+  console.log("Correct Message:")
+  console.log(correctMsg)
+  res.send(JSON.stringify(correctMsg))
+})
+
+app.post('/search', async (req, res) => {
+  let { searchQuery, sort, loggedIn } = req.body
+  sort = ((sort == undefined) || (sort == null)) ? "Title" : sort
+  loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
+  console.log(searchQuery)
+  let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  let regexQuery = ((sort == "Title") || (sort == "Text") || (sort == "Author")) ? {} : null
+  if(sort == "Creation") {
+    console.log(searchQuery)
+    let day = 1000 * 60 * 60 * 24
+    matchQuery = {
+      "createdAt": {
+        "$gte":(new Date(searchQuery + " 00:00:00")).getTime() - day/2,
+        "$lte": (new Date(searchQuery + " 24:00:00")).getTime() + day/2
+      }
+    }
+  } else if(sort == "Author") {
+    matchQuery = {
+      "creator": searchQuery
+    }
+    regexQuery = {
+      "creator": `(${searchQuery})`
+    }
+  }
+  if(sort == "Title") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "title": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  } else if(sort == "Text") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "text": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  }
+  console.log(matchQuery)
+  let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+  let questions = (data.success) ? data.questions : null
+  console.log(questions)
+  if(questions) {
+    questions.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: questions,
+      user: req.session.user
+    })
+  } else {
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: [],
+      user: req.session.user
+    })
+  }
+})
 
 app.get('/dashboard', async (req, res) => {
   console.log(req.session)
@@ -197,21 +377,19 @@ app.get('/dashboard', async (req, res) => {
   }
 })
 
-app.post('/email', (req, res) => {
-  const { username } = req.body
+app.get('/email', (req, res) => {
+  const { username } = req.session.user.username
   res.render('changeEmail', {username: username})
 })
 
-app.post('/password', (req, res) => {
-  const { username } = req.body
+app.get('/password', (req, res) => {
+  const { username } = req.session.user.username
   res.render('changePassword', {username: username})
 })
 
 app.post('/emailChange', async (req, res) => {
   const { username, newEmail } = req.body
-  let data = await api.sendRequest("/users/" + username, "PATCH", {
-    email: newEmail
-  }).then((data) => {
+  let data = await api.changeEmailOf(username).then((data) => {
     if(data.success) {
       return data
     }
@@ -279,10 +457,7 @@ app.post('/questions',  async (req, res) => {
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
   const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
-  let data = await api.sendRequest("/users/" + username, "PATCH", {
-    key: keyString,
-    salt: saltString
-  }).then((data) => {
+  let data = await api.changePasswordOf(username, keyString, saltString).then((data) => {
     if(data.success) {
       console.log("Password Changed!")
       return data
@@ -293,7 +468,13 @@ app.post('/passwordChange', async (req, res) => {
 })
 app.post('/deleteAccount', async (req, res) => {
   const { username } = req.body
-  let data = await api.sendRequest("/users/" + username, 'DELETE')
+  let data = await api.deleteUser(username).then((data) => {
+    if(data.success) {
+      return data
+    } else {
+      return data
+    }
+  })
   req.session.user = {}
   req.session.loggedIn = false
   if (data.success)  res.redirect('/') 
@@ -364,7 +545,7 @@ app.get('/mail', async (req, res) => {
     user.nextLevel = user.level + 1
     user.nextLevelPoints = levelMinimums[user.nextLevel - 1]
     console.log("Username: " + username)
-    let mailData = await api.sendRequest('/mail/' + username, 'GET')
+    let mailData = await api.getUserMail(username)
     mailData.messages.forEach((message) => {
       message.timeElapsed = msToTime(Date.now() - message.createdAt)
     })
@@ -408,12 +589,7 @@ app.post("/messages", async (req, res) => {
   username = (username) ? username : req.session.user.username
   console.log(`Reciever: ${receiver}, Sender: ${username}`)
   console.log(username)
-  let data = await api.sendRequest("/mail", 'POST', {
-    sender: username,
-    receiver: receiver,
-    subject: subject,
-    text: text
-  })
+  let data = await api.sendMessage(username, receiver, subject, text)
   console.log(data)
   console.log(data.success)
   if(data.success) {
@@ -481,6 +657,8 @@ app.post("/auth/login", async (req,res) => {
 }
 
 });
+
+
 app.get("/buffet", (req, res) => {
   var sort;
   if(req.query.sort) {
@@ -1042,6 +1220,18 @@ io.on('connection', (socket) => {
   })
   socket.on("getAnswerCount", (qId) => {
     if(Date.now() - lastRecieved < 100)  return
+modifyPoints = async (username, amount) => {
+  return await api.modifyPoints(username, amount)
+}
+
+replaceCharacters = (str) => {
+  let newQ = str
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
+  newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
+  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
+  return newQ
+}
 
      lastRecieved = Date.now();
 
