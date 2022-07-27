@@ -1,5 +1,3 @@
-let msg = "World, Programmed To Learn And Not To Feeeel (Melismatic Singing) \n-Louie Zong (https://youtu.be/Yw6u6YkTgQ4)"
-console.log("Hello " + msg)
 let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
 
 const express = require('express')
@@ -22,6 +20,7 @@ const io = new Server(server, {
 });
 
 var forgotTokens = {};
+var ongoingVotes = {};
 
  const api = new Api(process.env.key)
  var gravatar = require('gravatar');
@@ -33,6 +32,7 @@ var forgotTokens = {};
 var session = require('express-session')
 const sqlite = require("better-sqlite3");
 const { randomUUID } = require('crypto')
+const e = require('express')
 
 const SqliteStore = require("better-sqlite3-session-store")(session)
 const db = new sqlite("sessions.db");
@@ -43,6 +43,7 @@ app.use(bodyParser.json())
 
 app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
+
 
 
 app.use(session({
@@ -65,19 +66,64 @@ app.use(session({
   )
 }))
 
-app.get('/', (req, res) => { //Homepage
-  console.log(req.session)
+app.get('/', async (req, res) => { //Homepage
+  // console.log(req.session)
   var sort = req.query.sort ?? "recent";
-  console.log(sort)
+  // console.log(sort)
   var possible = ["recent", "best", "interesting", "hottest"];
   if(!possible.includes(sort)) sort = "recent";
+  try {
+   var basicData = await getBasicData(req.session.user?.username);
+  } catch(e) {
+    console.log(e)
+    var basicData = {};
+  }
   res.render('index', {
     loggedIn: req.session.loggedIn ?? false,
     user: req.session.user,
-    sort
+    sort,
+    basicData,
   })
 });
 
+var modifyPoints = async (amount, username) => {
+  let operation = Math.sign(amount) == -1 ? "decrement" : "increment";
+  amount = Math.abs(amount);
+  console.log("giving " + amount + " points to " + username)
+  return await api.sendRequest("/users/" + username + "/points", "PATCH", {
+    operation: operation,
+    amount: amount
+  })
+}
+
+
+
+
+var levelCalculation = (userPoints) => {
+  let _level
+  for(let i = 0; i < levelMinimums.length; i++) {
+    if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
+      console.log("Less than " + levelMinimums[i])
+      _level = i + 2;
+      break;
+    } else if(i == 0) {
+      if(userPoints < levelMinimums[0]) {
+        console.log("Less than " + levelMinimums[0])
+        _level = i + 1;
+        break;
+      }
+    } else if(i == levelMinimums.length - 1) {
+      if(userPoints > levelMinimums[i]) {
+        console.log("Less than " + levelMinimums[i])
+        _level = levelMinimums.length + 1;
+        break;
+      }
+    }
+  }
+
+  return _level
+}
+///------------------------------------- Questions Stuff --------------------------------
 app.get('/search', async (req, res) => {
   let { searchQuery, sort, loggedIn } = req.query
   sort = ((sort == undefined) || (sort == null)) ? "title" : sort
@@ -284,8 +330,8 @@ app.get('/dashboard', async (req, res) => {
         let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
         let nextLevelPoints = levelMinimums[_level - 1]
         user.abilities = _abilities
-        console.log(`You are Level ${_level}`)
-        console.log(`You can: ` + _abilities.join(', '))
+        // console.log(`You are Level ${_level}`)
+        // console.log(`You can: ` + _abilities.join(', '))
         let myQueryObject = {
           "creator": user.username
         }
@@ -362,6 +408,21 @@ app.get('/questionEditor', async (req, res) => {
   console.log("User: " + username)
   res.render('questionEditor', {username: username})
 })
+var answerOwnerCache = {};
+
+app.post('/acceptAnswer',  (req, res) => {
+  var { questionId, answerId } = req.body
+  api.updateAnswer(questionId, answerId, undefined, undefined, undefined, true).then(async (data) => {
+    if(!answerOwnerCache[answerId]) answerOwnerCache[answerId] = await api.getAnswerOwner(questionId, answerId);
+    var owner = answerOwnerCache[answerId];
+    await modifyPoints(15, owner);
+    res.send(data);
+  }).catch((err) => {
+    console.log(err)
+    res.send({success: false})
+  })
+
+});
 
 app.post('/questions',  async (req, res) => {
   let {username, title, text } = req.body 
@@ -373,7 +434,7 @@ app.post('/questions',  async (req, res) => {
         return data
       }
     })
-    let pointsData = await modifyPoints(username, 1).then((data) => {
+    let pointsData = await modifyPoints(1, username).then((data) => {
       if(data.success) {
         return data
       }
@@ -416,7 +477,8 @@ app.post('/deleteAccount', async (req, res) => {
   })
   req.session.user = {}
   req.session.loggedIn = false
-  (data.success) ? res.redirect('/') : res.redirect('/dashboard')
+  if (data.success)  res.redirect('/') 
+  else res.redirect('/dashboard')
 })
 
 app.get('/auth/login', (req, res) => {
@@ -539,15 +601,17 @@ app.post("/messages", async (req, res) => {
   }
 })
 
-app.post('/api/answer', (req, res) => {
+app.post('/api/answer', async (req, res) => {
   if(!req.session.loggedIn) return res.send({success: false})
   let { question, text } = req.body
   let username = req.session.user.username
   console.log(`Question: ${question}, Answer: ${text}`);
-  api.addAnswer(question, username, text).then(data => {
+  api.addAnswer(question, username, text).then(async data => {
     console.log(data)
     if(data.success) {
+      await modifyPoints(2, username);
       res.send({success: true, answer: data.answer})
+      io.emit('newAnswer', question);
     } else {
       res.send({success: false})
     }
@@ -563,7 +627,7 @@ app.post("/auth/login", async (req,res) => {
   }
 
   var user = await api.getUser(username);
-  console.log(user)
+  // console.log(user)
   if(user.success && user) {
     // login user
     var salt = user.user.salt;
@@ -580,7 +644,8 @@ app.post("/auth/login", async (req,res) => {
             res.redirect('/')
         } else {
             res.render('login', {
-                error: {msg: "Incorrect password"}
+                error: {msg: "Incorrect password"},
+                badPassword: true
             })
         }
     
@@ -605,13 +670,113 @@ app.get("/buffet", (req, res) => {
 });
 
 app.get("/hasUserVotedAnswer", (req, res) => {
-  var user = req.session.user.username;
+  var user = req.session.user?.username;
   var answer = req.query.answer;
   var question = req.query.question;
   api.hasUserVotedAnswer(question, answer, user).then(data => {
     res.send(JSON.stringify(data))
   });
 })
+
+app.post("/api/removeStatusVote/:id", (req, res) => {
+  var id = req.params.id;
+  var user = req.session.user?.username;
+  if(ongoingVotes[id]) {
+   var indx =  ongoingVotes[id].votes.findIndex(vote => vote == user)
+   if(indx != -1) {
+     ongoingVotes[id].votes.splice(indx, 1)
+     if(ongoingVotes[id].votes.length == 0) {
+       ongoingVotes[id].after = undefined;
+
+     }
+     res.send({success: true})
+
+   } else {
+      console.log("Could not find vote to remove")
+      res.send({success: false})
+   }
+  }
+});
+
+app.post("/api/statusVote/:status/:id", (req, res) => {``
+  var user = req.session.user?.username;
+  if(!user) res.send({success: false})
+  var status = req.params.status;
+  var id = req.params.id;
+  if((status == "closed" || status=="open") && req.session.user?.level < 7) return res.send({success: false});
+  else if(req.session.user?.level < 6) return res.send({success: false})
+  api.getQuestion(id).then(data => {
+    if(data.success) {
+      var question = data.question;
+      if(ongoingVotes[id]) {
+        if(ongoingVotes[id].before != question.status) {
+          ongoingVotes[id] = {
+            before: question.status,
+            votes: []
+          }
+          res.send({success: false})
+          return;
+        }
+        if(!ongoingVotes[id].after) {
+          ongoingVotes[id].after = status;
+        }
+        if(ongoingVotes[id].votes.length >= 1 && (ongoingVotes[id].after != status)) {
+          res.send({success: false})
+          return;
+        } else if(ongoingVotes[id].after == status) {
+          if(ongoingVotes[id].votes.indexOf(user) != -1) {
+            res.send({success: false})
+            return;
+          }
+          ongoingVotes[id].votes.push(user)
+          if(ongoingVotes[id].votes.length >= 3) {
+            api.changeQuestionStatus(id, ongoingVotes[id].after).then(data => {
+              if(data.success) {
+                res.send({success: true})
+                ongoingVotes[id].votes = [];
+                ongoingVotes[id].after = undefined;
+                ongoingVotes[id].before = status;
+                return;
+              } else {
+                res.send({success: false})
+                //remove last vote
+                ongoingVotes[id].votes.pop()
+                return;
+              }
+            })
+          } else  res.send({success: true})
+
+          return;
+        }
+      }  else {
+        ongoingVotes[id] = {
+          before: question.status,
+          votes: []
+        }
+        var validStatuses = [];
+        if(question.status == "open") validStatuses = ["protected", "closed"];
+        if(question.status == "protected") validStatuses = ["closed"];
+        if(question.status == "closed") validStatuses = ["open"];
+        if(validStatuses.indexOf(status) == -1) {
+          res.send({success: false})
+          return;
+        }
+        // check if user has already voted
+        if(ongoingVotes[id].votes.indexOf(user) != -1) {
+          res.send({success: false})
+          return;
+        }
+        ongoingVotes[id].after = status;
+        console.log(status)
+        ongoingVotes[id].votes.push(user);
+        console.log(ongoingVotes[id])
+        res.send({success: true})
+      }
+    } else {
+      res.send({success: false})
+    }
+  });
+});
 
 app.get("/question/:id", (req, res) => {
   var id= req.params.id;
@@ -628,26 +793,30 @@ app.get("/question/:id", (req, res) => {
       res.send("Invalid question id")
       return;
     }
-
-
-      console.time("increaseViews")
+  
 
     api.increaseViews(id).then(data4 => {
-      console.timeEnd("increaseViews")
-      console.time("checkVote")
       
       console.log(data4)
       data.question.views ++;
     api.hasUserVoted(id, req.session.user?.username).then(data3 => {
-      console.timeEnd("checkVote")
+      io.emit("increaseView", id)
       // console.timeEnd("getQuestion")
+      getBasicData(req.session.user?.username).then(basicData => {
+        console.log(ongoingVotes[id])
     res.render('question', {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
-      username: req.session.user.username,
-      voted: data3
+      username: req.session.user?.username,
+      voted: data3,
+      basicData,
+      ongoingVotes: ongoingVotes[id] ?? {
+        before: data.question.status,
+        votes: []
+      }
     })
+  });
   }).catch(err => {
     console.timeEnd("getQuestion")
     console.log(err)
@@ -655,7 +824,7 @@ app.get("/question/:id", (req, res) => {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
-      username: req.session.user.username,
+      username: req.session.user?.username,
       voted: {voted: false}
     })
   });
@@ -664,59 +833,49 @@ app.get("/question/:id", (req, res) => {
 
   });
 var basicDataCache = {};
+function getBasicData(username) {
+  return new Promise((resolve, reject) => {
+
+  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 1000 * 5) {
+    resolve({success:true, ...basicDataCache[username].data})
+
+  } else {
+    api.getUser(username).then(data => {
+      if(data.success) {
+      var userPoints = data.user.points;
+      console.log(data)
+      let _level = levelCalculation(userPoints);
+      // console.log("Level: " + _level)
+      var needed = {
+        time: Date.now(),
+        data: {
+          pfp: gravatarGen(data.user.email),
+          level: _level,
+          points: userPoints,
+        }
+      }
+      basicDataCache[username] = needed;
+      resolve({success:true, ...needed.data})
+    } else {
+      console.log(data.error)
+      resolve(JSON.stringify({success: false}))
+    }
+    });
+  }
+});
+}
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
-    if(basicDataCache.hasOwnProperty(req.query.user) && Date.now() - basicDataCache[req.query.user].time < 1000 * 60 * 5) {
-      res.send({success:true, ...basicDataCache[req.query.user].data})
-
-    } else {
-      api.getUser(req.query.user).then(data => {
-        if(data.success) {
-        var userPoints = data.user.points;
-        console.log(data)
-        let _level;
-        for(let i = 0; i < levelMinimums.length; i++) {
-          if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
-            console.log("Less than " + levelMinimums[i])
-            _level = i + 2;
-            break;
-          } else if(i == 0) {
-            if(userPoints < levelMinimums[0]) {
-              console.log("Less than " + levelMinimums[0])
-              _level = i + 1;
-              break;
-            }
-          } else if(i == levelMinimums.length - 1) {
-            if(userPoints > levelMinimums[i]) {
-              console.log("Less than " + levelMinimums[i])
-              _level = levelMinimums.length + 1;
-              break;
-            }
-          }
-        }
-        console.log("Level: " + _level)
-        var needed = {
-          time: Date.now(),
-          data: {
-            pfp: gravatarGen(data.user.email),
-            level: _level,
-            points: userPoints,
-          }
-        }
-        basicDataCache[req.query.user] = needed;
-        res.send({success:true, ...needed.data})
-      } else {
-        console.log(data.error)
-        res.send(JSON.stringify({success: false}))
-      }
-      });
-    }
+    getBasicData(req.query.user).then(data => {
+      res.send(data)
+    });
   } else res.send(JSON.stringify({success: false}))
 })
 
 app.get("/questionComments", (req, res) => {
   var question = req.query.question;
-  api.getQuestionComments(question).then(data => {
+  var after = req.query.after;
+  api.getQuestionComments(question, after).then(data => {
     res.send(JSON.stringify(data))
   }).catch(err => {
     console.log(err)
@@ -727,8 +886,9 @@ app.get("/questionComments", (req, res) => {
 app.post("/answerComments", (req, res) => {
   var answer = req.body.answer;
   var question = req.body.question;
+  var after = req.body.after;
   console.log(req.body)
-  api.getAnswerComments(question, answer).then(data => {
+  api.getAnswerComments(question, answer, after).then(data => {
     res.send(JSON.stringify(data))
   }).catch(err => {
     console.log(err)
@@ -740,7 +900,7 @@ app.post("/addCommentQuestion", (req, res) => {
   var question = req.body.question;
   var comment = req.body.text;
   var user = req.session.user.username;
-  console.log(question, comment, user)
+  // console.log(question, comment, user)
   if(!user || !question || !comment) {
     res.send(JSON.stringify({success: false}))
     return
@@ -760,10 +920,10 @@ app.post("/addCommentQuestion", (req, res) => {
 
 app.get("/hasUserVotedComment", (req, res) => {
   var comment = req.query.comment;
-  var user = req.session.user.username;
+  var user = req.session.user?.username;
   var question = req.query.question;
   var answer = req.query.answer;
-  console.log(comment, user, question, answer)
+  // console.log(comment, user, question, answer)
   api.hasUserVotedComment(question,comment,user,answer).then(data => {
     res.send(JSON.stringify(data))
   }).catch(err => {
@@ -778,7 +938,7 @@ app.post("/addCommentAnswer", (req, res) => {
   var comment = req.body.text;
   var user = req.session.user.username;
   var question = req.body.question;
-  console.log(answer, comment, user, question)
+  // console.log(answer, comment, user, question)
   if(!user || !answer || !comment || !question) {
     res.send(JSON.stringify({success: false}))
     return
@@ -915,20 +1075,27 @@ app.post("/reset/:token", (req, res) => {
   }
 })
 
+var questionOwnerCache = {};
 
 app.post("/api/question/:id/:type", (req,res) => {
   var id = req.params.id;
   var type = req.params.type;
   var action = req.body.action;
-  console.log(action, type, id)
+  // console.log(action, type, id)
   if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
     res.send("Invalid question id or type")
     return
   }
   type += "s";
-  api.voteQuestion(id, req.session.user?.username, type, action).then(data => {
+  api.voteQuestion(id, req.session.user?.username, type, action).then(async data => {
     res.send(JSON.stringify(data))
     var dir = action == "increment" ? 1 : -1;
+    if(!questionOwnerCache[id]) questionOwnerCache[id] = await api.getQuestionOwner(id);
+    var owner = questionOwnerCache[id];
+    await modifyPoints(dir*(type=="downvotes"?-1:5), owner);
+    if(type == "downvotes") {
+      await modifyPoints(dir*-1, req.session.user?.username);
+    }
     dir *= type == "upvotes" ? 1 : -1;
     if(data.success) {
       io.emit("voteQ", [id, dir])
@@ -937,21 +1104,26 @@ app.post("/api/question/:id/:type", (req,res) => {
 
 
 })
-
 app.post("/api/answer/:id/:type", (req,res) => {
   var id = req.params.id;
   var type = req.params.type;
   var action = req.body.action;
   var  question = req.body.question;
-  console.log(action, type, id)
+  // console.log(action, type, id)
   if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
     res.send("Invalid answer id or type")
     return
   }
   type += "s";
-  api.voteAnswer( question , id, req.session.user?.username, type, action).then(data => {
+  api.voteAnswer( question , id, req.session.user?.username, type, action).then(async data => {
     res.send(JSON.stringify(data))
     var dir = action == "increment" ? 1 : -1;
+    if(!answerOwnerCache[id]) answerOwnerCache[id] = await api.getAnswerOwner(question, id);
+    var owner = answerOwnerCache[id];
+    await modifyPoints(dir*(type=="downvotes"?-5:10), owner);
+    if(type == "downvotes") {
+      await modifyPoints(dir*-1, req.session.user?.username);
+    }
     dir *= type == "upvotes" ? 1 : -1;
     if(data.success) {
       io.emit("voteA", [question, id, dir])
@@ -970,7 +1142,7 @@ app.post("/api/comment/:id/:type", (req,res) => {
     res.send({success: false, msg: "You must be logged in to comment"})
     return
   }
-  console.log("vote comment", action, type, id, question, answer);
+  // console.log("vote comment", action, type, id, question, answer);
   if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement") || !question) {
     res.send("Invalid answer id or type")
     return
@@ -986,16 +1158,68 @@ app.post("/api/comment/:id/:type", (req,res) => {
   });
 });
 
+var liveCache = {
+  votes: {},
+  views: {},
+  answerCount: {},
+};
 io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-});
+  // console.log('a user connected');
+  var lastRecieved = 0;
+  socket.on("getVotes", (qId) => {
+    if(Date.now() - lastRecieved < 100)  return
+     lastRecieved = Date.now();
+    if(liveCache.votes[qId] && Date.now() - liveCache.votes[qId].time < 1000) {
+      socket.emit("questionVotes", liveCache.votes[qId].data, qId);
+    } else {
+    api.getQuestion(qId).then(data => {
+      if(data.success) {
+        liveCache.votes[qId] = {
+          time: Date.now(),
+          data: {upvotes: data.question.upvotes, downvotes: data.question.downvotes}
+        }
+        liveCache.views[qId] = {
+          time: Date.now(),
+          data: data.question.views
+        }
+        liveCache.answerCount[qId] = {
+          time: Date.now(),
+          data: data.question.answers
+        }
+        socket.emit("questionVotes", liveCache.votes[qId].data, qId);
+      }
+
+    });
+  }
+  })
+  socket.on("getViews", (qId) => {
+    if(Date.now() - lastRecieved < 100)  return
 
 
-server.listen(port, () => console.log(`Example app listening on port ${port}!`))
-
+    if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 10) {
+      socket.emit("questionViews", liveCache.views[qId].data, qId);
+    } else {
+    api.getQuestion(qId).then(data => {
+      if(data && data.success) {
+        liveCache.votes[qId] = {
+          time: Date.now(),
+          data: {upvotes: data.question.upvotes, downvotes: data.question.downvotes}
+        }
+        liveCache.views[qId] = {
+          time: Date.now(),
+          data: data.question.views
+        }
+        liveCache.answerCount[qId] = {
+          time: Date.now(),
+          data: data.question.answers
+        }
+        socket.emit("questionViews", liveCache.views[qId].data,qId);
+      }
+    });
+  }
+  })
+  socket.on("getAnswerCount", (qId) => {
+    if(Date.now() - lastRecieved < 100)  return
 modifyPoints = async (username, amount) => {
   return await api.modifyPoints(username, amount)
 }
@@ -1009,27 +1233,35 @@ replaceCharacters = (str) => {
   return newQ
 }
 
-levelCalculation = (userPoints) => {
-  let _level
-  for(let i = 0; i < levelMinimums.length; i++) {
-    if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
-      console.log("Less than " + levelMinimums[i])
-      _level = i + 2;
-      break;
-    } else if(i == 0) {
-      if(userPoints < levelMinimums[0]) {
-        console.log("Less than " + levelMinimums[0])
-        _level = i + 1;
-        break;
-      }
-    } else if(i == levelMinimums.length - 1) {
-      if(userPoints > levelMinimums[i]) {
-        console.log("Less than " + levelMinimums[i])
-        _level = levelMinimums.length + 1;
-        break;
-      }
-    }
-  }
+     lastRecieved = Date.now();
 
-  return _level
-}
+    if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 10) {
+      socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
+    } else {
+    api.getQuestion(qId).then(data => {
+      if(data.success) {
+        liveCache.votes[qId] = {
+          time: Date.now(),
+          data: {upvotes: data.question.upvotes, downvotes: data.question.downvotes}
+        }
+        liveCache.views[qId] = {
+          time: Date.now(),
+          data: data.question.views
+        }
+        liveCache.answerCount[qId] = {
+          time: Date.now(),
+          data: data.question.answers
+        }
+        socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
+      }
+    });
+  }
+  })
+  socket.on('disconnect', () => {
+    // console.log('user disconnected');
+  });
+});
+
+
+server.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
