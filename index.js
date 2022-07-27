@@ -331,13 +331,13 @@ app.get('/dashboard', async (req, res) => {
   }
 })
 
-app.post('/email', (req, res) => {
-  const { username } = req.body
+app.get('/email', (req, res) => {
+  const { username } = req.session.user.username
   res.render('changeEmail', {username: username})
 })
 
-app.post('/password', (req, res) => {
-  const { username } = req.body
+app.get('/password', (req, res) => {
+  const { username } = req.session.user.username
   res.render('changePassword', {username: username})
 })
 
