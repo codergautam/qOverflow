@@ -120,6 +120,21 @@ class Api {
   async getUser(username) {
     return this.sendRequest('/users/'+username, 'GET');
   }
+  
+  async updateQuestion(id, status, title, text, views, upvotes, downvotes) {
+    return this.sendRequest('/questions/' + id, 'PATCH', {
+      status: status,
+      title: title,
+      text: text,
+      views: views,
+      upvotes: upvotes,
+      downvotes: downvotes
+    });
+  }
+
+  async changeQuestionStatus(id, status) {
+    return this.updateQuestion(id, status, undefined, undefined, undefined, undefined, undefined);
+  }
 
   async getQuestions(sort, regex, match, after) {
     //Sort param: ---------

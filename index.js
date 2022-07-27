@@ -21,6 +21,7 @@ const io = new Server(server, {
 });
 
 var forgotTokens = {};
+var ongoingVotes = {};
 
  const api = new Api(process.env.key)
  var gravatar = require('gravatar');
@@ -32,6 +33,7 @@ var forgotTokens = {};
 var session = require('express-session')
 const sqlite = require("better-sqlite3");
 const { randomUUID } = require('crypto')
+const e = require('express')
 
 const SqliteStore = require("better-sqlite3-session-store")(session)
 const db = new sqlite("sessions.db");
@@ -42,6 +44,7 @@ app.use(bodyParser.json())
 
 app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
+
 
 
 app.use(session({
@@ -64,16 +67,23 @@ app.use(session({
   )
 }))
 
-app.get('/', (req, res) => { //Homepage
+app.get('/', async (req, res) => { //Homepage
   // console.log(req.session)
   var sort = req.query.sort ?? "recent";
   // console.log(sort)
   var possible = ["recent", "best", "interesting", "hottest"];
   if(!possible.includes(sort)) sort = "recent";
+  try {
+   var basicData = await getBasicData(req.session.user?.username);
+  } catch(e) {
+    console.log(e)
+    var basicData = {};
+  }
   res.render('index', {
     loggedIn: req.session.loggedIn ?? false,
     user: req.session.user,
-    sort
+    sort,
+    basicData,
   })
 });
 
@@ -87,7 +97,10 @@ var modifyPoints = async (amount, username) => {
   })
 }
 
-levelCalculation = (userPoints) => {
+
+
+
+var levelCalculation = (userPoints) => {
   let _level
   for(let i = 0; i < levelMinimums.length; i++) {
     if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
@@ -487,6 +500,106 @@ app.get("/hasUserVotedAnswer", (req, res) => {
   });
 })
 
+app.post("/api/removeStatusVote/:id", (req, res) => {
+  var id = req.params.id;
+  var user = req.session.user?.username;
+  if(ongoingVotes[id]) {
+   var indx =  ongoingVotes[id].votes.findIndex(vote => vote == user)
+   if(indx != -1) {
+     ongoingVotes[id].votes.splice(indx, 1)
+     if(ongoingVotes[id].votes.length == 0) {
+       ongoingVotes[id].after = undefined;
+
+     }
+     res.send({success: true})
+
+   } else {
+      console.log("Could not find vote to remove")
+      res.send({success: false})
+   }
+  }
+});
+
+app.post("/api/statusVote/:status/:id", (req, res) => {``
+  var user = req.session.user?.username;
+  if(!user) res.send({success: false})
+  var status = req.params.status;
+  var id = req.params.id;
+  if((status == "closed" || status=="open") && req.session.user?.level < 7) return res.send({success: false});
+  else if(req.session.user?.level < 6) return res.send({success: false})
+  api.getQuestion(id).then(data => {
+    if(data.success) {
+      var question = data.question;
+      if(ongoingVotes[id]) {
+        if(ongoingVotes[id].before != question.status) {
+          ongoingVotes[id] = {
+            before: question.status,
+            votes: []
+          }
+          res.send({success: false})
+          return;
+        }
+        if(!ongoingVotes[id].after) {
+          ongoingVotes[id].after = status;
+        }
+        if(ongoingVotes[id].votes.length >= 1 && (ongoingVotes[id].after != status)) {
+          res.send({success: false})
+          return;
+        } else if(ongoingVotes[id].after == status) {
+          if(ongoingVotes[id].votes.indexOf(user) != -1) {
+            res.send({success: false})
+            return;
+          }
+          ongoingVotes[id].votes.push(user)
+          if(ongoingVotes[id].votes.length >= 3) {
+            api.changeQuestionStatus(id, ongoingVotes[id].after).then(data => {
+              if(data.success) {
+                res.send({success: true})
+                ongoingVotes[id].votes = [];
+                ongoingVotes[id].after = undefined;
+                ongoingVotes[id].before = status;
+                return;
+              } else {
+                res.send({success: false})
+                //remove last vote
+                ongoingVotes[id].votes.pop()
+                return;
+              }
+            })
+          } else  res.send({success: true})
+
+          return;
+        }
+      }  else {
+        ongoingVotes[id] = {
+          before: question.status,
+          votes: []
+        }
+        var validStatuses = [];
+        if(question.status == "open") validStatuses = ["protected", "closed"];
+        if(question.status == "protected") validStatuses = ["closed"];
+        if(question.status == "closed") validStatuses = ["open"];
+        if(validStatuses.indexOf(status) == -1) {
+          res.send({success: false})
+          return;
+        }
+        // check if user has already voted
+        if(ongoingVotes[id].votes.indexOf(user) != -1) {
+          res.send({success: false})
+          return;
+        }
+        ongoingVotes[id].after = status;
+        console.log(status)
+        ongoingVotes[id].votes.push(user);
+        console.log(ongoingVotes[id])
+        res.send({success: true})
+      }
+    } else {
+      res.send({success: false})
+    }
+  });
+});
+
 app.get("/question/:id", (req, res) => {
   var id= req.params.id;
   if(!id) {
@@ -502,8 +615,6 @@ app.get("/question/:id", (req, res) => {
       res.send("Invalid question id")
       return;
     }
-
-
   
 
     api.increaseViews(id).then(data4 => {
@@ -513,13 +624,21 @@ app.get("/question/:id", (req, res) => {
     api.hasUserVoted(id, req.session.user?.username).then(data3 => {
       io.emit("increaseView", id)
       // console.timeEnd("getQuestion")
+      getBasicData(req.session.user?.username).then(basicData => {
+        console.log(ongoingVotes[id])
     res.render('question', {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
       username: req.session.user?.username,
-      voted: data3
+      voted: data3,
+      basicData,
+      ongoingVotes: ongoingVotes[id] ?? {
+        before: data.question.status,
+        votes: []
+      }
     })
+  });
   }).catch(err => {
     console.timeEnd("getQuestion")
     console.log(err)
@@ -536,53 +655,42 @@ app.get("/question/:id", (req, res) => {
 
   });
 var basicDataCache = {};
+function getBasicData(username) {
+  return new Promise((resolve, reject) => {
+
+  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 1000 * 5) {
+    resolve({success:true, ...basicDataCache[username].data})
+
+  } else {
+    api.getUser(username).then(data => {
+      if(data.success) {
+      var userPoints = data.user.points;
+      console.log(data)
+      let _level = levelCalculation(userPoints);
+      // console.log("Level: " + _level)
+      var needed = {
+        time: Date.now(),
+        data: {
+          pfp: gravatarGen(data.user.email),
+          level: _level,
+          points: userPoints,
+        }
+      }
+      basicDataCache[username] = needed;
+      resolve({success:true, ...needed.data})
+    } else {
+      console.log(data.error)
+      resolve(JSON.stringify({success: false}))
+    }
+    });
+  }
+});
+}
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
-    if(basicDataCache.hasOwnProperty(req.query.user) && Date.now() - basicDataCache[req.query.user].time < 1000 * 20) {
-      res.send({success:true, ...basicDataCache[req.query.user].data})
-
-    } else {
-      api.getUser(req.query.user).then(data => {
-        if(data.success) {
-        var userPoints = data.user.points;
-        console.log(data)
-        let _level;
-        for(let i = 0; i < levelMinimums.length; i++) {
-          if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
-            console.log("Less than " + levelMinimums[i])
-            _level = i + 2;
-            break;
-          } else if(i == 0) {
-            if(userPoints < levelMinimums[0]) {
-              console.log("Less than " + levelMinimums[0])
-              _level = i + 1;
-              break;
-            }
-          } else if(i == levelMinimums.length - 1) {
-            if(userPoints > levelMinimums[i]) {
-              console.log("Less than " + levelMinimums[i])
-              _level = levelMinimums.length + 1;
-              break;
-            }
-          }
-        }
-        // console.log("Level: " + _level)
-        var needed = {
-          time: Date.now(),
-          data: {
-            pfp: gravatarGen(data.user.email),
-            level: _level,
-            points: userPoints,
-          }
-        }
-        basicDataCache[req.query.user] = needed;
-        res.send({success:true, ...needed.data})
-      } else {
-        console.log(data.error)
-        res.send(JSON.stringify({success: false}))
-      }
-      });
-    }
+    getBasicData(req.query.user).then(data => {
+      res.send(data)
+    });
   } else res.send(JSON.stringify({success: false}))
 })
 
@@ -914,7 +1022,7 @@ io.on('connection', (socket) => {
       socket.emit("questionViews", liveCache.views[qId].data, qId);
     } else {
     api.getQuestion(qId).then(data => {
-      if(data.success) {
+      if(data && data.success) {
         liveCache.votes[qId] = {
           time: Date.now(),
           data: {upvotes: data.question.upvotes, downvotes: data.question.downvotes}
