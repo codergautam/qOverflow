@@ -1,18 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="/index.css">
+    <style>
+        #mydiv {
+            width: 100px;
+            height: 100px;
+            background: #000;
+            color: #fff;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
     <div class="grid relative grid-cols-6 bg-gray-50">
         <div class="col-span-6">
-            <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
+            <%- include('./navbar'), { loggedIn: true, login: false, } %>
         </div>
-        <div class="relative flex-col w-full col-span-2 bg-white h-full">
+        <div class="relative flex-col w-full col-span-2 bg-white h-full" id="mydiv">
             <div class="absolute bg-gray-50 left-6 top-4 w-1/2 h-20 z-0 rounded-md">
 
             </div>
@@ -23,17 +34,24 @@
             </div>
             <div class="ml-8 relative z-10 pt-2">
                 <div class="flex pt-4">
-                    <div class="text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
-                        <%= user.username %> 
+                    <div
+                        class="text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
+                        <%= user.username %>
                     </div>
                 </div>
                 <div class="flex justify-between">
                     <div class="inline-block py-2 items-baseline">
-                        <div class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
-                            Level <%= user.level %> <div class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">Level <%= nextLevel %> (<%= nextLevelPoints %> pts.) </div>
+                        <div
+                            class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
+                            Level <%= user.level %>
+                                <div
+                                    class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">
+                                    Level <%= nextLevel %> (<%= nextLevelPoints %> pts.) </div>
                         </div>
-                        <div class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
-                            <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
+                        <div
+                            class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
+                            <%= user.points %>
+                                <% if(user.points> 1 ) { %> pts. <% } else { %> pt. <% } %>
                         </div>
                     </div>
                 </div>
@@ -44,24 +62,31 @@
                         You Can...
                     </div>
                     <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
-                        <% if(user.abilities) { %> 
-                            <% user.abilities.map((ability) => { %> 
-                                <li><%= ability %></li>
-                            <% }) %> 
-                        <% } %> 
+                        <% if(user.abilities) { %>
+                            <% user.abilities.map((ability)=> { %>
+                                <li>
+                                    <%= ability %>
+                                </li>
+                                <% }) %>
+                                    <% } %>
                     </div>
                 </div>
             </div>
             <div class="ml-4 z-10  mt-2 px-4 pt-2">
                 <div class="inline-block py-4">
-                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-t-md border-b-4 border-white">
-                        <span class="font-staat font-light">Email:</span> <%- user.email %> 
+                    <div
+                        class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-t-md border-b-4 border-white">
+                        <span class="font-staat font-light">Email:</span>
+                        <%- user.email %>
                     </div>
                     <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-100 px-2 py-1 rounded-none">
-                        <span class="font-staat font-light">Questions:</span> <%- user.questions %> 
+                        <span class="font-staat font-light">Questions:</span>
+                        <%- user.questions %>
                     </div>
-                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-b-md border-t-4 border-white">
-                        <span class="font-staat font-light">Answers:</span> <%- user.answers%> 
+                    <div
+                        class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-b-md border-t-4 border-white">
+                        <span class="font-staat font-light">Answers:</span>
+                        <%- user.answers%>
                     </div>
                 </div>
             </div>
@@ -79,83 +104,99 @@
                             Questions
                         </p>
                         <div class="hidden" id="questions">
-                            <% if(questionFeed.length != 0) { %>
-                                <% questionFeed.forEach((data) => { %> 
+                            <% if(questionFeed.length !=0) { %>
+                                <% questionFeed.forEach((data)=> { %>
                                     <div class="flex-col">
-                                    <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
-                                        <div class="px-4 py-4 ">
-                                          <div class="font-bold text-lg mb-2"><%= data.title %> </div>
-                                          <p class="text-gray-700 text-base w-5/6">
-                                            <%= data.text %> 
-                                          </p>
-                                        </div>
-                                        <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
+                                        <div
+                                            class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                                            <div class="px-4 py-4 ">
+                                                <div class="font-bold text-lg mb-2">
+                                                    <%= data.title %>
+                                                </div>
+                                                <p class="text-gray-700 text-base w-5/6">
+                                                    <%= data.text %>
+                                                </p>
+                                            </div>
+                                            <div class="pl-3 pr-6 pt-4 pb-2 ">
+                                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%=
+                                                        data.creator %> </span>
+                                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">
+                                                    <%= data.timeElapsed %> ago
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                    </div>
-                                <% }) %> 
-                            <% } else { %>
-                                <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                    You Have No Questions Right Now
-                                </div>
-                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                      </svg>
-                                </span>
-                            <% } %>
-                        </div>  
-                        <% if(questionFeed.length != 0)  { %> 
+                                    <% }) %>
+                                        <% } else { %>
+                                            <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                                You Have No Questions Right Now
+                                            </div>
+                                            <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                    viewBox="0 0 20 20" fill="currentColor">
+                                                    <path
+                                                        d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                </svg>
+                                            </span>
+                                            <% } %>
+                        </div>
+                        <% if(questionFeed.length !=0) { %>
                             <div class="flex-col overflow-y-auto h-72 items-start" id="questionFeed">
-                            </div>   
-                        <% } else { %>
-                            <div class="flex-col" id="questionFeed">
-                            </div>   
-                        <% } %>  
+                            </div>
+                            <% } else { %>
+                                <div class="flex-col" id="questionFeed">
+                                </div>
+                                <% } %>
                     </div>
                     <div class="flex-col mt-12">
                         <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
                             Answers
                         </p>
                         <div class="hidden" id="answers">
-                            <% if(answerFeed.length != 0) { %>
-                                <% answerFeed.forEach((data) => { %> 
+                            <% if(answerFeed.length !=0) { %>
+                                <% answerFeed.forEach((data)=> { %>
                                     <div class="flex-col">
-                                    <div class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
-                                        <div class="px-4 py-4 ">
-                                          <div class="font-bold text-base mb-2"><%= data.title %> </div>
-                                          <p class="text-gray-700 text-lg font-bold w-5/6">
-                                            <%= data.text %> 
-                                          </p>
-                                        </div>
-                                        <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
+                                        <div
+                                            class="hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                                            <div class="px-4 py-4 ">
+                                                <div class="font-bold text-base mb-2">
+                                                    <%= data.title %>
+                                                </div>
+                                                <p class="text-gray-700 text-lg font-bold w-5/6">
+                                                    <%= data.text %>
+                                                </p>
+                                            </div>
+                                            <div class="pl-3 pr-6 pt-4 pb-2 ">
+                                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%=
+                                                        data.creator %> </span>
+                                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">
+                                                    <%= data.timeElapsed %> ago
+                                                </span>
+                                            </div>
                                         </div>
                                     </div>
-                                    </div>
-                                <% }) %> 
-                            <% } else { %>
-                                <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                    You Have No Answers Right Now
-                                </div>
-                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                      </svg>
-                                </span>
-                            <% } %>
-                        </div>  
-                        
-                        <% if(answerFeed.length != 0)  { %> 
+                                    <% }) %>
+                                        <% } else { %>
+                                            <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                                You Have No Answers Right Now
+                                            </div>
+                                            <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                                                    viewBox="0 0 20 20" fill="currentColor">
+                                                    <path
+                                                        d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                                </svg>
+                                            </span>
+                                            <% } %>
+                        </div>
+
+                        <% if(answerFeed.length !=0) { %>
                             <div class="flex-col overflow-y-auto h-72 items-start" id="answerFeed">
-                            </div>   
-                        <% } else { %>
-                            <div class="flex-col" id="answerFeed">
-                            </div>   
-                        <% } %>  
+                            </div>
+                            <% } else { %>
+                                <div class="flex-col" id="answerFeed">
+                                </div>
+                                <% } %>
                     </div>
                 </div>
             </div>
@@ -163,34 +204,49 @@
         <div class="col-span-1 relative h-screen">
             <div class="flex justify-end">
                 <div class="flex-col justify-end">
-                    <img src="<%= user.img %>" alt="" class="ml-auto rounded-full w-14 h-14 mr-6 mt-6 bg-white px-2 py-2 border-4 hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
-                    <form action="./email" method="POST" class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
+                    <img src="<%= user.img %>" alt=""
+                        class="ml-auto rounded-full w-14 h-14 mr-6 mt-6 bg-white px-2 py-2 border-4 hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
+                    <form action="./email" method="POST"
+                        class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
                         <input type="hidden" name="username" value="<%= user.username %> ">
-                        <input type="submit" class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out" value="Change Your Email" />
-                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        <input type="submit"
+                            class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                            value="Change Your Email" />
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500" fill="none"
+                            viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                         </svg>
                     </form>
-                    <form action="./password" method="POST" class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
+                    <form action="./password" method="POST"
+                        class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
                         <input type="hidden" name="username" value="<%= user.username %> ">
-                        <input type="submit" class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out" value="Change Your Password"/>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                        <input type="submit"
+                            class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                            value="Change Your Password" />
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500" fill="none"
+                            viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                         </svg>
                     </form>
                     <form action="./deleteAccount" method="POST" class="flex group mt-2 justify-end mr-6">
                         <input type="hidden" name="username" value="<%= user.username %> ">
-                        <input value="Delete Account" type="submit" class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out hover:ring-2 hover:ring-red-400 hover:ring-offset-1"/>
+                        <input value="Delete Account" type="submit"
+                            class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out hover:ring-2 hover:ring-red-400 hover:ring-offset-1" />
                     </form>
                 </div>
             </div>
         </div>
     </div>
-    <% if (questionFeed)  { %> 
+    <% if (questionFeed) { %>
         <script>
+            setTimeout(function() {
+                $('#mydiv').fadeOut('fast');
+            }, 1000);
             let chunkSize
             let standard = 6
-            
+
             let children = document.getElementById("questions").innerHTML
             document.getElementById("questionFeed").innerHTML = children
             let questionFeed = document.getElementById("questionFeed").children
@@ -198,7 +254,7 @@
             let index = questionFeed.length - 1
 
 
-            while(questionFeed.length > chunkSize) {
+            while (questionFeed.length > chunkSize) {
                 questionFeed.item(index).remove()
                 index--
             }
@@ -213,7 +269,7 @@
                                       </svg>
                                 </span>`
 
-            if(!document.getElementById("noQuestions")) {
+            if (!document.getElementById("noQuestions")) {
                 implementLoader(questionFeed.length, document.getElementById("questions").children.length)
             }
 
@@ -227,7 +283,7 @@
                 chunkSize += standard
                 let index = questionFeed.length - 1
 
-                while(questionFeed.length > chunkSize) {
+                while (questionFeed.length > chunkSize) {
                     questionFeed.item(index).remove()
                     index--
                 }
@@ -237,7 +293,7 @@
             }
 
             function loadLessQuestions() {
-                if((chunkSize - standard) > 0) {
+                if ((chunkSize - standard) > 0) {
                     let children = document.getElementById("questions").innerHTML
                     document.getElementById("questionFeed").innerHTML = children
 
@@ -246,7 +302,7 @@
                     chunkSize -= standard
                     let index = questionFeed.length - 1
 
-                    while(questionFeed.length > chunkSize) {
+                    while (questionFeed.length > chunkSize) {
                         questionFeed.item(index).remove()
                         index--
                     }
@@ -264,7 +320,7 @@
             chunkSize = standard
             let indexA = answerFeed.length - 1
 
-            while(answerFeed.length > chunkSize) {
+            while (answerFeed.length > chunkSize) {
                 answerFeed.item(index).remove()
                 index--
             }
@@ -278,7 +334,7 @@
                                         <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z"></path>
                                       </svg>
                                 </span>`
-            if(!document.getElementById("noAnswers")) {
+            if (!document.getElementById("noAnswers")) {
                 implementLoaderA(answerFeed.length, document.getElementById("answers").children.length)
             }
 
@@ -291,7 +347,7 @@
                 chunkSize += standard
                 let index = answerFeed.length - 1
 
-                while(answerFeed.length > chunkSize) {
+                while (answerFeed.length > chunkSize) {
                     answerFeed.item(index).remove()
                     index--
                 }
@@ -301,7 +357,7 @@
             }
 
             function loadLessAnswers() {
-                if((chunkSize - standard) > 0) {
+                if ((chunkSize - standard) > 0) {
                     let childrenA = document.getElementById("answers").innerHTML
                     document.getElementById("answerFeed").innerHTML = children
 
@@ -310,7 +366,7 @@
                     chunkSize -= standard
                     let index = answerFeed.length - 1
 
-                    while(answerFeed.length > chunkSize) {
+                    while (answerFeed.length > chunkSize) {
                         answerFeed.item(index).remove()
                         index--
                     }
@@ -323,7 +379,7 @@
             }
 
             function implementLoader(qLength, cLength) {
-                if(qLength < cLength) {
+                if (qLength < cLength) {
                     let loader = `
                             <div class="flex mt-4">
                                 <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
@@ -337,10 +393,10 @@
                                     </button>
                                 </span>
                             </div>`
-                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    } else {
-                        let loader = `
+                    document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
+                    return
+                } else {
+                    let loader = `
                                     <div class="flex mt-4">
                                         <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
                                             <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
@@ -348,14 +404,14 @@
                                             </button>
                                         </span>
                                     </div>`
-                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    }
+                    document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
+                    return
+                }
             }
 
             function implementLoaderA(qLength, cLength) {
                 let emptyElem = ``
-                if(qLength < cLength) {
+                if (qLength < cLength) {
                     let loader = `
                             <div class="flex mt-4">
                                 <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
@@ -369,10 +425,10 @@
                                     </button>
                                 </span>
                             </div>`
-                        document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    } else {
-                        let loader = `
+                    document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
+                    return
+                } else {
+                    let loader = `
                                     <div class="flex mt-4">
                                         <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
                                             <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
@@ -380,15 +436,16 @@
                                             </button>
                                         </span>
                                     </div>`
-                        document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    }
+                    document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
+                    return
+                }
             }
         </script>
-    <% } else { %>
-        <script>
-            
-        </script>
-    <% } %>  
+        <% } else { %>
+            <script>
+
+            </script>
+            <% } %>
 </body>
+
 </html>
