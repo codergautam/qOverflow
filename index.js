@@ -106,13 +106,17 @@ app.get('/search', async (req, res) => {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
-    console.log(q)
-    let newK = q.forEach((data, i) => {
+    q.forEach((data, i) => {
       if((data != '') && (data != ' ')) {
+        console.log("Length: " + q.length)
+        if(((i != 0) && (i != q.length - 1)) || (q.length == 1)) {
+          console.log("adding space")
+           q[i] = ` ${data} `
+        }
         return data
       }
     })
-    console.log(newK)
+    console.log(q)
     regexQuery = {
       "title": `(${q.join(")|(")})`
     }
@@ -121,13 +125,17 @@ app.get('/search', async (req, res) => {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
-    console.log(q)
-    let newK = q.forEach((data, i) => {
+    q.forEach((data, i) => {
       if((data != '') && (data != ' ')) {
+        console.log("Length: " + q.length)
+        if(((i != 0) && (i != q.length - 1)) || (q.length == 1)) {
+          console.log("adding space")
+           q[i] = ` ${data} `
+        }
         return data
       }
     })
-    console.log(newK)
+    console.log(q)
     regexQuery = {
       "text": `(${q.join(")|(")})`
     }
@@ -147,7 +155,8 @@ app.get('/search', async (req, res) => {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
-      searchFeed: questions
+      searchFeed: questions, 
+      user: req.session.user
     })
   } else {
     res.redirect('/')
@@ -229,27 +238,35 @@ app.post('/search', async (req, res) => {
     console.log(newQ)
     let q = newQ.split(" ")
     console.log(q)
-    let newK = q.forEach((data, i) => {
+    q.forEach((data, i) => {
       if((data != '') && (data != ' ')) {
+        console.log("Length: " + q.length)
+        if(((i != 0) && (i != q.length - 1)) || (q.length == 1)) {
+          console.log("adding space")
+           q[i] = ` ${data} `
+        }
         return data
       }
     })
-    console.log(newK)
     regexQuery = {
-      "title": `(${q.join(")|(")})`
+      "title":  `(${q.join(")|(")})`
     }
     console.log(regexQuery.title)
   } else if(sort == "Text") {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
-    console.log(q)
-    let newK = q.forEach((data, i) => {
+    q.forEach((data, i) => {
       if((data != '') && (data != ' ')) {
+        console.log("Length: " + q.length)
+        if(((i != 0) && (i != q.length - 1)) || (q.length == 1)) {
+          console.log("adding space")
+           q[i] = ` ${data} `
+        }
         return data
       }
     })
-    console.log(newK)
+    console.log(q)
     regexQuery = {
       "text": `(${q.join(")|(")})`
     }
@@ -259,7 +276,7 @@ app.post('/search', async (req, res) => {
   req.session.currentRegex = regexQuery
   let data = await api.getQuestions(null, regexQuery, matchQuery, null)
   let questions = (data.success) ? data.questions : null
-  console.log(questions)
+  // console.log(questions)
   if(questions) {
     questions.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
@@ -268,7 +285,8 @@ app.post('/search', async (req, res) => {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
-      searchFeed: questions
+      searchFeed: questions, 
+      user: req.session.user
     })
   } else {
     res.redirect('/')
@@ -1035,7 +1053,7 @@ modifyPoints = async (amount, username) => {
 replaceCharacters = (str) => {
   let newQ = str
   // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
-  newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
   // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
   newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
   return newQ
