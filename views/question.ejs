@@ -9,6 +9,7 @@
   <link rel="stylesheet"
       href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 <script>
@@ -17,44 +18,70 @@
 };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
-<script src="http://github.hubspot.com/odometer/odometer.js"></script>
+<!-- <link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
+<script src="http://github.hubspot.com/odometer/odometer.js"></script> -->
+<% 
+function msToTime(duration) {
+  const portions = [];
+    const msInDay = 1000 * 60 * 60 * 24;
+  const days = Math.trunc(duration / msInDay);
+  if (days > 0) {
+    portions.push(days + 'd');
+    duration = duration - (days * msInDay);
+  }
+
+  const msInHour = 1000 * 60 * 60;
+  const hours = Math.trunc(duration / msInHour);
+  if (hours > 0) {
+    portions.push(hours + 'h');
+    duration = duration - (hours * msInHour);
+  }
+
+  const msInMinute = 1000 * 60;
+  const minutes = Math.trunc(duration / msInMinute);
+  if (minutes > 0) {
+    portions.push(minutes + 'm');
+    duration = duration - (minutes * msInMinute);
+  }
+
+  const seconds = Math.trunc(duration / 1000);
+  if (seconds > 0) {
+    portions.push(seconds + 's');
+  }
+
+  return portions[0];
+}
+%>
 <style>
   h1 {
     font-size: 2em;
     font-weight: normal;
-    text-align: center;
     margin: 0.67em 0;
   }
   h2 {
     font-size: 1.5em;
     font-weight: normal;
-    text-align: center;
     margin: 0.83em 0;
   }
   h3 {
     font-size: 1.17em;
     font-weight: normal;
-    text-align: center;
     margin: 1em 0;
   }
   h4 {
     font-size: 1em;
     font-weight: normal;
     margin: 1.33em 0;
-    text-align: center;
   }
   h5 {
     font-size: 0.83em;
     font-weight: normal;
     margin: 1.67em 0;
-    text-align: center;
   }
   h6 {
     font-size: 0.67em;
     font-weight: normal;
     margin: 2.33em 0;
-    text-align: center;
   }
   table {
     border-collapse: collapse;
@@ -83,7 +110,6 @@
 
 
     list-style: disc;
-    text-align: center;
 
 list-style-position: inside;
   }
@@ -91,7 +117,6 @@ list-style-position: inside;
     margin: 1.33em 0;
     padding: 0.5em 1em;
     list-style: decimal;
-    text-align: center;
     list-style-position: inside;
   }
   li {
@@ -113,49 +138,300 @@ list-style-position: inside;
     </div>
     <!-- <div class="flex justify-center items-center flex-grow"> -->
       <div class="min-h-full">
-      
+  
 
           <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <div class="px-4 py-6 sm:px-0 rounded overflow-hidden shadow-lg">
+            <% if(question.status == "protected") { %>
+              <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
+                <div class="flex">
+                  <div class="py-1 pr-5"><i class="fa fa-shield" style="font-size: 40px;" aria-hidden="true"></i></div>
+                  <div>
+                    <p class="font-bold">This question is Protected</p>
+                    <p class="text-sm">This is to help protect the question against spam and other unwanted things.<br/>Only users level 5 or above can comment, or answer on this question.</p>
+                
+              <% } else if(question.status == "closed") {%>
+                <div class="bg-gray-100 border-t-4 border-gray-500 rounded-b text-gray-900 px-4 py-3 shadow-md" role="alert">
+                  <div class="flex">
+                    <div class="py-1 pr-5"><i class="fa fa-lock" style="font-size: 40px;" aria-hidden="true"></i></div>
+                    <div>
+                      <p class="font-bold">This question is Closed</p>
+                      <p class="text-sm">Nobody can Comment on or Answer this question</p>
+                <% } else if(question.status == "open" && loggedIn && basicData.level >= 6) { %>
+                  <div class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md" role="alert">
+                    <div class="flex">
+                      <div class="py-1 pr-5"><i class="fa fa-check" style="font-size: 40px;" aria-hidden="true"></i></div>
+                      <div>
+                        <p class="font-bold">This question is Open</p>
+                        <p class="text-sm">Anyone can Comment on or Answer this question</p>
+                  <% } %>
+                 <% if((question.status == "open" && loggedIn && basicData.level >= 6) || question.status != "open") { %>
+                <%   if( basicData.level >= 6 && ((ongoingVotes.before != "closed" && ongoingVotes.before != "protected") || basicData.level >= 7)) { %>
+                  <br/>
+                 <p class="text-sm">You can vote to change the status of this question </p>
+                
+<script>
+                 
+  console.log("<%= JSON.stringify(ongoingVotes )%>");
+  function voteQuestionStatus(status) {
+    fetch(`/api/statusVote/${status}/<%= question.question_id %>`, {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json'
+                              }
+                            }).then(function(response) {
+                              return response.json();
+                            }).then(function(data) {
+                              if(data.success) { 
+                              window.location.reload();
+                              console.log(data);
+                                
+                              }
+                            });
+  }
+
+  
+</script>
+<% if(!ongoingVotes.after) {%>
+                    <% if(question.status == "open") { %>
+                      <% if(basicData.level >= 7) { %>
+                        <button id="voteClose" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote to Close</button>
+                       <% } %>
+                        <button id="voteProtect" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote to Protect</button>
+                        <script>
+                      <% if(basicData.level >= 7) { %>
+
+                          document.getElementById("voteClose").onclick = function() {
+                           voteQuestionStatus("closed");
+                          };
+                       <% } %>
+
+                          document.getElementById("voteProtect").onclick = function() {
+                           voteQuestionStatus("protected");
+                          };
+                        </script>
+                      <% } %>
+                      <% if(question.status == "closed") { %>
+                        <button id="voteOpen" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote to Re-open</button>
+                     
+                        <script>
+
+                          document.getElementById("voteOpen").onclick = function() {
+                           voteQuestionStatus("open");
+                          };
+                        </script>
+                      <% } %>
+                      <% if(question.status == "protected") { %>
+                        <button id="voteClose" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote to Close</button>
+                     
+                        <script>
+
+                          document.getElementById("voteClose").onclick = function() {
+                           voteQuestionStatus("closed");
+                          };
+                        </script>
+                      <% } %>
+
+                    <% } else {%>
+                      <p>Ongoing vote: <%= ongoingVotes.after == "closed" ? "Closing" : ongoingVotes.after == "open" ? "Re-open" : "Protecting" %></p>
+                      <br/>
+                      <p><%= "Current voters: "+ongoingVotes.votes.join(", ") %></p>
+                      <br>
+                      <!-- remove votebtn-->
+                      <% if(ongoingVotes.votes.includes(user.username)) { %>
+                      <button id="removeVote" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Remove Vote</button>
+                      <% } else { %>
+                      <button id="addVote" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add Vote</button>
+                        <% } %>
+
+                      <script>
+                          function removeVote() {
+    fetch(`/api/removeStatusVote/<%= question.question_id %>`, {
+                              method: 'POST',
+                              headers: {
+                                'Content-Type': 'application/json'
+                              }
+                            }).then(function(response) {
+                              return response.json();
+                            }).then(function(data) {
+                              if(data.success) { 
+                              window.location.reload();
+                              console.log(data);
+                                
+                              }
+                            });
+  }
+  if(document.getElementById("removeVote")) {
+                        document.getElementById("removeVote").onclick = function() {
+                          removeVote();
+                        };
+                      } else {
+
+                        document.getElementById("addVote").onclick = function() {
+                          voteQuestionStatus("<%= ongoingVotes.after %>");
+                        };
+                      }
+
+                      </script>
+                      <% } %>
+                 <%   } %>
+                </div>
+                  </div>
+                  </div>
+                <% } %>
+                <% if((!loggedIn || ((ongoingVotes.after == "closed" || ongoingVotes.after == "open") ? (basicData.level <= 6) : (basicData.level <= 5))) && ongoingVotes.votes.length >= 1) { %>
+                  <div class="text-center py-4 lg:px-4">
+                    <div class="p-2 bg-teal-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex" role="alert">
+                      <span class="flex rounded-full bg-teal-500 uppercase px-2 py-1 text-xs font-bold mr-3">Ongoing vote</span>
+                      <span class=" mr-2 text-left flex-auto">Changing to <%= ongoingVotes.after %><br/>Voted by: <%= ongoingVotes.votes.join(",") %></span>
+                    </div>
+                  </div>
+                  <% } %>
+                
+            <div class="px-6 py-6 sm:px-0 rounded overflow-hidden shadow-lg">
               <div class="flex flex-row">
-                <div class="flex content-center flex-col w-1/12">
-                  <img class="rounded-lg cursor-pointer" id="questionUp" style="width: 50%; margin-left: auto; margin-right: auto;" src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
-                  <p class="text-center odometer" id="voteQ"><%= question.upvotes - question.downvotes %></p>
-                  <img class="rounded-lg rotate-180 cursor-pointer" id="questionDown" style="width: 50%; margin-left: auto; margin-right: auto;"  src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+                <div class="flex content-center flex-col w-1/12 px-3">
+                  <img class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'invisible' %>" src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>" id="questionUp" style="width: 50%; margin-left: auto; margin-right: auto; " alt="">
+                  <p class="text-center odometer text-3xl md:text-2xl sm:text-sm" id="voteQ"><%= question.upvotes - question.downvotes %></p>
+                  <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 4 ? '' : 'invisible' %>" id="questionDown" style="width: 50%; margin-left: auto; margin-right: auto;"  src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>" alt="">
+               <br/>
+               <% if(loggedIn && basicData.level >= 5) { %>
+               <p>Upvotes: <b><%= question.upvotes %></b>  Downvotes: <b><%= question.downvotes %></b></p>
+                <% } %>
                 </div>
                 <div></div>
                 <div class="flex-grow">
                   <p class="text-4xl text-center py-5 "><b><%= question.title %></b></p> 
                   <hr/>
-                  <p id="questionText" class="text-center ">
+                  <p id="questionText" class="text-center break-all ">
    
                   </p>
+                  <div class="px-6 pt-4 pb-2 text-right">
+                    <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: <%= question.creator%> </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp" class="max-w-full h-auto rounded-full"><p id="levelText"></p></center></span>
+                     <br>
+                     <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= msToTime(Date.now() - question.createdAt) ?? "just now" %> ago</span>
+                     <span id="viewCount" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><%= question.views %> views</span>
+               
+                     <span id="answerCount" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}"><%= question.answers %> answers</span>
+                   </div>
+                   <!-- show comments btn -->
+                
+                    <div class="flex flex-col justify-center items-center">
+                      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showComments">Show Comments (<%= question.comments %>)</button>
+                    
+                      
+
+                      <div id="commentsList">
+
+                    </div>  
+<br/>
+                    <!--
+                      post comment
+                    -->
+         
+                 
+               
+                    <% if(loggedIn && ((question.status == "open" && (basicData.level >= 3 || question.creator ==  user.username)) || (question.status == "protected" && (basicData.level >= 5)))) { %>
+                      <div class="flex flex-col justify-center items-center w-[50%]">
+
+                        <textarea maxlength="150" rows="2" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500" id="commentText" type="text" placeholder="Comment"></textarea>
+                        <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded" id="postComment">Post comment</button>
+                      </div>
+                      <% } %>
+                 
+                  
                 </div>
               </div>
             </div>
           </div>
-          
-          <% for (var answer of answers) { %>
-          <div class="max-w-5xl mx-auto py-[12px] sm:px-[46px] lg:px-[46px]">
-            <div class="px-8 py-[12px] sm:px-0">
-              <div class="border-4 border-solid border-gray-200 rounded-lg h-96">
-
-              </div>
+          <div id="answers">
+            <div class="flex items-center justify-center flex-col px-[30px]">
+              <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                <% if(question.answers) { %>
+               <div class="px-4 py-4 ">
+                 <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+            
+               </div>
+               <% } %>
+             </div>
             </div>
           </div>
-          <% } %>
+          <!-- create answer -->
+          <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
+          <div class="flex items-center justify-center flex-col px-[30px]" id="createDiv" style="display: none;">
+            <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+              <div class="px-4 py-4 ">
+                <p> Know the solution? Then create an answer!</p>
+              <br>
+              <form id="createAnswerForm">
+                <div class="flex flex-col">
+                  <label class="text-gray-700 text-sm font-bold mb-2" for="answer">Your Answer</label>
+                  <textarea wrap="hard" maxlength="3000" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="answerText" name="answer" rows="3"></textarea>
+                </div>
+                <br/>
+                <div id="preview">
+                  <div class="flex flex-col">
+                    <label class="text-gray-700 text-sm font-bold mb-2" for="answer">Preview</label>
+                    <div class="flex flex-col">
+                      <p  class="text-gray-700 text-sm font-bold mb-2 border border-spacing-2 border-solid" id="previewText"></p>
+                    </div>
+
+                  </div>
+                </div>
+
+                </form>
+                <br/>
+                <!-- btn -->
+                <div class="flex flex-col">
+                  <button class="bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" disabled type="button" id="createAnswer">
+                    Create Answer
+                  </button>
+              </div>
+            </div>
+            <% } %>
       </div>
   <!-- </div> -->
+  <!-- create answer form-->
 </div>
-</div>
-    <script>
+    <script defer>
+      function msToTime(duration) {
+  const portions = [];
+    const msInDay = 1000 * 60 * 60 * 24;
+  const days = Math.trunc(duration / msInDay);
+  if (days > 0) {
+    portions.push(days + 'd');
+    duration = duration - (days * msInDay);
+  }
+
+  const msInHour = 1000 * 60 * 60;
+  const hours = Math.trunc(duration / msInHour);
+  if (hours > 0) {
+    portions.push(hours + 'h');
+    duration = duration - (hours * msInHour);
+  }
+
+  const msInMinute = 1000 * 60;
+  const minutes = Math.trunc(duration / msInMinute);
+  if (minutes > 0) {
+    portions.push(minutes + 'm');
+    duration = duration - (minutes * msInMinute);
+  }
+
+  const seconds = Math.trunc(duration / 1000);
+  if (seconds > 0) {
+    portions.push(seconds + 's');
+  }
+
+  return portions[0];
+}
     document.getElementById('questionText').innerHTML =
       marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
-   hljs.highlightAll();
-   
-      document.getElementById("questionUp").addEventListener("click", () => {
-        var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
-        fetch('/api/question/<%= question.question_id %>/upvote', {
+
+      var actiongoing = false;
+    async function questionUp() {
+      try {
+       actiongoing = true;
+      var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+       var f = await fetch('/api/question/<%= question.question_id %>/upvote', {
           method: 'POST',
           body: JSON.stringify({
             action
@@ -163,17 +439,36 @@ list-style-position: inside;
           headers: {
             'Content-Type': 'application/json'
           }
-        }).then(response => response.json()).then((j) => {
+        })
+        var j = await f.json();
+        setTimeout(() => {
+            actiongoing = false;
+          }, 3000);
           if(j.success) {
             document.getElementById("questionUp").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
             // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+            var curVotes = document.getElementById("voteQ").innerHTML;
+            if(action === "increment") {
+              document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
+            } else {
+              document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
+            }
           }
-        })
-      })
+        } catch(e) {
+          console.log(e);
+          setTimeout(() => {
+            actiongoing = false;
+          }, 3000);
+        }
 
-      document.getElementById("questionDown").addEventListener("click", () => {
-        var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
-        fetch('/api/question/<%= question.question_id %>/downvote', {
+    }
+
+    async function questionDown() {
+      
+      actiongoing = true;
+      try {
+      var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+      var f = await  fetch('/api/question/<%= question.question_id %>/downvote', {
           method: 'POST',
           body: JSON.stringify({
             action
@@ -181,24 +476,876 @@ list-style-position: inside;
           headers: {
             'Content-Type': 'application/json'
           }
-        }).then(response => response.json()).then((j) => {
+        })
+        var j = await f.json();
+        setTimeout(() => {
+            actiongoing = false;
+          }, 3000);
           if(j.success) {
             document.getElementById("questionDown").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
             // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+            var curVotes = document.getElementById("voteQ").innerHTML;
+            if(action === "increment") {
+              document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
+            } else {
+              document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
+            }
           }
-        })
+        } catch(e) {
+          console.log(e);
+        
+          setTimeout(() => {
+            actiongoing = false;
+          }, 3000);
+        }
+      
+    }
+   
+      document.getElementById("questionUp").addEventListener("click",async () => {
+       if (document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length-1] == "voteSelected.png") {
+        await questionDown();
+        }
+        questionUp();
+      })
+
+      document.getElementById("questionDown").addEventListener("click",async () => {
+        if (document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length-1] == "voteSelected.png") {
+          await questionUp();
+        }
+        questionDown();
       })
 
 
       var curVotes = <%= question.upvotes - question.downvotes %>;
   const socket = io();
-  socket.on("voteQ", ([id, dir]) => {
+  // socket.on("voteQ", ([id, dir]) => {
+  //   if(id == "<%= question.question_id %>") {
+  //     curVotes += dir;
+  //     console.log(curVotes);
+  //     document.getElementById("voteQ").innerHTML = curVotes;
+  //   }
+  // })
+  // socket.on("voteA", ([q, id, dir]) => {
+  //   if(q == "<%= question.question_id %>") {
+  //     var curNum = Number(document.getElementById("voteA"+id).innerHTML)
+  //     curNum += dir;
+  //     document.getElementById("voteA"+id).innerHTML = curNum;
+  //   }
+  // })
+  // socket.on("voteC", ([q, id, dir]) => {
+  //   console.log(q, id, dir, document.getElementById("voteC"+id) != null);
+  //   if(q == "<%= question.question_id %>" && document.getElementById("voteC"+id) != null) {
+  //     var curNum = Number(document.getElementById("voteC"+id).innerHTML)
+  //     curNum += dir;
+  //     document.getElementById("voteC"+id).innerHTML = curNum;
+  //   }
+  // })
+
+  // socket.on("newAnswer", (q) => {
+  //   if(q == "<%= question.question_id %>") {
+  //     //update answer count
+  //     var curNum = parseInt(document.getElementById("answerCount").innerHTML)
+  //     curNum += 1;
+  //     document.getElementById("answerCount").innerHTML = curNum + " answers";
+  //   }
+  // })
+  // socket.on("increaseView", (q) => {
+  //   if(q == "<%= question.question_id %>") {
+  //     //update answer count
+  //     var curNum = parseInt(document.getElementById("viewCount").innerHTML)
+  //     curNum += 1;
+  //     document.getElementById("viewCount").innerHTML = curNum + " views";
+  //   }
+  // })
+
+  setInterval(() => {
+
+    socket.emit("getViews", "<%= question.question_id %>");
+    socket.emit("getAnswerCount", "<%= question.question_id %>");
+   
+
+  }, 5000);
+  setInterval(() => {
+    socket.emit("getVotes", "<%= question.question_id %>");
+  }, 1000);
+
+  socket.on("questionViews", (cnt, id) => {
+    if(!(id == "<%= question.question_id %>")) {
+      return;
+    }
+    document.getElementById("viewCount").innerHTML = cnt + " views";
+  })
+
+  socket.on("questionVotes", (data, id) => {
+    if(!(id == "<%= question.question_id %>")) {
+      return;
+    }
+    if(!actiongoing) document.getElementById("voteQ").innerHTML = data.upvotes - data.downvotes;
+  })
+
+  socket.on("answerCount", (cnt, id) => {
     if(id == "<%= question.question_id %>") {
-      curVotes += dir;
-      console.log(curVotes);
-      document.getElementById("voteQ").innerHTML = curVotes;
+      document.getElementById("answerCount").innerHTML = cnt + " answers";
     }
   })
+
+  fetch("/getBasicData?user=<%= question.creator %>").then(response => response.json()).then((j) => {
+    if(j.success) {
+      document.getElementById("qPfp").src = j.pfp;
+      document.getElementById("qPfp").style.opacity = 1;
+      document.getElementById("levelText").innerHTML = "Level "+j.level
+    }
+  })
+  
+
+
+async function appendAnswer(answer) {
+  var id = answer.answer_id;
+  var answerComments = answer.comments;
+  var hasAcceptedAnswer = <%= question.hasAcceptedAnswer %>
+  var owner = <%= loggedIn && question.creator == user.username ? "true" : "false" %>;
+  
+  var loggedIn = <% if(loggedIn) { %>true<% } else { %>false<% } %>;
+  var t= `<div class="max-w-5xl mx-auto px-9 py-[12px] rounded overflow-hidden shadow-lg">
+            <div class="flex flex-row">
+              <div class="flex content-center flex-col w-1/12">
+                <img class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'hidden' %>" id="answerUp${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                <p class="text-center odometer text-3xl <%= loggedIn && basicData.level >= 4 ? '' : 'pt-9' %>" id="voteA${ answer.answer_id }">${ answer.upvotes - answer.downvotes }</p>
+                <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 4 ? '' : 'invisible' %>" id="answerDown${ answer.answer_id }" style="width: 50%; margin-left: auto; margin-right: auto;"  src="/vote.png" alt="">
+                <% if(loggedIn && basicData.level >= 5) { %>
+                <p>Upvotes: <b>${answer.upvotes}</b>  Downvotes: <b>${answer.downvotes}</b></p>
+                <% } %>
+                <hr/>
+              ${answer.accepted?"<p class='text-sky-800'>Accepted Answer</p>":`<p class='text-sky-800 invisible' id='hiddenAccept${answer.answer_id}'>Accepted Answer</p>`}
+              ${!hasAcceptedAnswer && owner ? `                        <button class='bg-sky-600 hover:bg-sky-800 text-white py-2 min-w-[60px] rounded' id='acceptAnswer${answer.answer_id}'>Accept Answer</button>` : ""}
+                </div>
+
+              <div class="flex-grow">
+            <div class=" py-[12px] sm:px-[46px] lg:px-[46px] ">
+              <div class="h-auto px-8">
+                <p id="${ answer.answer_id }Text" class="break-all"> </p>
+
+              </div>
+            </div>
+            <div class="px-6 pt-4 pb-2 text-right">
+              <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${ answer.creator} </p> <img src='' style="opacity:0%" width="50" height="50" id="aPfp${ answer.answer_id }" class="max-w-full h-auto rounded-full"><p id="levelText${ answer.answer_id }"></p></center></span>
+               <br>
+               <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${ msToTime(Date.now() - answer.createdAt) ?? "just now" } ago</span>
+                               </div>
+                               <div class="flex flex-col justify-center items-center">
+                      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showComments${id}">Show Comments (${answerComments})</button>
+                    
+                      
+
+                      <div id="commentsList${id}">
+
+                    </div>  
+<br/>
+                    <!--
+                      post comment
+                    -->
+         
+              
+               
+${ (loggedIn && ((<%= question.status == "open"%> &&(<%= (basicData.level >= 3 ) %> || answer.creator == "<%= user?.username %>" ) ) || <%= (question.status == "protected" && (basicData.level >= 5)) %>))? `
+                      <div class="flex flex-col justify-center items-center w-[50%]  ">
+
+                        <textarea maxlength="150" rows="2" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500" id="commentText${id}" type="text" placeholder="Comment"></textarea>
+                        <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded" id="postComment${id}">Post comment</button>
+                      </div>
+                      ` : ""}
+                      
+                  
+                </div>
+          </div>
+        </div>
+        </div> `
+
+// string to DOM element
+var doc  = new DOMParser().parseFromString(t, "text/html");
+
+        document.getElementById("answers").appendChild(doc.body.firstChild);
+  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(decodeURIComponent(answer.text));
+
+if( document.getElementById("acceptAnswer"+answer.answer_id)) {
+  document.getElementById("acceptAnswer"+answer.answer_id).onclick = () => {
+  fetch("/acceptAnswer", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      answerId: answer.answer_id,
+      questionId: "<%= question.question_id %>"
+    })
+  }).then(response => response.json()).then((j) => {
+      if(j.success) {
+        const elements1 = document.querySelectorAll(`[id^="acceptAnswer"]`);
+        [...elements1].forEach(element => {
+          element.remove();
+        });
+        document.getElementById("hiddenAccept"+answer.answer_id).classList.remove("invisible");
+
+      }
+  })
+}
+}
+
+
+  var userData = await fetch("/getBasicData?user="+answer.creator)
+    userData = await userData.json();
+    if(userData.success) {
+      document.getElementById("aPfp"+answer.answer_id).src = userData.pfp;
+      document.getElementById("aPfp"+answer.answer_id).style.opacity = 1;
+      document.getElementById("levelText"+answer.answer_id).innerHTML = "Level "+userData.level
+    }
+    hljs.highlightAll();
+   var js = await fetch('/hasUserVotedAnswer?answer='+answer.answer_id+"&question=<%= question.question_id %>")
+   var j = await js.json();
+      console.log("dfgdfgg", answer.answer_id);
+    
+      if(j.success) {
+      console.log("dfgg", answer.answer_id);
+
+      if(j.voted) {
+        console.log("ffff", answer.answer_id);
+
+        if(j.vote == "upvoted") {
+          document.getElementById("answerUp"+answer.answer_id).src = "/voteSelected.png";
+          console.log("upvoted", answer.answer_id);
+   
+
+        } else {
+          document.getElementById("answerDown"+answer.answer_id).src = "/voteSelected.png";
+          console.log("upvoted", answer.answer_id);
+
+
+        }
+      }
+    }
+
+
+  console.log("register", answer.answer_id);
+
+  async function answerUp() {
+    console.log("upvoted", answer.answer_id);
+    var action = document.getElementById("answerUp"+answer.answer_id).src.split("/")[document.getElementById("answerUp"+answer.answer_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+    var j = await fetch('/api/answer/'+answer.answer_id+'/upvote', {
+      method: 'POST',
+      body: JSON.stringify({
+        action,
+        question: "<%= question.question_id %>"
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+
+    j = await j.json();
+    
+
+      if(j.success) {
+        document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+
+                  // set vote count
+                  var curVoteCount = Number(document.getElementById("voteA"+answer.answer_id).innerHTML);
+          console.log("upvoted", curVoteCount);
+          if(action === "increment") {
+            document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount + 1;
+          } else {
+            document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount - 1;
+          }
+
+        // document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
+      }
+  }
+
+  async function answerDown() {
+    console.log("upvoted", answer.answer_id);
+
+var action = document.getElementById("answerDown"+answer.answer_id).src.split("/")[document.getElementById("answerDown"+answer.answer_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+var j = await fetch('/api/answer/'+answer.answer_id+'/downvote', {
+  method: 'POST',
+  body: JSON.stringify({
+    action,
+    question: "<%= question.question_id %>"
+  }),
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
+
+j =await j.json();
+  if(j.success) {
+    document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+    // document.getElementById("answerDown"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
+
+    var curVoteCount = Number(document.getElementById("voteA"+answer.answer_id).innerHTML);
+          console.log("downvotedvoted", curVoteCount);
+          if(action === "increment") {
+            document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount - 1;
+          } else {
+            document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount + 1;
+          }
+  }
+
+return;
+  }
+
+  document.getElementById("answerUp"+answer.answer_id).onclick = async () => {
+    if( document.getElementById("answerDown"+answer.answer_id).src.split("/")[document.getElementById("answerDown"+answer.answer_id).src.split("/").length-1] == "voteSelected.png") {
+      await answerDown();
+    }
+    await answerUp();
+  };
+  document.getElementById("answerDown"+answer.answer_id).onclick = async () => {
+    if( document.getElementById("answerUp"+answer.answer_id).src.split("/")[document.getElementById("answerUp"+answer.answer_id).src.split("/").length-1] == "voteSelected.png") {
+      await answerUp();
+    }
+    await answerDown();
+  };
+
+  var toggled = false;
+  var remainingComments = [];
+
+  function recursiveShowMoreComments() {
+    // ANSWER COMMENTS
+    var lastAppended = undefined;
+    console.log("remainingComments", remainingComments);
+    document.getElementById("showMore"+id)?.remove();
+    for(var i = 0; i < remainingComments.length; i++) {
+      if(i >= 3) {
+   
+        break;
+      } else {
+      
+     // get comment and remove it from array
+     var comment = remainingComments.shift();
+     appendComment(comment, id);
+     lastAppended = comment.comment_id;
+     console.log(remainingComments.length);
+
+      
+      }
+    }
+    if(remainingComments.length > 0) {
+      var btn = `<div class="flex justify-center items-center">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
+                Show more comments
+              </button>
+            </div>`
+            // dom parser
+            var parser = new DOMParser();
+            var btnDom = parser.parseFromString(btn, "text/html");
+            var commentsList = document.getElementById("commentsList"+id);
+            commentsList.appendChild(btnDom.body.firstChild);
+            
+
+            document.getElementById("showMore"+id).onclick = recursiveShowMoreComments;
+            console.log("remaining", remainingComments);
+    } else {
+      if(lastAppended) {
+         fetch('/answerComments', {method: 'POST', body: JSON.stringify({answer: id, question: "<%= question.question_id %>", after: lastAppended}),         headers: {
+          'Content-Type': 'application/json'
+        }}).then((s) => s.json()).then((j) => {
+          if(j.comments.length > 0) {
+            remainingComments = j.comments;
+            recursiveShowMoreComments();
+          }
+        })
+      }
+    }
+  } 
+
+ async function showThisCommentList() {
+    document.getElementById("showComments"+id).innerHTML = "Hide comments ("+answerComments+")";
+    document.getElementById("showComments"+id).disabled = true;
+try {
+   var f = await fetch('/answerComments', {method: 'POST', body: JSON.stringify({answer: id, question: "<%= question.question_id %>"}),         headers: {
+          'Content-Type': 'application/json'
+        }})
+     var j = await f.json();
+
+
+    document.getElementById("showComments"+id).disabled = false;
+          
+      if(j.success) {
+        console.log("comments", j.comments);
+        var comments = j.comments;
+        var commentsList = document.getElementById("commentsList"+id);
+        commentsList.innerHTML = "";
+        for(var i = 0; i < comments.length; i++) {
+          if(i >= 5) {
+            remainingComments.push(comments[i]);
+            if(i == 5) {
+              //  append Button in tailwind that says show more
+             
+              var btn = `<div class="flex justify-center items-center">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
+                Show more comments
+              </button>
+            </div>`
+            // dom parser
+            var parser = new DOMParser();
+            var btnDom = parser.parseFromString(btn, "text/html");
+            commentsList.appendChild(btnDom.body.firstChild);
+
+            document.getElementById("showMore"+id).onclick = recursiveShowMoreComments;
+         
+    
+
+          
+            }
+          } else  {
+            await appendComment(comments[i], id);
+        }
+      }
+      }
+    } catch(e) {
+      console.log(e);
+    document.getElementById("showComments"+id).disabled = true;
+
+    }
+  }
+
+  function hideThisCommentList() {
+    remainingComments = [];
+    document.getElementById("commentsList"+id).innerHTML = "";
+    document.getElementById("showComments"+id).innerHTML = "Show comments ("+answerComments+")";
+  }
+
+  document.getElementById("showComments"+id).onclick = async () => {
+    console.log("show comments", id);
+    if(!toggled) { 
+      toggled = true;
+ await showThisCommentList();
+  } else {
+    toggled = false;
+hideThisCommentList();
+  
+  }
+  }
+
+  <% if(loggedIn) { %>
+    
+    if(<%= (((question.status == "open") || (question.status == "protected" && basicData.level >= 5))) %> || answer.creator == "<%= user.username %>") {
+  document.getElementById("postComment"+answer.answer_id).onclick = () => {
+    var comment = document.getElementById("commentText"+answer.answer_id).value;
+    if(comment.trim().length == 0) return;
+    //disable button
+    document.getElementById("postComment"+answer.answer_id).disabled = true;
+    if(comment.length > 0) {
+      fetch('/addCommentAnswer', {
+        method: 'POST',
+        body: JSON.stringify({
+          text: comment,
+          question: "<%= question.question_id %>",
+          answer: answer.answer_id
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json()).then(async(j) => {
+        //enable button
+        document.getElementById("postComment"+answer.answer_id).disabled = false;
+        if(j.success) {
+          answerComments++;
+          
+          if(toggled) {
+            hideThisCommentList();
+            await showThisCommentList();
+            toggled = true;
+          } else {
+           await showThisCommentList();
+           toggled =true;
+          }
+
+          document.getElementById("commentText"+answer.answer_id).value = "";
+
+        }
+      }).catch(err => {
+        //enable button
+        document.getElementById("postComment"+answer.answer_id).disabled = false;
+        console.log(err);
+      }
+      );
+    }
+  }
+    }
+  <% } %>
+
+
+};
+  fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
+    if(j.success) {
+      document.getElementById("answers").innerHTML = "";
+      // j.answers.forEach((answer) => {
+      //   appendAnswer(answer);
+      // })
+      var alreadyAnswered=  false
+      for (answer of j.answers) {
+        await appendAnswer(answer);
+        if(answer.creator =="<%= loggedIn ? username : "" %>") {
+          alreadyAnswered = true
+        }
+      }
+      console.log("alreadyAnswered", alreadyAnswered);
+      if(!alreadyAnswered) {
+        <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
+
+        document.getElementById("createDiv").style.display = "block";
+        <% } %>
+      }
+      
+    }
+  })
+
+  <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
+
+  document.getElementById("answerText").addEventListener("keyup", () => {
+    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value);
+
+    if(document.getElementById("answerText").value.length == 0) {
+      document.getElementById("createAnswer").disabled = true;
+
+      document.getElementById("createAnswer").classList.add("bg-gray-500");
+
+      document.getElementById("createAnswer").classList.remove("bg-blue-500");
+      document.getElementById("createAnswer").classList.remove("hover:bg-blue-700");
+
+    } else {
+      document.getElementById("createAnswer").disabled = false;
+
+      document.getElementById("createAnswer").classList.remove("bg-gray-500");
+
+
+      document.getElementById("createAnswer").classList.add("bg-blue-500");
+      document.getElementById("createAnswer").classList.add("hover:bg-blue-700");
+    }
+  })
+
+  document.getElementById("createAnswer").addEventListener("click", () => {
+    fetch('/api/answer', {
+      method: 'POST',
+      body: JSON.stringify({
+        text: document.getElementById("answerText").value,
+        question: "<%= question.question_id %>"
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()).then((j) => {
+      if(j.success) {
+        <% if(loggedIn) { %>
+
+        document.getElementById("answerText").value = "";
+        document.getElementById("previewText").innerHTML = "";
+        document.getElementById("createDiv").style.display = "none";
+        <% } %>
+        appendAnswer(j.answer);
+      }
+    });
+  });
+  <% } %>
+
+   var appendComment =async  (comment, where="") => {
+    document.getElementById("commentsList"+where).insertAdjacentHTML('beforeend',"</br>")
+
+   var commentt = "<b>"+comment.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+})+"</b>";
+  
+
+console.log(comment.comment_id)
+
+
+    var html = `
+    
+    <div class= "flex flex-row">
+      <div class="flex flex-col items-center justify-between   rounded-lg">
+    <img class="rounded-lg cursor-pointer min-w-[10px]"  id="commentUp${comment.comment_id}"style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                  <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
+                  <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px]" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;"  src="/vote.png" alt="">
+                </div>
+                
+    <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
+   <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5"${commentt} - ${comment.creator}</div>
+    
+
+                </div>
+   </div>
+</div>
+`
+console.log("WTF")
+
+
+// dom parser
+var parser = new DOMParser();
+var htmlDoc = parser.parseFromString(html, "text/html");
+var commenty = htmlDoc.body.firstChild;
+
+
+
+    document.getElementById("commentsList"+where).appendChild(commenty);
+
+
+    //comment upvote and downvote
+   
+    var sendProps = {
+      comment: comment.comment_id,
+      question: "<%= question.question_id %>",
+      answer: where == "" ? undefined : where
+    }
+    var urlEncodedProps = Object.keys(sendProps).map(key => key + "=" + sendProps[key]).join("&");
+    console.log(comment.comment_id, comment.text, '<%= question.question_id %>', where);
+    fetch('/hasUserVotedComment?'+urlEncodedProps, {
+      method: 'GET'
+    }).then(response => response.json()).then((j) => {
+     
+        if(j.voted) {
+          if(j.vote == "upvoted") {
+            document.getElementById("commentUp"+comment.comment_id).src = "/voteSelected.png";
+          } else {
+            document.getElementById("commentDown"+comment.comment_id).src = "/voteSelected.png";
+          }
+        } else {
+          document.getElementById("commentUp"+comment.comment_id).src = "/vote.png";
+          document.getElementById("commentDown"+comment.comment_id).src = "/vote.png";
+        }
+      
+    }).catch(err => {
+      console.log(err);
+    }
+    );
+
+    var upvoteComment = async () => {
+      var action = document.getElementById("commentUp"+comment.comment_id).src.split("/")[document.getElementById("commentUp"+comment.comment_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+
+      var j = await fetch('/api/comment/'+comment.comment_id+'/upvote', {
+        method: 'POST',
+        body: JSON.stringify({
+          question: "<%= question.question_id %>",
+          answer: where == "" ? undefined : where,
+          action
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      j = await j.json()
+   
+        if(j.success) {
+          var curVoteCount = Number(document.getElementById("voteC"+comment.comment_id).innerHTML);
+          console.log("upvoted", curVoteCount);
+         
+          if(action == "increment") {
+            document.getElementById("commentUp"+comment.comment_id).src = "/voteSelected.png";
+        
+            document.getElementById("voteC"+comment.comment_id).innerHTML = curVoteCount + 1;
+          } else {
+            document.getElementById("commentUp"+comment.comment_id).src = "/vote.png";
+            document.getElementById("voteC"+comment.comment_id).innerHTML = curVoteCount - 1;
+            
+          }
+        }
+      
+    }
+    var downvoteComment = async () => {
+      var action = document.getElementById("commentDown"+comment.comment_id).src.split("/")[document.getElementById("commentDown"+comment.comment_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+
+      var j = await fetch('/api/comment/'+comment.comment_id+'/downvote', {
+        method: 'POST',
+        body: JSON.stringify({
+          question: "<%= question.question_id %>",
+          answer: where == "" ? undefined : where,
+          action
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      j = await j.json()
+   
+        if(j.success) {
+          var curVoteCount = Number(document.getElementById("voteC"+comment.comment_id).innerHTML);
+          console.log("downvoted", curVoteCount);
+         
+          if(action == "increment") {
+            document.getElementById("commentDown"+comment.comment_id).src = "/voteSelected.png";
+            document.getElementById("voteC"+comment.comment_id).innerHTML = curVoteCount - 1;
+            
+          } else {
+            document.getElementById("commentDown"+comment.comment_id).src = "/vote.png";
+            document.getElementById("voteC"+comment.comment_id).innerHTML = curVoteCount + 1;
+
+            
+            
+          }
+        }
+      
+    }
+
+   console.log( document.getElementById("commentDown"+comment.comment_id));
+
+ document.getElementById("commentUp"+comment.comment_id).addEventListener("click", async () => {
+  if(document.getElementById("commentDown"+comment.comment_id).src.split("/")[document.getElementById("commentDown"+comment.comment_id).src.split("/").length-1] === "voteSelected.png") {
+    await downvoteComment();
+  }
+  await upvoteComment();
+  
+ });
+  document.getElementById("commentDown"+comment.comment_id).addEventListener("click", async () => {
+    if(document.getElementById("commentUp"+comment.comment_id).src.split("/")[document.getElementById("commentUp"+comment.comment_id).src.split("/").length-1] === "voteSelected.png") {
+    await upvoteComment();
+  }
+  await downvoteComment();
+  });
+    
+
+   
+  }
+
+
+  var commentsToggle = false;
+  var mainCommentsCnt = <%= question.comments %>;
+var remainingComments = [];
+  function hideComments(where="") {
+    remainingComments = [];
+    document.getElementById("commentsList"+where).innerHTML = "";
+      document.getElementById("showComments"+where).innerHTML = `Show Comments (${mainCommentsCnt})`;
+  }
+  
+  function showComments(where="") {
+    function recursiveShowMoreComments() {
+      var lastAppended = undefined;
+      // QUESTION COMMENTS
+    console.log("remainingComments", remainingComments);
+    document.getElementById("showMore")?.remove();
+    for(var i = 0; i < remainingComments.length; i++) {
+      if(i >= 3) {
+   
+        break;
+      } else {
+      
+     // get comment and remove it from array
+     var comment = remainingComments.shift();
+     appendComment(comment);
+     lastAppended = comment.comment_id
+     console.log(remainingComments.length);
+
+      
+      }
+    }
+    if(remainingComments.length > 0) {
+      var btn = `<div class="flex justify-center items-center">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
+                Show more comments
+              </button>
+            </div>`
+            // dom parser
+            var parser = new DOMParser();
+            var btnDom = parser.parseFromString(btn, "text/html");
+            var commentsList = document.getElementById("commentsList");
+            commentsList.appendChild(btnDom.body.firstChild);
+            
+
+            document.getElementById("showMore").onclick = recursiveShowMoreComments;
+            console.log("remaining", remainingComments);
+    } else if(lastAppended && remainingComments.length <= 0) {
+            fetch("/questionComments?question=<%= question.question_id %>&after="+lastAppended).then(response => response.json()).then(async (j) => {
+              if(j.success && j.comments.length > 0) {
+                remainingComments = j.comments;
+                recursiveShowMoreComments();
+              }
+            });
+          }
+  } 
+    document.getElementById("showComments"+where).innerHTML = `Hide Comments (${mainCommentsCnt})`;
+      document.getElementById("showComments"+where).disabled = true;
+
+      fetch("/questionComments?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
+      document.getElementById("showComments"+where).disabled = false;
+    
+        
+        if(j.success) {
+          for (var i = 0; i < j.comments.length; i++) {
+            if(i > 4) {
+              remainingComments.push(j.comments[i]);
+              console.log(i)
+              if(i == 5) {
+                             //  append Button in tailwind that says show more
+             
+              var btn = `<div class="flex justify-center items-center">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
+                Show more comments
+              </button>
+            </div>`
+            // dom parser
+            var parser = new DOMParser();
+            var btnDom = parser.parseFromString(btn, "text/html");
+            var commentsList = document.getElementById("commentsList");
+            commentsList.appendChild(btnDom.body.firstChild);
+            console.log("FFFF")
+            document.getElementById("showMore").onclick = recursiveShowMoreComments;
+         
+    
+              }
+            } else await appendComment(j.comments[i], where);
+          }
+        }
+      }).catch(err => {console.log(err)
+        document.getElementById("showComments"+where).disabled = false;
+      });
+  }
+  document.getElementById("showComments").addEventListener("click", () => {
+    if(commentsToggle) {
+      commentsToggle = false;
+      hideComments();
+    } else {
+      
+      commentsToggle = true;
+      showComments();
+
+
+    }
+  });
+
+  <% if(loggedIn && ((question.status == "open" && (basicData.level >= 3 || question.creator ==  user.username)) || (question.status == "protected" && (basicData.level >= 5)))) { %>
+  document.getElementById("postComment").addEventListener("click", () => {
+    document.getElementById("postComment").disabled = true;
+    fetch('/addCommentQuestion', {
+      method: 'POST',
+      body: JSON.stringify({
+        text: document.getElementById("commentText").value,
+        question: "<%= question.question_id %>"
+      }),
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => response.json()).then((j) => {
+      document.getElementById("postComment").disabled = false;
+      if(j.success) {
+        document.getElementById("commentText").value = "";
+        mainCommentsCnt++;
+        // document.getElementById("commentText").focus();
+        if(!commentsToggle) {
+          commentsToggle = true;
+          showComments();
+        } else {
+          hideComments();
+          showComments();
+        }
+      }
+    }).catch(err => {console.log(err);
+      document.getElementById("postComment").disabled = false;
+    });
+  });
+  <% } %>
+
+
+
+
+    </script>
   </script>
 </body>
 </html>

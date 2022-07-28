@@ -8,17 +8,31 @@
   <link rel="stylesheet" href="/index.css">
 </head>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="/socket.io/socket.io.js"></script>
 
 <body>  
    <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
    <div class="px-9 py-3">
-   <% var possible = ["recent", "best", "interesting", "hottest"] %>
+   <% var possible = ["Recent", "Best", "Interesting", "Hottest"] %>
+   <!-- <p class="px-3">Sort Order: </p> -->
    <% for (var i = 0; i < possible.length; i++) { %>
-     <a href="/?sort=<%= possible[i] %>" class="inline-block px-3 <%= sort == possible[i] ? 'bg-green-200' : '' %> py-2 text-sm leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
+    
+     <a href="/?sort=<%= possible[i].toLowerCase() %>" class="inline-block px-3 <%= sort.toLowerCase() == possible[i].toLowerCase() ? 'bg-green-200' : '' %> py-2 text-lg leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
        <%= possible[i] %>
      </a>
     <% } %>
 </div>
+<% if(loggedIn && basicData.points >= 1) { %>
+  <div class="fixed bottom-4 right-4 group  px-2 py-2 bg-gray-200 bg-opacity-75 rounded-3xl flex items-center hover:bg-opacity-90 hover:-translate-x-1/4 transition-all delay-75 duration-700 ease-in-out">
+     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 stroke-gray-700 transition-all duration-500 " fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+       <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+     </svg>
+     <form action="/questionEditor" method="GET">
+      <input type="hidden" name="username" value="<%= user.username %> ">
+      <input value="Create a Question" type="submit" class="text-2xl cursor-pointer text-gray-700 mr-2 font-semibold inline-block transition-all delay-150">
+     </form>
+  </div>
+ <% } %> 
    <div id="questions">
 
    </div>
@@ -62,7 +76,8 @@
     
     document.getElementById("questions").insertAdjacentHTML('beforeend', loader);
 
-    var data = await fetch('/buffet?sort=<%= sort %>'+((!isUndefined(lastQuestionId))?`&after=${lastQuestionId}`:"")).then(res => res.json());
+    var data = await fetch('/buffet?sort=<%= sort %>'+((!isUndefined(lastQuestionId))?`&after=${lastQuestionId}`:""));
+    data = await data.json();
     clearLastQuestion();
    if(data.questions.length > 0) send = true;
     
@@ -120,7 +135,7 @@
     // console.log(data.id)
 
    
-    var question = `<div class="flex items-center justify-center flex-col  px-[30px]" >
+    var question = `<div class="flex items-center justify-center flex-col px-[30px]" id="${data.question_id}" >
    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full cursor-pointer"  onclick="location.href = '/question/${data.question_id}'">
     <div class="px-4 ">
       <div class="font-bold text-xl mb-2 ">${data.title}</div>
@@ -129,10 +144,10 @@
      <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${data.creator}</p> <img src='' style="opacity:0%" width="50" height="50" id="${data.question_id+"pfp"}" class="max-w-full h-auto rounded-full"><p id="${data.question_id+"levelText"}"></p></center></span>
       <br>
       <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.upvotes - data.downvotes} points</span>
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.views} views</span>
+      <span id="points${data.question_id}" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.upvotes - data.downvotes} points</span>
+      <span id="views${data.question_id}" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.views} views</span>
 
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.answers} answers</span>
+      <span  id="answers${data.question_id}" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.answers} answers</span>
     </div>
   </div>
 </div> 
@@ -169,6 +184,96 @@ window.onscroll = function(ev) {
     }
 };
 yo();
+
+
+const socket = io();
+
+function domIdExists(id) {
+  return document.getElementById(id) != null;
+}
+
+function isElementInViewport (el) {
+
+// Special bonus for those using jQuery
+if (typeof jQuery === "function" && el instanceof jQuery) {
+    el = el[0];
+}
+
+var rect = el.getBoundingClientRect();
+
+return (
+    rect.top >= -130 &&
+    rect.left >= 0 &&
+    rect.bottom <= (window.innerHeight * 1.3 || document.documentElement.clientHeight * 1.3) && /* or $(window).height() */
+    rect.right <= (window.innerWidth || document.documentElement.clientWidth) /* or $(window).width() */
+);
+}
+
+function getQuestionsOnScreen() {
+  // find questions shown on screen
+  var questionsElem = document.getElementById('questions');
+  var questions = questionsElem.getElementsByClassName('flex');
+  var questionsOnScreen = [];
+  for(var i = 0; i < questions.length; i++) {
+    if(isElementInViewport(questions[i]) && questions[i].getAttribute('id')) {
+      questionsOnScreen.push(questions[i].getAttribute('id'));
+    }
+  }
+  return questionsOnScreen;
+}
+
+setInterval(() => {
+
+  getQuestionsOnScreen().forEach((e) => {
+    socket.emit("getVotes", e);
+  });
+}, 5000);
+
+setInterval(() => {
+
+getQuestionsOnScreen().forEach((e) => {
+  socket.emit("getAnswerCount", e);
+});
+}, 4500);
+
+setInterval(() => {
+
+getQuestionsOnScreen().forEach((e) => {
+  socket.emit("getViews", e);
+});
+}, 5500);
+
+
+
+
+socket.on("questionViews", (cnt, id) => {
+
+  if(domIdExists(id)) {
+    console.log(id);
+    document.getElementById("views"+id).innerHTML = cnt + " views";
+  }
+})
+
+socket.on("answerCount", (cnt, id) => {
+  if(domIdExists(id)) {
+//  alert(cnt);
+    document.getElementById("answers"+id).innerHTML = cnt + " answers";
+  }
+})
+
+socket.on("questionVotes", (cnt, id) => {
+
+  if(domIdExists(id)) {
+    document.getElementById("points"+id).innerHTML = (cnt.upvotes - cnt.downvotes) + " points";
+  }
+})
+
+
 </script>
+<% if(loggedIn) { %>
+  <script>
+  localStorage.setItem("attemptsLeft",3)
+</script>
+  <% } %>
 </body>
 </html>

@@ -1,24 +1,4 @@
-// function paginate(arr, chunkSize) {
-//   const res = [];
-//   for (let i = 0; i < arr.length; i += chunkSize) {
-//       const chunk = arr.slice(i, i + chunkSize);
-//       res.push(chunk);
-//   }
-//   return res;
-// }
-
-
-// let myQueryObject = {
-//   "creator": "elizabethWarren"
-// }
-
-// let myQuery = encodeURIComponent(JSON.stringify(myQueryObject))
-
-// console.log(myQuery)
-let msg = "World, Programmed To Learn And Not To Feeeel (Melismatic Singing) \n-Louie Zong (https://youtu.be/Yw6u6YkTgQ4)"
-console.log("Hello " + msg)
 let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
-
 
 const express = require('express')
 const http = require('http')
@@ -40,6 +20,7 @@ const io = new Server(server, {
 });
 
 var forgotTokens = {};
+var ongoingVotes = {};
 
  const api = new Api(process.env.key)
  var gravatar = require('gravatar');
@@ -51,6 +32,7 @@ var forgotTokens = {};
 var session = require('express-session')
 const sqlite = require("better-sqlite3");
 const { randomUUID } = require('crypto')
+const e = require('express')
 
 const SqliteStore = require("better-sqlite3-session-store")(session)
 const db = new sqlite("sessions.db");
@@ -61,6 +43,8 @@ app.use(bodyParser.json())
 
 app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
+
+
 
 app.use(session({
   secret: process.env.secret,
@@ -82,293 +66,330 @@ app.use(session({
   )
 }))
 
-app.get('/', (req, res) => { //Homepage
-  console.log(req.session)
+app.get('/', async (req, res) => { //Homepage
+  // console.log(req.session)
   var sort = req.query.sort ?? "recent";
-  console.log(sort)
+  // console.log(sort)
   var possible = ["recent", "best", "interesting", "hottest"];
   if(!possible.includes(sort)) sort = "recent";
+  try {
+   var basicData = await getBasicData(req.session.user?.username);
+  } catch(e) {
+    console.log(e)
+    var basicData = {};
+  }
   res.render('index', {
     loggedIn: req.session.loggedIn ?? false,
     user: req.session.user,
-    sort
+    sort,
+    basicData,
   })
 });
 
+var modifyPoints = async (amount, username) => {
+  let operation = Math.sign(amount) == -1 ? "decrement" : "increment";
+  amount = Math.abs(amount);
+  console.log("giving " + amount + " points to " + username)
+  return await api.sendRequest("/users/" + username + "/points", "PATCH", {
+    operation: operation,
+    amount: amount
+  })
+}
+
+
+
+
+var levelCalculation = (userPoints) => {
+  let _level
+  for(let i = 0; i < levelMinimums.length; i++) {
+    if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
+      console.log("Less than " + levelMinimums[i])
+      _level = i + 2;
+      break;
+    } else if(i == 0) {
+      if(userPoints < levelMinimums[0]) {
+        console.log("Less than " + levelMinimums[0])
+        _level = i + 1;
+        break;
+      }
+    } else if(i == levelMinimums.length - 1) {
+      if(userPoints > levelMinimums[i]) {
+        console.log("Less than " + levelMinimums[i])
+        _level = levelMinimums.length + 1;
+        break;
+      }
+    }
+  }
+
+  return _level
+}
+///------------------------------------- Questions Stuff --------------------------------
+app.get('/search', async (req, res) => {
+  let { searchQuery, sort, loggedIn } = req.query
+  sort = ((sort == undefined) || (sort == null)) ? "title" : sort
+  loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
+  console.log(searchQuery)
+  let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  let regexQuery = ((sort == "Title") || (sort == "Text") || (sort == "Author")) ? {} : null
+  if(sort == "Creation") {
+    console.log(searchQuery)
+    let day = 1000 * 60 * 60 * 24
+    matchQuery = {
+      "createdAt": {
+        "$gte":(new Date(searchQuery + " 00:00:00")).getTime() - day/2,
+        "$lte": (new Date(searchQuery + " 24:00:00")).getTime() + day/2
+      }
+    }
+  } else if(sort == "Author") {
+    matchQuery = {
+      "creator": searchQuery
+    }
+    regexQuery = {
+      "creator": `(${searchQuery})`
+    }
+  }
+  if(sort == "Title") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "title": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  } else if(sort == "Text") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "text": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  }
+  console.log(matchQuery)
+  let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+  let questions = (data.success) ? data.questions : null
+  console.log(questions)
+  if(questions) {
+    questions.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: questions,
+      user: req.session.user
+    })
+  } else {
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: [],
+      user: req.session.user
+    })
+  }
+})
+
+app.get('/userMail/:mail_id', async (req, res) => {
+  let username = req.session.user.username
+  let mailId = req.params.mail_id
+  let data = await api.getUserMail(username)
+  let messages = data.messages
+  let correctMsg
+  messages.forEach((data) => {
+    // console.log("Mail Id:" + mailId)
+    // console.log("Data Id:" + data.mail_id)
+    // console.log(mailId == data.mail_id)
+    if(data.mail_id == mailId) {
+      console.log(data)
+      correctMsg = data
+    }
+  })
+  console.log("Correct Message:")
+  console.log(correctMsg)
+  res.send(JSON.stringify(correctMsg))
+})
+
+app.post('/search', async (req, res) => {
+  let { searchQuery, sort, loggedIn } = req.body
+  sort = ((sort == undefined) || (sort == null)) ? "Title" : sort
+  loggedIn = ((loggedIn == undefined) || (loggedIn == null)) ? req.session.loggedIn : loggedIn
+  console.log(searchQuery)
+  let matchQuery = ((sort == "Author") || (sort == "Creation")) ? {} : null
+  let regexQuery = ((sort == "Title") || (sort == "Text") || (sort == "Author")) ? {} : null
+  if(sort == "Creation") {
+    console.log(searchQuery)
+    let day = 1000 * 60 * 60 * 24
+    matchQuery = {
+      "createdAt": {
+        "$gte":(new Date(searchQuery + " 00:00:00")).getTime() - day/2,
+        "$lte": (new Date(searchQuery + " 24:00:00")).getTime() + day/2
+      }
+    }
+  } else if(sort == "Author") {
+    matchQuery = {
+      "creator": searchQuery
+    }
+    regexQuery = {
+      "creator": `(${searchQuery})`
+    }
+  }
+  if(sort == "Title") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "title": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  } else if(sort == "Text") {
+    let newQ = replaceCharacters(searchQuery).trim()
+    console.log(newQ)
+    let q = newQ.split(" ")
+    console.log(q)
+    let newK = q.forEach((data, i) => {
+      if((data != '') && (data != ' ')) {
+        return data
+      }
+    })
+    console.log(newK)
+    regexQuery = {
+      "text": `(${q.join(")|(")})`
+    }
+    console.log(regexQuery.title)
+  }
+  console.log(matchQuery)
+  let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+  let questions = (data.success) ? data.questions : null
+  console.log(questions)
+  if(questions) {
+    questions.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: questions,
+      user: req.session.user
+    })
+  } else {
+    res.render('searchResult', {
+      loggedIn: req.session.loggedIn,
+      searchQuery: searchQuery,
+      sort: sort,
+      searchFeed: [],
+      user: req.session.user
+    })
+  }
+})
+
 app.get('/dashboard', async (req, res) => {
-    console.log(req.session)
-    if(Object.keys(req.session.user).length != 0) {
-        let user = await api.getUser(req.session.user.username).then(
-          (data) => {
-            if(data.success) {
-              return data.user
-            }
-          }
-        )
-        let userPoints = parseInt(user.points);
-        let _level
-        console.log(userPoints)
-        for(let i = 0; i < levelMinimums.length; i++) {
-          if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
-            console.log("Less than " + levelMinimums[i])
-            _level = i + 2;
-            break;
-          } else if(i == 0) {
-            if(userPoints < levelMinimums[0]) {
-              console.log("Less than " + levelMinimums[0])
-              _level = i + 1;
-              break;
-            }
-          } else if(i == levelMinimums.length - 1) {
-            if(userPoints > levelMinimums[i]) {
-              console.log("Less than " + levelMinimums[i])
-              _level = levelMinimums.length + 1;
-              break;
-            }
+  console.log(req.session)
+  if(Object.keys(req.session.user).length != 0) {
+      let data = await api.getUser(req.session.user.username).then(
+        (data) => {
+          if(data && data.success) {
+            return data
+          } else {
+            return false
           }
         }
-        console.log("Level: " + _level)
+      )
+      if(data.success) {
+        let user = data.user
+        let userPoints = parseInt(user.points)
+        let _level = levelCalculation(userPoints)
+        let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
+        let _abilities = allAbilities.splice(0, _level)
+        user.points = userPoints
+        user.level = _level
+        let nextLevel = _level + 1
+        let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
+        let nextLevelPoints = levelMinimums[_level - 1]
+        user.abilities = _abilities
+        // console.log(`You are Level ${_level}`)
+        // console.log(`You can: ` + _abilities.join(', '))
+        let myQueryObject = {
+          "creator": user.username
+        }
+        const questionData = await api.getUserQuestions(user.username)
+        const answerData = await api.getUserAnswers(user.username)
+        let questionFeed = (questionData.success) ? questionData.questions : null
+        let answerFeed = (answerData.success) ? answerData.answers : null
+        questionFeed.forEach((question) => {
+          let timeElapsed = msToTime(Date.now() - question.createdAt)
+          question.timeElapsed = timeElapsed
+        })
+        answerFeed.forEach((answer) => {
+          let timeElapsed = msToTime(Date.now() - answer.createdAt)
+          answer.timeElapsed = timeElapsed
+        })
+        user.img = gravatarGen(user.email)
+        req.session.user = user
+        console.log(answerFeed)
         var needed = {
           time: Date.now(),
           data: {
-            pfp: gravatarGen(data.user.email),
+            pfp: gravatarGen(user.email),
             level: _level,
           }
         }
         basicDataCache[req.query.user] = needed;
-        res.send({success:true, ...needed.data})
-      } else {
-        res.send(JSON.stringify({success: false}))
-      }
-      });
-    }
-  } else res.send(JSON.stringify({success: false}))
-})
 
-app.get("/forgot", (req, res) => {
-  if(req.session.loggedIn) req.redirect('/')
-  res.render('forgot', {
-  });
-})
-
-app.post("/forgot", (req, res) => {
-  var username = req.body.username;
-  var email = req.body.email;
-  if(!username || !email) {
-    res.render('forgot', {
-      error: {msg: "Please fill in all fields"}
-    })
-    return
-  };
-  api.getUser(username).then(data => {
-    if(data.success) {
-      if(data.user.email == email) {
-        var token = randomUUID();
-        forgotTokens[token] = {
-          username: username,
-          time: Date.now()
-        };
-        res.send("<b>One more step</b><br>We haven't sent you an email, But if we had, we wouldv'e send the below link <br> Please click the link below to reset your password.<br>Please be quick, as the link expires in 5 minutes<br/><br><a href='/reset/" + token + "'>Click here to reset your password</a>");
-      } else {
-        res.render('forgot', {
-          error: {msg: "Email doesn't match"}
-        })
-        return
-      }
-    } else {
-      res.render('forgot', {
-        error: {msg: "Invalid username or email"}
-      })
-      return
-    }
-  }).catch(err => {
-    console.log(err)
-    res.render('forgot', {
-      error: {msg: "Something went wrong.. Please try again"}
-    })
-  });
-
-});
-
-app.get("/reset/:token", (req, res) => {
-  if(req.params.token) {
-    if(forgotTokens.hasOwnProperty(req.params.token)) {
-      if(Date.now() - forgotTokens[req.params.token].time < 1000 * 60 * 5) {
-        res.render('reset', {
-          username: forgotTokens[req.params.token].username
+        res.render('dashboard', {
+            loggedIn: req.session.loggedIn,
+            questionFeed: questionFeed,
+            answerFeed: answerFeed,
+            user: req.session.user,
+            nextLevel: nextLevel,
+            nextLevelPoints: nextLevelPoints
         })
       } else {
-        res.render('forgot', {
-          error: {msg: "Link expired, please try again"}
-        });
-      }
-    } else {
-      res.render('forgot', {
-        error: {msg: "Invalid link, please try again"}
-      });
-    }
-  } else {
-    res.render('forgot', {
-      error: {msg: "Bad link, please try again"}
-    });
-  }
-})
-
-app.post("/reset/:token", (req, res) => {
-  if(req.params.token) {
-    if(forgotTokens.hasOwnProperty(req.params.token)) {
-      if(Date.now() - forgotTokens[req.params.token].time < 1000 * 60 * 5) {
-        var username = forgotTokens[req.params.token].username;
-        var password = req.body.password;
-        if(!password) {
-          res.render('reset', {
-            username: username,
-            error: {msg: "Please fill in all fields"}
-          })
-          return
-        }
-        api.resetPassword(username, password).then(data => {
-          if(data.success) {
-            res.render('login', {
-              username: username,
-              success: {msg: "Password reset successfully"}
-            })
-          } else {
-            res.render('reset', {
-              username: username,
-              error: {msg: "Something went wrong.. Please try again"}
-            })
-          }
-        }).catch(err => {
-          console.log(err)
-          res.render('reset', {
-            username: username,
-            error: {msg: "Something went wrong.. Please try again"}
-          })
-        }
-        );
-      } else {
-        res.render('forgot', {
-          error: {msg: "Link expired, please try again"}
-        });
-      }
-    } else {
-      res.render('forgot', {
-        error: {msg: "Invalid link, please try again"}
-      });
-    }
-  } else {
-    res.render('forgot', {
-      error: {msg: "Bad link, please try again"}
-    });
-  }
-})
-
-
-app.post("/api/question/:id/:type", (req,res) => {
-  var id = req.params.id;
-  var type = req.params.type;
-  var action = req.body.action;
-  console.log(action, type, id)
-  if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
-    res.send("Invalid question id or type")
-    return
-  }
-  type += "s";
-  api.voteQuestion(id, req.session.user?.username, type, action).then(data => {
-    res.send(JSON.stringify(data))
-    var dir = action == "increment" ? 1 : -1;
-    dir *= type == "upvotes" ? 1 : -1;
-    if(data.success) {
-      io.emit("voteQ", [id, dir])
-    }
-  });
-
-
-})
-
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
-  });
-});
-
-///------------------------------------- Questions Stuff --------------------------------
-
-app.get('/dashboard', async (req, res) => {
-    console.log(req.session)
-    if(Object.keys(req.session.user).length != 0) {
-        let data = await api.getUser(req.session.user.username).then(
-          (data) => {
-            if(data && data.success) {
-              return data
-            } else {
-              return false
-            }
-          }
-        )
-        if(data.success) {
-          let user = data.user
-          let userPoints = parseInt(user.points)
-          let _level = levelCalculation(userPoints)
-          let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
-          let _abilities = allAbilities.splice(0, _level)
-          user.points = userPoints
-          user.level = _level
-          let nextLevel = _level + 1
-          let nextLevelPoints = levelMinimums[_level - 1]
-          user.abilities = _abilities
-          console.log(`You are Level ${_level}`)
-          console.log(`You can: ` + _abilities.join(', '))
-          let myQueryObject = {
-            "creator": user.username
-          }
-          const [ questionData, answerData ] = await api.getUserQuestionsAnswers(user.username)
-          let questionFeed = (questionData.success) ? questionData.questions : null
-          let answerFeed = (answerData.success) ? answerData.answers : null
-          console.log(answerFeed)
-          questionFeed.forEach((question) => {
-            let timeElapsed = msToTime(Date.now() - question.createdAt)
-            question.timeElapsed = timeElapsed
-          })
-          user.img = gravatarGen(user.email)
-          req.session.user = user
-          console.log(user)
-          console.log(questionFeed.length)
-          res.render('dashboard', {
-              loggedIn: req.session.loggedIn,
-              questionFeed: questionFeed,
-              answerFeed: answerFeed,
-              user: req.session.user,
-              nextLevel: nextLevel,
-              nextLevelPoints: nextLevelPoints
-          })
-        } else {
-          req.session.loggedIn = false
-          res.redirect('/auth/login')
-        }
-    } else {
         req.session.loggedIn = false
         res.redirect('/auth/login')
-    }
+      }
+  } else {
+      req.session.loggedIn = false
+      res.redirect('/auth/login')
+  }
 })
 
-app.post('/email', (req, res) => {
-  const { username } = req.body
+app.get('/email', (req, res) => {
+  const { username } = req.session.user.username
   res.render('changeEmail', {username: username})
 })
 
-app.post('/password', (req, res) => {
-  const { username } = req.body
+app.get('/password', (req, res) => {
+  const { username } = req.session.user.username
   res.render('changePassword', {username: username})
 })
 
 app.post('/emailChange', async (req, res) => {
   const { username, newEmail } = req.body
-  let data = await api.sendRequest("/users/" + username, "PATCH", {
-    email: newEmail
-  }).then((data) => {
+  let data = await api.changeEmailOf(username).then((data) => {
     if(data.success) {
       return data
     }
@@ -382,11 +403,26 @@ app.get('/logout', async (req, res) => {
   res.redirect('/')
 })
 
-app.post('/questionEditor', async (req, res) => {
-  const { username } = req.body
+app.get('/questionEditor', async (req, res) => {
+  let username = req.session.username
   console.log("User: " + username)
-  res.render('question', {username: username})
+  res.render('questionEditor', {username: username})
 })
+var answerOwnerCache = {};
+
+app.post('/acceptAnswer',  (req, res) => {
+  var { questionId, answerId } = req.body
+  api.updateAnswer(questionId, answerId, undefined, undefined, undefined, true).then(async (data) => {
+    if(!answerOwnerCache[answerId]) answerOwnerCache[answerId] = await api.getAnswerOwner(questionId, answerId);
+    var owner = answerOwnerCache[answerId];
+    await modifyPoints(15, owner);
+    res.send(data);
+  }).catch((err) => {
+    console.log(err)
+    res.send({success: false})
+  })
+
+});
 
 app.post('/questions',  async (req, res) => {
   let {username, title, text } = req.body 
@@ -398,7 +434,7 @@ app.post('/questions',  async (req, res) => {
         return data
       }
     })
-    let pointsData = await modifyPoints(15, username).then((data) => {
+    let pointsData = await modifyPoints(1, username).then((data) => {
       if(data.success) {
         return data
       }
@@ -421,10 +457,7 @@ app.post('/questions',  async (req, res) => {
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
   const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
-  let data = await api.sendRequest("/users/" + username, "PATCH", {
-    key: keyString,
-    salt: saltString
-  }).then((data) => {
+  let data = await api.changePasswordOf(username, keyString, saltString).then((data) => {
     if(data.success) {
       console.log("Password Changed!")
       return data
@@ -435,7 +468,7 @@ app.post('/passwordChange', async (req, res) => {
 })
 app.post('/deleteAccount', async (req, res) => {
   const { username } = req.body
-  let data = await api.sendRequest("/users/" + username, 'DELETE').then((data) => {
+  let data = await api.deleteUser(username).then((data) => {
     if(data.success) {
       return data
     } else {
@@ -444,7 +477,8 @@ app.post('/deleteAccount', async (req, res) => {
   })
   req.session.user = {}
   req.session.loggedIn = false
-  (data.success) ? res.redirect('/') : res.redirect('/dashboard')
+  if (data.success)  res.redirect('/') 
+  else res.redirect('/dashboard')
 })
 
 app.get('/auth/login', (req, res) => {
@@ -511,7 +545,10 @@ app.get('/mail', async (req, res) => {
     user.nextLevel = user.level + 1
     user.nextLevelPoints = levelMinimums[user.nextLevel - 1]
     console.log("Username: " + username)
-    let mailData = await api.sendRequest('/mail/' + username, 'GET')
+    let mailData = await api.getUserMail(username)
+    mailData.messages.forEach((message) => {
+      message.timeElapsed = msToTime(Date.now() - message.createdAt)
+    })
     console.log(mailData)
     res.render('mail', {
       loggedIn: req.session.loggedIn,
@@ -523,26 +560,36 @@ app.get('/mail', async (req, res) => {
 })
 
 
-app.post("/messageEditor", async (req, res) => {
-  let { username } = req.body 
+app.get("/messageEditor", async (req, res) => {
+  let username = req.session.user.username
   console.log(username)
   username = (username) ? username : req.session.user.username
   res.render('messageEditor', {
     username: username
   })
 })
-
+app.get('/getAnswers', async (req, res) => {
+  var id = req.query.question;
+  api.getAnswers(id).then(data => {
+    if(data.success) {
+      data.answers = data.answers.sort ((a, b) => {
+        return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes)
+      });
+      res.send({answers: data.answers, success: true})
+    } else {
+      res.send({success: false})
+    }
+  }).catch(err => {
+    console.log(err)
+    res.send({success: false});
+    });
+});
 app.post("/messages", async (req, res) => {
   let { username, receiver, subject, text } = req.body 
   username = (username) ? username : req.session.user.username
   console.log(`Reciever: ${receiver}, Sender: ${username}`)
   console.log(username)
-  let data = await api.sendRequest("/mail", 'POST', {
-    sender: username,
-    receiver: receiver,
-    subject: subject,
-    text: text
-  })
+  let data = await api.sendMessage(username, receiver, subject, text)
   console.log(data)
   console.log(data.success)
   if(data.success) {
@@ -554,6 +601,23 @@ app.post("/messages", async (req, res) => {
   }
 })
 
+app.post('/api/answer', async (req, res) => {
+  if(!req.session.loggedIn) return res.send({success: false})
+  let { question, text } = req.body
+  let username = req.session.user.username
+  console.log(`Question: ${question}, Answer: ${text}`);
+  api.addAnswer(question, username, text).then(async data => {
+    console.log(data)
+    if(data.success) {
+      await modifyPoints(2, username);
+      res.send({success: true, answer: data.answer})
+      io.emit('newAnswer', question);
+    } else {
+      res.send({success: false})
+    }
+  });
+})
+
 app.post("/auth/login", async (req,res) => {
   // get form data
   const { username, password } = req.body
@@ -563,7 +627,7 @@ app.post("/auth/login", async (req,res) => {
   }
 
   var user = await api.getUser(username);
-  console.log(user)
+  // console.log(user)
   if(user.success && user) {
     // login user
     var salt = user.user.salt;
@@ -580,7 +644,8 @@ app.post("/auth/login", async (req,res) => {
             res.redirect('/')
         } else {
             res.render('login', {
-                error: {msg: "Incorrect password"}
+                error: {msg: "Incorrect password"},
+                badPassword: true
             })
         }
     
@@ -592,6 +657,8 @@ app.post("/auth/login", async (req,res) => {
 }
 
 });
+
+
 app.get("/buffet", (req, res) => {
   var sort;
   if(req.query.sort) {
@@ -601,93 +668,293 @@ app.get("/buffet", (req, res) => {
     res.send(JSON.stringify(data))
   });
 });
+
+app.get("/hasUserVotedAnswer", (req, res) => {
+  var user = req.session.user?.username;
+  var answer = req.query.answer;
+  var question = req.query.question;
+  api.hasUserVotedAnswer(question, answer, user).then(data => {
+    res.send(JSON.stringify(data))
+  });
+})
+
+app.post("/api/removeStatusVote/:id", (req, res) => {
+  var id = req.params.id;
+  var user = req.session.user?.username;
+  if(ongoingVotes[id]) {
+   var indx =  ongoingVotes[id].votes.findIndex(vote => vote == user)
+   if(indx != -1) {
+     ongoingVotes[id].votes.splice(indx, 1)
+     if(ongoingVotes[id].votes.length == 0) {
+       ongoingVotes[id].after = undefined;
+
+     }
+     res.send({success: true})
+
+   } else {
+      console.log("Could not find vote to remove")
+      res.send({success: false})
+   }
+  }
+});
+
+app.post("/api/statusVote/:status/:id", (req, res) => {``
+  var user = req.session.user?.username;
+  if(!user) res.send({success: false})
+  var status = req.params.status;
+  var id = req.params.id;
+  if((status == "closed" || status=="open") && req.session.user?.level < 7) return res.send({success: false});
+  else if(req.session.user?.level < 6) return res.send({success: false})
+  api.getQuestion(id).then(data => {
+    if(data.success) {
+      var question = data.question;
+      if(ongoingVotes[id]) {
+        if(ongoingVotes[id].before != question.status) {
+          ongoingVotes[id] = {
+            before: question.status,
+            votes: []
+          }
+          res.send({success: false})
+          return;
+        }
+        if(!ongoingVotes[id].after) {
+          ongoingVotes[id].after = status;
+        }
+        if(ongoingVotes[id].votes.length >= 1 && (ongoingVotes[id].after != status)) {
+          res.send({success: false})
+          return;
+        } else if(ongoingVotes[id].after == status) {
+          if(ongoingVotes[id].votes.indexOf(user) != -1) {
+            res.send({success: false})
+            return;
+          }
+          ongoingVotes[id].votes.push(user)
+          if(ongoingVotes[id].votes.length >= 3) {
+            api.changeQuestionStatus(id, ongoingVotes[id].after).then(data => {
+              if(data.success) {
+                res.send({success: true})
+                ongoingVotes[id].votes = [];
+                ongoingVotes[id].after = undefined;
+                ongoingVotes[id].before = status;
+                return;
+              } else {
+                res.send({success: false})
+                //remove last vote
+                ongoingVotes[id].votes.pop()
+                return;
+              }
+            })
+          } else  res.send({success: true})
+
+          return;
+        }
+      }  else {
+        ongoingVotes[id] = {
+          before: question.status,
+          votes: []
+        }
+        var validStatuses = [];
+        if(question.status == "open") validStatuses = ["protected", "closed"];
+        if(question.status == "protected") validStatuses = ["closed"];
+        if(question.status == "closed") validStatuses = ["open"];
+        if(validStatuses.indexOf(status) == -1) {
+          res.send({success: false})
+          return;
+        }
+        // check if user has already voted
+        if(ongoingVotes[id].votes.indexOf(user) != -1) {
+          res.send({success: false})
+          return;
+        }
+        ongoingVotes[id].after = status;
+        console.log(status)
+        ongoingVotes[id].votes.push(user);
+        console.log(ongoingVotes[id])
+        res.send({success: true})
+      }
+    } else {
+      res.send({success: false})
+    }
+  });
+});
+
 app.get("/question/:id", (req, res) => {
   var id= req.params.id;
   if(!id) {
     res.send("Invalid question id")
     return
   }
+  console.time("getQuestion")
   api.getQuestion(id).then(data => {
+  console.timeEnd("getQuestion")
+  console.time("getAnswers")
+
     if(!data.success) {
       res.send("Invalid question id")
       return;
     }
-    api.getAnswers(id, data.answers).then(data2 => {
-    if(!data2.success) {
-      res.send("Something wen't wrong.. Please try again")
-      return;
-    }
+  
 
+    api.increaseViews(id).then(data4 => {
+      
+      console.log(data4)
+      data.question.views ++;
     api.hasUserVoted(id, req.session.user?.username).then(data3 => {
+      io.emit("increaseView", id)
+      // console.timeEnd("getQuestion")
+      getBasicData(req.session.user?.username).then(basicData => {
+        console.log(ongoingVotes[id])
     res.render('question', {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
-      answers: data2.answers,
-      voted: data3
+      username: req.session.user?.username,
+      voted: data3,
+      basicData,
+      ongoingVotes: ongoingVotes[id] ?? {
+        before: data.question.status,
+        votes: []
+      }
     })
+  });
   }).catch(err => {
+    console.timeEnd("getQuestion")
     console.log(err)
     res.render('question', {
       question: data.question,
       user: req.session.user,
       loggedIn: req.session.loggedIn,
-      answers: data2.answers,
+      username: req.session.user?.username,
       voted: {voted: false}
     })
   });
   });
+});
 
   });
-});
 var basicDataCache = {};
+function getBasicData(username) {
+  return new Promise((resolve, reject) => {
+
+  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 1000 * 5) {
+    resolve({success:true, ...basicDataCache[username].data})
+
+  } else {
+    api.getUser(username).then(data => {
+      if(data.success) {
+      var userPoints = data.user.points;
+      console.log(data)
+      let _level = levelCalculation(userPoints);
+      // console.log("Level: " + _level)
+      var needed = {
+        time: Date.now(),
+        data: {
+          pfp: gravatarGen(data.user.email),
+          level: _level,
+          points: userPoints,
+        }
+      }
+      basicDataCache[username] = needed;
+      resolve({success:true, ...needed.data})
+    } else {
+      console.log(data.error)
+      resolve(JSON.stringify({success: false}))
+    }
+    });
+  }
+});
+}
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
-    if(basicDataCache.hasOwnProperty(req.query.user) && Date.now() - basicDataCache[req.query.user].time < 1000 * 60 * 5) {
-      res.send({success:true, ...basicDataCache[req.query.user].data})
-
-    } else {
-      api.getUser(req.query.user).then(data => {
-        if(data.success) {
-        var userPoints = data.user.points;
-        console.log(data)
-        let _level;
-        for(let i = 0; i < levelMinimums.length; i++) {
-          if((userPoints >= levelMinimums[i]) && (userPoints < levelMinimums[i+1])) {
-            console.log("Less than " + levelMinimums[i])
-            _level = i + 2;
-            break;
-          } else if(i == 0) {
-            if(userPoints < levelMinimums[0]) {
-              console.log("Less than " + levelMinimums[0])
-              _level = i + 1;
-              break;
-            }
-          } else if(i == levelMinimums.length - 1) {
-            if(userPoints > levelMinimums[i]) {
-              console.log("Less than " + levelMinimums[i])
-              _level = levelMinimums.length + 1;
-              break;
-            }
-          }
-        }
-        console.log("Level: " + _level)
-        var needed = {
-          time: Date.now(),
-          data: {
-            pfp: gravatarGen(data.user.email),
-            level: _level,
-          }
-        }
-        basicDataCache[req.query.user] = needed;
-        res.send({success:true, ...needed.data})
-      } else {
-        res.send(JSON.stringify({success: false}))
-      }
-      });
-    }
+    getBasicData(req.query.user).then(data => {
+      res.send(data)
+    });
   } else res.send(JSON.stringify({success: false}))
 })
+
+app.get("/questionComments", (req, res) => {
+  var question = req.query.question;
+  var after = req.query.after;
+  api.getQuestionComments(question, after).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+app.post("/answerComments", (req, res) => {
+  var answer = req.body.answer;
+  var question = req.body.question;
+  var after = req.body.after;
+  console.log(req.body)
+  api.getAnswerComments(question, answer, after).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+app.post("/addCommentQuestion", (req, res) => {
+  var question = req.body.question;
+  var comment = req.body.text;
+  var user = req.session.user.username;
+  // console.log(question, comment, user)
+  if(!user || !question || !comment) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  
+  if(comment.length > 150) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  api.addCommentQuestion(question, user, comment).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+app.get("/hasUserVotedComment", (req, res) => {
+  var comment = req.query.comment;
+  var user = req.session.user?.username;
+  var question = req.query.question;
+  var answer = req.query.answer;
+  // console.log(comment, user, question, answer)
+  api.hasUserVotedComment(question,comment,user,answer).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
+
+app.post("/addCommentAnswer", (req, res) => {
+  var answer = req.body.answer;
+  var comment = req.body.text;
+  var user = req.session.user.username;
+  var question = req.body.question;
+  // console.log(answer, comment, user, question)
+  if(!user || !answer || !comment || !question) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  if(comment.length > 150) {
+    res.send(JSON.stringify({success: false}))
+    return
+  }
+  api.addCommentAnswer(question, answer, user, comment).then(data => {
+    res.send(JSON.stringify(data))
+  }).catch(err => {
+    console.log(err)
+    res.send(JSON.stringify({success: false}))
+  });
+});
+
 
 app.get("/forgot", (req, res) => {
   if(req.session.loggedIn) req.redirect('/')
@@ -808,20 +1075,27 @@ app.post("/reset/:token", (req, res) => {
   }
 })
 
+var questionOwnerCache = {};
 
 app.post("/api/question/:id/:type", (req,res) => {
   var id = req.params.id;
   var type = req.params.type;
   var action = req.body.action;
-  console.log(action, type, id)
+  // console.log(action, type, id)
   if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
     res.send("Invalid question id or type")
     return
   }
   type += "s";
-  api.voteQuestion(id, req.session.user?.username, type, action).then(data => {
+  api.voteQuestion(id, req.session.user?.username, type, action).then(async data => {
     res.send(JSON.stringify(data))
     var dir = action == "increment" ? 1 : -1;
+    if(!questionOwnerCache[id]) questionOwnerCache[id] = await api.getQuestionOwner(id);
+    var owner = questionOwnerCache[id];
+    await modifyPoints(dir*(type=="downvotes"?-1:5), owner);
+    if(type == "downvotes") {
+      await modifyPoints(dir*-1, req.session.user?.username);
+    }
     dir *= type == "upvotes" ? 1 : -1;
     if(data.success) {
       io.emit("voteQ", [id, dir])
@@ -830,12 +1104,164 @@ app.post("/api/question/:id/:type", (req,res) => {
 
 
 })
-
-io.on('connection', (socket) => {
-  console.log('a user connected');
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+app.post("/api/answer/:id/:type", (req,res) => {
+  var id = req.params.id;
+  var type = req.params.type;
+  var action = req.body.action;
+  var  question = req.body.question;
+  // console.log(action, type, id)
+  if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement")) {
+    res.send("Invalid answer id or type")
+    return
+  }
+  type += "s";
+  api.voteAnswer( question , id, req.session.user?.username, type, action).then(async data => {
+    res.send(JSON.stringify(data))
+    var dir = action == "increment" ? 1 : -1;
+    if(!answerOwnerCache[id]) answerOwnerCache[id] = await api.getAnswerOwner(question, id);
+    var owner = answerOwnerCache[id];
+    await modifyPoints(dir*(type=="downvotes"?-5:10), owner);
+    if(type == "downvotes") {
+      await modifyPoints(dir*-1, req.session.user?.username);
+    }
+    dir *= type == "upvotes" ? 1 : -1;
+    if(data.success) {
+      io.emit("voteA", [question, id, dir])
+    }
   });
 });
 
+app.post("/api/comment/:id/:type", (req,res) => {
+  var id = req.params.id;
+  var type = req.params.type;
+  var action = req.body.action;
+  var  question = req.body.question;
+  var answer = req.body.answer;
+  var user = req.session.user?.username;
+  if(!user) {
+    res.send({success: false, msg: "You must be logged in to comment"})
+    return
+  }
+  // console.log("vote comment", action, type, id, question, answer);
+  if(!id || !type || !action || (type != "upvote" && type != "downvote") || (action != "increment" && action != "decrement") || !question) {
+    res.send("Invalid answer id or type")
+    return
+  }
+  type += "s";
+  api.voteComment( user, id, type, action, question, answer).then(data => {
+    res.send(JSON.stringify(data))
+    var dir = action == "increment" ? 1 : -1;
+    dir *= type == "upvotes" ? 1 : -1;
+    if(data.success) {
+      io.emit("voteC", [question, id, dir, answer])
+    }
+  });
+});
+
+var liveCache = {
+  votes: {},
+  views: {},
+  answerCount: {},
+};
+io.on('connection', (socket) => {
+  // console.log('a user connected');
+  var lastRecieved = 0;
+  socket.on("getVotes", (qId) => {
+    if(Date.now() - lastRecieved < 100)  return
+     lastRecieved = Date.now();
+    if(liveCache.votes[qId] && Date.now() - liveCache.votes[qId].time < 1000) {
+      socket.emit("questionVotes", liveCache.votes[qId].data, qId);
+    } else {
+    api.getQuestion(qId).then(data => {
+      if(data.success) {
+        liveCache.votes[qId] = {
+          time: Date.now(),
+          data: {upvotes: data.question.upvotes, downvotes: data.question.downvotes}
+        }
+        liveCache.views[qId] = {
+          time: Date.now(),
+          data: data.question.views
+        }
+        liveCache.answerCount[qId] = {
+          time: Date.now(),
+          data: data.question.answers
+        }
+        socket.emit("questionVotes", liveCache.votes[qId].data, qId);
+      }
+
+    });
+  }
+  })
+  socket.on("getViews", (qId) => {
+    if(Date.now() - lastRecieved < 100)  return
+
+
+    if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 10) {
+      socket.emit("questionViews", liveCache.views[qId].data, qId);
+    } else {
+    api.getQuestion(qId).then(data => {
+      if(data && data.success) {
+        liveCache.votes[qId] = {
+          time: Date.now(),
+          data: {upvotes: data.question.upvotes, downvotes: data.question.downvotes}
+        }
+        liveCache.views[qId] = {
+          time: Date.now(),
+          data: data.question.views
+        }
+        liveCache.answerCount[qId] = {
+          time: Date.now(),
+          data: data.question.answers
+        }
+        socket.emit("questionViews", liveCache.views[qId].data,qId);
+      }
+    });
+  }
+  })
+  socket.on("getAnswerCount", (qId) => {
+    if(Date.now() - lastRecieved < 100)  return
+modifyPoints = async (username, amount) => {
+  return await api.modifyPoints(username, amount)
+}
+
+replaceCharacters = (str) => {
+  let newQ = str
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
+  newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
+  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
+  return newQ
+}
+
+     lastRecieved = Date.now();
+
+    if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 10) {
+      socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
+    } else {
+    api.getQuestion(qId).then(data => {
+      if(data.success) {
+        liveCache.votes[qId] = {
+          time: Date.now(),
+          data: {upvotes: data.question.upvotes, downvotes: data.question.downvotes}
+        }
+        liveCache.views[qId] = {
+          time: Date.now(),
+          data: data.question.views
+        }
+        liveCache.answerCount[qId] = {
+          time: Date.now(),
+          data: data.question.answers
+        }
+        socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
+      }
+    });
+  }
+  })
+  socket.on('disconnect', () => {
+    // console.log('user disconnected');
+  });
+});
+
+
 server.listen(port, () => console.log(`Example app listening on port ${port}!`))
+
