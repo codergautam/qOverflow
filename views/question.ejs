@@ -928,7 +928,7 @@ hideThisCommentList();
 
   <% if(loggedIn) { %>
     
-    if(<%= (((question.status == "open") || (question.status == "protected" && basicData.level >= 5))) %> || answer.creator == "<%= user.username %>") {
+    if(<%= (((question.status == "open" && basicData.level >= 3) || (question.status == "protected" && basicData.level >= 5))) %> || answer.creator == "<%= user.username %>") {
   document.getElementById("postComment"+answer.answer_id).onclick = () => {
     var comment = document.getElementById("commentText"+answer.answer_id).value;
     if(comment.trim().length == 0) return;
@@ -976,9 +976,12 @@ hideThisCommentList();
 
 
 };
+var remaining = [];
+var pageSize = 5;
   fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
     if(j.success) {
       document.getElementById("answers").innerHTML = "";
+      remaining = j.answers;
       // j.answers.forEach((answer) => {
       //   appendAnswer(answer);
       // })

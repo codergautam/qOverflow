@@ -429,20 +429,10 @@ app.post('/questions',  async (req, res) => {
   username = (username != " ") ? username : req.session.user.username
   if(username != " ") {
     console.log(`User ${username}, making Question [Title: ${title}, Text ${text.slice(0, 16)}]`)
-    let data = await api.createQuestion(username, title, text).then((data) => {
-      if(data.success) {
-        return data
-      }
-    })
-    let pointsData = await modifyPoints(1, username).then((data) => {
-      if(data.success) {
-        return data
-      }
-    })
-    let pointStatus = pointsData.success
+    let data = await api.createQuestion(username, title, text)
+ await modifyPoints(1, username)
     let dataStatus = data.success
-    console.log(pointStatus)
-    if (dataStatus && pointStatus) { 
+    if (dataStatus) { 
       res.redirect('/')
     } else {
       res.redirect('/questionEditor', {username: username})
