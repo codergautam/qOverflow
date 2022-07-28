@@ -40,46 +40,26 @@
             </div>
         </div>
         <div class="col-span-12 relative mt-10">
-                <div class="hidden" id="questions">
-                    <% if(searchFeed.length != 0) { %>
-                        <% searchFeed.forEach((data) => { %> 
-                            <div class="flex-col mx-auto">
-                            <div onclick="location.href = '/question/<%=data.question_id%>'" class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
-                                <div class="px-4 py-4 ">
-                                <div class="font-bold text-lg mb-2"><%= data.title %> </div>
-                                </div>
-                                <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.upvotes - data.downvotes %> pts.</span>
-                                </div>
-                            </div>
-                            </div>
-                        <% }) %>
-                    <% } %> 
-                    <% if(searchFeed.length <= 0) { %>
-                        <div class="flex-col">
-                            <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
-                                You Have No Questions Right Now
-                                <br>...
-                            </div>
-                        </div>
-                    <% } %> 
-                </div>
             <div class="flex-col w-1/2 mx-auto pb-8" id="searchFeed">
-
+                <% if(searchFeed.length <= 0) { %>
+                    <div class="flex-col">
+                        <div id="noQuestions" class="text-gray-500 text-center font-semibold text-xl">
+                            Sorry we're stumped!
+                            <br>...
+                        </div>
+                    </div>
+                <% } %> 
             </div>
         </div>
     </div>
     <script>
-            let chunkSize
-            let standard = 45
+            let standard = 12
             let lastResult = 0
             let moreToCome = false
 
             appendQuestion = (question) => {
                 let searchFeed = document.getElementById("searchFeed")
-                searchFeed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="mx-auto cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                searchFeed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="mx-auto cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-full">
                                 <div class="px-4 py-4 ">
                                 <div class="hidden questionId">${question.question_id}</div>
                                 <div class="font-bold text-lg mb-2">${question.title}</div>
@@ -159,14 +139,6 @@
             
             if(!document.getElementById("noQuestions")) {
                 loadMore(standard, lastResult)
-            } else {
-                let msg = `<div class="flex-col">
-                            <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
-                                That's all folks!
-                                <br>...
-                            </div>
-                        </div>`
-                document.getElementById("searchFeed").insertAdjacentHTML("beforeend", msg)
             }
 
             function implementMore(moreToLoad = true) {
@@ -178,7 +150,7 @@
                             let loaderWithLess = `
                                     <div class = "flex">
                                         <div class="flex mt-4">
-                                            <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                            <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
                                                 <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult}')">
                                                     Load More
                                                 </button>
@@ -198,7 +170,7 @@
                             let loader = `
                                         <div class = "flex">
                                             <div class="flex mt-4">
-                                                <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
                                                     <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult}')">
                                                         Load More
                                                     </button>
@@ -208,11 +180,11 @@
                             document.getElementById("searchFeed").insertAdjacentHTML("beforeend", loader)
                             return
                         }
-                    } else if(!moreToCome) {
+                    } else if(!moreToLoad) {
                             if(searchFeed.childElementCount > standard) {
                                 let loaderWithLess = `
                                         <div class="flex mt-4">
-                                            <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                            <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
                                                 <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard})">
                                                     Load Less
                                                 </button>

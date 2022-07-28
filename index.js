@@ -155,7 +155,6 @@ app.get('/searchResults/:after', async (req, res) => {
     console.log("recieved null")
     let data = await api.getQuestions(null, regexQuery, matchQuery, null)
     data = data.questions
-    console.log(data.questions)
     data.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
@@ -163,7 +162,52 @@ app.get('/searchResults/:after', async (req, res) => {
   } else {
     let data = await api.getQuestions(null, regexQuery, matchQuery, after)
     data = data.questions
-    console.log(data.questions)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  }
+})
+
+app.get('/userAnswerResults/:after', async (req, res) => {
+  const after = req.params.after
+  const username = req.session.user.username
+  if(after == 0) {
+    let data = await api.getUserAnswers(username)
+    data = data.answers
+    console.log(data)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  } else {
+    let data = await api.getUserAnswers(username, after)
+    data = data.answers
+    console.log(data)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  }
+})
+
+app.get('/userQuestionResults/:after', async (req, res) => {
+  const after = req.params.after
+  const username = req.session.user.username
+  if(after == 0) {
+    console.log("Questions:")
+    let data = await api.getUserQuestions(username)
+    data = data.questions
+    console.log(data)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  } else {
+    console.log("Questions:")
+    let data = await api.getUserQuestions(username, after)
+    data = data.questions
+    console.log(data)
     data.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
@@ -332,12 +376,12 @@ app.get('/dashboard', async (req, res) => {
 
 app.post('/email', (req, res) => {
   const { username } = req.body
-  res.render('changeEmail', {username: username})
+  res.render('changeEmail', {username: username, user: req.session.user})
 })
 
 app.post('/password', (req, res) => {
   const { username } = req.body
-  res.render('changePassword', {username: username})
+  res.render('changePassword', {username: username, user: req.session.user})
 })
 
 app.post('/emailChange', async (req, res) => {

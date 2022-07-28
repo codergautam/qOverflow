@@ -138,13 +138,15 @@ class Api {
   }
    
   
-  async getUserQuestions(username) {
-    let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
+  async getUserQuestions(username, after = null) {
+    let condition = (after) ? `?after=${after}` : ''
+    let userQuestions = await this.sendRequest('/users/' + username + '/questions' + condition, 'GET')
     return userQuestions
   }
 
-  async getUserAnswers(username) {
-    let userAnswers = await this.sendRequest('/users/' + username + '/answers', 'GET')
+  async getUserAnswers(username, after = null) {
+    let condition = (after) ? `?after=${after}` : ''
+    let userAnswers = await this.sendRequest('/users/' + username + '/answers' + condition, 'GET')
     return userAnswers
   }
 
