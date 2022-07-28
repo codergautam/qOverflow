@@ -134,6 +134,8 @@ app.get('/search', async (req, res) => {
     console.log(regexQuery.title)
   }
   console.log(matchQuery)
+  req.session.currentMatch = matchQuery
+  req.session.currentRegex = regexQuery
   let data = await api.getQuestions(null, regexQuery, matchQuery, null)
   let questions = (data.success) ? data.questions : null
   console.log(questions)
@@ -150,6 +152,52 @@ app.get('/search', async (req, res) => {
   } else {
     res.redirect('/')
   }
+})
+
+app.get('/searchResults/:after', async (req, res) => {
+  const after = req.params.after
+  console.log("After: " + after)
+  console.log(after == false)
+  const matchQuery  = req.session.currentMatch
+  const regexQuery  = req.session.currentRegex
+  if(after == 0) {
+    console.log("recieved null")
+    let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+    data = data.questions
+    console.log(data.questions)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  } else {
+    let data = await api.getQuestions(null, regexQuery, matchQuery, after)
+    data = data.questions
+    console.log(data.questions)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  }
+})
+
+app.get('/userMail/:mail_id', async (req, res) => {
+  let username = req.session.user.username
+  let mailId = req.params.mail_id
+  let data = await api.getUserMail(username)
+  let messages = data.messages
+  let correctMsg
+  messages.forEach((data) => {
+    // console.log("Mail Id:" + mailId)
+    // console.log("Data Id:" + data.mail_id)
+    // console.log(mailId == data.mail_id)
+    if(data.mail_id == mailId) {
+      console.log(data)
+      correctMsg = data
+    }
+  })
+  console.log("Correct Message:")
+  console.log(correctMsg)
+  res.send(JSON.stringify(correctMsg))
 })
 
 app.post('/search', async (req, res) => {
@@ -207,7 +255,8 @@ app.post('/search', async (req, res) => {
     }
     console.log(regexQuery.title)
   }
-  console.log(matchQuery)
+  req.session.currentMatch = matchQuery
+  req.session.currentRegex = regexQuery
   let data = await api.getQuestions(null, regexQuery, matchQuery, null)
   let questions = (data.success) ? data.questions : null
   console.log(questions)
@@ -225,6 +274,8 @@ app.post('/search', async (req, res) => {
     res.redirect('/')
   }
 })
+
+
 
 app.get('/dashboard', async (req, res) => {
   console.log(req.session)
@@ -360,6 +411,7 @@ app.post('/questions',  async (req, res) => {
   }
   // res.redirect('/')
 })
+
 
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
