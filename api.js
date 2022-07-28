@@ -1,5 +1,7 @@
 const fetch = require('node-fetch');
 const passwordUtils = require('./utils/password');
+const process = require('process');
+const delay = time => new Promise(res=>setTimeout(res,time));
 
 class Api {
   constructor(key) {
@@ -7,13 +9,17 @@ class Api {
     this.key = key
     console.log(this.key)
     this.requestsThisSecond = 0;
-    this.lockAfter = 8;
+    this.lockAfter = 7;
+    this.requestsInQueue = 0;
     setInterval(() => {
-      console.log(this.requestsThisSecond)
       this.requestsThisSecond = 0;
-    }, 1000);
+    }, 1200);
   }
    async sendRequest(endpoint, method, data) {
+
+    this.requestsInQueue++;
+    await delay(200*(this.requestsInQueue-1));
+    console.log("Send request: "+ endpoint, "Queue wait:" +200*(this.requestsInQueue-1))
     if(this.requestsThisSecond <= this.lockAfter) {
       this.requestsThisSecond++;
     try {
@@ -26,20 +32,35 @@ class Api {
       }
     })
     var text= await req.text()
+    this.requestsInQueue--;
    
     return JSON.parse(text)
   } catch (error) {
     // TODO: handle error
     console.log(error)
+    this.requestsInQueue--;
   }
 } else {
   return new Promise((resolve, reject) => {
     console.log("WOAH WOHA SLOW DOWN MY FIRNED")
     resolve({success: false, error: "Too many requests"})
+    // process.exit(1)
+
+    // throw new Error("Too many requests")
   }
   )
 
 }
+  }
+
+
+  async updateAnswer(questionId, answerId, text, upvotes, downvotes, accepted) {
+    return this.sendRequest('/questions/' + questionId + '/answers/' + answerId, 'PATCH', {
+      text: text,
+      upvotes: upvotes,
+      downvotes: downvotes,
+      accepted: accepted
+    });
   }
 
   async findUsernameFromEmail(userEmail) {
@@ -99,6 +120,21 @@ class Api {
   async getUser(username) {
     return this.sendRequest('/users/'+username, 'GET');
   }
+  
+  async updateQuestion(id, status, title, text, views, upvotes, downvotes) {
+    return this.sendRequest('/questions/' + id, 'PATCH', {
+      status: status,
+      title: title,
+      text: text,
+      views: views,
+      upvotes: upvotes,
+      downvotes: downvotes
+    });
+  }
+
+  async changeQuestionStatus(id, status) {
+    return this.updateQuestion(id, status, undefined, undefined, undefined, undefined, undefined);
+  }
 
   async getQuestions(sort, regex, match, after) {
     //Sort param: ---------
@@ -115,7 +151,6 @@ class Api {
     
     //After param: ---------
     //Just get whatever questions are after the question_id put in
-    console.log(match)
     var params =  {
       sort: sort,
       regexMatch: regex ? JSON.stringify(regex) : undefined ,
@@ -192,7 +227,6 @@ class Api {
     if(username) {
     return new Promise((resolve, reject) => {
     this.sendRequest('/questions/' + questionId + '/vote/' + username, 'GET').then(data => {
-      console.log(data)
       if(data.success) {
         if(data.error) resolve({voted: false, error: data.error})
         else resolve({voted: true, vote: data.vote})
@@ -224,7 +258,6 @@ if(answerId == "undefined") {
     if(answerId) var endpoint = '/questions/' + questionId + '/answers/' + answerId + '/comments/' + commentId + '/vote/' + username;
     else var endpoint = '/questions/' + questionId + '/comments/' + commentId + '/vote/' + username;
 
-    console.log(endpoint)
 
     return new Promise((resolve, reject) => {
       this.sendRequest(endpoint, 'GET').then(data => {
@@ -244,12 +277,12 @@ if(answerId == "undefined") {
     return this.sendRequest('/questions/' + questionId, 'GET');
   }
 
-  getQuestionComments(questionId) {
-    return this.sendRequest('/questions/' + questionId + '/comments', 'GET');
+  getQuestionComments(questionId, after) {
+    return this.sendRequest('/questions/' + questionId + '/comments'+(after ? "?after="+after : ""), 'GET');
   }
 
-  getAnswerComments(questionId, answerId) {
-    return this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/comments', 'GET');
+  getAnswerComments(questionId, answerId, after) {
+    return this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/comments'+(after ? "?after="+after : ""), 'GET');
   }
 
   addCommentQuestion(questionId, username, text) {
@@ -292,7 +325,6 @@ if(answerId == "undefined") {
     if(username) {
     return new Promise((resolve, reject) => {
     this.sendRequest('/questions/' + questionId + '/vote/' + username, 'GET').then(data => {
-      console.log(data)
       if(data.success) {
         if(data.error) resolve({voted: false, error: data.error})
         else resolve({voted: true, vote: data.vote})
@@ -310,7 +342,6 @@ if(answerId == "undefined") {
   }
 
   async voteQuestion(questionId, username, target, action) {
-    console.log(questionId, username, target, action)
     var req = this.sendRequest('/questions/' + questionId + '/vote/' + username, 'PATCH', {
       operation: action,
       target
@@ -319,8 +350,6 @@ if(answerId == "undefined") {
   }
 
   async voteAnswer(questionId, answerId, username, target, action) {
-    console.log(questionId, answerId, username, target, action)
-    console.log(action)
     var req = this.sendRequest('/questions/' + questionId + '/answers/' + answerId + '/vote/' + username, 'PATCH', {
       operation: action,
       target
@@ -352,6 +381,39 @@ if(answerId == "undefined") {
     const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(password);
     return this.updateUser(username, saltString, keyString, undefined, undefined);
   }
+
+  async getQuestionOwner(questionId) {
+    var q = await this.getQuestion(questionId)
+    console.log(q)
+
+    return q.question.creator;
+
+  }
+
+  async getAnswer(questionId, answerId) {
+    var answer = undefined;
+    var lastSaw = undefined;
+    while(answer == undefined) {
+      var j = await this.getAnswers(questionId, undefined, lastSaw)
+      if(j.success) {
+        answer = j.answers.find(a => a.answer_id == answerId);
+        lastSaw = j.answers[j.answers.length-1].answer_id;
+
+      } else {
+        console.log(j)
+        break;
+        
+      }
+
+    }
+    return answer;
+  }
+
+  async getAnswerOwner(questionId, answerId) {
+    var a = await this.getAnswer(questionId, answerId)
+    console.log(a)
+    return a.creator;
+  }
     
   async increaseViews(questionId) {
     try {
@@ -367,12 +429,12 @@ if(answerId == "undefined") {
 }
 
 
-  getAnswers(questionId, count=Infinity) {
-  if(count > 0)  return this.sendRequest('/questions/' + questionId + '/answers', 'GET');
+  getAnswers(questionId, count=Infinity, after=undefined) {
+  if(count > 0)  return this.sendRequest('/questions/' + questionId + '/answers'+(after?"?after="+after:""), 'GET');
   else return new Promise((resolve, reject) => {
     // if count is 0, return an empty array
     resolve([]);
-  });
+  }); 
   }
 
   addAnswer(questionId, username, text) {

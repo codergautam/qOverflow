@@ -95,8 +95,8 @@
                                     </div>
                                 <% }) %> 
                             <% } else { %>
-                                <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                    You Have No Answers Right Now
+                                <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                    You Have No Questions Right Now
                                 </div>
                                 <span class="ml-6 mt-1 text-gray-500 badge w-min">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -185,6 +185,7 @@
             </div>
         </div>
     </div>
+
     <% if (questionFeed)  { %> 
         <script>
             let chunkSize
@@ -365,5 +366,6 @@
             
         </script>
     <% } %>  
+ 
 </body>
 </html>
