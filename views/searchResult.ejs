@@ -10,7 +10,7 @@
 <body>
     <div class="grid grid-cols-12 bg-white">
         <div class="col-span-12">
-            <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
+            <%- include('./navbar'), { loggedIn: true, login: false, user: user } %> 
         </div>
         <div class="flex-col mt-6 col-start-5 col-span-4 items-center relative">
             <div class="flex-col">
@@ -39,114 +39,169 @@
                 <% } %>
             </div>
         </div>
-        <div class="col-start-2 col-span-10 relative mt-10">
-                <div class="hidden" id="questions">
-                    <% if(searchFeed.length != 0) { %>
-                        <% searchFeed.forEach((data) => { %> 
-                            <div class="flex-col mx-auto">
-                            <div onclick="location.href = '/question/<%=data.question_id%>'" class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
-                                <div class="px-4 py-4 ">
-                                <div class="font-bold text-lg mb-2"><%= data.title %> </div>
-                                </div>
-                                <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.upvotes - data.downvotes %> pts.</span>
-                                </div>
-                            </div>
-                            </div>
-                        <% }) %>
-                    <% } %> 
-                    <% if(searchFeed.length <= 0) { %>
-                        <div class="flex-col">
-                            <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
-                                You Have No Questions Right Now
-                                <br>...
-                            </div>
+        <div class="col-span-12 relative mt-10">
+            <div class="flex-col w-1/2 mx-auto pb-8" id="searchFeed">
+                <% if(searchFeed.length <= 0) { %>
+                    <div class="flex-col">
+                        <div id="noQuestions" class="text-gray-500 text-center font-semibold text-xl">
+                            Sorry we're stumped!
+                            <br>...
                         </div>
-                    <% } %> 
-                </div>
-            <div class="flex-col pb-8" id="searchFeed">
-
+                    </div>
+                <% } %> 
             </div>
         </div>
     </div>
     <script>
-            let chunkSize
-            let standard = 6
-            
-            let children = document.getElementById("questions").innerHTML
-            document.getElementById("searchFeed").innerHTML = children
-            let questionFeed = document.getElementById("searchFeed").children
-            chunkSize = standard
-            let index = questionFeed.length - 1
-            while(questionFeed.length > chunkSize) {
-                questionFeed.item(index).remove()
-                index--
+            let standard = 12
+            let lastResult = 0
+            let moreToCome = false
+
+            appendQuestion = (question) => {
+                let searchFeed = document.getElementById("searchFeed")
+                searchFeed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="mx-auto cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-full">
+                                <div class="px-4 py-4 ">
+                                <div class="hidden questionId">${question.question_id}</div>
+                                <div class="font-bold text-lg mb-2">${question.title}</div>
+                                </div>
+                                <div class="pl-3 pr-6 pt-4 pb-2 ">
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: ${question.creator} </span>
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.timeElapsed} ago</span>
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.upvotes - question.downvotes} pts.</span>
+                                </div>
+                            </div>`
             }
-             
-            if(!document.getElementById("noQuestions")) {
-                implementLoader(questionFeed.length, document.getElementById("questions").children.length)
-            }
-            function loadMoreQuestions() {
-                let children = document.getElementById("questions").innerHTML
-                document.getElementById("searchFeed").innerHTML = children
-                let questionFeed = document.getElementById("searchFeed").children
-                chunkSize += standard
-                let index = questionFeed.length - 1
-                while(questionFeed.length > chunkSize) {
-                    questionFeed.item(index).remove()
-                    index--
-                }
-                implementLoader(questionFeed.length, document.getElementById("questions").children.length)
-            }
-            function loadLessQuestions() {
-                if((chunkSize - standard) > 0) {
-                    let children = document.getElementById("questions").innerHTML
-                    document.getElementById("searchFeed").innerHTML = children
-                    let questionFeed = document.getElementById("searchFeed").children
-                    chunkSize -= standard
-                    let index = questionFeed.length - 1
-                    while(questionFeed.length > chunkSize) {
-                        questionFeed.item(index).remove()
-                        index--
-                    }
-                    implementLoader(questionFeed.length, document.getElementById("questions").children.length)
+
+            async function getQuestions(size, lastResult) {
+                let questions = await fetch('/searchResults/' + lastResult).then((res) => (res.json()))
+                console.log(questions.length + "Standard: " + size)
+                if(questions.length > size) {
+                    console.log("There's more!")
+                    moreToCome = true
                 } else {
+                    console.log("Thats all folks!")
+                    moreToCome = false
+                }
+                console.log(questions)
+                if(questions.length < size) {
+                    if(questions.length == 1) {
+                        return questions
+                    } else {
+                        return questions.splice(0, questions.length)
+                    }
+                } else {
+                    return questions.splice(0, size)
+                }
+            }
+
+            async function loadMore(size, _lastResult) {
+                // console.log("Current: " + _lastResult)
+                let searchFeed = document.getElementById("searchFeed")
+                searchFeed.lastChild.remove()
+                var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
+                <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                <div class="px-4 py-4 ">
+                    <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+                
+                </div>
+                </div>
+                </div>`;
+                searchFeed.insertAdjacentHTML("beforeend", loader)
+                let data = await getQuestions(size, _lastResult)
+                if(data) {
+                    if(searchFeed.childElementCount > 0 && !document.getElementById("noQuestions")) {
+                        searchFeed.children.item(searchFeed.children.length-1).remove()
+                    }
+                    console.log(data)
+                    lastResult = data[data.length - 1].question_id
+                    // console.log("New: " + lastResult)
+                    data.forEach(appendQuestion)
+                    // searchFeed.lastChild.remove()
+                    implementMore(moreToCome)
                     return
                 }
             }
+
+            async function loadLess(size) {
+                // console.log("Current: " + _lastResult)
+                let searchFeed = document.getElementById("searchFeed")
+                console.log(lastResult)
+                searchFeed.lastChild.remove()
+                for(let i = 0; i < size; i++) {
+                    console.log(i)
+                    let count = searchFeed.childElementCount
+                    searchFeed.children.item(count - 1).remove()
+                }
+                let childCount = searchFeed.childElementCount
+                lastResult = searchFeed.children.item(childCount-2).querySelector(".questionId").innerText
+                implementMore()
+            }
             
-            function implementLoader(qLength, cLength) {
-                console.log(qLength + " " + cLength)
-                let emptyElem = ``
-                if(qLength < cLength) {
-                    let loader = `
-                            <div class="flex mt-4">
-                                <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                      <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreQuestions()">
-                                          Load More
-                                      </button>
-                                </span>
-                                <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
-                                        Load Less
-                                    </button>
-                                </span>
-                            </div>`
-                        document.getElementById("searchFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    } else {
-                        let loader = `
+            if(!document.getElementById("noQuestions")) {
+                loadMore(standard, lastResult)
+            }
+
+            function implementMore(moreToLoad = true) {
+                    console.log("Adding Loaders")
+                    let searchFeed = document.getElementById("searchFeed")
+                    console.log(searchFeed.childElementCount)
+                    if(moreToLoad) {
+                        if(searchFeed.childElementCount > standard) {
+                            let loaderWithLess = `
+                                    <div class = "flex">
+                                        <div class="flex mt-4">
+                                            <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult}')">
+                                                    Load More
+                                                </button>
+                                            </span>
+                                        </div>
                                     <div class="flex mt-4">
-                                        <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessQuestions()">
+                                        <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard})">
                                                 Load Less
                                             </button>
                                         </span>
+                                    </div>
                                     </div>`
-                        document.getElementById("searchFeed").insertAdjacentHTML("beforeend", loader)
-                        return
+                            document.getElementById("searchFeed").insertAdjacentHTML("beforeend", loaderWithLess)
+                            return
+                        } else {
+                            let loader = `
+                                        <div class = "flex">
+                                            <div class="flex mt-4">
+                                                <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult}')">
+                                                        Load More
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>`
+                            document.getElementById("searchFeed").insertAdjacentHTML("beforeend", loader)
+                            return
+                        }
+                    } else if(!moreToLoad) {
+                            if(searchFeed.childElementCount > standard) {
+                                let loaderWithLess = `
+                                        <div class="flex mt-4">
+                                            <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard})">
+                                                    Load Less
+                                                </button>
+                                            </span>
+                                        </div>`
+                                document.getElementById("searchFeed").insertAdjacentHTML("beforeend", loaderWithLess)
+                                return
+                            } else {
+                            let msg = `<div class="flex-col">
+                            <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
+                                That's all folks!
+                                <br>...
+                            </div>
+                        </div>`
+                            document.getElementById("searchFeed").insertAdjacentHTML("beforeend", msg)
+                            }
+                            return
                     }
             }
 

@@ -86,6 +86,38 @@ app.get('/', async (req, res) => { //Homepage
   })
 });
 
+
+
+replaceCharacters = (str) => {
+  let newQ = str
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
+  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
+  return newQ
+}
+
+formatQuery = (query) => {
+  let qLength = query.length
+  let q = query
+  q.forEach((data, i) => {
+    if((data != '') && (data != ' ')) {
+      if(((i != 0) && (i != qLength - 1))) {
+        console.log("adding space")
+         q[i] = ` ${data} `
+      }
+      // if(qLength == 1) {
+      //   if(q[0].length > 3) {
+      //     q[0] = `${q[0]}`
+      //   } else {
+      //     q[0] = `${q[0]}`
+      //   }
+      // }
+    }
+  })
+  return q
+}
+
 var modifyPoints = async (amount, username) => {
   let operation = Math.sign(amount) == -1 ? "decrement" : "increment";
   amount = Math.abs(amount);
@@ -152,13 +184,8 @@ app.get('/search', async (req, res) => {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
+    q = formatQuery(q)
     console.log(q)
-    let newK = q.forEach((data, i) => {
-      if((data != '') && (data != ' ')) {
-        return data
-      }
-    })
-    console.log(newK)
     regexQuery = {
       "title": `(${q.join(")|(")})`
     }
@@ -167,19 +194,16 @@ app.get('/search', async (req, res) => {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
+    q = formatQuery(q)
     console.log(q)
-    let newK = q.forEach((data, i) => {
-      if((data != '') && (data != ' ')) {
-        return data
-      }
-    })
-    console.log(newK)
     regexQuery = {
       "text": `(${q.join(")|(")})`
     }
     console.log(regexQuery.title)
   }
   console.log(matchQuery)
+  req.session.currentMatch = matchQuery
+  req.session.currentRegex = regexQuery
   let data = await api.getQuestions(null, regexQuery, matchQuery, null)
   let questions = (data.success) ? data.questions : null
   console.log(questions)
@@ -202,6 +226,76 @@ app.get('/search', async (req, res) => {
       searchFeed: [],
       user: req.session.user
     })
+  }
+})
+
+app.get('/searchResults/:after', async (req, res) => {
+  const after = req.params.after
+  console.log("After: " + after)
+  console.log(after == false)
+  const matchQuery  = req.session.currentMatch
+  const regexQuery  = req.session.currentRegex
+  if(after == 0) {
+    console.log("recieved null")
+    let data = await api.getQuestions(null, regexQuery, matchQuery, null)
+    data = data.questions
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  } else {
+    let data = await api.getQuestions(null, regexQuery, matchQuery, after)
+    data = data.questions
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  }
+})
+
+app.get('/userAnswerResults/:after', async (req, res) => {
+  const after = req.params.after
+  const username = req.session.user.username
+  if(after == 0) {
+    let data = await api.getUserAnswers(username)
+    data = data.answers
+    console.log(data)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  } else {
+    let data = await api.getUserAnswers(username, after)
+    data = data.answers
+    console.log(data)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  }
+})
+
+app.get('/userQuestionResults/:after', async (req, res) => {
+  const after = req.params.after
+  const username = req.session.user.username
+  if(after == 0) {
+    console.log("Questions:")
+    let data = await api.getUserQuestions(username)
+    data = data.questions
+    console.log(data)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  } else {
+    console.log("Questions:")
+    let data = await api.getUserQuestions(username, after)
+    data = data.questions
+    console.log(data)
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
   }
 })
 
@@ -253,37 +347,28 @@ app.post('/search', async (req, res) => {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
+    q = formatQuery(q)
     console.log(q)
-    let newK = q.forEach((data, i) => {
-      if((data != '') && (data != ' ')) {
-        return data
-      }
-    })
-    console.log(newK)
     regexQuery = {
-      "title": `(${q.join(")|(")})`
+      "title":  `(${q.join(")|(")})`
     }
     console.log(regexQuery.title)
   } else if(sort == "Text") {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
+    q = formatQuery(q)
     console.log(q)
-    let newK = q.forEach((data, i) => {
-      if((data != '') && (data != ' ')) {
-        return data
-      }
-    })
-    console.log(newK)
     regexQuery = {
       "text": `(${q.join(")|(")})`
     }
     console.log(regexQuery.title)
   }
-  console.log(matchQuery)
+  req.session.currentMatch = matchQuery
+  req.session.currentRegex = regexQuery
   let data = await api.getQuestions(null, regexQuery, matchQuery, null)
   let questions = (data.success) ? data.questions : null
-  console.log(questions)
+  // console.log(questions)
   if(questions) {
     questions.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
@@ -292,7 +377,7 @@ app.post('/search', async (req, res) => {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
-      searchFeed: questions,
+      searchFeed: questions, 
       user: req.session.user
     })
   } else {
@@ -305,6 +390,8 @@ app.post('/search', async (req, res) => {
     })
   }
 })
+
+
 
 app.get('/dashboard', async (req, res) => {
   console.log(req.session)
@@ -377,14 +464,14 @@ app.get('/dashboard', async (req, res) => {
   }
 })
 
-app.get('/email', (req, res) => {
-  const { username } = req.session.user.username
-  res.render('changeEmail', {username: username})
+app.post('/email', (req, res) => {
+  const { username } = req.body
+  res.render('changeEmail', {username: username, user: req.session.user})
 })
 
-app.get('/password', (req, res) => {
-  const { username } = req.session.user.username
-  res.render('changePassword', {username: username})
+app.post('/password', (req, res) => {
+  const { username } = req.body
+  res.render('changePassword', {username: username, user: req.session.user})
 })
 
 app.post('/emailChange', async (req, res) => {
@@ -443,6 +530,7 @@ app.post('/questions',  async (req, res) => {
   }
   // res.redirect('/')
 })
+
 
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
@@ -1210,18 +1298,8 @@ io.on('connection', (socket) => {
   })
   socket.on("getAnswerCount", (qId) => {
     if(Date.now() - lastRecieved < 100)  return
-modifyPoints = async (username, amount) => {
-  return await api.modifyPoints(username, amount)
-}
 
-replaceCharacters = (str) => {
-  let newQ = str
-  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
-  newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
-  // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
-  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
-  return newQ
-}
+
 
      lastRecieved = Date.now();
 
