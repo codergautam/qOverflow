@@ -77,6 +77,27 @@ class Api {
     return selectedUsername;
   }
 
+  async getAllAnswers(questionId) {
+    var answers = [];
+    var lastAnswer = null;
+    var success = true;
+    while(true) {
+      var data = await this.sendRequest('/questions/' + questionId + '/answers'+(lastAnswer?'?after='+lastAnswer:""), 'GET');
+      if(data.success) {
+        if(data.answers.length == 0) {
+          break;
+        }
+      answers = answers.concat(data.answers);
+      lastAnswer = data.answers[data.answers.length-1].answer_id;
+      if(data.answers.length < 100) break;
+      } else {
+        success = false;
+        break;
+      }
+    }
+    return {success: success, answers: answers};
+  }
+
   async deleteUser(username) {
     return this.sendRequest("/users/" + username, 'DELETE');
   }
