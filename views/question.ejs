@@ -976,22 +976,19 @@ hideThisCommentList();
 
 
 };
+var pageSize = 2;
 var remaining = [];
-var pageSize = 5;
   fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
     if(j.success) {
       document.getElementById("answers").innerHTML = "";
-      remaining = j.answers;
       // j.answers.forEach((answer) => {
       //   appendAnswer(answer);
       // })
-      var alreadyAnswered=  false
-      for (answer of j.answers) {
-        await appendAnswer(answer);
-        if(answer.creator =="<%= loggedIn ? username : "" %>") {
-          alreadyAnswered = true
-        }
-      }
+      remaining = j.answers;
+      alreadyAnswered = j.answers.findIndex((answer) => {
+        return answer.creator == "<%= user.username %>";
+      }) == -1 ? false : true;
+
       console.log("alreadyAnswered", alreadyAnswered);
       if(!alreadyAnswered) {
         <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
@@ -999,9 +996,47 @@ var pageSize = 5;
         document.getElementById("createDiv").style.display = "block";
         <% } %>
       }
-      
+
+     async function showPage() {
+    // get 5 from remaining
+    var page = [];
+    for(var i = 0; i < pageSize; i++) {
+      if(remaining.length > 0) {
+        page.push(remaining.shift());
+      }
+    }
+    for (var i = 0; i < page.length; i++) {
+     await appendAnswer(page[i]);
+    }
+
+  }
+
+  function appendShowMore() {
+    var btn = `<div class="flex justify-center items-center">
+      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
+        Show more answers
+      </button>
+    </div>`
+    // dom parser
+    var parser = new DOMParser();
+    var btnDom = parser.parseFromString(btn, "text/html");
+    document.getElementById("answers").appendChild(btnDom.body.firstChild);
+    document.getElementById("showMore").onclick = async () => {
+      document.getElementById("showMore").remove();
+      await showPage();
+      if(remaining.length > 0) {
+        appendShowMore();
+      }
+    };
+  }
+  await showPage();
+  if(remaining.length > 0) {
+    appendShowMore();
+  }
     }
   })
+
+
 
   <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
 

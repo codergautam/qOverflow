@@ -560,7 +560,7 @@ app.get("/messageEditor", async (req, res) => {
 })
 app.get('/getAnswers', async (req, res) => {
   var id = req.query.question;
-  api.getAnswers(id).then(data => {
+  api.getAllAnswers(id).then(data => {
     if(data.success) {
       data.answers = data.answers.sort ((a, b) => {
         return (b.upvotes - b.downvotes) - (a.upvotes - a.downvotes)
