@@ -78,28 +78,8 @@
                         <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
                             Questions
                         </p>
-<<<<<<< HEAD
                         <div class="flex-col mt-4 mb-6 overflow-y-auto h-80" id="questionFeed">
                             <% if(questionFeed.length <= 0) { %>
-=======
-                        <div class="hidden" id="questions">
-                            <% if(questionFeed.length != 0) { %>
-                                <% questionFeed.forEach((data) => { %> 
-                                    <div class="flex-col">
-                                    <div  onclick="location.href = '/question/<%=data.question_id%>'" class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
-                                        <div class="px-4 py-4 ">
-                                          <div class="font-bold text-lg mb-2"><%= data.title %> </div>
-                                        </div>
-                                        <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.upvotes - data.downvotes %> pts.</span>
-                                        </div>
-                                    </div>
-                                    </div>
-                                <% }) %> 
-                            <% } else { %>
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
                                 <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
                                     You Have No Questions Right Now
                                 </div>
@@ -109,22 +89,9 @@
                                       </svg>
                                 </span>
                             <% } %>
-<<<<<<< HEAD
                         </div> 
                     </div> 
                     <div class="flex-col">
-=======
-                        </div>  
-                        <% if(questionFeed.length != 0)  { %> 
-                            <div class="flex-col overflow-y-auto h-64 items-start" id="questionFeed">
-                            </div>   
-                        <% } else { %>
-                            <div class="flex-col" id="questionFeed">
-                            </div>   
-                        <% } %> 
-                        </div>  
-                    <div class="flex-col pb-24">
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
                         <p class="ml-6 mt-2 text-gray-700 font-semibold text-3xl">
                             Answers
                         </p>
@@ -133,7 +100,6 @@
                                     <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
                                         You Have No Answers Right Now
                                     </div>
-<<<<<<< HEAD
                                     <span class="ml-6 mt-1 text-gray-500 badge w-min">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -141,28 +107,6 @@
                                     </span>
                                 <% } %>
                             </div>  
-=======
-                                <% }) %> 
-                            <% } else { %>
-                                <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                    You Have No Answers Right Now
-                                </div>
-                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                      </svg>
-                                </span>
-                            <% } %>
-                        </div>
-                        
-                        <% if(answerFeed.length != 0)  { %> 
-                            <div class="flex-col mt-2 overflow-y-auto h-72 items-start" id="answerFeed">
-                            </div>   
-                        <% } else { %>
-                            <div class="flex-col pb-24" id="answerFeed">
-                            </div>   
-                        <% } %>  
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
                     </div>
                 </div>
             </div>
@@ -193,7 +137,6 @@
             </div>
         </div>
     </div>
-<<<<<<< HEAD
     <% if (questionFeed || answerFeed)  { %> 
            <script>
             let standard = 3
@@ -214,22 +157,6 @@
                                 <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.upvotes - question.downvotes} pts.</span>
                                 </div>
                             </div>`
-=======
-
-    <% if (questionFeed)  { %> 
-        <script>
-            let chunkSize
-            let standard = 6
-            
-            let children = document.getElementById("questions").innerHTML
-            document.getElementById("questionFeed").innerHTML = children
-            let questionFeed = document.getElementById("questionFeed").children
-            chunkSize = standard
-            let index = questionFeed.length - 1
-            while(questionFeed.length > chunkSize) {
-                questionFeed.item(index).remove()
-                index--
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
             }
 
             async function getQuestions(size, lastResultQ) {

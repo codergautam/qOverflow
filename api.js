@@ -222,11 +222,6 @@ class Api {
     })
   }
   
-<<<<<<< HEAD
-  async getUserQuestions(username, after = null) {
-    let condition = (after) ? `?after=${after}` : ''
-    let userQuestions = await this.sendRequest('/users/' + username + '/questions' + condition, 'GET')
-=======
   async sendMessage(sender, receiver, subject, text) {
     return await this.sendRequest("/mail", 'POST', {
       sender: sender,
@@ -235,9 +230,9 @@ class Api {
       text: text
     })
   }
-  async getUserQuestions(username) {
-    let userQuestions = await this.sendRequest('/users/' + username + '/questions', 'GET')
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
+  async getUserQuestions(username, after = null) {
+    let condition = (after) ? `?after=${after}` : ''
+    let userQuestions = await this.sendRequest('/users/' + username + '/questions' + condition, 'GET')
     return userQuestions
   }
 

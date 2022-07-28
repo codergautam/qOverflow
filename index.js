@@ -86,6 +86,38 @@ app.get('/', async (req, res) => { //Homepage
   })
 });
 
+
+
+replaceCharacters = (str) => {
+  let newQ = str
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
+  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
+  return newQ
+}
+
+formatQuery = (query) => {
+  let qLength = query.length
+  let q = query
+  q.forEach((data, i) => {
+    if((data != '') && (data != ' ')) {
+      if(((i != 0) && (i != qLength - 1))) {
+        console.log("adding space")
+         q[i] = ` ${data} `
+      }
+      // if(qLength == 1) {
+      //   if(q[0].length > 3) {
+      //     q[0] = `${q[0]}`
+      //   } else {
+      //     q[0] = `${q[0]}`
+      //   }
+      // }
+    }
+  })
+  return q
+}
+
 var modifyPoints = async (amount, username) => {
   let operation = Math.sign(amount) == -1 ? "decrement" : "increment";
   amount = Math.abs(amount);
@@ -183,11 +215,7 @@ app.get('/search', async (req, res) => {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
-<<<<<<< HEAD
-      searchFeed: questions, 
-=======
       searchFeed: questions,
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
       user: req.session.user
     })
   } else {
@@ -201,7 +229,6 @@ app.get('/search', async (req, res) => {
   }
 })
 
-<<<<<<< HEAD
 app.get('/searchResults/:after', async (req, res) => {
   const after = req.params.after
   console.log("After: " + after)
@@ -272,8 +299,6 @@ app.get('/userQuestionResults/:after', async (req, res) => {
   }
 })
 
-=======
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
 app.get('/userMail/:mail_id', async (req, res) => {
   let username = req.session.user.username
   let mailId = req.params.mail_id
@@ -352,11 +377,7 @@ app.post('/search', async (req, res) => {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
-<<<<<<< HEAD
       searchFeed: questions, 
-=======
-      searchFeed: questions,
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
       user: req.session.user
     })
   } else {
@@ -443,7 +464,6 @@ app.get('/dashboard', async (req, res) => {
   }
 })
 
-<<<<<<< HEAD
 app.post('/email', (req, res) => {
   const { username } = req.body
   res.render('changeEmail', {username: username, user: req.session.user})
@@ -452,16 +472,6 @@ app.post('/email', (req, res) => {
 app.post('/password', (req, res) => {
   const { username } = req.body
   res.render('changePassword', {username: username, user: req.session.user})
-=======
-app.get('/email', (req, res) => {
-  const { username } = req.session.user.username
-  res.render('changeEmail', {username: username})
-})
-
-app.get('/password', (req, res) => {
-  const { username } = req.session.user.username
-  res.render('changePassword', {username: username})
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
 })
 
 app.post('/emailChange', async (req, res) => {
@@ -1288,18 +1298,8 @@ io.on('connection', (socket) => {
   })
   socket.on("getAnswerCount", (qId) => {
     if(Date.now() - lastRecieved < 100)  return
-modifyPoints = async (username, amount) => {
-  return await api.modifyPoints(username, amount)
-}
 
-replaceCharacters = (str) => {
-  let newQ = str
-  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
-  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
-  // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
-  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
-  return newQ
-}
+
 
      lastRecieved = Date.now();
 
@@ -1333,29 +1333,3 @@ replaceCharacters = (str) => {
 
 server.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
-<<<<<<< HEAD
-  return _level
-}
-
-formatQuery = (query) => {
-  let qLength = query.length
-  let q = query
-  q.forEach((data, i) => {
-    if((data != '') && (data != ' ')) {
-      if(((i != 0) && (i != qLength - 1))) {
-        console.log("adding space")
-         q[i] = ` ${data} `
-      }
-      // if(qLength == 1) {
-      //   if(q[0].length > 3) {
-      //     q[0] = `${q[0]}`
-      //   } else {
-      //     q[0] = `${q[0]}`
-      //   }
-      // }
-    }
-  })
-  return q
-}
-=======
->>>>>>> b5f1d616fa3de07dee5a0f78ba9cfe662be9782d
