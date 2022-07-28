@@ -94,6 +94,7 @@
 
             async function getQuestions(size, lastResult) {
                 let questions = await fetch('/searchResults/' + lastResult).then((res) => (res.json()))
+                console.log(questions.length + "Standard: " + size)
                 if(questions.length > size) {
                     console.log("There's more!")
                     moreToCome = true
@@ -101,7 +102,16 @@
                     console.log("Thats all folks!")
                     moreToCome = false
                 }
-                return questions.splice(0, size)
+                console.log(questions)
+                if(questions.length < size) {
+                    if(questions.length == 1) {
+                        return questions
+                    } else {
+                        return questions.splice(0, questions.length)
+                    }
+                } else {
+                    return questions.splice(0, size)
+                }
             }
 
             async function loadMore(size, _lastResult) {
@@ -126,7 +136,7 @@
                     lastResult = data[data.length - 1].question_id
                     // console.log("New: " + lastResult)
                     data.forEach(appendQuestion)
-                    searchFeed.lastChild.remove()
+                    // searchFeed.lastChild.remove()
                     implementMore(moreToCome)
                     return
                 }
@@ -148,7 +158,7 @@
             }
             
             if(!document.getElementById("noQuestions")) {
-                loadMore(standard + 1, lastResult)
+                loadMore(standard, lastResult)
             } else {
                 let msg = `<div class="flex-col">
                             <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
@@ -169,14 +179,14 @@
                                     <div class = "flex">
                                         <div class="flex mt-4">
                                             <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard + 1}, '${lastResult}')">
+                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult}')">
                                                     Load More
                                                 </button>
                                             </span>
                                         </div>
                                     <div class="flex mt-4">
                                         <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard + 1})">
+                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard})">
                                                 Load Less
                                             </button>
                                         </span>
@@ -189,7 +199,7 @@
                                         <div class = "flex">
                                             <div class="flex mt-4">
                                                 <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard + 1}, '${lastResult}')">
+                                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult}')">
                                                         Load More
                                                     </button>
                                                 </span>
@@ -203,7 +213,7 @@
                                 let loaderWithLess = `
                                         <div class="flex mt-4">
                                             <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard + 1})">
+                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard})">
                                                     Load Less
                                                 </button>
                                             </span>

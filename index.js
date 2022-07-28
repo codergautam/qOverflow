@@ -106,16 +106,7 @@ app.get('/search', async (req, res) => {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
-    q.forEach((data, i) => {
-      if((data != '') && (data != ' ')) {
-        console.log("Length: " + q.length)
-        if(((i != 0) && (i != q.length - 1)) || (q.length == 1)) {
-          console.log("adding space")
-           q[i] = ` ${data} `
-        }
-        return data
-      }
-    })
+    q = formatQuery(q)
     console.log(q)
     regexQuery = {
       "title": `(${q.join(")|(")})`
@@ -125,16 +116,7 @@ app.get('/search', async (req, res) => {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
-    q.forEach((data, i) => {
-      if((data != '') && (data != ' ')) {
-        console.log("Length: " + q.length)
-        if(((i != 0) && (i != q.length - 1)) || (q.length == 1)) {
-          console.log("adding space")
-           q[i] = ` ${data} `
-        }
-        return data
-      }
-    })
+    q = formatQuery(q)
     console.log(q)
     regexQuery = {
       "text": `(${q.join(")|(")})`
@@ -237,17 +219,8 @@ app.post('/search', async (req, res) => {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
+    q = formatQuery(q)
     console.log(q)
-    q.forEach((data, i) => {
-      if((data != '') && (data != ' ')) {
-        console.log("Length: " + q.length)
-        if(((i != 0) && (i != q.length - 1)) || (q.length == 1)) {
-          console.log("adding space")
-           q[i] = ` ${data} `
-        }
-        return data
-      }
-    })
     regexQuery = {
       "title":  `(${q.join(")|(")})`
     }
@@ -256,16 +229,7 @@ app.post('/search', async (req, res) => {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
-    q.forEach((data, i) => {
-      if((data != '') && (data != ' ')) {
-        console.log("Length: " + q.length)
-        if(((i != 0) && (i != q.length - 1)) || (q.length == 1)) {
-          console.log("adding space")
-           q[i] = ` ${data} `
-        }
-        return data
-      }
-    })
+    q = formatQuery(q)
     console.log(q)
     regexQuery = {
       "text": `(${q.join(")|(")})`
@@ -1082,4 +1046,25 @@ levelCalculation = (userPoints) => {
   }
 
   return _level
+}
+
+formatQuery = (query) => {
+  let qLength = query.length
+  let q = query
+  q.forEach((data, i) => {
+    if((data != '') && (data != ' ')) {
+      if(((i != 0) && (i != qLength - 1))) {
+        console.log("adding space")
+         q[i] = ` ${data} `
+      }
+      // if(qLength == 1) {
+      //   if(q[0].length > 3) {
+      //     q[0] = `${q[0]}`
+      //   } else {
+      //     q[0] = `${q[0]}`
+      //   }
+      // }
+    }
+  })
+  return q
 }
