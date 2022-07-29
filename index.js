@@ -260,14 +260,14 @@ app.get('/mailResults/:after', async (req, res) => {
   if(after == 0) {
     console.log("recieved null")
     let data = await api.getUserMail(username)
-    data = data.mail
+    data = data.messages
     data.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
     res.send(JSON.stringify(data))
   } else {
     let data = await api.getUserMail(username, after)
-    data = data.mail
+    data = data.messages
     data.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })

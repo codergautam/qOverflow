@@ -54,7 +54,7 @@
             </div>
             <div class="col-span-3 relative flex overflow-hidden overflow-y-auto  bg-gray-100 h-screen bg-fixed">
                 <div class="flex-col w-11/12 mx-auto h-screen" id="inbox">
-                    <% if(mailResults.length == 0) { %> 
+                    <% if(messageFeed.length == 0) { %> 
                         <div id="noMail" class="flex-col w-full">
                             <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto z-10 relative h-28 w-28 mt-4 stroke-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"o d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
@@ -144,6 +144,9 @@
                                         ${mail.subject}
                                     </p>
                                 </div>
+                                <div class="hidden mailId">
+                                    ${mail.mail_id}
+                                </div>
                             </div>`
             }
 
@@ -171,20 +174,21 @@
 
             async function loadMore(size, _lastResult) {
                 // console.log("Current: " + _lastResult)
+                console.log("Loading more")
                 let feed = document.getElementById("inbox")
                 feed.lastChild.remove()
-                var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
-                <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-                <div class="px-4 py-4 ">
-                    <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+                var loader = `    <div class="flex items-center justify-center flex-col pl-4">
+                <div class=" my-5 rounded overflow-hidden min-w-full ">
+                <div class="pl-2 py-4 ">
+                    <img class="animate-spin" width="72" height="72" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
                 
                 </div>
                 </div>
-                </div>`;
+                </div>`
                 feed.insertAdjacentHTML("beforeend", loader)
                 let data = await getMail(size, _lastResult)
                 if(data) {
-                    if(feed.childElementCount > 0 && !document.getElementById("noQuestions")) {
+                    if(feed.childElementCount > 0 && !document.getElementById("noMail")) {
                         feed.children.item(feed.children.length-1).remove()
                     }
                     console.log(data)
@@ -198,7 +202,7 @@
             }
 
             async function loadLess(size) {
-                // console.log("Current: " + _lastResult)
+                console.log("Current: " + lastResult)
                 let feed = document.getElementById("inbox")
                 console.log(lastResult)
                 feed.lastChild.remove()
@@ -208,7 +212,8 @@
                     feed.children.item(count - 1).remove()
                 }
                 let childCount = feed.childElementCount
-                lastResult = feed.children.item(childCount-2).querySelector(".mailId").innerText
+                lastResult = feed.children.item(childCount-1).querySelector(".mailId").innerText
+                console.log("New: " + lastResult)
                 implementMore()
             }
             
@@ -219,14 +224,14 @@
             function implementMore(moreToLoad = true) {
                     console.log("Adding Loaders")
                     let feed = document.getElementById("inbox")
-                    console.log(feed.childElementCount)
+                    console.log("More to Come: " + moreToLoad)
                     if(moreToLoad) {
                         if(feed.childElementCount > standard) {
                             let loaderWithLess = `
-                                    <div class = "flex">
+                                    <div class="flex">
                                         <div class="flex mt-4">
                                             <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult}')">
+                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult.trim()}')">
                                                     Load More
                                                 </button>
                                             </span>
@@ -246,7 +251,7 @@
                                         <div class = "flex">
                                             <div class="flex mt-4">
                                                 <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult}')">
+                                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResult.trim()}')">
                                                         Load More
                                                     </button>
                                                 </span>
