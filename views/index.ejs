@@ -151,6 +151,9 @@
     questionsShown++;
     // console.log(data.id)
 
+    data.title = data.title.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+});
    
     var question = `<div class="flex items-center justify-center flex-col px-[30px]" id="${data.question_id}" >
    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full cursor-pointer"  onclick="location.href = '/question/${data.question_id}'">
