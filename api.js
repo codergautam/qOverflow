@@ -193,8 +193,9 @@ class Api {
     return await this.sendRequest('/questions/search?'+urlEncodedParams, 'GET');
   }
    
-  async getUserMail(username) {
-    return await this.sendRequest('/mail/' + username, 'GET')
+  async getUserMail(username, after = null) {
+    let condition = (after) ? `?after=${after}` : ''
+    return await this.sendRequest('/mail/' + username + condition, 'GET')
   }
 
   async modifyPoints(username, amount) {
