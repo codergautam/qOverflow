@@ -48,7 +48,6 @@
                       <h2 class="wavy-hover overflow-hidden group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">Mail</h2>
                     </div>
                   </a>
-                  <% if(typeof user != "undefined") { %>
                   <a href="/dashboard">
                     <!--Dashboard Icon-->
                     <div class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
@@ -60,36 +59,28 @@
                     </div>
                       <!-- user level and points text-->
                       <div class="group shadow-purple-900 flex align-middle rounded-fullpy-1">
-                     
-
-                        <h4 class=" overflow-hidden group-hover:visible text-l my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out" id="user-level"> <% if(user.level) { %> Level: <%= user.level %> <% } %> </h2>
-                       
-                          &nbsp;
-  
-                        <h4 class="overflow-hidden group-hover:visible text-l my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out" id="user-points"><% if(user.points) { %>Points: <%= user.points %><% } %> </h2>
-                        </div>
+                        <h4 class=" overflow-hidden group-hover:visible text-l my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out" id="user-level">Level: <%= user.level %> </h2>
+                        &nbsp;
+                        <h4 class="overflow-hidden group-hover:visible text-l my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out" id="user-points">Points: <%= user.points %> </h2>
+                      </div>
                       </div>
                 
                     </div>
-                    <% } %>
                     <!-- Level + points-->
      
             
                   </a>
                 </div>
 
-                <% if(typeof user != "undefined") { %>
                 <script>
                   fetch('/getBasicData?user=<%= user.username %>')
                     .then(response => response.json())
                     .then(data => {
                       console.log(data);
-                      if(!data.success) return;
                       document.querySelector('#user-level').innerHTML = "Level: "+data.level;
                       document.querySelector('#user-points').innerHTML = "Points: "+data.points;
                     });
                 </script>
-                <% } %>
           
               <% } else { %>
               <% if (typeof login == "undefined" || !login) { %>

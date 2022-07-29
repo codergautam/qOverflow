@@ -315,42 +315,42 @@ list-style-position: inside;
                    </div>
                    <!-- show comments btn -->
                 
+                    <div class="flex flex-col justify-center items-center">
+                      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showComments">Show Comments (<%= question.comments %>)</button>
+                    
+                      
+
+                      <div id="commentsList">
+
+                    </div>  
+<br/>
+                    <!--
+                      post comment
+                    -->
+         
+                 
+               
+                    <% if(loggedIn && ((question.status == "open" && (basicData.level >= 3 || question.creator ==  user.username)) || (question.status == "protected" && (basicData.level >= 5)))) { %>
+                      <div class="flex flex-col justify-center items-center w-[50%]">
+
+                        <textarea maxlength="150" rows="2" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500" id="commentText" type="text" placeholder="Comment"></textarea>
+                        <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded" id="postComment">Post comment</button>
+                      </div>
+                      <% } %>
+                 
                   
+                </div>
               </div>
             </div>
-            <div class="flex flex-col justify-center items-center">
-              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showComments">Show Comments (<%= question.comments %>)</button>
-            
-              
-
-              <div id="commentsList">
-
-            </div>  
-<br/>
-            <!--
-              post comment
-            -->
- 
-         
-       
-            <% if(loggedIn && ((question.status == "open" && (basicData.level >= 3 || question.creator ==  user.username)) || (question.status == "protected" && (basicData.level >= 5)))) { %>
-              <div class="flex flex-col justify-center items-center w-[50%]">
-
-                <textarea maxlength="150" rows="2" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500" id="commentText" type="text" placeholder="Comment"></textarea>
-                <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded" id="postComment">Post comment</button>
-              </div>
-              <% } %>
-         
-          
-        </div>
           </div>
           <div id="answers">
             <div class="flex items-center justify-center flex-col px-[30px]">
               <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
                 <% if(question.answers) { %>
-             
-                 <div id="spinneranswer" class="px-4 py-4 "><img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>
-              
+               <div class="px-4 py-4 ">
+                 <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+            
+               </div>
                <% } %>
              </div>
             </div>
@@ -561,16 +561,13 @@ list-style-position: inside;
   setInterval(() => {
 
     socket.emit("getViews", "<%= question.question_id %>");
-
+    socket.emit("getAnswerCount", "<%= question.question_id %>");
    
 
-  }, 3600);
+  }, 5000);
   setInterval(() => {
     socket.emit("getVotes", "<%= question.question_id %>");
-  }, 6930);
-  setInterval(() => {
-    socket.emit("getVotes", "<%= question.question_id %>");
-  }, 8000);
+  }, 1000);
 
   socket.on("questionViews", (cnt, id) => {
     if(!(id == "<%= question.question_id %>")) {
@@ -609,7 +606,7 @@ async function appendAnswer(answer) {
   var owner = <%= loggedIn && question.creator == user.username ? "true" : "false" %>;
   
   var loggedIn = <% if(loggedIn) { %>true<% } else { %>false<% } %>;
-  var t= `<div class="max-w-5xl mx-auto px-9 py-[12px] rounded overflow-hidden shadow-lg hidden" id="mainAnswerDiv${id}">
+  var t= `<div class="max-w-5xl mx-auto px-9 py-[12px] rounded overflow-hidden shadow-lg">
             <div class="flex flex-row">
               <div class="flex content-center flex-col w-1/12">
                 <img class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'hidden' %>" id="answerUp${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
@@ -635,11 +632,7 @@ async function appendAnswer(answer) {
                <br>
                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${ msToTime(Date.now() - answer.createdAt) ?? "just now" } ago</span>
                                </div>
-                               
-          </div>
-          
-        </div>
-        <div class="flex flex-col justify-center items-center">
+                               <div class="flex flex-col justify-center items-center">
                       <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showComments${id}">Show Comments (${answerComments})</button>
                     
                       
@@ -664,6 +657,8 @@ ${ (loggedIn && ((<%= question.status == "open"%> &&(<%= (basicData.level >= 3 )
                       
                   
                 </div>
+          </div>
+        </div>
         </div> `
 
 // string to DOM element
@@ -865,7 +860,6 @@ return;
  async function showThisCommentList() {
     document.getElementById("showComments"+id).innerHTML = "Hide comments ("+answerComments+")";
     document.getElementById("showComments"+id).disabled = true;
-  appendCommentSpinner(id);
 try {
    var f = await fetch('/answerComments', {method: 'POST', body: JSON.stringify({answer: id, question: "<%= question.question_id %>"}),         headers: {
           'Content-Type': 'application/json'
@@ -878,7 +872,6 @@ try {
       if(j.success) {
         console.log("comments", j.comments);
         var comments = j.comments;
-        if(comments.length < 1) destroyCommentSpinner(id);
         var commentsList = document.getElementById("commentsList"+id);
         commentsList.innerHTML = "";
         for(var i = 0; i < comments.length; i++) {
@@ -935,7 +928,7 @@ hideThisCommentList();
 
   <% if(loggedIn) { %>
     
-    if(<%= (((question.status == "open" && basicData.level >= 3) || (question.status == "protected" && basicData.level >= 5))) %> || answer.creator == "<%= user.username %>") {
+    if(<%= (((question.status == "open") || (question.status == "protected" && basicData.level >= 5))) %> || answer.creator == "<%= user.username %>") {
   document.getElementById("postComment"+answer.answer_id).onclick = () => {
     var comment = document.getElementById("commentText"+answer.answer_id).value;
     if(comment.trim().length == 0) return;
@@ -980,21 +973,22 @@ hideThisCommentList();
   }
     }
   <% } %>
-  console.log(document.getElementById("mainAnswerDiv"+answer.answer_id))
+
 
 };
-var pageSize = 2;
-var remaining = [];
   fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
     if(j.success) {
+      document.getElementById("answers").innerHTML = "";
       // j.answers.forEach((answer) => {
       //   appendAnswer(answer);
       // })
-      remaining = j.answers;
-      alreadyAnswered = j.answers.findIndex((answer) => {
-        return answer.creator == "<%= user?.username %>";
-      }) == -1 ? false : true;
-
+      var alreadyAnswered=  false
+      for (answer of j.answers) {
+        await appendAnswer(answer);
+        if(answer.creator =="<%= loggedIn ? username : "" %>") {
+          alreadyAnswered = true
+        }
+      }
       console.log("alreadyAnswered", alreadyAnswered);
       if(!alreadyAnswered) {
         <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
@@ -1002,71 +996,9 @@ var remaining = [];
         document.getElementById("createDiv").style.display = "block";
         <% } %>
       }
-
-     async function showPage() {
-    // get 5 from remaining
-    var page = [];
-    for(var i = 0; i < pageSize; i++) {
-      if(remaining.length > 0) {
-        page.push(remaining.shift());
-      }
-    }
-    for (var i = 0; i < page.length; i++) {
-     await appendAnswer(page[i]);
-    }
-
-  }
-
-  
-
-  function appendShowMore() {
-    var btn = `<div class="flex justify-center items-center">
-      <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold my-5 py-2 px-4 rounded" id="showMore">
-        Show more answers
-      </button>
-    </div>`
-    // dom parser
-    var parser = new DOMParser();
-    var btnDom = parser.parseFromString(btn, "text/html");
-    document.getElementById("answers").appendChild(btnDom.body.firstChild);
-    document.getElementById("showMore").onclick = async () => {
-      document.getElementById("showMore").remove();
-      document.getElementById("answers").insertAdjacentHTML("beforeend", `<div id="spinneranswer" class="px-4 py-4 "><img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
-      await showPage();
-      if(remaining.length > 0) {
-        appendShowMore();
-      }
-      document.getElementById("spinneranswer").remove();
-      // select all elements with prefix "mainAnswerDiv" id
-      var mainAnswerDivs = document.querySelectorAll("[id^=mainAnswerDiv]");
-      // loop through all elements
-      [...mainAnswerDivs].forEach((div) => {
-        div.classList.remove("hidden");
-      })
-
-    };
-  }
-
-  await showPage();
-  if(remaining.length > 0) {
-    appendShowMore();
-  }
-
-  if(document.getElementById("spinneranswer")) {
-  document.getElementById("spinneranswer").remove();
-      // select all elements with prefix "mainAnswerDiv" id
-
-  }
-  var mainAnswerDivs = document.querySelectorAll("[id^=mainAnswerDiv]");
-      // loop through all elements
-      [...mainAnswerDivs].forEach((div) => {
-        div.classList.remove("hidden");
-      })
-
+      
     }
   })
-
-
 
   <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
 
@@ -1268,8 +1200,6 @@ var commenty = htmlDoc.body.firstChild;
   }
   await downvoteComment();
   });
-
-  destroyCommentSpinner(where);
     
 
    
@@ -1284,35 +1214,13 @@ var remainingComments = [];
     document.getElementById("commentsList"+where).innerHTML = "";
       document.getElementById("showComments"+where).innerHTML = `Show Comments (${mainCommentsCnt})`;
   }
-  function appendCommentSpinner(where="") {
-    var html = `
-    <div class="px-4 py-4 ">
-                 <img class="animate-spin" id="commentSpinner${where}" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
-            
-               </div>
-               `
-               
-    // document.getElementById("commentsList"+where).insertAdjacentHTML("beforeend", html);
-
-    // append to top
-    console.time("Appended")
-    document.getElementById("commentsList"+where).insertAdjacentHTML("afterbegin", html);
-
-
-  }
-
-  function destroyCommentSpinner(where="") {
-    if(document.getElementById("commentSpinner"+where)) {
-      document.getElementById("commentSpinner"+where).remove();
-    }
-  }
-
-async function showComments(where="") {
-   async function recursiveShowMoreComments() {
+  
+  function showComments(where="") {
+    function recursiveShowMoreComments() {
       var lastAppended = undefined;
       // QUESTION COMMENTS
+    console.log("remainingComments", remainingComments);
     document.getElementById("showMore")?.remove();
-    // appendCommentSpinner(where);
     for(var i = 0; i < remainingComments.length; i++) {
       if(i >= 3) {
    
@@ -1321,13 +1229,12 @@ async function showComments(where="") {
       
      // get comment and remove it from array
      var comment = remainingComments.shift();
-      await appendComment(comment);
+     appendComment(comment);
      lastAppended = comment.comment_id
-
+     console.log(remainingComments.length);
 
       
       }
-     
     }
     if(remainingComments.length > 0) {
       var btn = `<div class="flex justify-center items-center">
@@ -1355,16 +1262,16 @@ async function showComments(where="") {
   } 
     document.getElementById("showComments"+where).innerHTML = `Hide Comments (${mainCommentsCnt})`;
       document.getElementById("showComments"+where).disabled = true;
-appendCommentSpinner()
+
       fetch("/questionComments?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
       document.getElementById("showComments"+where).disabled = false;
-    if(j.comments.length < 1) destroyCommentSpinner();
+    
         
         if(j.success) {
           for (var i = 0; i < j.comments.length; i++) {
             if(i > 4) {
               remainingComments.push(j.comments[i]);
-            
+              console.log(i)
               if(i == 5) {
                              //  append Button in tailwind that says show more
              
