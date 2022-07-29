@@ -44,6 +44,14 @@ app.use(bodyParser.json())
 app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 
+function replaceCharacters (str) {
+  let newQ = str
+  // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
+  newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, ' ').replace(/(\san\s)|(an\s)/gmi, ' ').replace(/(\sis\s)/gmi, ' ').replace(/(\sthe\s)/gmi, ' ').replace(/(\sas\s)/gmi, " ")
+  // newQ = newQ.replace(/(\sas\s)|(as\s)/gmi, " ").replace(/(\sdo\s)|(do\s)/gmi, " ").replace(/(\sthat\s)|(that\s)/gmi, " ").replace(/(\syou\s)|(you\s)/gmi, " ")
+  newQ = newQ.replace(/(\!)|(\?)|(\.)|(\;)|(\:)|(\")|(\')/gmi, '').trim()
+  return newQ
+}
 
 
 app.use(session({
@@ -224,7 +232,8 @@ app.get('/search', async (req, res) => {
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: [],
-      user: req.session.user
+      user: req.session.user,
+      error: true
     })
   }
 })
@@ -502,8 +511,9 @@ app.post('/acceptAnswer',  (req, res) => {
   api.updateAnswer(questionId, answerId, undefined, undefined, undefined, true).then(async (data) => {
     if(!answerOwnerCache[answerId]) answerOwnerCache[answerId] = await api.getAnswerOwner(questionId, answerId);
     var owner = answerOwnerCache[answerId];
-    await modifyPoints(15, owner);
     res.send(data);
+    await modifyPoints(15, owner);
+
   }).catch((err) => {
     console.log(err)
     res.send({success: false})
@@ -517,13 +527,14 @@ app.post('/questions',  async (req, res) => {
   if(username != " ") {
     console.log(`User ${username}, making Question [Title: ${title}, Text ${text.slice(0, 16)}]`)
     let data = await api.createQuestion(username, title, text)
- await modifyPoints(1, username)
     let dataStatus = data.success
     if (dataStatus) { 
       res.redirect('/')
     } else {
       res.redirect('/questionEditor', {username: username})
     }
+ await modifyPoints(1, username)
+
   } else {
      req.session.loggedIn = false
      res.redirect('/')
@@ -624,6 +635,7 @@ app.get('/mail', async (req, res) => {
     user.nextLevelPoints = levelMinimums[user.nextLevel - 1]
     console.log("Username: " + username)
     let mailData = await api.getUserMail(username)
+    if(!mailData.success) return res.render('error', {error: "Your mail couldn't be retrieved, please try refreshing."})
     mailData.messages.forEach((message) => {
       message.timeElapsed = msToTime(Date.now() - message.createdAt)
     })
@@ -634,7 +646,7 @@ app.get('/mail', async (req, res) => {
       messageFeed: mailData.messages,
       messageCount: mailData.messages.length
     })
-  }
+  } else res.redirect('/')
 })
 
 
@@ -687,9 +699,10 @@ app.post('/api/answer', async (req, res) => {
   api.addAnswer(question, username, text).then(async data => {
     console.log(data)
     if(data.success) {
-      await modifyPoints(2, username);
       res.send({success: true, answer: data.answer})
       io.emit('newAnswer', question);
+      await modifyPoints(2, username);
+
     } else {
       res.send({success: false})
     }
@@ -730,7 +743,7 @@ app.post("/auth/login", async (req,res) => {
     })
 } else {
   res.render('login', {
-    error: {msg: "Invalid username"}
+    error: {msg: user.failed ? "Something went wrong, please try again later.": "Invalid username"}
   })
 }
 
@@ -859,7 +872,9 @@ app.post("/api/statusVote/:status/:id", (req, res) => {``
 app.get("/question/:id", (req, res) => {
   var id= req.params.id;
   if(!id) {
-    res.send("Invalid question id")
+    res.render('error', {
+      error: "This question does not exist"
+    });
     return
   }
   console.time("getQuestion")
@@ -868,14 +883,15 @@ app.get("/question/:id", (req, res) => {
   console.time("getAnswers")
 
     if(!data.success) {
-      res.send("Invalid question id")
+      res.render('error', {
+        error: "Failed to get question, please try again later."
+      });
       return;
     }
   
 
-    api.increaseViews(id).then(data4 => {
+  
       
-      console.log(data4)
       data.question.views ++;
     api.hasUserVoted(id, req.session.user?.username).then(data3 => {
       io.emit("increaseView", id)
@@ -894,6 +910,7 @@ app.get("/question/:id", (req, res) => {
         votes: []
       }
     })
+    api.increaseViews(id).then(data4 => {
   });
   }).catch(err => {
     console.timeEnd("getQuestion")
@@ -914,14 +931,13 @@ var basicDataCache = {};
 function getBasicData(username) {
   return new Promise((resolve, reject) => {
 
-  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 1000 * 5) {
+  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 300000) {
     resolve({success:true, ...basicDataCache[username].data})
 
   } else {
     api.getUser(username).then(data => {
       if(data.success) {
       var userPoints = data.user.points;
-      console.log(data)
       let _level = levelCalculation(userPoints);
       // console.log("Level: " + _level)
       var needed = {
@@ -1247,9 +1263,15 @@ io.on('connection', (socket) => {
   socket.on("getVotes", (qId) => {
     if(Date.now() - lastRecieved < 100)  return
      lastRecieved = Date.now();
-    if(liveCache.votes[qId] && Date.now() - liveCache.votes[qId].time < 1000) {
+    if(liveCache.votes[qId] && Date.now() - liveCache.votes[qId].time < 10000) {
       socket.emit("questionVotes", liveCache.votes[qId].data, qId);
     } else {
+      console.log(liveCache.views[qId])
+      if(liveCache.votes[qId]) {
+        liveCache.votes[qId].time = Date.now();
+        liveCache.views[qId].time = Date.now();
+        liveCache.answerCount[qId].time = Date.now();
+        }
     api.getQuestion(qId).then(data => {
       if(data.success) {
         liveCache.votes[qId] = {
@@ -1277,6 +1299,12 @@ io.on('connection', (socket) => {
     if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 10) {
       socket.emit("questionViews", liveCache.views[qId].data, qId);
     } else {
+      console.log(liveCache.views[qId])
+      if(liveCache.votes[qId]) {
+        liveCache.votes[qId].time = Date.now();
+        liveCache.views[qId].time = Date.now();
+        liveCache.answerCount[qId].time = Date.now();
+        }
     api.getQuestion(qId).then(data => {
       if(data && data.success) {
         liveCache.votes[qId] = {
@@ -1300,12 +1328,17 @@ io.on('connection', (socket) => {
     if(Date.now() - lastRecieved < 100)  return
 
 
-
      lastRecieved = Date.now();
 
     if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 10) {
       socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
     } else {
+      console.log(liveCache.views[qId])
+      if(liveCache.votes[qId]) {
+      liveCache.votes[qId].time = Date.now();
+      liveCache.views[qId].time = Date.now();
+      liveCache.answerCount[qId].time = Date.now();
+      }
     api.getQuestion(qId).then(data => {
       if(data.success) {
         liveCache.votes[qId] = {

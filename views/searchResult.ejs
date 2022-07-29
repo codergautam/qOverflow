@@ -56,7 +56,6 @@
             let standard = 12
             let lastResult = 0
             let moreToCome = false
-
             appendQuestion = (question) => {
                 let searchFeed = document.getElementById("searchFeed")
                 searchFeed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="mx-auto cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-full">
@@ -71,7 +70,6 @@
                                 </div>
                             </div>`
             }
-
             async function getQuestions(size, lastResult) {
                 let questions = await fetch('/searchResults/' + lastResult).then((res) => (res.json()))
                 console.log(questions.length + "Standard: " + size)
@@ -93,7 +91,6 @@
                     return questions.splice(0, size)
                 }
             }
-
             async function loadMore(size, _lastResult) {
                 // console.log("Current: " + _lastResult)
                 let searchFeed = document.getElementById("searchFeed")
@@ -121,7 +118,6 @@
                     return
                 }
             }
-
             async function loadLess(size) {
                 // console.log("Current: " + _lastResult)
                 let searchFeed = document.getElementById("searchFeed")
@@ -140,7 +136,6 @@
             if(!document.getElementById("noQuestions")) {
                 loadMore(standard, lastResult)
             }
-
             function implementMore(moreToLoad = true) {
                     console.log("Adding Loaders")
                     let searchFeed = document.getElementById("searchFeed")
@@ -204,8 +199,6 @@
                             return
                     }
             }
-
-
         </script>
 </body>
 </html>
