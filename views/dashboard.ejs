@@ -78,23 +78,8 @@
                         <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
                             Questions
                         </p>
-                        <div class="hidden" id="questions">
-                            <% if(questionFeed.length != 0) { %>
-                                <% questionFeed.forEach((data) => { %> 
-                                    <div class="flex-col">
-                                    <div  onclick="location.href = '/question/<%=data.question_id%>'" class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
-                                        <div class="px-4 py-4 ">
-                                          <div class="font-bold text-lg mb-2"><%= data.title %> </div>
-                                        </div>
-                                        <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
-                                          <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.upvotes - data.downvotes %> pts.</span>
-                                        </div>
-                                    </div>
-                                    </div>
-                                <% }) %> 
-                            <% } else { %>
+                        <div class="flex-col mt-4 mb-6 overflow-y-auto h-80" id="questionFeed">
+                            <% if(questionFeed.length <= 0) { %>
                                 <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
                                     You Have No Questions Right Now
                                 </div>
@@ -104,57 +89,24 @@
                                       </svg>
                                 </span>
                             <% } %>
-                        </div>  
-                        <% if(questionFeed.length != 0)  { %> 
-                            <div class="flex-col overflow-y-auto h-64 items-start" id="questionFeed">
-                            </div>   
-                        <% } else { %>
-                            <div class="flex-col" id="questionFeed">
-                            </div>   
-                        <% } %> 
-                        </div>  
-                    <div class="flex-col pb-24">
+                        </div> 
+                    </div> 
+                    <div class="flex-col">
                         <p class="ml-6 mt-2 text-gray-700 font-semibold text-3xl">
                             Answers
                         </p>
-                        <div class="hidden" id="answers">
-                            <% if(answerFeed.length != 0) { %>
-                                <% answerFeed.forEach((data) => { %> 
-                                    <div class="flex-col">
-                                        <div class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
-                                            <div class="px-4 py-4 ">
-                                              <div class="text-base font-semibold mb-2">ACCEPTED: <span class="font-bold <% if(!data.accepted) { %> text-red-500 <% } else { %> text-green-500 <% } %>"><%= data.accepted %></span></div>
-                                              <p class="font-bold text-gray-700 text-lg w-5/6">
-                                                <%= data.text %> 
-                                              </p>
-                                            </div>
-                                            <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: <%= data.creator %> </span>
-                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.timeElapsed %> ago</span>
-                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2"><%= data.upvotes - data.downvotes %> pts.</span>
-                                            </div>
-                                        </div>
+                            <div class="flex-col mt-4 mb-12 overflow-y-auto h-80" id="answerFeed">
+                                <% if(answerFeed.length <= 0) { %>
+                                    <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                        You Have No Answers Right Now
                                     </div>
-                                <% }) %> 
-                            <% } else { %>
-                                <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                    You Have No Answers Right Now
-                                </div>
-                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                      </svg>
-                                </span>
-                            <% } %>
-                        </div>
-                        
-                        <% if(answerFeed.length != 0)  { %> 
-                            <div class="flex-col mt-2 overflow-y-auto h-72 items-start" id="answerFeed">
-                            </div>   
-                        <% } else { %>
-                            <div class="flex-col pb-24" id="answerFeed">
-                            </div>   
-                        <% } %>  
+                                    <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                          </svg>
+                                    </span>
+                                <% } %>
+                            </div>  
                     </div>
                 </div>
             </div>
@@ -185,179 +137,315 @@
             </div>
         </div>
     </div>
+    <% if (questionFeed || answerFeed)  { %> 
+           <script>
+            let standard = 3
+            let lastResultQ = 0
+            let moreToComeQ = false
 
-    <% if (questionFeed)  { %> 
-        <script>
-            let chunkSize
-            let standard = 6
-            
-            let children = document.getElementById("questions").innerHTML
-            document.getElementById("questionFeed").innerHTML = children
-            let questionFeed = document.getElementById("questionFeed").children
-            chunkSize = standard
-            let index = questionFeed.length - 1
-            while(questionFeed.length > chunkSize) {
-                questionFeed.item(index).remove()
-                index--
+            appendQuestion = (question) => {
+                console.log(question)
+                let feed = document.getElementById("questionFeed")
+                feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                                <div class="px-4 py-4 ">
+                                <div class="hidden questionId">${question.question_id}</div>
+                                <div class="font-bold text-lg mb-2">${question.title}</div>
+                                </div>
+                                <div class="pl-3 pr-6 pt-4 pb-2 ">
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: ${question.creator} </span>
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.timeElapsed} ago</span>
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.upvotes - question.downvotes} pts.</span>
+                                </div>
+                            </div>`
             }
-             
-            if(!document.getElementById("noQuestions")) {
-                implementLoader(questionFeed.length, document.getElementById("questions").children.length)
-            }
-            function loadMoreQuestions() {
-                let children = document.getElementById("questions").innerHTML
-                document.getElementById("questionFeed").innerHTML = children
-                let questionFeed = document.getElementById("questionFeed").children
-                chunkSize += standard
-                let index = questionFeed.length - 1
-                while(questionFeed.length > chunkSize) {
-                    questionFeed.item(index).remove()
-                    index--
-                }
-                implementLoader(questionFeed.length, document.getElementById("questions").children.length)
-            }
-            function loadLessQuestions() {
-                if((chunkSize - standard) > 0) {
-                    let children = document.getElementById("questions").innerHTML
-                    document.getElementById("questionFeed").innerHTML = children
-                    let questionFeed = document.getElementById("questionFeed").children
-                    chunkSize -= standard
-                    let index = questionFeed.length - 1
-                    while(questionFeed.length > chunkSize) {
-                        questionFeed.item(index).remove()
-                        index--
-                    }
-                    implementLoader(questionFeed.length, document.getElementById("questions").children.length)
+
+            async function getQuestions(size, lastResultQ) {
+                let questions = await fetch('/userQuestionResults/' + lastResultQ).then((res) => (res.json()))
+                console.log(questions.length + "Standard: " + size)
+                if(questions.length > size) {
+                    console.log("There's more questions!")
+                    moreToComeQ = true
                 } else {
+                    console.log("Thats all folks!")
+                    moreToComeQ = false
+                }
+                console.log(questions)
+                if(questions.length < size) {
+                    if(questions.length == 1) {
+                        return questions
+                    } else {
+                        return questions.splice(0, questions.length)
+                    }
+                } else {
+                    return questions.splice(0, size)
+                }
+            }
+
+            async function loadMore(size, _lastResultQ) {
+                // console.log("Current: " + _lastResult)
+                let feed = document.getElementById("questionFeed")
+                feed.lastChild.remove()
+                var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
+                <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                <div class="px-4 py-4 ">
+                    <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+                
+                </div>
+                </div>
+                </div>`;
+                feed.insertAdjacentHTML("beforeend", loader)
+                let data = await getQuestions(size, _lastResultQ)
+                if(data) {
+                    if(feed.childElementCount > 0 && !document.getElementById("noQuestions")) {
+                        feed.children.item(feed.children.length-1).remove()
+                    }
+                    lastResultQ = data[data.length - 1].question_id
+                    // console.log("New: " + lastResult)
+                    data.forEach(appendQuestion)
+                    // searchFeed.lastChild.remove()
+                    implementMore(moreToComeQ)
                     return
                 }
             }
 
-            let chunkSizeA
-            let childrenA = document.getElementById("answers").innerHTML
-            document.getElementById("answerFeed").innerHTML = childrenA
-            let answerFeed = document.getElementById("answerFeed").children
-            chunkSizeA = standard
-            let indexA = answerFeed.length - 1
-
-            while(answerFeed.length > chunkSizeA) {
-                answerFeed.item(indexA).remove()
-                indexA--
+            async function loadLess(size) {
+                // console.log("Current: " + _lastResult)
+                let feed = document.getElementById("questionFeed")
+                console.log(lastResultQ)
+                feed.lastChild.remove()
+                for(let i = 0; i < size; i++) {
+                    console.log(i)
+                    let count = feed.childElementCount
+                    feed.children.item(count - 1).remove()
+                }
+                let childCount = feed.childElementCount
+                lastResultQ = feed.children.item(childCount-2).querySelector(".questionId").innerText
+                implementMore()
+            }
+            
+            if(!document.getElementById("noQuestions")) {
+                loadMore(standard, lastResultQ)
             }
 
+            function implementMore(moreToLoad = true) {
+                    console.log("Adding Loaders")
+                    console.log("More to Come: " + moreToLoad)
+                    let feed = document.getElementById("questionFeed")
+                    if(moreToLoad) {
+                        if(feed.childElementCount > standard) {
+                            let loaderWithLess = `
+                                    <div class = "ml-6 flex">
+                                        <div class="flex mt-4">
+                                            <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResultQ}')">
+                                                    Load More
+                                                </button>
+                                            </span>
+                                        </div>
+                                    <div class="flex mt-4">
+                                        <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard})">
+                                                Load Less
+                                            </button>
+                                        </span>
+                                    </div>
+                                    </div>`
+                            document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loaderWithLess)
+                            return
+                        } else {
+                            let loader = `
+                                        <div class = "ml-6 flex">
+                                            <div class="flex mt-4">
+                                                <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadMore(${standard}, '${lastResultQ}')">
+                                                        Load More
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>`
+                            document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
+                            return
+                        }
+                    } else if(!moreToLoad) {
+                            if(feed.childElementCount > standard) {
+                                let loaderWithLess = `
+                                        <div class="ml-6 flex mt-4">
+                                            <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard})">
+                                                    Load Less
+                                                </button>
+                                            </span>
+                                        </div>`
+                                document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loaderWithLess)
+                                return
+                            } else {
+                            let msg = `<div class="flex-col">
+                            <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
+                                That's all folks!
+                                <br>...
+                            </div>
+                        </div>`
+                            document.getElementById("questionFeed").insertAdjacentHTML("beforeend", msg)
+                            }
+                            return
+                    }
+            }
+        </script>
+        <!-- For the sake of organizaiton I have seperate script tags that handle the answer templates and question templates--->
+        <!-- Below: Answer, Above: Question -->
+        <script>
+            let standardA = 5
+            let lastResultA = 0
+            let moreToComeA = false
 
+            appendAnswer = (answer) => {
+                let feed = document.getElementById("answerFeed")
+                let color = (answer.accepted) ? "text-green-500" : "text-red-500"
+                feed.innerHTML += `<div class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                                            <div class="px-4 py-4 ">
+                                              <div class="text-base font-semibold mb-2">ACCEPTED: <span class="font-bold ${color}">${answer.accepted}</span></div>
+                                              <p class="font-bold text-gray-700 text-lg w-5/6">
+                                               ${answer.text} 
+                                              </p>
+                                            </div>
+                                            <div class="pl-3 pr-6 pt-4 pb-2 ">
+                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: ${answer.creator}  </span>
+                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">${answer.timeElapsed}  ago</span>
+                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">${answer.upvotes - answer.downvotes}  pts.</span>
+                                            </div>
+                                        </div>`
+            }
+
+            async function getQuestionsA(size, lastResultA) {
+                let questions = await fetch('/userAnswerResults/' + lastResultA).then((res) => (res.json()))
+                console.log(questions.length + "Standard: " + size)
+                if(questions.length > size) {
+                    console.log("There's more!")
+                    moreToComeA = true
+                } else {
+                    console.log("Thats all folks!")
+                    moreToComeA = false
+                }
+                console.log(questions)
+                if(questions.length < size) {
+                    if(questions.length == 1) {
+                        return questions
+                    } else {
+                        return questions.splice(0, questions.length)
+                    }
+                } else {
+                    return questions.splice(0, size)
+                }
+            }
+
+            async function loadMoreA(size, _lastResultA) {
+                // console.log("Current: " + _lastResult)
+                let feed = document.getElementById("answerFeed")
+                feed.lastChild.remove()
+                var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
+                <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                <div class="px-4 py-4 ">
+                    <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+                
+                </div>
+                </div>
+                </div>`;
+                feed.insertAdjacentHTML("beforeend", loader)
+                let data = await getQuestionsA(size, _lastResultA)
+                if(data) {
+                    if(feed.childElementCount > 0 && !document.getElementById("noQuestions")) {
+                        feed.children.item(feed.children.length-1).remove()
+                    }
+                    console.log(data)
+                    lastResultA = data[data.length - 1].answer_id
+                    // console.log("New: " + lastResult)
+                    data.forEach(appendAnswer)
+                    // searchFeed.lastChild.remove()
+                    implementMoreA(moreToComeA)
+                    return
+                }
+            }
+
+            async function loadLessA(size) {
+                // console.log("Current: " + _lastResult)
+                let feed = document.getElementById("answerFeed")
+                console.log(lastResultA)
+                feed.lastChild.remove()
+                for(let i = 0; i < size; i++) {
+                    console.log(i)
+                    let count = feed.childElementCount
+                    feed.children.item(count - 1).remove()
+                }
+                let childCount = feed.childElementCount
+                lastResultA = feed.children.item(childCount-2).querySelector(".answerId").innerText
+                implementMoreA()
+            }
             
             if(!document.getElementById("noAnswers")) {
-                implementLoaderA(answerFeed.length, document.getElementById("answers").children.length)
+                loadMoreA(standardA, lastResultA)
             }
 
-            function loadMoreAnswers() {
-                let childrenA = document.getElementById("answers").innerHTML
-                document.getElementById("answerFeed").innerHTML = childrenA
-
-                console.log(childrenA)
-
-
-                let answerFeed = document.getElementById("answerFeed").children
-                chunkSizeA += standard
-                let indexA = answerFeed.length - 1
-
-                console.log(answerFeed)
-                console.log(answerFeed.length)
-
-                while(answerFeed.length > chunkSizeA) {
-                    answerFeed.item(indexA).remove()
-                    indexA--
-                }
-
-
-                implementLoaderA(answerFeed.length, document.getElementById("answers").children.length)
-            }
-
-            function loadLessAnswers() {
-                if((chunkSizeA - standard) > 0) {
-                    let childrenA = document.getElementById("answers").innerHTML
-                    document.getElementById("answerFeed").innerHTML = childrenA
-
-
-                    let answerFeed = document.getElementById("answerFeed").children
-                    chunkSizeA -= standard
-                    let indexA = answerFeed.length - 1
-
-                    while(answerFeed.length > chunkSizeA) {
-                        answerFeed.item(indexA).remove()
-                        indexA--
-                    }
-
-                    implementLoaderA(answerFeed.length, document.getElementById("answers").children.length)
-                } else {
-                    return
-                }
-            }
-
-            function implementLoader(qLength, cLength) {
-                console.log(qLength + " " + cLength)
-                let emptyElem = ``
-                if(qLength < cLength) {
-                    let loader = `
-                            <div class="flex mt-4">
-                                <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                      <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreAnswers()">
-                                          Load More
-                                      </button>
-                                </span>
-                                <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadLessAnswers()">
-                                        Load Less
-                                    </button>
-                                </span>
-                            </div>`
-                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    } else {
-                        let loader = `
+            function implementMoreA(moreToLoad = true) {
+                    console.log("Adding Loaders")
+                    let feed = document.getElementById("answerFeed")
+                    console.log(feed.childElementCount)
+                    if(moreToLoad) {
+                        if(feed.childElementCount > standardA) {
+                            let loaderWithLess = `
+                                    <div class = "flex ml-6 ">
+                                        <div class="flex mt-4">
+                                            <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreA(${standard}, '${lastResultA}')">
+                                                    Load More
+                                                </button>
+                                            </span>
+                                        </div>
                                     <div class="flex mt-4">
-                                        <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessAnswers()">
+                                        <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessA(${standard})">
                                                 Load Less
                                             </button>
                                         </span>
+                                    </div>
                                     </div>`
-                        document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    }
-            }
-
-            function implementLoaderA(qLength, cLength) {
-                console.log(qLength + " " + cLength)
-                let emptyElem = ``
-                if(qLength < cLength) {
-                    let loader = `
-                            <div class="flex mt-4">
-                                <span class="rounded-lg flex justify-between ml-8 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
-                                      <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreAnswers()">
-                                          Load More
-                                      </button>
-                                </span>
-                                <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadLessAnswers()">
-                                        Load Less
-                                    </button>
-                                </span>
-                            </div>`
-                        document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
-                        return
-                    } else {
-                        let loader = `
-                                    <div class="flex mt-4">
-                                        <span class="rounded-lg flex justify-between ml-4 px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 w-max">
-                                            <button class=" text-gray-500 font-semibold text-base" onclick="loadLessAnswers()">
-                                                Load Less
-                                            </button>
-                                        </span>
-                                    </div>`
-                        document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
-                        return
+                            document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loaderWithLess)
+                            return
+                        } else {
+                            let loader = `
+                                        <div class = "ml-6 flex">
+                                            <div class="flex mt-4">
+                                                <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                    <button class=" text-gray-500 font-semibold text-base" onclick="loadMoreA(${standard}, '${lastResultA}')">
+                                                        Load More
+                                                    </button>
+                                                </span>
+                                            </div>
+                                        </div>`
+                            document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
+                            return
+                        }
+                    } else if(!moreToLoad) {
+                            if(feed.childElementCount > standardA) {
+                                let loaderWithLess = `
+                                        <div class="ml-6 flex mt-4">
+                                            <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
+                                                <button class=" text-gray-500 font-semibold text-base" onclick="loadLessA(${standard})">
+                                                    Load Less
+                                                </button>
+                                            </span>
+                                        </div>`
+                                document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loaderWithLess)
+                                return
+                            } else {
+                            let msg = `<div class="flex-col">
+                            <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
+                                That's all folks!
+                                <br>...
+                            </div>
+                        </div>`
+                            document.getElementById("answerFeed").insertAdjacentHTML("beforeend", msg)
+                            }
+                            return
                     }
             }
         </script>

@@ -69,6 +69,19 @@
     return typeof variable === 'undefined';
   }
   var send = true;
+
+  function appendError(msg) {
+    var html =`
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 mx-9 rounded relative" role="alert">
+        <strong class="font-bold">Something went wrong!</strong>
+        <br/>
+        <span class="block sm:inline">${msg}</span>
+      </div>
+      `
+    document.getElementById('questions').innerHTML += html;
+
+  }
+
   async function getQuestions() {
     if(!send) return;
     console.log(lastQuestionId);
@@ -87,6 +100,10 @@
     var data = await fetch('/buffet?sort=<%= sort %>'+((!isUndefined(lastQuestionId))?`&after=${lastQuestionId}`:""));
     data = await data.json();
     clearLastQuestion();
+    if(!data.success) {
+      appendError("Failed to fetch the questions<br/>Please try refreshing.");
+      return;
+    }
    if(data.questions.length > 0) send = true;
     
     return data;
@@ -243,21 +260,21 @@ setInterval(() => {
   getQuestionsOnScreen().forEach((e) => {
     socket.emit("getVotes", e);
   });
-}, 5000);
+}, 15000);
 
 setInterval(() => {
 
 getQuestionsOnScreen().forEach((e) => {
   socket.emit("getAnswerCount", e);
 });
-}, 4500);
+}, 1000);
 
 setInterval(() => {
 
 getQuestionsOnScreen().forEach((e) => {
   socket.emit("getViews", e);
 });
-}, 5500);
+}, 11000);
 
 
 

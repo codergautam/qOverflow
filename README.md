@@ -7,3 +7,9 @@ Kushi tests the code in testing, until she is happy with it she would it move it
 If she is not happy and something needs to be fixed, fix needs to go to directly in testing
 	The update in test need to be duplicated in the dev branch so it is not lost. 
 Once testing is complete, code is pushed to master, master is demo only branch until another better version is ready. 
+
+Test Procedure
+git branch
+git checkout test
+git pull origin dev -X theirs
+:wq
