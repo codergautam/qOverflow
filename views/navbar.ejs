@@ -9,7 +9,7 @@
         <!-- Logo -->
         <a href="/dashboard" class="place-content-center grid align-middle">
           <div
-            class="group w-14 xl:w-20 align-left flex align-middle rounded-full mr-4 sm:mr-4 md:mr-6 xl:mr-9 py-1 transition delay-75 duration-300">
+            class="group w-12 sm:w-14 xl:w-20 align-left flex align-middle rounded-full mr-4 sm:mr-4 md:mr-6 xl:mr-9 py-1 transition delay-75 duration-300">
             <img src="https://bdpa.org/wp-content/uploads/2020/12/f0e60ae421144f918f032f455a2ac57a.png">
           </div>
         </a>
@@ -17,7 +17,7 @@
       <div class="w-full flex group pr-2 md:pr-0 text-left place-content-start sm:place-content-center">
         <form class="flex" action="/search" method="POST">
           <input id="1" name="searchQuery" type="text" required
-            class="h-10 md:h-12 lg:h-14 lg:w-96 appearance-none rounded-none rounded-l-lg relative block w-full px-3 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-md md:text-lg lg:text-xl xl-text-2xl font-semibold focus:ring-1"
+            class="h-10 md:h-12 lg:h-14 lg:w-96 appearance-none rounded-none rounded-l-lg relative block w-full px-3 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-sm md:text-md lg:text-lg xl-text-xl 2xl:text-2xl font-semibold focus:ring-1"
             placeholder="What is an apple?">
           <svg xmlns="http://www.w3.org/2000/svg"
             class="cursor-pointer h-10 md:h-12 lg:h-14 w-12 md:w-14 lg:w-14 px-2 py-1 rounded-none rounded-r-lg bg-indigo-400 stroke-white group-focus:outline-none group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 sm:text-sm group-focus:ring-1"
@@ -117,11 +117,11 @@
                 <% if (typeof login=="undefined" || !login) { %>
                   <div class="w-full flex place-content-end">
                     <button onclick="location.href = '/auth/login'"
-                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-1 rounded">
+                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-xs md:text-sm lg:text-md xl:text-lg mr-1 rounded">
                       <% } else { %>
                         <div class="w-full flex place-content-end">
                           <button onclick="location.href = '/auth/login'"
-                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 mr-1 px-4 rounded">
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 mr-1 px-4 text-xs md:text-sm lg:text-md xl:text-lg rounded">
 
                             <% } %>
                               Login
@@ -129,10 +129,10 @@
                           &nbsp;
                           <% if (typeof signup=="undefined" || !signup) { %>
                             <button onclick="location.href = '/auth/signup'"
-                              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 text-xs md:text-sm lg:text-md xl:text-lg rounded">
                               <% } else { %>
                                 <button onclick="location.href = '/auth/signup'"
-                                  class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                  class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 text-xs md:text-sm lg:text-md xl:text-lg rounded">
                                   <% } %>
                                     Signup
                                 </button>

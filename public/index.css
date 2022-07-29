@@ -4369,6 +4369,10 @@ video {
     width: 100%;
   }
 
+  .sm\:w-14 {
+    width: 3.5rem;
+  }
+
   .sm\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -4551,6 +4555,11 @@ video {
     font-size: 3rem;
     line-height: 1;
   }
+
+  .md\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -4609,6 +4618,11 @@ video {
   .lg\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
+  }
+
+  .lg\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 }
 
