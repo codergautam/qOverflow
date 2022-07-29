@@ -11,31 +11,39 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <body>  
-   <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
-   <div class="px-9 py-3">
-   <% var possible = ["Recent", "Best", "Interesting", "Hottest"] %>
-   <!-- <p class="px-3">Sort Order: </p> -->
-   <% for (var i = 0; i < possible.length; i++) { %>
-    
-     <a href="/?sort=<%= possible[i].toLowerCase() %>" class="inline-block px-3 <%= sort.toLowerCase() == possible[i].toLowerCase() ? 'bg-green-200' : '' %> py-2 text-lg leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
-       <%= possible[i] %>
-     </a>
-    <% } %>
+  <%-  include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
+  <div class="px-6 py-3 text-md md:text-lg lg:text-xl xl:text-2xl">
+  <!-- <% var possible = ["recent", "best", "interesting", "hottest"] %>
+  <% for (var i = 0; i < possible.length; i++) { %>
+    <a href="/?sort=<%= possible[i] %>" class="inline-block px-3 w-full <%= sort == possible[i] ? 'bg-green-200' : '' %> py-2 text-sm leading-5 font-medium text-gray-700 hover:text-gray-900 focus:outline-none focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300">
+      <%= possible[i] %>
+    </a>
+   <% } %> -->
+   <form>
+     <select class="border-2 border-black rounded-md font-bold">
+       <% var possible = ["recent", "best", "interesting", "hottest"] %>
+       <% for (var i = 0; i < possible.length; i++) { %>
+         <option href="/?sort=<%= possible[i] %>" class="w-full border-2 border-black inline-block px-3 rounded-none py-2 text-md md:text-lg lg:text-xl xl:text-2xl leading-5 text-gray-700 hover:text-gray-900 hover:bg-gray-900 focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 font-semibold" value="<%= sort == possible[i] ? 'bg-green-200' : '' %>"><%= possible[i] %></option>
+         <%= possible[i] %>
+        <% } %>
+     </select>
+     <input type="submit" value="/?sort=<%= possible[i] %>">
+   </form>
 </div>
 <% if(loggedIn && basicData.points >= 1) { %>
-  <div class="fixed bottom-4 right-4 group  px-2 py-2 bg-gray-200 bg-opacity-75 rounded-3xl flex items-center hover:bg-opacity-90 hover:-translate-x-1/4 transition-all delay-75 duration-700 ease-in-out">
-     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 stroke-gray-700 transition-all duration-500 " fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-       <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-     </svg>
-     <form action="/questionEditor" method="GET">
-      <input type="hidden" name="username" value="<%= user.username %> ">
-      <input value="Create a Question" type="submit" class="text-2xl cursor-pointer text-gray-700 mr-2 font-semibold inline-block transition-all delay-150">
-     </form>
-  </div>
- <% } %> 
-   <div id="questions">
+ <div class="fixed bottom-4 right-4 group px-2 py-2 bg-gray-200 bg-opacity-75 rounded-3xl flex items-center hover:bg-opacity-90 hover:shadow-inner transition-all duration-300 ease-in-out">
+    <svg xmlns="http://www.w3.org/2000/svg" class="sm:flex group-hover:flex md:w-12 md:h-12 h-7 stroke-gray-700 transition-all duration-500 " fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+    </svg>
+    <form action="/questionEditor" method="GET">
+     <input type="hidden" name="username" value="<%= user.username %> ">
+     <input value="Create a Question" type="submit" class="flex-none hidden transition-all duration-500 group-hover:flex text-lg md:text-2xl cursor-pointer text-gray-700 mr-2 font-semibold">
+    </form>
+ </div>
+<% } %>
+  <div id="questions" class="lg:grid">
 
-   </div>
+  </div>
 <!-- <div class="flex items-center justify-center flex-col px-[30px]">
    <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
     <div class="px-4 py-4 ">
@@ -152,23 +160,31 @@
     // console.log(data.id)
 
    
-    var question = `<div class="flex items-center justify-center flex-col px-[30px]" id="${data.question_id}" >
-   <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full cursor-pointer"  onclick="location.href = '/question/${data.question_id}'">
-    <div class="px-4 ">
-      <div class="font-bold text-xl mb-2 ">${data.title}</div>
-    </div>
-    <div class="px-6 pt-4 pb-2">
-     <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${data.creator}</p> <img src='' style="opacity:0%" width="50" height="50" id="${data.question_id+"pfp"}" class="max-w-full h-auto rounded-full"><p id="${data.question_id+"levelText"}"></p></center></span>
-      <br>
-      <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - data.createdAt) ?? "just now"} ago</span>
-      <span id="points${data.question_id}" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.upvotes - data.downvotes} points</span>
-      <span id="views${data.question_id}" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${data.views} views</span>
-
-      <span  id="answers${data.question_id}" class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.answers} answers</span>
-    </div>
-  </div>
-</div> 
-`
+    var question = `
+    <div class="sm:flex items-center justify-center flex-col px-[30px] md:justify-self-center xl:w-1/2 lg:w-9/12 transition-all delay-150">
+      <div class="transition-all delay-150 my-5 rounded-md sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full cursor-pointer" onclick="location.href = '/question/${data.question_id}'">
+        <div class="transition-all delay-150 p-4 pb-2 sm:p-0 sm:pt-2 sm:pl-2 col-span-5 row-span-2 sm:col-span-1 sm:row-span-2 rounded">
+          <span class="transition-all delay-150 inline-block align-middle place-content-stretch w-full sm:w-full h-auto max-h-auto bg-gray-200 px-2 py-1 text-xs font-semibold xl:font-bold text-gray-700 mr-2 mb-2 rounded-xl">
+            <center class="align-middle" style="hyphens: auto;">
+              <p class="font-semibold xl:font-bold text-xs xl:text-xl sm:text-sm break-words" >By: ${data.creator}</p>
+              <img src='' style="opacity: 1; transition: opacity 0.5s ease 0s;" width="30" height="30" id="${data.question_id+"pfp"}" class="mt-1 w-10 xl:w-16 h-auto rounded-full">
+              <p id="${data.question_id+"levelText"}" class=" align-baseline font-semibold xl:font-bold text-xs xl:text-xl sm:text-sm"></p>
+            </center>
+          </span>
+          <br>
+        </div>
+        <div class="grid transition-all delay-150 w-full py-3 px-7 row-span-2 sm:row-span-2 place-content-evenly sm:col-span-2 col-span-5 place-items-center w-full text-center">
+          <div class="transition-all delay-150 font-bold text-xl xl:text-3xl 2xl:text-4xl mb-2 align-middle lg:text-2xl" style="overflow-wrap: break-word; text-center; hyphens: auto;">${data.title}</div>
+        </div>
+        <div class="transition-all delay-150 row-span-1 sm:row-span-1 sm:col-span-3 px-2 col-span-5 place-content-center text-center sm:text-left align-items-center justify-content-center">
+          <span class="transition-all delay-150 justify-content-center inline-block text-center bg-gray-200 rounded-full px-3 py-1 text-sm xl:text-lg 2xl:text-xl font-semibold xl:font-bold text-gray-700 mr-1 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
+          <span class="transition-all delay-150 inline-block bg-gray-200 text-center rounded-full px-3 py-1 text-sm 2xl:text-xl xl:text-lg font-semibold xl:font-bold text-gray-700 mr-1 mb-2">${data.upvotes - data.downvotes} points</span>
+          <span class="transition-all delay-150 inline-block bg-gray-200 text-center rounded-full px-3 py-1 text-sm 2xl:text-xl xl:text-lg font-semibold xl:font-bold text-gray-700 mr-1 mb-2">${data.views} views</span>
+          <span class="transition-all delay-150 inline-block bg-gray-200 text-center rounded-full px-3 py-1 text-sm 2xl:text-xl xl:text-lg font-semibold xl:font-bold text-gray-700 mr-1 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}">${data.answers} answers</span>
+        </div>
+      </div>
+    </div> 
+    `
     document.getElementById('questions').innerHTML += question;
     fetch('/getBasicData?user='+data.creator).then((e) => e.json()).then((e) => {  
       if(e.success) {

@@ -1,119 +1,181 @@
 <html>
-  <nav class="bg-teal-600 py-1 relative">
-    <style>
-      @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dosis&family=Edu+Sa+Beginner&family=Helvetica&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap');
-    </style>
-    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8">
-      <div class="relative flex items-center justify-between h-16">
-        <div class="flex flex-1">
-          <!-- Logo -->
-          <div class="flex-shrink-0 flex ">
-            <img class="block lg:block h-8 w-auto" src="" alt="">
+<nav class="bg-teal-600 py-1 relative max-h-96 w-full">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dosis&family=Edu+Sa+Beginner&family=Helvetica&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap');
+  </style>
+  <div class=" w-full lg:h-20 xl:h-24 mx-auto px-1 md:px-3 lg:px-4 md:pr-4 max-h-96">
+    <div class="w-full flex items-center justify-between max-h-96">
+      <div>
+        <!-- Logo -->
+        <a href="/dashboard" class="place-content-center grid align-middle">
+          <div
+            class="group w-14 xl:w-20 align-left flex align-middle rounded-full mr-4 sm:mr-4 md:mr-6 xl:mr-9 py-1 transition delay-75 duration-300">
+            <img src="https://bdpa.org/wp-content/uploads/2020/12/f0e60ae421144f918f032f455a2ac57a.png">
           </div>
-        </div>
-          <div class="flex group mr-12">
-            <form class="flex" action="/search" method="POST">
-              <input id="1" name="searchQuery" type="text" required class="h-10 appearance-none rounded-none rounded-l-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm focus:ring-1" placeholder="What is an apple?">
-              <svg xmlns="http://www.w3.org/2000/svg" class="cursor-pointer h-10 w-12 px-2 py-1 rounded-none rounded-r-lg bg-indigo-400 stroke-white  group-focus:outline-none group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 sm:text-sm group-focus:ring-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </form>
-          </div>
-        <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-          <div class="ml-3 relative">
-            <div>
-              <% if(loggedIn) { %>
-                <!-- Profile picture -->
-                <div class="flex space-x-2 justify-start">
-                    <!--Mail Icon-->
-                    <div class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <a href="/logout" class="wavy-hover text-2xl my-auto font-staat text-white ">Logout</h2>
-                    </div>
-                  <!--Home Icon-->
-                  <a href="/">
-                    <div class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+        </a>
+      </div>
+      <div class="w-full flex group pr-2 md:pr-0 text-left place-content-start sm:place-content-center">
+        <form class="flex" action="/search" method="POST">
+          <input id="1" name="searchQuery" type="text" required
+            class="h-10 md:h-12 lg:h-14 lg:w-96 appearance-none rounded-none rounded-l-lg relative block w-full px-3 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-md md:text-lg lg:text-xl xl-text-2xl font-semibold focus:ring-1"
+            placeholder="What is an apple?">
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="cursor-pointer h-10 md:h-12 lg:h-14 w-12 md:w-14 lg:w-14 px-2 py-1 rounded-none rounded-r-lg bg-indigo-400 stroke-white group-focus:outline-none group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 sm:text-sm group-focus:ring-1"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </form>
+      </div>
+      <div class="flex items-center md:pr-2 align-right">
+        <div class="md:ml-3 relative w-full">
+          <div>
+            <% if(loggedIn) { %>
+              <!-- Profile picture -->
+              <div>
+                <div class="flex md:hidden place-content-end">
+                  <div class="outline-none pr-2" id="burger">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
+                      stroke="currentColor" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                  </div>
+                </div>
+                <div
+                  class="md:text-right place-content-end md:place-content-center h-full md:space-x-2 md:justify-start hidden grid md:flex"
+                  id="menu">
+                  <!--Mail Icon-->
+                  <div
+                    class="block w-full md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+                    <a href="/logout" class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white ">Logout</a>
+                  </div>
+                  <!-- Home Icon -->
+
+                  <a href="/" class="md:place-content-center w-full md:grid md:align-middle">
+                    <div
+                      class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-white"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path
+                          d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
+                        </path>
                       </svg>
-                      <h2 class="wavy-hover -hidden group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">Home</h2>
+                      <h2
+                        class="block md:flex wavy-hover xl:text-3xl group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
+                        Home</h2>
                     </div>
                   </a>
-                  <a href="/mail">
-                    <!--Mail Icon-->
-                    <div class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="ml-auto h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+                  <a href="/mail" class="md:place-content-center w-full md:grid md:align-middle">
+                    <!-- Mail Icon -->
+                    <div
+                      class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto h-8 xl:h-9 text-white"
+                        viewBox="0 0 20 20" fill="currentColor">
                         <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
                       </svg>
-                      <h2 class="wavy-hover overflow-hidden group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">Mail</h2>
+                      <h2
+                        class="block md:flex wavy-hover xl:text-3xl group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
+                        Mail</h2>
                     </div>
                   </a>
-                  <% if(typeof user != "undefined") { %>
-                  <a href="/dashboard">
-                    <!--Dashboard Icon-->
-                    <div class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+                  <a href="/dashboard" class="w-full md:place-content-center md:grid align-middle">
+                    <!-- Dashboard Icon -->
+                    <div>
+                      class="group hover:shadow-2xl shadow-purple-900 align-middle md:px-2 py-1 transition ease-in-out
+                      delay-75 duration-300 hover:-translate-y-2">
                       <div class="flex flex-col">
-                      <!-- profile img-->
-                      <div class="flex flex-row">
-                      <img class="h-8 w-8 rounded-full" src="<%= user.img%> " alt="">
-                      <h2 class="wavy-hover overflow-hidden text-2xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out"><%= user.username %> </h2>
-                    </div>
-                      <!-- user level and points text-->
-                      <div class="group shadow-purple-900 flex align-middle rounded-fullpy-1">
-                     
-
-                        <h4 class=" overflow-hidden group-hover:visible text-l my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out" id="user-level"> <% if(user.level) { %> Level: <%= user.level %> <% } %> </h2>
-                       
+                        <!-- profile img-->
+                        <div class="flex flex-row">
+                          <img class="h-8 xl:h-9 rounded-full" src="<%= user.img%> " alt="">
+                          <h2
+                            class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
+                            <%= user.username %>
+                          </h2>
+                        </div>
+                        <!-- user level and points text-->
+                        <div class="group shadow-purple-900 flex align-middle rounded-full">
+                          <h4
+                            class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
+                            id="user-level">Level: <%= user.level %>
+                          </h4>
                           &nbsp;
-  
-                        <h4 class="overflow-hidden group-hover:visible text-l my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out" id="user-points"><% if(user.points) { %>Points: <%= user.points %><% } %> </h2>
+                          <h4
+                            class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-white transition-all delay-75 duration-300 ease-in-out"
+                            id="user-points">Points: <%= user.points %>
+                          </h4>
                         </div>
                       </div>
-                
+
                     </div>
-                    <% } %>
-                    <!-- Level + points-->
-     
-            
-                  </a>
-                </div>
+                </div> <!-- Level + points-->
 
-                <% if(typeof user != "undefined") { %>
-                <script>
-                  fetch('/getBasicData?user=<%= user.username %>')
-                    .then(response => response.json())
-                    .then(data => {
-                      console.log(data);
-                      if(!data.success) return;
-                      document.querySelector('#user-level').innerHTML = "Level: "+data.level;
-                      document.querySelector('#user-points').innerHTML = "Points: "+data.points;
-                    });
-                </script>
-                <% } %>
-          
-              <% } else { %>
-              <% if (typeof login == "undefined" || !login) { %>
-                <button onclick="location.href = '/auth/login'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-              <% } else { %>
-                <button onclick="location.href = '/auth/login'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
 
-              <% } %>
-                Login
-                </button>
-              &nbsp;
-              <% if (typeof signup == "undefined" || !signup) { %>
-                <button onclick="location.href = '/auth/signup'" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                </a>
+              </div>
+
               <% } else { %>
-                <button onclick="location.href = '/auth/signup'" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-              <% } %>
-                Signup
-                </button>
-            <% } %>
-            </div>
+                <% if (typeof login=="undefined" || !login) { %>
+                  <div class="w-full flex place-content-end">
+                    <button onclick="location.href = '/auth/login'"
+                      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 mr-1 rounded">
+                      <% } else { %>
+                        <div class="w-full flex place-content-end">
+                          <button onclick="location.href = '/auth/login'"
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 mr-1 px-4 rounded">
+
+                            <% } %>
+                              Login
+                          </button>
+                          &nbsp;
+                          <% if (typeof signup=="undefined" || !signup) { %>
+                            <button onclick="location.href = '/auth/signup'"
+                              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                              <% } else { %>
+                                <button onclick="location.href = '/auth/signup'"
+                                  class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                  <% } %>
+                                    Signup
+                                </button>
+                        </div>
+                        <% } %>
+                  </div>
+          </div>
         </div>
       </div>
-    </div>
 
-  </div>
-  </nav>
+    </div>
+    <% if(typeof user !="undefined" ) { %>
+      <script>
+        fetch('/getBasicData?user=<%= user.username %>')
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+            if (!data.success) return;
+            document.querySelector('#user-level').innerHTML = "Level: " + data.level;
+            document.querySelector('#user-points').innerHTML = "Points: " + data.points;
+          });
+      </script>
+      <% } %>
+        <script>
+          fetch('/getBasicData?user=<%= user.username %>')
+            .then(response => response.json())
+            .then(data => {
+              console.log(data);
+              document.querySelector('#user-level').innerHTML = "Level: " + data.level;
+              document.querySelector('#user-points').innerHTML = "Points: " + data.points;
+            });
+          const burger = document.querySelector('#burger');
+          const menu = document.querySelector('#menu');
+
+          burger.addEventListener('click', (e) => {
+            if (menu.classList.contains('hidden')) {
+              menu.classList.remove('hidden');
+            } else {
+              menu.classList.add('hidden');
+            }
+          });
+        </script>
+</nav>
+
+
 </html>
