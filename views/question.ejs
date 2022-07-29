@@ -315,33 +315,34 @@ list-style-position: inside;
                    </div>
                    <!-- show comments btn -->
                 
-                    <div class="flex flex-col justify-center items-center">
-                      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showComments">Show Comments (<%= question.comments %>)</button>
-                    
-                      
-
-                      <div id="commentsList">
-
-                    </div>  
-<br/>
-                    <!--
-                      post comment
-                    -->
-         
-                 
-               
-                    <% if(loggedIn && ((question.status == "open" && (basicData.level >= 3 || question.creator ==  user.username)) || (question.status == "protected" && (basicData.level >= 5)))) { %>
-                      <div class="flex flex-col justify-center items-center w-[50%]">
-
-                        <textarea maxlength="150" rows="2" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500" id="commentText" type="text" placeholder="Comment"></textarea>
-                        <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded" id="postComment">Post comment</button>
-                      </div>
-                      <% } %>
-                 
                   
-                </div>
               </div>
             </div>
+            <div class="flex flex-col justify-center items-center">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showComments">Show Comments (<%= question.comments %>)</button>
+            
+              
+
+              <div id="commentsList">
+
+            </div>  
+<br/>
+            <!--
+              post comment
+            -->
+ 
+         
+       
+            <% if(loggedIn && ((question.status == "open" && (basicData.level >= 3 || question.creator ==  user.username)) || (question.status == "protected" && (basicData.level >= 5)))) { %>
+              <div class="flex flex-col justify-center items-center w-[50%]">
+
+                <textarea maxlength="150" rows="2" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500" id="commentText" type="text" placeholder="Comment"></textarea>
+                <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded" id="postComment">Post comment</button>
+              </div>
+              <% } %>
+         
+          
+        </div>
           </div>
           <div id="answers">
             <div class="flex items-center justify-center flex-col px-[30px]">
@@ -560,13 +561,16 @@ list-style-position: inside;
   setInterval(() => {
 
     socket.emit("getViews", "<%= question.question_id %>");
-    socket.emit("getAnswerCount", "<%= question.question_id %>");
+
    
 
-  }, 5000);
+  }, 3600);
   setInterval(() => {
     socket.emit("getVotes", "<%= question.question_id %>");
-  }, 1000);
+  }, 6930);
+  setInterval(() => {
+    socket.emit("getVotes", "<%= question.question_id %>");
+  }, 8000);
 
   socket.on("questionViews", (cnt, id) => {
     if(!(id == "<%= question.question_id %>")) {
@@ -631,7 +635,11 @@ async function appendAnswer(answer) {
                <br>
                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${ msToTime(Date.now() - answer.createdAt) ?? "just now" } ago</span>
                                </div>
-                               <div class="flex flex-col justify-center items-center">
+                               
+          </div>
+          
+        </div>
+        <div class="flex flex-col justify-center items-center">
                       <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showComments${id}">Show Comments (${answerComments})</button>
                     
                       
@@ -656,8 +664,6 @@ ${ (loggedIn && ((<%= question.status == "open"%> &&(<%= (basicData.level >= 3 )
                       
                   
                 </div>
-          </div>
-        </div>
         </div> `
 
 // string to DOM element
@@ -1015,7 +1021,7 @@ var remaining = [];
 
   function appendShowMore() {
     var btn = `<div class="flex justify-center items-center">
-      <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
+      <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold my-5 py-2 px-4 rounded" id="showMore">
         Show more answers
       </button>
     </div>`

@@ -11,15 +11,17 @@ class Api {
     this.requestsThisSecond = 0;
     this.lockAfter = 7;
     this.requestsInQueue = 0;
+    this.questionCache = {};
     setInterval(() => {
       this.requestsThisSecond = 0;
     }, 1200);
   }
    async sendRequest(endpoint, method, data) {
 
+
     this.requestsInQueue++;
     await delay(200*(this.requestsInQueue-1));
-    console.log("Send request: "+ endpoint, "Queue wait:" +200*(this.requestsInQueue-1))
+    console.log("Send request: "+ endpoint, method, "Queue wait:" +200*(this.requestsInQueue-1))
     if(this.requestsThisSecond <= this.lockAfter) {
       this.requestsThisSecond++;
     try {
@@ -31,14 +33,27 @@ class Api {
         'Authorization': 'bearer '+this.key
       }
     })
+    try {
     var text= await req.text()
+    } catch(e) {
+      console.log(e)
+      return {success: false, failed: true}
+    }
     this.requestsInQueue--;
-   
-    return JSON.parse(text)
+
+   try {
+   return JSON.parse(text);
+   } catch(e) {
+    return {success: false, failed: true} 
+    }
   } catch (error) {
     // TODO: handle error
     console.log(error)
+
+
+    
     this.requestsInQueue--;
+    return {success: false, failed: true} 
   }
 } else {
   return new Promise((resolve, reject) => {
@@ -184,7 +199,6 @@ class Api {
     for (var key in params) {
      if(params[key]) urlEncodedParams.append(key, params[key]);
     }
-    console.log(urlEncodedParams.toString())
 
 
     // console.log('/questions/search?'+urlEncodedParams.toString().replaceAll("%25","%"));
@@ -243,7 +257,30 @@ class Api {
   }
 
   getQuestion(questionId) {
-    return this.sendRequest('/questions/' + questionId, 'GET');
+   
+    if(this.questionCache[questionId] && Date.now() - this.questionCache[questionId].time < 5000) {
+      return new Promise((resolve, reject) => {
+        console.log("Caching")
+        resolve({success:true,question:this.questionCache[questionId].question})
+      }) 
+    } else {
+      return new Promise((resolve, reject) => {
+       this.sendRequest('/questions/' + questionId, 'GET').then((data) => {
+        if(data.success) {
+          this.questionCache[questionId] = {
+            time: Date.now(),
+            question: data.question
+          }
+          resolve(data)
+        } else {
+          resolve(data)
+        }
+       }).catch((err) => {
+        resolve({success: false, failed: true})
+       });
+      });
+    }
+
   }
 
   hasUserVoted(questionId, username) {
@@ -296,9 +333,6 @@ if(answerId == "undefined") {
    
   };
 
-  getQuestion(questionId) {
-    return this.sendRequest('/questions/' + questionId, 'GET');
-  }
 
   getQuestionComments(questionId, after) {
     return this.sendRequest('/questions/' + questionId + '/comments'+(after ? "?after="+after : ""), 'GET');
@@ -407,7 +441,6 @@ if(answerId == "undefined") {
 
   async getQuestionOwner(questionId) {
     var q = await this.getQuestion(questionId)
-    console.log(q)
 
     return q.question.creator;
 
@@ -434,7 +467,6 @@ if(answerId == "undefined") {
 
   async getAnswerOwner(questionId, answerId) {
     var a = await this.getAnswer(questionId, answerId)
-    console.log(a)
     return a.creator;
   }
     
@@ -446,7 +478,6 @@ if(answerId == "undefined") {
     if(send.success) return true;
     else return false;
   } catch (error) {
-    console.log(error)
     return false;
   }
 }
