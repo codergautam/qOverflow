@@ -224,7 +224,8 @@ app.get('/search', async (req, res) => {
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: questions,
-      user: req.session.user
+      user: req.session.user,
+      error: data.success ? undefined : true
     })
   } else {
     res.render('searchResult', {
@@ -382,12 +383,15 @@ app.post('/search', async (req, res) => {
     questions.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
+    
     res.render('searchResult', {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: questions, 
-      user: req.session.user
+      user: req.session.user,
+      error: data.success ? undefined : true
+
     })
   } else {
     res.render('searchResult', {
@@ -395,7 +399,8 @@ app.post('/search', async (req, res) => {
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: [],
-      user: req.session.user
+      user: req.session.user,
+      error: true
     })
   }
 })

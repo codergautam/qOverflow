@@ -44,7 +44,7 @@
                 <% if(searchFeed.length <= 0) { %>
                     <div class="flex-col">
                         <div id="noQuestions" class="text-gray-500 text-center font-semibold text-xl">
-                            Sorry we're stumped!
+                           <%= typeof error !="undefined" ? "Something went wrong.. Please try again later" : "Sorry we're stumped!" %>
                             <br>...
                         </div>
                     </div>
