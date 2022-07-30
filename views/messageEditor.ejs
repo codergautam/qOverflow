@@ -129,8 +129,12 @@
     <script>
         function val(e) {
             ghf = e.value;
-            console.log(marked.parse(ghf))
-            codeblock = marked.parse(ghf);
+            console.log(marked.parse(ghf).replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+}))
+            codeblock = marked.parse(ghf.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+}));
             document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View/Editor:</label><article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='prose prose-h1:text-red-500  break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
         }
         // function qwerty(e) {
