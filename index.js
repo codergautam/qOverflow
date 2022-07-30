@@ -588,6 +588,9 @@ app.post('/questions',  async (req, res) => {
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
   const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
+  if(newPassword.length <= 10) {
+    res.send({success: false, error: "Password must be at least 10 characters long"})
+  }
   let data = await api.changePasswordOf(username, keyString, saltString).then((data) => {
     if(data.success) {
       console.log("Password Changed!")
@@ -641,6 +644,12 @@ app.post("/auth/signup", (req,res) => {
     })
   }
 
+  if(password.length < 10 ) {
+    return res.render('signup', {
+      error: {msg: "Password must be at least 10 characters long"}
+    })
+  }
+
   console.log("Creating user: " + username, password)
   // create user
   api.createUser(username, email, password).then(data => {
@@ -657,8 +666,8 @@ app.post("/auth/signup", (req,res) => {
     } else {
       var err = data.error;
       console.log(err)
-      if(err == "an item with that \"email\" already exists") err = "Email taken!"
-      else if(err == "an item with that \"username\" already exists") err = "Username taken!";
+      if(err == "an item with that \"email\" already exists") err = "An account with that email already exists!"
+      else if(err == "an item with that \"username\" already exists") err = "An account with that username already exists!";
 
       res.render('signup', {
         error: {msg: err}
@@ -1197,6 +1206,12 @@ app.post("/reset/:token", (req, res) => {
             error: {msg: "Please fill in all fields"}
           })
           return
+        }
+        if(password.length <= 10) {
+          res.render('reset', {
+            username: username,
+            error: {msg: "Password must be at least 10 characters long"}
+          })
         }
         api.resetPassword(username, password).then(data => {
           if(data.success) {

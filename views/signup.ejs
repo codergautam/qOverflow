@@ -58,8 +58,32 @@
             <input id="1" name="email" type="email" required  class="font-semibold mt-4 transition-all delay-75 duration-300 ease-in-out appearance-none rounded-none relative block w-full px-3 py-2 border-b-2 border-gray-500 placeholder-gray-500 text-gray-900 outline-none focus:border-indigo-300 focus:z-10 sm:text-sm" placeholder="Email">
           </div>
           <div>
-            <label for="password" class="sr-only">Password</label>
+            
+            
             <input id="password" name="password" type="password" autocomplete="current-password" required  class="font-semibold mt-4 transition-all delay-75 duration-300 ease-in-out appearance-none rounded-none relative block w-full px-3 py-2 border-b-2 border-gray-500 placeholder-gray-500 text-gray-900 outline-none focus:border-indigo-300 focus:z-10 sm:text-sm" placeholder="Password">
+            <label id="passwordLabel" style="color: red;" for="password"></label>
+            <!-- password strength -->
+            <script>
+              document.getElementById("password").oninput = () => {
+                var value = document.getElementById("password").value;
+                if(value.length == 0) {
+                  document.getElementById("passwordLabel").innerHTML = "";
+                } 
+                else if(value.length <= 10) {
+                  document.getElementById("passwordLabel").innerHTML = "Weak Password";
+                  // red color
+                  document.getElementById("passwordLabel").style.color = "red";
+                } else if(value.length <= 17) {
+                  document.getElementById("passwordLabel").innerHTML = "Moderate Password";
+                  // yellow color
+                  document.getElementById("passwordLabel").style.color = "orange";
+                } else {
+                  document.getElementById("passwordLabel").innerHTML = "Strong Password";
+                  // green color
+                  document.getElementById("passwordLabel").style.color = "green";
+                }
+              }
+            </script>
           </div>
         </div>
   

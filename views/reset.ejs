@@ -39,6 +39,29 @@
             </label>
             <div class="mt-1 rounded-md shadow-sm">
               <input id="password" type="password" name="password" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5" required>
+              <label id="passwordLabel" style="color: red;" for="password"></label>
+              <!-- password strength -->
+              <script>
+                document.getElementById("password").oninput = () => {
+                  var value = document.getElementById("password").value;
+                  if(value.length == 0) {
+                    document.getElementById("passwordLabel").innerHTML = "";
+                  } 
+                  else if(value.length <= 10) {
+                    document.getElementById("passwordLabel").innerHTML = "Weak Password";
+                    // red color
+                    document.getElementById("passwordLabel").style.color = "red";
+                  } else if(value.length <= 17) {
+                    document.getElementById("passwordLabel").innerHTML = "Moderate Password";
+                    // yellow color
+                    document.getElementById("passwordLabel").style.color = "orange";
+                  } else {
+                    document.getElementById("passwordLabel").innerHTML = "Strong Password";
+                    // green color
+                    document.getElementById("passwordLabel").style.color = "green";
+                  }
+                }
+              </script>
             </div>
           </div>
         </div>
