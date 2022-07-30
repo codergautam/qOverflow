@@ -26,12 +26,12 @@
           </svg>
         </form>
       </div>
-      <div class="flex items-center md:pr-2 align-right">
+      <div class="flex w-full items-center md:pr-2 align-right">
         <div class="md:ml-3 relative w-full">
-          <div>
+          <div class="w-full">
             <% if(loggedIn) { %>
               <!-- Profile picture -->
-              <div>
+              <div class="w-full">
                 <div class="flex md:hidden place-content-end">
                   <div class="outline-none pr-2" id="burger">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
@@ -45,12 +45,12 @@
                   id="menu">
                   <!--Mail Icon-->
                   <div
-                    class="block w-full md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+                    class="block w-fill md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
                     <a href="/logout" class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white ">Logout</a>
                   </div>
                   <!-- Home Icon -->
 
-                  <a href="/" class="md:place-content-center w-full md:grid md:align-middle">
+                  <a href="/" class="md:place-content-center w-fill md:grid md:align-middle">
                     <div
                       class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-white"
@@ -64,7 +64,7 @@
                         Home</h2>
                     </div>
                   </a>
-                  <a href="/mail" class="md:place-content-center w-full md:grid md:align-middle">
+                  <a href="/mail" class="md:place-content-center w-fill md:grid md:align-middle">
                     <!-- Mail Icon -->
                     <div
                       class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
@@ -78,7 +78,7 @@
                         Mail</h2>
                     </div>
                   </a>
-                  <a href="/dashboard" class="w-full md:place-content-center md:grid align-middle">
+                  <a href="/dashboard" class="w-fill md:place-content-center md:grid align-middle">
                     <!-- Dashboard Icon -->
                     <div
                       class="group hover:shadow-2xl w-full shadow-purple-900 align-middle md:px-2 py-1 transition ease-in-out
