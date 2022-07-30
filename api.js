@@ -100,6 +100,7 @@ class Api {
           try {
             var r = await req.text();
             r = JSON.parse(r);
+            // console.log(r);
             return r;
           } catch (e) {
             console.log(e);
@@ -121,6 +122,54 @@ class Api {
       }
   }
 
+  async getQuestionId(answerId, createdAt, accepted) {
+    var found = false;
+    var questionId;
+    var last;
+    var end = false;
+    var match = {
+      "answers": {
+        "$gt": 0
+      }
+    };
+    // if(typeof accepted != "undefined") match.hasAcceptedAnswer = accepted;
+    // if(createdAt) match.createdAt = {
+    //   $lte: Number(createdAt)
+    // }
+    console.log(match);
+    while (!found && !end) {
+      var data = await this.getQuestions(undefined, undefined, match, last)
+      if(!data.success) {
+        end = true;
+        break;
+      } 
+      var questions = data.questions;
+      if(questions.length <= 99) end = true;
+      console.log(data);
+      last = questions[questions.length - 1].question_id;
+      for (let i = 0; i < questions.length; i++) {
+        var answers = await this.getAllAnswers(questions[i].question_id);
+        if (answers.success) {
+          for (let j = 0; j < answers.answers.length; j++) {
+            console.log(answers.answers[j].answer_id);
+            if (answers.answers[j].answer_id == answerId) {
+              found = true;
+              questionId = questions[i].question_id;
+
+              return{success:true, questionId};
+            }
+          }
+        } else {
+          end = true;
+          break;
+        }
+      }
+    }
+    console.log(questionId, "FOUND ITTFMHGFJJGFHJGH");
+
+    return {success: false};
+  }
+  
   async updateAnswer(questionId, answerId, text, upvotes, downvotes, accepted) {
     questionId = encodeURIComponent(questionId);
     answerId = encodeURIComponent(answerId);
