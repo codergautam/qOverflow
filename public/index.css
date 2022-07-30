@@ -3476,6 +3476,10 @@ video {
   padding-right: 0.25rem;
 }
 
+.pr-20 {
+  padding-right: 5rem;
+}
+
 .text-left {
   text-align: left;
 }
