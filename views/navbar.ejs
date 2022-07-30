@@ -80,7 +80,7 @@
                   </a>
                   <a href="/dashboard" class="w-full md:place-content-center md:grid align-middle">
                     <!-- Dashboard Icon -->
-                    <div>
+                    <div
                       class="group hover:shadow-2xl shadow-purple-900 align-middle md:px-2 py-1 transition ease-in-out
                       delay-75 duration-300 hover:-translate-y-2">
                       <div class="flex flex-col">
@@ -146,17 +146,6 @@
     </div>
     <% if(typeof user !="undefined" ) { %>
       <script>
-        fetch('/getBasicData?user=<%= user.username %>')
-          .then(response => response.json())
-          .then(data => {
-            console.log(data);
-            if (!data.success) return;
-            document.querySelector('#user-level').innerHTML = "Level: " + data.level;
-            document.querySelector('#user-points').innerHTML = "Points: " + data.points;
-          });
-      </script>
-      <% } %>
-        <script>
           fetch('/getBasicData?user=<%= user.username %>')
             .then(response => response.json())
             .then(data => {
@@ -174,7 +163,8 @@
               menu.classList.add('hidden');
             }
           });
-        </script>
+      </script>
+      <% } %>
 </nav>
 
 
