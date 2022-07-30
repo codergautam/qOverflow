@@ -1006,7 +1006,7 @@ var basicDataCache = {};
 function getBasicData(username) {
   return new Promise((resolve, reject) => {
 
-  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 300000) {
+  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 5000) {
     resolve({success:true, ...basicDataCache[username].data})
 
   } else {
@@ -1035,7 +1035,16 @@ function getBasicData(username) {
 }
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
+
     getBasicData(req.query.user).then(data => {
+      console.log(req.session.loggedIn, req.session.user, req.session.user?.username == req.query.user)
+
+      if(data.success && req.session.loggedIn && req.session.user && req.session.user.username == req.query.user) {
+        console.log("Caching basic data")
+        req.session.user.points = data.points;
+        req.session.user.img = data.pfp;
+        req.session.user.level = data.level;
+      }
       res.send(data)
     });
   } else res.send(JSON.stringify({success: false}))

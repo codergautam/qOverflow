@@ -136,6 +136,7 @@
     </div>
     <% if(typeof user !="undefined" ) { %>
       <script>
+        setInterval(function() {
           fetch('/getBasicData?user=<%= user?.username %>')
             .then(response => response.json())
             .then(data => {
@@ -145,6 +146,7 @@
               document.querySelector('#user-points').innerHTML = "Points: " + data.points;
               }
             });
+          }, 1000);
           const burger = document.querySelector('#burger');
           const menu = document.querySelector('#menu');
 
