@@ -154,6 +154,7 @@
 
             async function getMail(size, lastResult) {
                 let mail = await fetch('/mailResults/' + lastResult).then((res) => (res.json()))
+                if(mail.success) {
                 console.log(mail.length + "Standard: " + size)
                 if(mail.length > size) {
                     console.log("There's more!")
@@ -172,6 +173,15 @@
                 } else {
                     return mail.splice(0, size)
                 }
+            } else {
+                // remove spinner
+                let feed = document.getElementById("inbox")
+
+                feed.lastChild.remove()
+
+                var error = 
+
+            }
             }
 
             async function loadMore(size, _lastResult) {
