@@ -4,30 +4,32 @@
     @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dosis&family=Edu+Sa+Beginner&family=Helvetica&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap');
   </style>
   <div class="place-self-center">
-    <img class src="https://cdn.discordapp.com/attachments/977969159944163380/1002707119021228134/qOverflowLogoSmall.png" width="312" height="90">
+    <img class src="https://cdn.discordapp.com/attachments/977969159944163380/1002707119021228134/qOverflowLogoSmall.png" width="245" height="90">
   </div>
   <div class=" w-full lg:h-20 xl:h-24 mx-auto px-1 md:px-3 lg:px-4 md:pr-4 max-h-screen flex place-content-center">
-    <div class="w-full flex items-center justify-between max-h-screen relative">
+    <div class="w-full flex justify-between max-h-screen relative">
       <div id="logo">
         <!-- Logo -->
-        <a href="/dashboard" class="place-content-center grid lg:align-middle">
+        <a href="/dashboard" class="place-content-center items-center grid lg:align-middle">
           <div
             class="group w-12 sm:w-14 xl:w-20 align-left flex align-middle rounded-full mr-2 sm:mr-3 md:mr-4 xl:mr-7 py-1 transition delay-75 duration-300">
             <img src="https://bdpa.org/wp-content/uploads/2020/12/f0e60ae421144f918f032f455a2ac57a.png">
           </div>
         </a>
       </div>
-      <div class="w-full flex group pr-2 md:pr-0 text-left fixed lg:relative place-content-center lg:top-0 lg:place-content-center " id="search">
-        <form class="flex" action="/search" method="POST">
-          <input id="1" name="searchQuery" type="text" required
-            class="h-9 w-40 sm:w-80 sm:h-12 lg:h-12 lg:w-80 xl:h-14 xl:w-96 appearance-none rounded-none rounded-l-lg relative block px-3 pr-3 lg:py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-sm sm:text-lg lg:text-lg xl-text-xl font-semibold focus:ring-1"
-            placeholder="What is an apple?">
-          <svg xmlns="http://www.w3.org/2000/svg"
-            class="cursor-pointer h-9 sm:h-12 lg:h-12 w-10 xl:h-14 xl:w-16 sm:w-14 lg:w-14 px-2 py-1 rounded-none rounded-r-lg bg-indigo-400 stroke-white group-focus:outline-none group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 sm:text-sm group-focus:ring-1"
-            fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </form>
+      <div class="flex items-center" id="search">
+        <div class="w-full flex group pr-2 md:pr-0 text-left lg:relative place-content-center">
+          <form class="flex" action="/search" method="POST">
+            <input id="1" name="searchQuery" type="text" required
+              class="h-9 w-40 sm:w-80 sm:h-12 lg:h-12 lg:w-80 xl:h-14 xl:w-96 appearance-none rounded-none rounded-l-lg relative block px-3 pr-3 lg:py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-sm sm:text-lg lg:text-lg xl-text-xl font-semibold focus:ring-1"
+              placeholder="What is an apple?">
+            <svg xmlns="http://www.w3.org/2000/svg"
+              class="cursor-pointer h-9 sm:h-12 lg:h-12 w-10 xl:h-14 xl:w-16 sm:w-14 lg:w-14 px-2 py-1 rounded-none rounded-r-lg bg-indigo-400 stroke-white group-focus:outline-none group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 sm:text-sm group-focus:ring-1"
+              fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </form>
+        </div>
       </div>
       <div class="flex w-fill items-center md:pr-2 align-right">
         <div class="md:ml-3 relative w-fill">
@@ -164,12 +166,15 @@
           burger.addEventListener('click', (e) => {
             if (menu.classList.contains('hidden')) {
               menu.classList.remove('hidden');
-              search.classList.add('h-full');
+              search.classList.remove('items-center');
+              search.classList.remove('flex');
+              search.classList.add('mt-2');
               logo.classList.add('h-full');
             } else {
               menu.classList.add('hidden');
-              search.classList.remove('align-top');
-              search.classList.remove('h-full');
+              search.classList.add('items-center');
+              search.classList.add('flex');
+              search.classList.remove('mt-2');
               logo.classList.remove('h-full');
             }
           });

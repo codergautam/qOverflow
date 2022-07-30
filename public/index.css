@@ -2431,6 +2431,10 @@ video {
   margin-top: 0px;
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 .box-content {
   box-sizing: content-box;
 }
@@ -3538,6 +3542,10 @@ video {
   padding-right: 5rem;
 }
 
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -4592,16 +4600,16 @@ video {
     padding-right: 1rem;
   }
 
+  .md\:pr-0 {
+    padding-right: 0px;
+  }
+
   .md\:pr-2 {
     padding-right: 0.5rem;
   }
 
   .md\:pl-2 {
     padding-left: 0.5rem;
-  }
-
-  .md\:pr-0 {
-    padding-right: 0px;
   }
 
   .md\:text-right {
