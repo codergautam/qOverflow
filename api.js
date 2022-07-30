@@ -277,10 +277,10 @@ class Api {
       "GET"
     );
   }
-
-  async getUserMail(username) {
-    username = encodeURIComponent(username);
-    return await this.sendRequest("/mail/" + username, "GET");
+   
+  async getUserMail(username, after = null) {
+    let condition = (after) ? `?after=${after}` : ''
+    return await this.sendRequest('/mail/' + username + condition, 'GET')
   }
 
   async modifyPoints(username, amount) {

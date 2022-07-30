@@ -263,6 +263,28 @@ app.get('/searchResults/:after', async (req, res) => {
   }
 })
 
+app.get('/mailResults/:after', async (req, res) => {
+  const after = req.params.after
+  const username = req.session.user.username
+  console.log("After: " + after)
+  if(after == 0) {
+    console.log("recieved null")
+    let data = await api.getUserMail(username)
+    data = data.messages
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  } else {
+    let data = await api.getUserMail(username, after)
+    data = data.messages
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  }
+})
+
 app.get('/userAnswerResults/:after', async (req, res) => {
   const after = req.params.after
   const username = req.session.user.username
