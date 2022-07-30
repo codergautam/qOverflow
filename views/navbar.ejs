@@ -1,26 +1,29 @@
 <html>
-<nav class="bg-teal-600 py-1 relative max-h-96 w-full">
+<nav class="bg-teal-600 py-1 relative max-h-screen w-full">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dosis&family=Edu+Sa+Beginner&family=Helvetica&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap');
   </style>
-  <div class=" w-full lg:h-20 xl:h-24 mx-auto px-1 md:px-3 lg:px-4 md:pr-4 max-h-96">
-    <div class="w-full flex items-center justify-between max-h-96">
-      <div>
+  <div class="place-self-center">
+    <img class src="https://cdn.discordapp.com/attachments/977969159944163380/1002707119021228134/qOverflowLogoSmall.png" width="312" height="90">
+  </div>
+  <div class=" w-full lg:h-20 xl:h-24 mx-auto px-1 md:px-3 lg:px-4 md:pr-4 max-h-screen flex place-content-center">
+    <div class="w-full flex items-center justify-between max-h-screen relative">
+      <div id="logo">
         <!-- Logo -->
-        <a href="/dashboard" class="place-content-center grid align-middle">
+        <a href="/dashboard" class="place-content-center grid lg:align-middle">
           <div
             class="group w-12 sm:w-14 xl:w-20 align-left flex align-middle rounded-full mr-2 sm:mr-3 md:mr-4 xl:mr-7 py-1 transition delay-75 duration-300">
             <img src="https://bdpa.org/wp-content/uploads/2020/12/f0e60ae421144f918f032f455a2ac57a.png">
           </div>
         </a>
       </div>
-      <div class="w-full flex group pr-2 md:pr-0 text-left place-content-start sm:place-content-center">
+      <div class="w-full flex group pr-2 md:pr-0 text-left fixed lg:relative place-content-center lg:top-0 lg:place-content-center s" id="search">
         <form class="flex" action="/search" method="POST">
           <input id="1" name="searchQuery" type="text" required
-            class="h-10 md:h-10 lg:h-12 lg:w-80 appearance-none rounded-none rounded-l-lg relative block w-full px-3 pr-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-sm md:text-md lg:text-lg xl-text-xl 2xl:text-2xl font-semibold focus:ring-1"
+            class="h-9 w-40 sm:w-80 sm:h-12 lg:h-12 lg:w-80 xl:h-14 xl:w-96 appearance-none rounded-none rounded-l-lg relative block px-3 pr-3 lg:py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-sm sm:text-lg lg:text-lg xl-text-xl font-semibold focus:ring-1"
             placeholder="What is an apple?">
           <svg xmlns="http://www.w3.org/2000/svg"
-            class="cursor-pointer h-10 md:h-10 lg:h-12 w-12 md:w-14 lg:w-14 px-2 py-1 rounded-none rounded-r-lg bg-indigo-400 stroke-white group-focus:outline-none group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 sm:text-sm group-focus:ring-1"
+            class="cursor-pointer h-9 sm:h-12 lg:h-12 w-10 xl:h-14 xl:w-16 sm:w-14 lg:w-14 px-2 py-1 rounded-none rounded-r-lg bg-indigo-400 stroke-white group-focus:outline-none group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 sm:text-sm group-focus:ring-1"
             fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
@@ -32,7 +35,7 @@
             <% if(loggedIn) { %>
               <!-- Profile picture -->
               <div class="w-fill">
-                <div class="flex md:hidden place-content-end">
+                <div class="flex lg:hidden top-3 place-content-end">
                   <div class="outline-none pr-2" id="burger">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
                       stroke="currentColor" stroke-width="2">
@@ -41,16 +44,16 @@
                   </div>
                 </div>
                 <div
-                  class="md:text-right place-content-end md:place-content-center h-full md:space-x-2 md:justify-start w-full hidden grid md:flex"
+                  class="md:text-right place-content-end md:place-content-center h-full md:space-x-2 md:justify-start w-full hidden grid lg:flex"
                   id="menu">
                   <!--Mail Icon-->
                   <div
-                    class="block w-fill md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                    <a href="/logout" class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white ">Logout</a>
+                    class="block w-min justify-self-end md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+                    <a href="/logout" class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-staat text-white ">Logout</a>
                   </div>
                   <!-- Home Icon -->
 
-                  <a href="/" class="md:place-content-center w-fill md:grid md:align-middle">
+                  <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
                     <div
                       class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-white"
@@ -60,11 +63,11 @@
                         </path>
                       </svg>
                       <h2
-                        class="block md:flex wavy-hover xl:text-3xl group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
+                        class="block md:flex xs:text-xl wavy-hover text-xl md:text-2xl xl:text-3xl group-hover:visible my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
                         Home</h2>
                     </div>
                   </a>
-                  <a href="/mail" class="md:place-content-center w-fill md:grid md:align-middle">
+                  <a href="/mail" class="lg:place-content-center w-min justify-self-end w-fill md:grid md:align-middle">
                     <!-- Mail Icon -->
                     <div
                       class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
@@ -74,28 +77,28 @@
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
                       </svg>
                       <h2
-                        class="block md:flex wavy-hover xl:text-3xl group-hover:visible text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
+                        class="block md:flex xs:text-xl wavy-hover group-hover:visible text-xl md:text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
                         Mail</h2>
                     </div>
                   </a>
-                  <a href="/dashboard" class="w-fill md:place-content-center md:grid align-middle">
+                  <a href="/dashboard" class="w-max justify-self-end lg:place-content-center md:grid align-middle">
                     <!-- Dashboard Icon -->
                     <div
-                      class="group hover:shadow-2xl w-full shadow-purple-900 align-middle md:px-2 py-1 transition ease-in-out
+                      class="group hover:shadow-2xl w-full shadow-purple-900 align-middle md:pl-2 py-1 transition ease-in-out
                       delay-75 duration-300 hover:-translate-y-2">
                       <div class="flex w-full flex-col pr-3">
                         <!-- profile img-->
                         <div class="flex flex-row">
                           <img class="h-8 xl:h-9 rounded-full" src="<%= user.img%> " alt="">
                           <h2
-                            class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
+                            class="wavy-hover text-xl md:text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
                             <%= user.username %>
                           </h2>
                         </div>
                         <!-- user level and points text-->
                         <div class="group shadow-purple-900 flex align-middle rounded-full">
                           <h4
-                            class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
+                            class="group-hover:visible text-lg xl:text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
                             id="user-level">Level: <%= user.level %>
                           </h4>
                           &nbsp;
@@ -155,12 +158,19 @@
             });
           const burger = document.querySelector('#burger');
           const menu = document.querySelector('#menu');
+          const search = document.querySelector('#search');
+          const logo = document.querySelector('#logo');
 
           burger.addEventListener('click', (e) => {
             if (menu.classList.contains('hidden')) {
               menu.classList.remove('hidden');
+              search.classList.add('h-full');
+              logo.classList.add('h-full');
             } else {
               menu.classList.add('hidden');
+              search.classList.remove('align-top');
+              search.classList.remove('h-full');
+              logo.classList.remove('h-full');
             }
           });
       </script>
