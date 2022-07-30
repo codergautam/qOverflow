@@ -44,7 +44,7 @@
                 <% if(searchFeed.length <= 0) { %>
                     <div class="flex-col">
                         <div id="noQuestions" class="text-gray-500 text-center font-semibold text-xl">
-                            Sorry we're stumped!
+                           <%= typeof error !="undefined" ? "Something went wrong.. Please try again later" : "Sorry we're stumped!" %>
                             <br>...
                         </div>
                     </div>
@@ -129,7 +129,7 @@
                     searchFeed.children.item(count - 1).remove()
                 }
                 let childCount = searchFeed.childElementCount
-                lastResult = searchFeed.children.item(childCount-2).querySelector(".questionId").innerText
+                lastResult = searchFeed.children.item(childCount-1).querySelector(".questionId").innerText
                 implementMore()
             }
             

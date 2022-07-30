@@ -55,13 +55,13 @@
             <div class="ml-4 z-10  mt-2 px-4 pt-2">
                 <div class="inline-block py-4">
                     <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-t-md border-b-4 border-white">
-                        <span class="font-staat font-light">Email:</span> <%- user.email %> 
+                        <span class="font-staat font-light">Email:</span> <%= user.email %> 
                     </div>
                     <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-100 px-2 py-1 rounded-none">
-                        <span class="font-staat font-light">Questions:</span> <%- user.questions %> 
+                        <span class="font-staat font-light">Questions:</span> <%= user.questions %> 
                     </div>
                     <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-b-md border-t-4 border-white">
-                        <span class="font-staat font-light">Answers:</span> <%- user.answers%> 
+                        <span class="font-staat font-light">Answers:</span> <%= user.answers%> 
                     </div>
                 </div>
             </div>
@@ -149,7 +149,9 @@
                 feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                 <div class="px-4 py-4 ">
                                 <div class="hidden questionId">${question.question_id}</div>
-                                <div class="font-bold text-lg mb-2">${question.title}</div>
+                                <div class="font-bold text-lg mb-2">${question.title.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+})}</div>
                                 </div>
                                 <div class="pl-3 pr-6 pt-4 pb-2 ">
                                 <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: ${question.creator} </span>
@@ -301,11 +303,13 @@
             appendAnswer = (answer) => {
                 let feed = document.getElementById("answerFeed")
                 let color = (answer.accepted) ? "text-green-500" : "text-red-500"
-                feed.innerHTML += `<div class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                feed.innerHTML += `<div class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5" onclick="window.location.href='/answer/${answer.answer_id}?at=${answer.createdAt}&accepted=${answer.accepted}'">
                                             <div class="px-4 py-4 ">
-                                              <div class="text-base font-semibold mb-2">ACCEPTED: <span class="font-bold ${color}">${answer.accepted}</span></div>
+                                              <div class="text-base font-semibold mb-2"><span class="font-bold ${color}">${answer.accepted ? "Accepted" : "Not accepted"}</span></div>
                                               <p class="font-bold text-gray-700 text-lg w-5/6">
-                                               ${answer.text} 
+                                               ${answer.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+})} 
                                               </p>
                                             </div>
                                             <div class="pl-3 pr-6 pt-4 pb-2 ">
@@ -377,7 +381,7 @@
                     feed.children.item(count - 1).remove()
                 }
                 let childCount = feed.childElementCount
-                lastResultA = feed.children.item(childCount-2).querySelector(".answerId").innerText
+                lastResultA = feed.children.item(childCount-1).querySelector(".answerId").innerText
                 implementMoreA()
             }
             
