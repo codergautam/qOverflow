@@ -305,7 +305,7 @@
                 let color = (answer.accepted) ? "text-green-500" : "text-red-500"
                 feed.innerHTML += `<div class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                             <div class="px-4 py-4 ">
-                                              <div class="text-base font-semibold mb-2">ACCEPTED: <span class="font-bold ${color}">${answer.accepted}</span></div>
+                                              <div class="text-base font-semibold mb-2"><span class="font-bold ${color}">${answer.accepted ? "Accepted" : "Not accepted"}</span></div>
                                               <p class="font-bold text-gray-700 text-lg w-5/6">
                                                ${answer.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
    return '&#'+i.charCodeAt(0)+';';
