@@ -132,10 +132,10 @@ class Api {
         "$gt": 0
       }
     };
-    // if(typeof accepted != "undefined") match.hasAcceptedAnswer = accepted;
-    // if(createdAt) match.createdAt = {
-    //   $lte: Number(createdAt)
-    // }
+    // if(typeof accepted != "undefined") match.hasAcceptedAnswer = typeof accepted == "boolean" ? accepted : accepted == "false" ? false : true;
+    if(createdAt) match.createdAt = {
+      $lte: Number(createdAt)
+    }
     console.log(match);
     while (!found && !end) {
       var data = await this.getQuestions(undefined, undefined, match, last)
