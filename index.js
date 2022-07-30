@@ -505,7 +505,7 @@ app.get('/dashboard', async (req, res) => {
         loggedIn: req.session.loggedIn,
         user: req.session.user,
         error: true
-        
+
       })
     }
   } else {
@@ -655,6 +655,7 @@ app.post("/auth/signup", (req,res) => {
       res.redirect('/')
     } else {
       var err = data.error;
+      console.log(err)
       if(err == "an item with that \"email\" already exists") err = "Email taken!"
       else if(err == "an item with that \"username\" already exists") err = "Username taken!";
 
