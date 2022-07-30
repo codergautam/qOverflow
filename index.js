@@ -435,7 +435,8 @@ app.post('/search', async (req, res) => {
 
 
 app.get('/dashboard', async (req, res) => {
-  console.log(req.session)
+  console.log(req.session.user)
+  if(!req.session.loggedIn) return res.redirect('/')
   if(Object.keys(req.session.user).length != 0) {
       let data = await api.getUser(req.session.user.username).then(
         (data) => {
