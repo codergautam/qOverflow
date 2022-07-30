@@ -270,11 +270,16 @@ app.get('/mailResults/:after', async (req, res) => {
   if(after == 0) {
     console.log("recieved null")
     let data = await api.getUserMail(username)
-    data = data.messages
+    data = data?.messages
+    if(data) {
     data.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
+  
     res.send(JSON.stringify(data))
+  } else {
+    res.send({success:false, failed: true})
+  }
   } else {
     let data = await api.getUserMail(username, after)
     data = data.messages
@@ -460,6 +465,7 @@ app.get('/dashboard', async (req, res) => {
         }
         const questionData = await api.getUserQuestions(user.username)
         const answerData = await api.getUserAnswers(user.username)
+      if(questionData.success && answerData.success) {
         let questionFeed = (questionData.success) ? questionData.questions : null
         let answerFeed = (answerData.success) ? answerData.answers : null
         questionFeed.forEach((question) => {
@@ -494,6 +500,14 @@ app.get('/dashboard', async (req, res) => {
         req.session.loggedIn = false
         res.redirect('/auth/login')
       }
+    } else {
+      res.render('error', {
+        loggedIn: req.session.loggedIn,
+        user: req.session.user,
+        error: true
+        
+      })
+    }
   } else {
       req.session.loggedIn = false
       res.redirect('/auth/login')

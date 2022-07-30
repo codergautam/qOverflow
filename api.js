@@ -58,7 +58,7 @@ class Api {
         }
 
         try {
-          return JSON.parse(text);
+          return Math.random() > 0 ? JSON.parse(text) :{ success: false, failed: true };
         } catch (e) {
          if(count <= 3) return await this.sendRequest(endpoint, method, data, count + 1);
           else return { success: false, failed: true };
