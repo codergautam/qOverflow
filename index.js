@@ -135,6 +135,7 @@ var modifyPoints = async (amount, username) => {
     amount: amount
   })
 }
+   //modifyPoints(-33, "level2")
 
 
 
@@ -573,7 +574,7 @@ app.post('/questions',  async (req, res) => {
     if (dataStatus) { 
       res.redirect('/')
     } else {
-      res.redirect('/questionEditor', {username: username})
+      res.redirect('/questionEditor')
     }
  await modifyPoints(1, username)
 
@@ -1037,10 +1038,8 @@ app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
 
     getBasicData(req.query.user).then(data => {
-      console.log(req.session.loggedIn, req.session.user, req.session.user?.username == req.query.user)
 
       if(data.success && req.session.loggedIn && req.session.user && req.session.user.username == req.query.user) {
-        console.log("Caching basic data")
         req.session.user.points = data.points;
         req.session.user.img = data.pfp;
         req.session.user.level = data.level;
