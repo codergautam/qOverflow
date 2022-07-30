@@ -39,8 +39,7 @@
         <!-- <img class="mx-auto h-12 w-auto" src="" alt=""> -->
         <% if (typeof error != "undefined") { %>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <strong class="font-bold">Signup Failed!</strong>
-          <span class="block sm:inline"><%= error.msg %></span>
+          <strong class="font-bold"><%= error.msg ?? "Signup failed!" %></strong>
         </div>
         <% } %>
         <h2 class="text-center text-3xl font-extrabold text-gray-900">Create a qOverflow account</h2>
@@ -147,11 +146,11 @@
     return resultant
   }
   let mathQuestions = [
-    ["3x+12=0 \n x=?", -4],
-    ["5x+5=-5 \n x=?", -2],
-    ["11x-11=0 \n x=?", 1],
-    ["(x-3)^2=0 \n x=?", 3],
-    ["x=2 \n x+y=5 \n y=?", 3]
+    ["1+2=?", 3],
+    ["3+7=?", 10],
+    ["4-3=?", 1],
+    ["7-4=?", 3],
+    ["5+3=?", 8]
 ]
 let questionIndex = random(0,mathQuestions.length-1)
 console.log(questionIndex)

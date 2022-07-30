@@ -65,8 +65,8 @@ class Api {
         }
       } else {
         var status = req.status;
-        console.log(status);
-        if ((status != 404) || (status != 403)) {
+        console.log("status", status);
+        if ((status != 404) && (status != 403) && (status != 400)) {
           this.requestsInQueue--;
           return { success: false, failed: true };
         } else if (status == 404) {
@@ -89,6 +89,17 @@ class Api {
             var r = await req.text();
             r = JSON.parse(r);
             console.log(r);
+            return r;
+          } catch (e) {
+            console.log(e);
+           return { success: false, failed: true };
+          }
+        } else if(status == 400) {
+
+          this.requestsInQueue--;
+          try {
+            var r = await req.text();
+            r = JSON.parse(r);
             return r;
           } catch (e) {
             console.log(e);
