@@ -108,7 +108,9 @@
             let author = message.sender
             let subject = message.subject
             let messageText = message.text
-            let parsedText = marked.parse(messageText)
+            let parsedText = marked.parse(messageText.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+}))
             console.log(parsedText)
             // console.log(message)
             // console.log(text)

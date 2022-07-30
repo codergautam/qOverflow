@@ -224,7 +224,8 @@ app.get('/search', async (req, res) => {
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: questions,
-      user: req.session.user
+      user: req.session.user,
+      error: data.success ? undefined : true
     })
   } else {
     res.render('searchResult', {
@@ -404,12 +405,15 @@ app.post('/search', async (req, res) => {
     questions.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
+    
     res.render('searchResult', {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: questions, 
-      user: req.session.user
+      user: req.session.user,
+      error: data.success ? undefined : true
+
     })
   } else {
     res.render('searchResult', {
@@ -417,7 +421,8 @@ app.post('/search', async (req, res) => {
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: [],
-      user: req.session.user
+      user: req.session.user,
+      error: true
     })
   }
 })
@@ -756,11 +761,17 @@ app.post("/auth/login", async (req,res) => {
             }
             res.redirect('/')
         } else {
+          if(data.failed) {
+            res.render('login', {
+              error: {msg: user.failed ? "Something went wrong, please try again later.": "Invalid username"}
+            })
+          } else {
             res.render('login', {
                 error: {msg: "Incorrect password"},
                 badPassword: true
             })
         }
+      }
     
     })
 } else {
@@ -1204,7 +1215,9 @@ app.post("/api/question/:id/:type", (req,res) => {
   }
   type += "s";
   api.voteQuestion(id, req.session.user?.username, type, action).then(async data => {
+   
     res.send(JSON.stringify(data))
+    if(!data.success) return;
     var dir = action == "increment" ? 1 : -1;
     if(!questionOwnerCache[id]) questionOwnerCache[id] = await api.getQuestionOwner(id);
     var owner = questionOwnerCache[id];
@@ -1232,7 +1245,9 @@ app.post("/api/answer/:id/:type", (req,res) => {
   }
   type += "s";
   api.voteAnswer( question , id, req.session.user?.username, type, action).then(async data => {
+   
     res.send(JSON.stringify(data))
+    if(!data.success) return;
     var dir = action == "increment" ? 1 : -1;
     if(!answerOwnerCache[id]) answerOwnerCache[id] = await api.getAnswerOwner(question, id);
     var owner = answerOwnerCache[id];
@@ -1266,6 +1281,7 @@ app.post("/api/comment/:id/:type", (req,res) => {
   type += "s";
   api.voteComment( user, id, type, action, question, answer).then(data => {
     res.send(JSON.stringify(data))
+    if(!data.success) return;
     var dir = action == "increment" ? 1 : -1;
     dir *= type == "upvotes" ? 1 : -1;
     if(data.success) {

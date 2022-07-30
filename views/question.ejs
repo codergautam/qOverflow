@@ -424,7 +424,9 @@ list-style-position: inside;
   return portions[0];
 }
     document.getElementById('questionText').innerHTML =
-      marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
+      marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`).replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+}));
 
       var actiongoing = false;
     async function questionUp() {
@@ -670,10 +672,15 @@ ${ (loggedIn && ((<%= question.status == "open"%> &&(<%= (basicData.level >= 3 )
 var doc  = new DOMParser().parseFromString(t, "text/html");
 
         document.getElementById("answers").appendChild(doc.body.firstChild);
-  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(decodeURIComponent(answer.text));
+  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(decodeURIComponent(answer.text).replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+}));
 
 if( document.getElementById("acceptAnswer"+answer.answer_id)) {
+
   document.getElementById("acceptAnswer"+answer.answer_id).onclick = () => {
+    document.getElementById("acceptAnswer"+answer.answer_id).disabled = true;
+    document.getElementById("acceptAnswer"+answer.answer_id).innerHTML = "Accepting...";
   fetch("/acceptAnswer", {
     method: "POST",
     headers: {
@@ -685,13 +692,20 @@ if( document.getElementById("acceptAnswer"+answer.answer_id)) {
     })
   }).then(response => response.json()).then((j) => {
       if(j.success) {
+      
         const elements1 = document.querySelectorAll(`[id^="acceptAnswer"]`);
         [...elements1].forEach(element => {
           element.remove();
         });
         document.getElementById("hiddenAccept"+answer.answer_id).classList.remove("invisible");
 
+      } else {
+        document.getElementById("acceptAnswer"+answer.answer_id).disabled = false;
+        document.getElementById("acceptAnswer"+answer.answer_id).innerHTML = "Accept Answer";
       }
+  }).catch(err => {
+    document.getElementById("acceptAnswer"+answer.answer_id).disabled = false;
+    document.getElementById("acceptAnswer"+answer.answer_id).innerHTML = "Accept Answer";
   })
 }
 }
@@ -1071,7 +1085,9 @@ var remaining = [];
   <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
 
   document.getElementById("answerText").addEventListener("keyup", () => {
-    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value);
+    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+}));
 
     if(document.getElementById("answerText").value.length == 0) {
       document.getElementById("createAnswer").disabled = true;
@@ -1102,7 +1118,7 @@ var remaining = [];
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then(response => response.json()).then((j) => {
+    }).then(response => response.json()).then( async(j) => {
       if(j.success) {
         <% if(loggedIn) { %>
 
@@ -1110,7 +1126,12 @@ var remaining = [];
         document.getElementById("previewText").innerHTML = "";
         document.getElementById("createDiv").style.display = "none";
         <% } %>
-        appendAnswer(j.answer);
+      document.getElementById("answers").insertAdjacentHTML("beforeend", `<div id="spinneranswer" class="px-4 py-4 "><img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
+
+        await appendAnswer(j.answer);
+
+       document.getElementById("mainAnswerDiv"+j.answer.answer_id).classList.remove("hidden");
+        document.getElementById("spinneranswer").remove();
       }
     });
   });
