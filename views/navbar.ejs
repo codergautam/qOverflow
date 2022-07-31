@@ -83,34 +83,7 @@
                         Mail</h2>
                     </div>
                   </a>
-                  <a href="/dashboard" class="w-max justify-self-end lg:place-content-center md:grid align-middle">
-                    <!-- Dashboard Icon -->
-                    <div
-                      class="group hover:shadow-2xl w-full shadow-purple-900 align-middle md:pl-2 py-1 transition ease-in-out
-                      delay-75 duration-300 hover:-translate-y-2">
-                      <div class="flex w-full flex-col pr-3">
-                        <!-- profile img-->
-                        <div class="flex flex-row">
-                          <img class="h-8 xl:h-9 rounded-full" src="<%= user.img%> " alt="">
-                          <h2
-                            class="wavy-hover text-xl md:text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
-                            <%= user.username %>
-                          </h2>
-                        </div>
-                        <!-- user level and points text-->
-                        <div class="group shadow-purple-900 flex align-middle rounded-full">
-                          <h4
-                            class="group-hover:visible text-lg xl:text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
-                            id="user-level">Level: <%= user.level %>
-                          </h4>
-                          &nbsp;
-                          <h4
-                            class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-white transition-all delay-75 duration-300 ease-in-out"
-                            id="user-points">Points: <%= user.points %>
-                          </h4>
-                        </div>
-                      </div>
-                    </a>
+                  
                     <a href="/dashboard" class="w-fill md:place-content-center md:grid align-middle">
                       <!-- Dashboard Icon -->
                       <div
@@ -120,21 +93,21 @@
                           <!-- profile img-->
                           <% if(typeof user != undefined) { %>
                           <div class="flex flex-row">
-                            <img class="h-8 xl:h-9 rounded-full" src="<%= user?.img%> " alt="">
+                            <img class="h-8 mr-1 xl:h-9 rounded-full" src="<%= user?.img%> " alt="">
                             <h2
-                              class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-gray-700 transition-all delay-75 duration-100 ease-in-out">
+                              class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
                               <%= user?.username %>
                             </h2>
                           </div>
                           <!-- user level and points text-->
                           <div class="group shadow-purple-900 flex align-middle rounded-full">
                             <h4
-                              class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                              class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
                               id="user-level">Level: <%= user?.level %>
                             </h4>
                             &nbsp;
                             <h4
-                              class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                              class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-white transition-all delay-75 duration-300 ease-in-out"
                               id="user-points">Points: <%= user?.points %>
                             </h4>
                           </div>
@@ -201,6 +174,8 @@
             } else {
               menu.classList.add('hidden');
               search.classList.add('items-center');
+              search.classList.add('flex');
+              search.classList.add('align-');
               search.classList.add('flex');
               search.classList.remove('mt-2');
               logo.classList.remove('h-full');
