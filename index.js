@@ -135,7 +135,6 @@ var modifyPoints = async (amount, username) => {
     amount: amount
   })
 }
-   //modifyPoints(-33, "level2")
 
 
 
@@ -656,7 +655,13 @@ app.post("/auth/signup", (req,res) => {
   api.createUser(username, email, password).then(data => {
     if(data.success) {
       req.session.loggedIn = true
-
+      if(req.body.remember) {
+        req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7 * 30;
+        req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
+     } else {
+        req.session.cookie.maxAge = 1000 * 60 * 30;
+        req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 30);
+     }
       req.session.user = {
         username: data.user.username,
         user_id: data.user.user_id,
@@ -787,7 +792,10 @@ app.post("/auth/login", async (req,res) => {
     console.log("Missing username or password")
     return
   }
-
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+  res.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+  res.setHeader("Expires", "0"); // Proxies.
+  
   var user = await api.getUser(username);
   // console.log(user)
   if(user.success && user) {
@@ -802,7 +810,7 @@ app.post("/auth/login", async (req,res) => {
               req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
            } else {
               req.session.cookie.maxAge = 1000 * 60 * 30;
-              req.session.cookie.expires = new Date(Date.now() + 1000);
+              req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 30);
            }
             req.session.user = {
                 username: user.user.username,
@@ -818,6 +826,7 @@ app.post("/auth/login", async (req,res) => {
               error: {msg: user.failed ? "Something went wrong, please try again later.": "Invalid username"}
             })
           } else {
+            
             res.render('login', {
                 error: {msg: "Incorrect password"},
                 badPassword: true
@@ -1360,11 +1369,96 @@ var liveCache = {
   views: {},
   answerCount: {},
 };
+
+var answerVoteCache = {};
+var questionCommentCache = {};
+
+var answerCommentCache = {};
+
 io.on('connection', (socket) => {
-  // console.log('a user connected');
+  console.log('a user connected');
   var lastRecieved = 0;
+
+
+  socket.on('questionCommentVoteCount', async (questionId, commentId) => {
+    if(questionCommentCache[questionId] && questionCommentCache[questionId][commentId] && Date.now() - questionCommentCache[questionId][commentId].time < 15000) {
+      socket.emit('questionCommentVoteCount', [questionId, commentId, questionCommentCache[questionId][commentId].votes]);
+      return;
+    } else {
+    var comments = await api.getAllQuestionComments(questionId);
+    if(comments.success) {
+      if(!questionCommentCache[questionId]) questionCommentCache[questionId] = {};
+    var comment = comments.comments.find(c => c.comment_id == commentId);
+    if(comment) {
+      questionCommentCache[questionId][commentId] = {
+        votes: comment.upvotes - comment.downvotes,
+        time: Date.now()
+      };
+      socket.emit("questionCommentVoteCount", [questionId, commentId, comment.upvotes - comment.downvotes]);
+
+
+      comments.comments.forEach(c => {
+        questionCommentCache[questionId][c.comment_id] = {
+          votes: c.upvotes - c.downvotes,
+          time: Date.now()
+        }
+        });
+    }
+  }
+}
+  })
+
+  socket.on('answerCommentVoteCount', async (questionId, answerId, commentId) => {
+    if(answerCommentCache[questionId] && answerCommentCache[questionId][answerId] && answerCommentCache[questionId][answerId][commentId] && Date.now() - answerCommentCache[questionId][answerId][commentId].time < 15000) {
+      socket.emit('questionCommentVoteCount', [questionId, answerId , commentId, answerCommentCache[questionId][answerId][commentId].votes]);
+      return;
+    } else {
+    var comments = await api.getAllAnswerComments(questionId, answerId);
+    if(comments.success) {
+      if(!answerCommentCache[questionId]) answerCommentCache[questionId] = {};
+      if(!answerCommentCache[questionId][answerId]) answerCommentCache[questionId][answerId] = {};
+    var comment = comments.comments.find(c => c.comment_id == commentId);
+    if(comment) {
+      answerCommentCache[questionId][answerId][commentId] = {
+        votes: comment.upvotes - comment.downvotes,
+        time: Date.now()
+      };
+      socket.emit("answerCommentVoteCount", [questionId, answerId , commentId, comment.upvotes - comment.downvotes]);
+
+
+      comments.comments.forEach(c => {
+        answerCommentCache[questionId][answerId][c.comment_id] = {
+          votes: c.upvotes - c.downvotes,
+          time: Date.now()
+        }
+        });
+    }
+  }
+}
+  });
+
+  socket.on('answerVoteCount', (a) => {
+    
+    var answer = a[0];
+    var question = a[1];
+    if(answerVoteCache[question] && answerVoteCache[question][answer] && Date.now() - answerVoteCache[question][answer].time < 10000) {
+      socket.emit("answerVoteCount", [answer, question, answerVoteCache[question][answer].votes]);
+
+    } else {
+    api.getAnswer(question, answer).then(data => {
+      if(data.answer_id) {
+        if(!answerVoteCache[question])  answerVoteCache[question] = {};
+        var count = data.upvotes + data.downvotes;
+        answerVoteCache[question][answer] = {votes: count, time: Date.now()};
+
+          socket.emit("answerVoteCount", [question, answer, count])
+        console.log("answerVoteCount", question, answer, count)
+      }
+    });
+  }
+  })
   socket.on("getVotes", (qId) => {
-    if(Date.now() - lastRecieved < 100)  return
+    // if(Date.now() - lastRecieved < 100)  return
      lastRecieved = Date.now();
     if(liveCache.votes[qId] && Date.now() - liveCache.votes[qId].time < 10000) {
       socket.emit("questionVotes", liveCache.votes[qId].data, qId);
@@ -1396,11 +1490,14 @@ io.on('connection', (socket) => {
   }
   })
   socket.on("getViews", (qId) => {
-    if(Date.now() - lastRecieved < 100)  return
+
+    // if(Date.now() - lastRecieved < 100)  return
+    console.log("getViews", qId)
 
 
-    if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 10) {
+    if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 5) {
       socket.emit("questionViews", liveCache.views[qId].data, qId);
+
     } else {
       console.log(liveCache.views[qId])
       if(liveCache.votes[qId]) {
@@ -1423,6 +1520,7 @@ io.on('connection', (socket) => {
           data: data.question.answers
         }
         socket.emit("questionViews", liveCache.views[qId].data,qId);
+
       }
     });
   }
@@ -1432,8 +1530,7 @@ io.on('connection', (socket) => {
 
 
      lastRecieved = Date.now();
-
-    if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 10) {
+    if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 5) {
       socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
     } else {
       console.log(liveCache.views[qId])
