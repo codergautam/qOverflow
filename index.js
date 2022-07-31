@@ -1382,7 +1382,7 @@ io.on('connection', (socket) => {
 
   socket.on('questionCommentVoteCount', async (questionId, commentId) => {
     if(questionCommentCache[questionId] && questionCommentCache[questionId][commentId] && Date.now() - questionCommentCache[questionId][commentId].time < 15000) {
-      socket.emit('questionCommentVoteCount', [questionId, commentId, questionCommentCache[questionId][commentId].votes]);
+      socket.emit('questionCommentVoteCount', [questionId, commentId, questionCommentCache[questionId][commentId].votes, questionCommentCache[questionId][commentId].time]);
       return;
     } else {
     var comments = await api.getAllQuestionComments(questionId);
@@ -1394,7 +1394,7 @@ io.on('connection', (socket) => {
         votes: comment.upvotes - comment.downvotes,
         time: Date.now()
       };
-      socket.emit("questionCommentVoteCount", [questionId, commentId, comment.upvotes - comment.downvotes]);
+      socket.emit("questionCommentVoteCount", [questionId, commentId, comment.upvotes - comment.downvotes, Date.now()]);
 
 
       comments.comments.forEach(c => {
@@ -1410,7 +1410,7 @@ io.on('connection', (socket) => {
 
   socket.on('answerCommentVoteCount', async (questionId, answerId, commentId) => {
     if(answerCommentCache[questionId] && answerCommentCache[questionId][answerId] && answerCommentCache[questionId][answerId][commentId] && Date.now() - answerCommentCache[questionId][answerId][commentId].time < 15000) {
-      socket.emit('questionCommentVoteCount', [questionId, answerId , commentId, answerCommentCache[questionId][answerId][commentId].votes]);
+      socket.emit('questionCommentVoteCount', [questionId, answerId , commentId, answerCommentCache[questionId][answerId][commentId].votes, answerCommentCache[questionId][answerId][commentId].time]);
       return;
     } else {
     var comments = await api.getAllAnswerComments(questionId, answerId);
@@ -1423,7 +1423,7 @@ io.on('connection', (socket) => {
         votes: comment.upvotes - comment.downvotes,
         time: Date.now()
       };
-      socket.emit("answerCommentVoteCount", [questionId, answerId , commentId, comment.upvotes - comment.downvotes]);
+      socket.emit("answerCommentVoteCount", [questionId, answerId , commentId, comment.upvotes - comment.downvotes, Date.now()]);
 
 
       comments.comments.forEach(c => {
@@ -1442,7 +1442,7 @@ io.on('connection', (socket) => {
     var answer = a[0];
     var question = a[1];
     if(answerVoteCache[question] && answerVoteCache[question][answer] && Date.now() - answerVoteCache[question][answer].time < 10000) {
-      socket.emit("answerVoteCount", [answer, question, answerVoteCache[question][answer].votes]);
+      socket.emit("answerVoteCount", [answer, question, answerVoteCache[question][answer].votes, answerVoteCache[question][answer].time]);
 
     } else {
     api.getAnswer(question, answer).then(data => {
@@ -1451,7 +1451,7 @@ io.on('connection', (socket) => {
         var count = data.upvotes + data.downvotes;
         answerVoteCache[question][answer] = {votes: count, time: Date.now()};
 
-          socket.emit("answerVoteCount", [question, answer, count])
+          socket.emit("answerVoteCount", [question, answer, count, Date.now()]);
         console.log("answerVoteCount", question, answer, count)
       }
     });
@@ -1461,7 +1461,7 @@ io.on('connection', (socket) => {
     // if(Date.now() - lastRecieved < 100)  return
      lastRecieved = Date.now();
     if(liveCache.votes[qId] && Date.now() - liveCache.votes[qId].time < 10000) {
-      socket.emit("questionVotes", liveCache.votes[qId].data, qId);
+      socket.emit("questionVotes", liveCache.votes[qId].data, qId, liveCache.votes[qId].time);
     } else {
       console.log(liveCache.views[qId])
       if(liveCache.votes[qId]) {
@@ -1483,7 +1483,7 @@ io.on('connection', (socket) => {
           time: Date.now(),
           data: data.question.answers
         }
-        socket.emit("questionVotes", liveCache.votes[qId].data, qId);
+        socket.emit("questionVotes", liveCache.votes[qId].data, qId, liveCache.votes[qId].time);
       }
 
     });
@@ -1496,7 +1496,7 @@ io.on('connection', (socket) => {
 
 
     if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 5) {
-      socket.emit("questionViews", liveCache.views[qId].data, qId);
+      socket.emit("questionViews", liveCache.views[qId].data, qId, liveCache.views[qId].time);
 
     } else {
       console.log(liveCache.views[qId])
@@ -1519,7 +1519,7 @@ io.on('connection', (socket) => {
           time: Date.now(),
           data: data.question.answers
         }
-        socket.emit("questionViews", liveCache.views[qId].data,qId);
+        socket.emit("questionViews", liveCache.views[qId].data,qId, liveCache.views[qId].time);
 
       }
     });
@@ -1531,7 +1531,7 @@ io.on('connection', (socket) => {
 
      lastRecieved = Date.now();
     if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 5) {
-      socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
+      socket.emit("answerCount", liveCache.answerCount[qId].data,qId, liveCache.answerCount[qId].time);
     } else {
       console.log(liveCache.views[qId])
       if(liveCache.votes[qId]) {
@@ -1553,7 +1553,7 @@ io.on('connection', (socket) => {
           time: Date.now(),
           data: data.question.answers
         }
-        socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
+        socket.emit("answerCount", liveCache.answerCount[qId].data,qId, liveCache.answerCount[qId].time);
       }
     });
   }
