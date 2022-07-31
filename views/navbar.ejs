@@ -1,26 +1,26 @@
 <html>
-<nav class="bg-teal-600 py-1 relative max-h-screen w-full grid">
+<nav class="bg-teal-600 py-1 relative max-h-screen w-screen grid">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dosis&family=Edu+Sa+Beginner&family=Helvetica&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap');
   </style>
-  <div class="grid place-self-center">
+  <a href="/" class="grid place-self-center">
     <img class
       src="https://cdn.discordapp.com/attachments/977969159944163380/1002707119021228134/qOverflowLogoSmall.png"
       width="245" height="90">
-  </div>
+  </a>
   <div class=" w-full lg:h-20 xl:h-24 mx-auto px-1 md:px-3 lg:px-4 max-h-screen flex place-content-center">
     <div class="w-full flex justify-between max-h-screen relative">
       <div id="logo">
         <!-- Logo -->
-        <a href="/dashboard" class="place-content-center items-center grid lg:align-middle">
+        <div class="place-content-center items-center grid lg:align-middle">
           <div
             class="group w-12 sm:w-14 xl:w-20 align-left flex align-middle rounded-full mr-2 sm:mr-3 md:mr-4 xl:mr-7 py-1 transition delay-75 duration-300">
             <img src="https://bdpa.org/wp-content/uploads/2020/12/f0e60ae421144f918f032f455a2ac57a.png">
           </div>
-        </a>
+        </div>
       </div>
       <div class="flex items-center w-full place-content-center" id="search">
-        <div class="w-fill fixed flex group pr-2 md:pr-0 text-left lg:relative place-content-center">
+        <div class="w-fill fixed flex group pr-2 md:pr-0 text-left lg:relative place-content-center" id="search2">
           <form class="flex" action="/search" method="POST">
             <input id="1" name="searchQuery" type="text" required
               class="h-9 w-40 sm:w-80 sm:h-12 lg:h-12 lg:w-80 xl:h-14 xl:w-96 appearance-none rounded-none rounded-l-lg relative block px-3 pr-3 lg:py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-sm sm:text-lg lg:text-lg xl-text-xl font-semibold focus:ring-1"
@@ -249,15 +249,9 @@
       burger.addEventListener('click', (e) => {
         if (menu.classList.contains('hidden')) {
           menu.classList.remove('hidden');
-          search.classList.remove('items-center');
-          search.classList.add('mt-2');
           logo.classList.add('h-full');
         } else {
           menu.classList.add('hidden');
-          search.classList.add('items-center');
-          search.classList.add('flex');
-          search.classList.add('items-center');
-          search.classList.remove('mt-2');
           logo.classList.remove('h-full');
         }
       });
