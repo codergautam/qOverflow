@@ -656,6 +656,7 @@ app.post("/auth/signup", (req,res) => {
   api.createUser(username, email, password).then(data => {
     if(data.success) {
       req.session.loggedIn = true
+
       req.session.user = {
         username: data.user.username,
         user_id: data.user.user_id,
@@ -795,6 +796,14 @@ app.post("/auth/login", async (req,res) => {
     api.loginUser(username, password, salt).then(data => {
         if(data.success) {
             req.session.loggedIn = true
+            console.log(req.body, "RMEMFDMG")
+           if(req.body.remember) {
+              req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7 * 30;
+              req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
+           } else {
+              req.session.cookie.maxAge = 1000 * 60 * 30;
+              req.session.cookie.expires = new Date(Date.now() + 1000);
+           }
             req.session.user = {
                 username: user.user.username,
                 user_id: user.user.user_id,
