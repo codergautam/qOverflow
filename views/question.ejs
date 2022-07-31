@@ -16,6 +16,9 @@
         window.odometerOptions = {
   duration: 1, // Change how long the javascript expects the CSS animation to take
 };
+
+window.timecache = {};
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <!-- <link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
@@ -244,6 +247,8 @@ list-style-position: inside;
                         <% } %>
 
                       <script>
+ var startTime = Date.now();
+
                           function removeVote() {
     fetch(`/api/removeStatusVote/<%= question.question_id %>`, {
                               method: 'POST',
@@ -452,9 +457,19 @@ list-style-position: inside;
             var curVotes = document.getElementById("voteQ").innerHTML;
             if(action === "increment") {
               document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
+
+
+
             } else {
               document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
             }
+            if(!window.timecache["<%= question.question_id %>"]) {
+                window.timecache["<%= question.question_id %>"] = {
+                  votes: Date.now(),
+                  answers: startTime,
+                  views: startTime
+                };
+              }
           }
         } catch(e) {
           console.log(e);
@@ -492,6 +507,13 @@ list-style-position: inside;
             } else {
               document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
             }
+            if(!window.timecache["<%= question.question_id %>"]) {
+                window.timecache["<%= question.question_id %>"] = {
+                  votes: Date.now(),
+                  answers: startTime,
+                  views: startTime
+                };
+              }
           }
         } catch(e) {
           console.log(e);
@@ -611,35 +633,80 @@ return visibleAnswersArray;
     socket.emit("getAnswerCount", "<%= question.question_id %>");
   }, 5000);
 
-  socket.on("questionViews", (cnt, id) => {
+var startTime = Date.now();
+
+  socket.on("questionViews", (cnt, id, time) => {
     if(!(id == "<%= question.question_id %>")) {
       return;
     }
-    document.getElementById("viewCount").innerHTML = cnt + " views";
+    if(!window.timecache[id] ) {
+      window.timecache[id] = {
+        views: startTime,
+        votes: startTime,
+        answers: startTime,
+      }
+    }
+
+    if(window.timecache[id].views <= time) {
+      window.timecache[id].views = time;
+      document.getElementById("viewCount").innerHTML = cnt + " views";
+    }
   })
 
-  socket.on("questionVotes", (data, id) => {
+  socket.on("questionVotes", (data, id, time) => {
     if(!(id == "<%= question.question_id %>")) {
       return;
     }
+    if(!window.timecache[id] ) {
+      window.timecache[id] = {
+        views: startTime,
+        votes: startTime,
+        answers: startTime,
+      }
+    }
+
+    if(window.timecache[id].votes <= time) {
+      window.timecache[id].votes = time;
+    
     if(!actiongoing) document.getElementById("voteQ").innerHTML = data.upvotes - data.downvotes;
+    }
   })
 
-  socket.on("answerCount", (cnt, id) => {
+  socket.on("answerCount", (cnt, id, time) => {
     if(id == "<%= question.question_id %>") {
+      if(!window.timecache[id] ) {
+      window.timecache[id] = {
+        views: startTime,
+        votes: startTime,
+        answers: startTime,
+      }
+    }
+
+    if(window.timecache[id].answers <= time) {
+      window.timecache[id].answers = time;
       document.getElementById("answerCount").innerHTML = cnt + " answers";
     }
+    }
   })
 
-  socket.on("answerVoteCount", ([question, answer, count]) => {
+  socket.on("answerVoteCount", ([question, answer, count, time]) => {
     // alert(question, answer, count);
     if(question == "<%= question.question_id %>") {
+      
       if(document.getElementById("voteA"+answer)) {
+        if(!window.timecache[answer] ) {
+      window.timecache[answer] = {
+        votes: startTime,
+      }
+    }
+
+    if(window.timecache[answer].votes <= time) {
+      window.timecache[answer].votes = time;
         document.getElementById("voteA"+answer).innerHTML = count;
       }
     }
   }
-  )
+})
 
   fetch("/getBasicData?user=<%= question.creator %>").then(response => response.json()).then((j) => {
     if(j.success) {
@@ -826,6 +893,11 @@ if( document.getElementById("acceptAnswer"+answer.answer_id)) {
           } else {
             document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount - 1;
           }
+          if(!window.timecache[answer.answer_id]) {
+                window.timecache[answer.answer_id] = {
+                  votes: Date.now(),
+                };
+              }
 
         // document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
       }
@@ -858,6 +930,11 @@ j =await j.json();
           } else {
             document.getElementById("voteA"+answer.answer_id).innerHTML = curVoteCount + 1;
           }
+          if(!window.timecache[answer.answer_id]) {
+                window.timecache[answer.answer_id] = {
+                  votes: Date.now(),
+                };
+              }
   }
 
 return;

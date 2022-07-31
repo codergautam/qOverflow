@@ -289,26 +289,50 @@ getQuestionsOnScreen().forEach((e) => {
 });
 }, 21000);
 
+var cacheUpdates = {};
+var startTime = Date.now();
 
 
-
-socket.on("questionViews", (cnt, id) => {
+socket.on("questionViews", (cnt, id, checkedTime) => {
   if(domIdExists(id+"views")) {
-    document.getElementById(id+"views").innerHTML = cnt + " views";
+    if(!cacheUpdates[id]) cacheUpdates[id] = {
+      views: startTime,
+      answers: startTime,
+      votes: startTime
+    };
+    if(cacheUpdates[id].views <= checkedTime) {
+      cacheUpdates[id].views = checkedTime;
+      document.getElementById(id+"views").innerHTML = cnt+" views";
+    }
   }
 })
 
-socket.on("answerCount", (cnt, id) => {
+socket.on("answerCount", (cnt, id, checkedTime) => {
   if(domIdExists(id+"answers")) {
-//  alert(cnt);
-    document.getElementById(id+"answers").innerHTML = cnt + " answers";
+    if(!cacheUpdates[id]) cacheUpdates[id] = {
+      views: startTime,
+      answers: startTime,
+      votes: startTime
+    };
+    if(cacheUpdates[id].answers <= checkedTime) {
+      cacheUpdates[id].answers = checkedTime;
+      document.getElementById(id+"answers").innerHTML = cnt+" answers";
+    }
   }
 })
 
 socket.on("questionVotes", (cnt, id) => {
 
   if(domIdExists(id+"points")) {
-    document.getElementById(id+"points").innerHTML = (cnt.upvotes - cnt.downvotes) + " points";
+    if(!cacheUpdates[id]) cacheUpdates[id] = {
+      views: startTime,
+      answers: startTime,
+      votes: startTime
+    };
+    if(cacheUpdates[id].votes <= checkedTime) {
+      cacheUpdates[id].votes = checkedTime;
+      document.getElementById(id+"answers").innerHTML = cnt+" answers";
+    }
   }
 })
 
