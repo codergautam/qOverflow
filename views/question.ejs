@@ -424,7 +424,9 @@ list-style-position: inside;
   return portions[0];
 }
     document.getElementById('questionText').innerHTML =
-      marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`));
+      marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`).replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+}));
 
       var actiongoing = false;
     async function questionUp() {
@@ -602,7 +604,7 @@ list-style-position: inside;
   
 
 
-async function appendAnswer(answer) {
+async function appendAnswer(answer, beforeShowMore=false) {
   var id = answer.answer_id;
   var answerComments = answer.comments;
   var hasAcceptedAnswer = <%= question.hasAcceptedAnswer %>
@@ -667,13 +669,23 @@ ${ (loggedIn && ((<%= question.status == "open"%> &&(<%= (basicData.level >= 3 )
         </div> `
 
 // string to DOM element
+
+if(!beforeShowMore) {
 var doc  = new DOMParser().parseFromString(t, "text/html");
 
         document.getElementById("answers").appendChild(doc.body.firstChild);
-  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(decodeURIComponent(answer.text));
+} else {
+  document.getElementById("showMore").parentElement.insertAdjacentHTML("beforebegin", t);
+}
+  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(decodeURIComponent(answer.text).replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+}));
 
 if( document.getElementById("acceptAnswer"+answer.answer_id)) {
+
   document.getElementById("acceptAnswer"+answer.answer_id).onclick = () => {
+    document.getElementById("acceptAnswer"+answer.answer_id).disabled = true;
+    document.getElementById("acceptAnswer"+answer.answer_id).innerHTML = "Accepting...";
   fetch("/acceptAnswer", {
     method: "POST",
     headers: {
@@ -685,13 +697,20 @@ if( document.getElementById("acceptAnswer"+answer.answer_id)) {
     })
   }).then(response => response.json()).then((j) => {
       if(j.success) {
+      
         const elements1 = document.querySelectorAll(`[id^="acceptAnswer"]`);
         [...elements1].forEach(element => {
           element.remove();
         });
         document.getElementById("hiddenAccept"+answer.answer_id).classList.remove("invisible");
 
+      } else {
+        document.getElementById("acceptAnswer"+answer.answer_id).disabled = false;
+        document.getElementById("acceptAnswer"+answer.answer_id).innerHTML = "Accept Answer";
       }
+  }).catch(err => {
+    document.getElementById("acceptAnswer"+answer.answer_id).disabled = false;
+    document.getElementById("acceptAnswer"+answer.answer_id).innerHTML = "Accept Answer";
   })
 }
 }
@@ -853,10 +872,15 @@ return;
          fetch('/answerComments', {method: 'POST', body: JSON.stringify({answer: id, question: "<%= question.question_id %>", after: lastAppended}),         headers: {
           'Content-Type': 'application/json'
         }}).then((s) => s.json()).then((j) => {
+          if(j.success) {
           if(j.comments.length > 0) {
             remainingComments = j.comments;
             recursiveShowMoreComments();
           }
+        } else {
+          alert("Failed to load comments, please try again later");
+          document.getElementId("showComments"+id).click();
+        }
         })
       }
     }
@@ -907,6 +931,9 @@ try {
             await appendComment(comments[i], id);
         }
       }
+      } else {
+        alert("Failed to load comments, please try again later");
+        document.getElementById("showComments"+id).click();
       }
     } catch(e) {
       console.log(e);
@@ -983,8 +1010,9 @@ hideThisCommentList();
   console.log(document.getElementById("mainAnswerDiv"+answer.answer_id))
 
 };
-var pageSize = 2;
+var pageSize = 1;
 var remaining = [];
+
   fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
     if(j.success) {
       // j.answers.forEach((answer) => {
@@ -1002,24 +1030,7 @@ var remaining = [];
         document.getElementById("createDiv").style.display = "block";
         <% } %>
       }
-
-     async function showPage() {
-    // get 5 from remaining
-    var page = [];
-    for(var i = 0; i < pageSize; i++) {
-      if(remaining.length > 0) {
-        page.push(remaining.shift());
-      }
-    }
-    for (var i = 0; i < page.length; i++) {
-     await appendAnswer(page[i]);
-    }
-
-  }
-
-  
-
-  function appendShowMore() {
+      function appendShowMore() {
     var btn = `<div class="flex justify-center items-center">
       <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold my-5 py-2 px-4 rounded" id="showMore">
         Show more answers
@@ -1046,6 +1057,23 @@ var remaining = [];
 
     };
   }
+     async function showPage() {
+    // get 5 from remaining
+    var page = [];
+    for(var i = 0; i < pageSize; i++) {
+      if(remaining.length > 0) {
+        page.push(remaining.shift());
+      }
+    }
+    for (var i = 0; i < page.length; i++) {
+     await appendAnswer(page[i]);
+    }
+
+  }
+
+  
+
+
 
   await showPage();
   if(remaining.length > 0) {
@@ -1063,6 +1091,25 @@ var remaining = [];
         div.classList.remove("hidden");
       })
 
+    } else {
+      // remove spinners
+      try {
+      document.getElementById("spinneranswer").remove();
+      } catch(err) {
+        console.log(err);
+      }
+      var errorHtml = 
+      `<div class="flex justify-center items-center">
+        <div class="bg-red-500  font-bold my-5 py-2 px-4 rounded" id="error">
+          Failed to fetch answers, please try refreshing.
+        </div>
+        </div>
+        `
+      // dom parser
+      var parser = new DOMParser();
+      var errorDom = parser.parseFromString(errorHtml, "text/html");
+      document.getElementById("answers").appendChild(errorDom.body.firstChild);
+      
     }
   })
 
@@ -1071,7 +1118,9 @@ var remaining = [];
   <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
 
   document.getElementById("answerText").addEventListener("keyup", () => {
-    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value);
+    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+}));
 
     if(document.getElementById("answerText").value.length == 0) {
       document.getElementById("createAnswer").disabled = true;
@@ -1102,7 +1151,7 @@ var remaining = [];
       headers: {
         'Content-Type': 'application/json'
       }
-    }).then(response => response.json()).then((j) => {
+    }).then(response => response.json()).then( async(j) => {
       if(j.success) {
         <% if(loggedIn) { %>
 
@@ -1110,7 +1159,15 @@ var remaining = [];
         document.getElementById("previewText").innerHTML = "";
         document.getElementById("createDiv").style.display = "none";
         <% } %>
-        appendAnswer(j.answer);
+      document.getElementById("answers").insertAdjacentHTML("beforeend", `<div id="spinneranswer" class="px-4 py-4 "><img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
+
+
+        await appendAnswer(j.answer, document.getElementById("showMore") ? true : false);
+
+
+
+       document.getElementById("mainAnswerDiv"+j.answer.answer_id).classList.remove("hidden");
+        document.getElementById("spinneranswer").remove();
       }
     });
   });
@@ -1349,6 +1406,9 @@ async function showComments(where="") {
               if(j.success && j.comments.length > 0) {
                 remainingComments = j.comments;
                 recursiveShowMoreComments();
+              } else if(!j.success) {
+                alert("Failure to load comments, please try again later");
+                document.getElementById("showComments"+where).click();
               }
             });
           }
@@ -1358,7 +1418,7 @@ async function showComments(where="") {
 appendCommentSpinner()
       fetch("/questionComments?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
       document.getElementById("showComments"+where).disabled = false;
-    if(j.comments.length < 1) destroyCommentSpinner();
+    if(j.success && j.comments.length < 1) destroyCommentSpinner();
         
         if(j.success) {
           for (var i = 0; i < j.comments.length; i++) {
@@ -1385,6 +1445,9 @@ appendCommentSpinner()
               }
             } else await appendComment(j.comments[i], where);
           }
+        } else {
+          alert("Failure to load comments, please try again later");
+          document.getElementById("showComments"+where).click();
         }
       }).catch(err => {console.log(err)
         document.getElementById("showComments"+where).disabled = false;

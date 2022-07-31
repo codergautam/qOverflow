@@ -135,6 +135,7 @@ var modifyPoints = async (amount, username) => {
     amount: amount
   })
 }
+   //modifyPoints(-33, "level2")
 
 
 
@@ -224,7 +225,8 @@ app.get('/search', async (req, res) => {
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: questions,
-      user: req.session.user
+      user: req.session.user,
+      error: data.success ? undefined : true
     })
   } else {
     res.render('searchResult', {
@@ -255,6 +257,33 @@ app.get('/searchResults/:after', async (req, res) => {
   } else {
     let data = await api.getQuestions(null, regexQuery, matchQuery, after)
     data = data.questions
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+    res.send(JSON.stringify(data))
+  }
+})
+
+app.get('/mailResults/:after', async (req, res) => {
+  const after = req.params.after
+  const username = req.session.user.username
+  console.log("After: " + after)
+  if(after == 0) {
+    console.log("recieved null")
+    let data = await api.getUserMail(username)
+    data = data?.messages
+    if(data) {
+    data.forEach((q) => {
+      q.timeElapsed = msToTime(Date.now() - q.createdAt)
+    })
+  
+    res.send(JSON.stringify(data))
+  } else {
+    res.send({success:false, failed: true})
+  }
+  } else {
+    let data = await api.getUserMail(username, after)
+    data = data.messages
     data.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
@@ -382,12 +411,15 @@ app.post('/search', async (req, res) => {
     questions.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
+    
     res.render('searchResult', {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: questions, 
-      user: req.session.user
+      user: req.session.user,
+      error: data.success ? undefined : true
+
     })
   } else {
     res.render('searchResult', {
@@ -395,7 +427,8 @@ app.post('/search', async (req, res) => {
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: [],
-      user: req.session.user
+      user: req.session.user,
+      error: true
     })
   }
 })
@@ -403,7 +436,8 @@ app.post('/search', async (req, res) => {
 
 
 app.get('/dashboard', async (req, res) => {
-  console.log(req.session)
+  console.log(req.session.user)
+  if(!req.session.loggedIn) return res.redirect('/')
   if(Object.keys(req.session.user).length != 0) {
       let data = await api.getUser(req.session.user.username).then(
         (data) => {
@@ -433,6 +467,7 @@ app.get('/dashboard', async (req, res) => {
         }
         const questionData = await api.getUserQuestions(user.username)
         const answerData = await api.getUserAnswers(user.username)
+      if(questionData.success && answerData.success) {
         let questionFeed = (questionData.success) ? questionData.questions : null
         let answerFeed = (answerData.success) ? answerData.answers : null
         questionFeed.forEach((question) => {
@@ -467,6 +502,14 @@ app.get('/dashboard', async (req, res) => {
         req.session.loggedIn = false
         res.redirect('/auth/login')
       }
+    } else {
+      res.render('error', {
+        loggedIn: req.session.loggedIn,
+        user: req.session.user,
+        error: true
+
+      })
+    }
   } else {
       req.session.loggedIn = false
       res.redirect('/auth/login')
@@ -531,7 +574,7 @@ app.post('/questions',  async (req, res) => {
     if (dataStatus) { 
       res.redirect('/')
     } else {
-      res.redirect('/questionEditor', {username: username})
+      res.redirect('/questionEditor')
     }
  await modifyPoints(1, username)
 
@@ -546,6 +589,9 @@ app.post('/questions',  async (req, res) => {
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
   const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
+  if(newPassword.length <= 10) {
+    res.send({success: false, error: "Password must be at least 10 characters long"})
+  }
   let data = await api.changePasswordOf(username, keyString, saltString).then((data) => {
     if(data.success) {
       console.log("Password Changed!")
@@ -599,11 +645,18 @@ app.post("/auth/signup", (req,res) => {
     })
   }
 
+  if(password.length < 10 ) {
+    return res.render('signup', {
+      error: {msg: "Password must be at least 10 characters long"}
+    })
+  }
+
   console.log("Creating user: " + username, password)
   // create user
   api.createUser(username, email, password).then(data => {
     if(data.success) {
       req.session.loggedIn = true
+
       req.session.user = {
         username: data.user.username,
         user_id: data.user.user_id,
@@ -614,8 +667,9 @@ app.post("/auth/signup", (req,res) => {
       res.redirect('/')
     } else {
       var err = data.error;
-      if(err == "an item with that \"email\" already exists") err = "Email taken!"
-      else if(err == "an item with that \"username\" already exists") err = "Username taken!";
+      console.log(err)
+      if(err == "an item with that \"email\" already exists") err = "An account with that email already exists!"
+      else if(err == "an item with that \"username\" already exists") err = "An account with that username already exists!";
 
       res.render('signup', {
         error: {msg: err}
@@ -624,6 +678,23 @@ app.post("/auth/signup", (req,res) => {
   });
 
 })
+
+app.get('/answer/:id', async (req, res) => {
+  var answerId = req.params.id;
+  var createdAt = req.query.at;
+  var accepted = req.query.accepted;
+  api.getQuestionId(answerId, createdAt, accepted).then(data => {
+    console.log(data)
+    if(data.success) {
+      res.redirect(`/question/${data.questionId}`)
+    } else {
+      res.render('error', {
+        error: "Answer not found"
+      })
+    }
+  });
+
+});
 
 app.get('/mail', async (req, res) => {
   if(req.session.loggedIn) {
@@ -725,6 +796,14 @@ app.post("/auth/login", async (req,res) => {
     api.loginUser(username, password, salt).then(data => {
         if(data.success) {
             req.session.loggedIn = true
+            console.log(req.body, "RMEMFDMG")
+           if(req.body.remember) {
+              req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7 * 30;
+              req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
+           } else {
+              req.session.cookie.maxAge = 1000 * 60 * 30;
+              req.session.cookie.expires = new Date(Date.now() + 1000);
+           }
             req.session.user = {
                 username: user.user.username,
                 user_id: user.user.user_id,
@@ -734,11 +813,17 @@ app.post("/auth/login", async (req,res) => {
             }
             res.redirect('/')
         } else {
+          if(data.failed) {
+            res.render('login', {
+              error: {msg: user.failed ? "Something went wrong, please try again later.": "Invalid username"}
+            })
+          } else {
             res.render('login', {
                 error: {msg: "Incorrect password"},
                 badPassword: true
             })
         }
+      }
     
     })
 } else {
@@ -931,7 +1016,7 @@ var basicDataCache = {};
 function getBasicData(username) {
   return new Promise((resolve, reject) => {
 
-  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 300000) {
+  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 5000) {
     resolve({success:true, ...basicDataCache[username].data})
 
   } else {
@@ -960,7 +1045,14 @@ function getBasicData(username) {
 }
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
+
     getBasicData(req.query.user).then(data => {
+
+      if(data.success && req.session.loggedIn && req.session.user && req.session.user.username == req.query.user) {
+        req.session.user.points = data.points;
+        req.session.user.img = data.pfp;
+        req.session.user.level = data.level;
+      }
       res.send(data)
     });
   } else res.send(JSON.stringify({success: false}))
@@ -1132,6 +1224,12 @@ app.post("/reset/:token", (req, res) => {
           })
           return
         }
+        if(password.length <= 10) {
+          res.render('reset', {
+            username: username,
+            error: {msg: "Password must be at least 10 characters long"}
+          })
+        }
         api.resetPassword(username, password).then(data => {
           if(data.success) {
             res.render('login', {
@@ -1182,7 +1280,9 @@ app.post("/api/question/:id/:type", (req,res) => {
   }
   type += "s";
   api.voteQuestion(id, req.session.user?.username, type, action).then(async data => {
+   
     res.send(JSON.stringify(data))
+    if(!data.success) return;
     var dir = action == "increment" ? 1 : -1;
     if(!questionOwnerCache[id]) questionOwnerCache[id] = await api.getQuestionOwner(id);
     var owner = questionOwnerCache[id];
@@ -1210,7 +1310,9 @@ app.post("/api/answer/:id/:type", (req,res) => {
   }
   type += "s";
   api.voteAnswer( question , id, req.session.user?.username, type, action).then(async data => {
+   
     res.send(JSON.stringify(data))
+    if(!data.success) return;
     var dir = action == "increment" ? 1 : -1;
     if(!answerOwnerCache[id]) answerOwnerCache[id] = await api.getAnswerOwner(question, id);
     var owner = answerOwnerCache[id];
@@ -1244,6 +1346,7 @@ app.post("/api/comment/:id/:type", (req,res) => {
   type += "s";
   api.voteComment( user, id, type, action, question, answer).then(data => {
     res.send(JSON.stringify(data))
+    if(!data.success) return;
     var dir = action == "increment" ? 1 : -1;
     dir *= type == "upvotes" ? 1 : -1;
     if(data.success) {

@@ -20,15 +20,20 @@
     </a>
    <% } %> -->
    <form>
-     <select class="border-2 border-black rounded-md font-bold">
+     <select id="selectSort" class="border-2 border-black rounded-md font-bold">
        <% var possible = ["recent", "best", "interesting", "hottest"] %>
        <% for (var i = 0; i < possible.length; i++) { %>
-         <option href="/?sort=<%= possible[i] %>" class="w-full border-2 border-black inline-block px-3 rounded-none py-2 text-md md:text-lg lg:text-xl xl:text-2xl leading-5 text-gray-700 hover:text-gray-900 hover:bg-gray-900 focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 font-semibold" value="<%= sort == possible[i] ? 'bg-green-200' : '' %>"><%= possible[i] %></option>
+         <option value="<%= possible[i] %>"" href="/?sort=<%= possible[i] %>" class="w-full border-2 border-black inline-block px-3 rounded-none py-2 text-md md:text-lg lg:text-xl xl:text-2xl leading-5 text-gray-700 hover:text-gray-900 hover:bg-gray-900 focus:text-gray-900 focus:bg-gray-50 focus:border-gray-300 font-semibold" value="<%= sort == possible[i] ? 'bg-green-200' : '' %>" <%= sort==possible[i] ? "selected" : "" %>><%= possible[i] %></option>
          <%= possible[i] %>
         <% } %>
      </select>
-     <input type="submit" value="/?sort=<%= possible[i] %>">
+
    </form>
+   <script>
+    document.getElementById("selectSort").onchange = function() {
+      window.location.href = "/?sort=" + this.value;
+    };
+   </script>
 </div>
 <% if(loggedIn && basicData.points >= 1) { %>
  <div class="fixed bottom-4 right-4 group px-2 py-2 bg-gray-200 bg-opacity-75 rounded-3xl flex items-center hover:bg-opacity-90 hover:shadow-inner transition-all duration-300 ease-in-out">
@@ -60,6 +65,7 @@
 </div> -->
 
 <script>
+  // alert("Temporary dev, styling in progress! Won't always be like this! :-)")
    lastQuestionId = undefined;
   var pageSize = 6;
   var questionsShown = 0;
@@ -159,6 +165,9 @@
     questionsShown++;
     // console.log(data.id)
 
+    data.title = data.title.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';';
+});
    
     var question = `
     <div class="sm:flex items-center justify-center flex-col px-[30px] md:justify-self-center xl:w-1/2 lg:w-9/12 transition-all delay-150">
