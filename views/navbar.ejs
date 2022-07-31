@@ -141,13 +141,12 @@
           fetch('/getBasicData?user=<%= user?.username %>')
             .then(response => response.json())
             .then(data => {
-              console.log(data);
               if(data) {
                 try {
               document.querySelector('#user-level').innerHTML = "Level: " + data.level;
               document.querySelector('#user-points').innerHTML = "Points: " + data.points;
                 } catch {
-                  
+
                 }
               }
             });

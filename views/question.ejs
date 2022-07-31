@@ -560,6 +560,43 @@ list-style-position: inside;
   //   }
   // })
 
+
+  function isElementInViewport (el) {
+
+// Special bonus for those using jQuery
+if (typeof jQuery === "function" && el instanceof jQuery) {
+    el = el[0];
+}
+
+var rect = el.getBoundingClientRect();
+
+return (
+    rect.top >= 0 &&
+    rect.left >= 0 &&
+    rect.bottom <= ((window.innerHeight || document.documentElement.clientHeight) * 1.5) && /* or $(window).height() */
+    rect.right <= ((window.innerWidth || document.documentElement.clientWidth) * 1.5) /* or $(window).width() */
+);
+}
+
+  var getVisibleAnswers = () => {
+ // get elements id prefixed mainAnswerDiv
+  var visibleAnswers = document.querySelectorAll('[id^="mainAnswerDiv"]');
+  var visibleAnswersArray = Array.from(visibleAnswers);
+  visibleAnswersArray = visibleAnswersArray.filter(isElementInViewport).map((i)=>i.id.slice("mainAnswerDiv".length));
+return visibleAnswersArray;  
+}
+
+  setInterval(() => {
+    var visibleAnswers = getVisibleAnswers();
+    if(visibleAnswers.length > 0) {
+      visibleAnswers.forEach((i) => {
+        socket.emit("answerVoteCount", [i, "<%= question.question_id %>"])
+      })
+    }
+  }, 10000);
+
+
+
   setInterval(() => {
 
     socket.emit("getViews", "<%= question.question_id %>");
@@ -571,8 +608,8 @@ list-style-position: inside;
     socket.emit("getVotes", "<%= question.question_id %>");
   }, 6930);
   setInterval(() => {
-    socket.emit("getVotes", "<%= question.question_id %>");
-  }, 8000);
+    socket.emit("getAnswerCount", "<%= question.question_id %>");
+  }, 5000);
 
   socket.on("questionViews", (cnt, id) => {
     if(!(id == "<%= question.question_id %>")) {
@@ -593,6 +630,16 @@ list-style-position: inside;
       document.getElementById("answerCount").innerHTML = cnt + " answers";
     }
   })
+
+  socket.on("answerVoteCount", ([question, answer, count]) => {
+    // alert(question, answer, count);
+    if(question == "<%= question.question_id %>") {
+      if(document.getElementById("voteA"+answer)) {
+        document.getElementById("voteA"+answer).innerHTML = count;
+      }
+    }
+  }
+  )
 
   fetch("/getBasicData?user=<%= question.creator %>").then(response => response.json()).then((j) => {
     if(j.success) {

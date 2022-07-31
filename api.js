@@ -536,6 +536,46 @@ class Api {
     );
   }
 
+  async getAllQuestionComments(questionId) {
+    var last;
+    var comments = [];
+    var success = true;
+
+    while (true) {
+      var c = await this.getQuestionComments(questionId, last);
+      if (c.success) {
+        comments = comments.concat(c.comments);
+        if (c.comments.length < 100) break;
+        last = c.comments[c.comments.length - 1].comment_id;
+      } else {
+        success = false;
+        break;
+      }
+    }
+
+    return { success: success, comments: comments };
+  }
+
+  async getAllAnswerComments(questionId, answerId) {
+    var last;
+    var comments = [];
+    var success = true;
+
+    while (true) {
+      var c = await this.getAnswerComments(questionId, answerId, last);
+      if (c.success) {
+        comments = comments.concat(c.comments);
+        if (c.comments.length < 100) break;
+        last = c.comments[c.comments.length - 1].comment_id;
+      } else {
+        success = false;
+        break;
+      }
+    }
+
+    return { success: success, comments: comments };
+  }
+
   addCommentQuestion(questionId, username, text) {
     questionId = encodeURIComponent(questionId);
     return this.sendRequest("/questions/" + questionId + "/comments", "POST", {
