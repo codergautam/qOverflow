@@ -135,7 +135,6 @@ var modifyPoints = async (amount, username) => {
     amount: amount
   })
 }
-   //modifyPoints(-33, "level2")
 
 
 
@@ -656,7 +655,13 @@ app.post("/auth/signup", (req,res) => {
   api.createUser(username, email, password).then(data => {
     if(data.success) {
       req.session.loggedIn = true
-
+      if(req.body.remember) {
+        req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7 * 30;
+        req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
+     } else {
+        req.session.cookie.maxAge = 1000 * 60 * 30;
+        req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 30);
+     }
       req.session.user = {
         username: data.user.username,
         user_id: data.user.user_id,
@@ -787,7 +792,10 @@ app.post("/auth/login", async (req,res) => {
     console.log("Missing username or password")
     return
   }
-
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+  res.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+  res.setHeader("Expires", "0"); // Proxies.
+  
   var user = await api.getUser(username);
   // console.log(user)
   if(user.success && user) {
@@ -802,7 +810,7 @@ app.post("/auth/login", async (req,res) => {
               req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
            } else {
               req.session.cookie.maxAge = 1000 * 60 * 30;
-              req.session.cookie.expires = new Date(Date.now() + 1000);
+              req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 30);
            }
             req.session.user = {
                 username: user.user.username,
@@ -818,6 +826,7 @@ app.post("/auth/login", async (req,res) => {
               error: {msg: user.failed ? "Something went wrong, please try again later.": "Invalid username"}
             })
           } else {
+            
             res.render('login', {
                 error: {msg: "Incorrect password"},
                 badPassword: true
@@ -1399,7 +1408,7 @@ io.on('connection', (socket) => {
     if(Date.now() - lastRecieved < 100)  return
 
 
-    if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 10) {
+    if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 5) {
       socket.emit("questionViews", liveCache.views[qId].data, qId);
     } else {
       console.log(liveCache.views[qId])
@@ -1433,7 +1442,7 @@ io.on('connection', (socket) => {
 
      lastRecieved = Date.now();
 
-    if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 10) {
+    if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 5) {
       socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
     } else {
       console.log(liveCache.views[qId])

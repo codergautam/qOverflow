@@ -269,7 +269,7 @@ setInterval(() => {
   getQuestionsOnScreen().forEach((e) => {
     socket.emit("getVotes", e);
   });
-}, 15000);
+}, 8000);
 
 setInterval(() => {
 
@@ -283,7 +283,7 @@ setInterval(() => {
 getQuestionsOnScreen().forEach((e) => {
   socket.emit("getViews", e);
 });
-}, 11000);
+}, 5000);
 
 
 
@@ -291,7 +291,7 @@ getQuestionsOnScreen().forEach((e) => {
 socket.on("questionViews", (cnt, id) => {
 
   if(domIdExists(id)) {
-    console.log(id);
+    console.log("VIEWS", id);
     document.getElementById("views"+id).innerHTML = cnt + " views";
   }
 })
@@ -315,6 +315,7 @@ socket.on("questionVotes", (cnt, id) => {
 <% if(loggedIn) { %>
   <script>
   localStorage.setItem("attemptsLeft",3)
+  
 </script>
   <% } %>
 </body>

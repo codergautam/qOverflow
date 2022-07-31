@@ -79,6 +79,7 @@
                         delay-75 duration-300 hover:-translate-y-2">
                         <div class="flex w-full flex-col pr-3">
                           <!-- profile img-->
+
                           <% if(typeof user != undefined) { %>
                           <div class="flex flex-row">
                             <img class="h-8 xl:h-9 rounded-full" src="<%= user?.img%> " alt="">
@@ -134,7 +135,7 @@
       </div>
 
     </div>
-    <% if(typeof user !="undefined" ) { %>
+    <% if(typeof user !="undefined"  ) { %>
       <script>
         setInterval(function() {
           fetch('/getBasicData?user=<%= user?.username %>')
@@ -142,8 +143,12 @@
             .then(data => {
               console.log(data);
               if(data) {
+                try {
               document.querySelector('#user-level').innerHTML = "Level: " + data.level;
               document.querySelector('#user-points').innerHTML = "Points: " + data.points;
+                } catch {
+                  
+                }
               }
             });
           }, 1000);

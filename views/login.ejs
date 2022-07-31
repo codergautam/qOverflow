@@ -26,10 +26,8 @@
         </div>
         <% } else { %>
           <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative hidden" id="errAlert" role="alert">
-            <strong class="font-bold">Error!</strong>
     
             
-            <br/>
             <span class="block sm:inline" id="attemptsLeft"></span>
   
           </div>
@@ -83,16 +81,21 @@
     function localStorageKeyExists(key) {
       return localStorage.getItem(key) !== null;
     }
+    
     if(!localStorageKeyExists("attemptsLeft")) localStorage.setItem("attemptsLeft", 3);
     <% if(typeof badPassword != "undefined") { %>
+      
  
       localStorage.setItem("attemptsLeft", Number(localStorage.getItem("attemptsLeft")) - 1);
       
-      document.getElementById("attemptsLeft").innerHTML = "You have " + localStorage.getItem("attemptsLeft") + " attempts left.";
 
       localStorage.setItem("lastAttempt", Date.now()+3600000);
 
       <% } %>
+      document.getElementById("attemptsLeft").innerHTML = "You have " + localStorage.getItem("attemptsLeft") + " attempts left.";
+      <% if(typeof badPassword == "undefined") { %>
+      document.getElementById("errAlert").classList.remove("hidden");
+        <% } %>
       function msToTime(duration) {
   const portions = [];
     const msInDay = 1000 * 60 * 60 * 24;
