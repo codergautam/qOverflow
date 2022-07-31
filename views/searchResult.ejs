@@ -68,7 +68,8 @@
                                 <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.timeElapsed} ago</span>
                                 <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.upvotes - question.downvotes} pts.</span>
                                 </div>
-                            </div>`
+                            </div>
+                            `
             }
             async function getQuestions(size, lastResult) {
                 let questions = await fetch('/searchResults/' + lastResult).then((res) => (res.json()))

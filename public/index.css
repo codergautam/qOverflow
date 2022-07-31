@@ -4646,10 +4646,6 @@ video {
     position: relative;
   }
 
-  .lg\:top-0 {
-    top: 0px;
-  }
-
   .lg\:flex {
     display: flex;
   }
