@@ -39,6 +39,43 @@
             font-size:30px;
             line-height: 1.2;
         }
+        
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
     </style>
 </head>
 
@@ -53,30 +90,34 @@
                     <a href="./">Go Back</a>
                 </div>
             </div>        
-        <div class="m-5 w-full">
+        <div class="w-full">
             <form class="w-full" action="/questions" method="POST">
                 <div class="flex">
-                    <div class="flex-1 items-between pb-8 w-5/6">
+                    <div class="flex-1 w-full">
                         <input type="hidden" name="username" value="<% username %> ">
-                        <div class="flex mb-10 space-x-4 mb-15 items-center justify-center">
-                            <label class="text-2xl font-extrabold block">Title:</label>
+                        <div class="grid sm:flex place-content-center mb-10 mt-5 w-full">
+                            <label class="text-2xl mr-3 text-center md:text-left font-extrabold block">Title:</label>
                             <input maxlength="150" type="text" id="text150" name="title"
-                                class="text-xl outline-black rounded outline outline-4 text-center font-bold block h-10 w-full md:h-12 md:w-96" required/>
+                                class="text-xl outline-black rounded outline outline-4 text-center flex place-self-center font-bold block h-10 w-full md:w-3/4" required/>
                         </div>
-                        <div class='flex md:divide-x-0 w-5/6'>
-                            <div class='flex mb-10' id="editor">
-                                <label class='m-2 text-2xl font-bold'>Content:</label>
-                                <textarea id='text3000' maxlength='3000' type='text' name="text" onkeyup='val(this);'
-                                    class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full' placeholder="Enter Markdown content..." required></textarea>
-                            </div>
-                            <div class='flex mb-10' id='viewer'>
-                                <label class='m-2 text-2xl font-bold'>View/Editor:</label>
+                        <div class="tab">
+                            <button class="tablinks" onclick="openCity(event, 'editor')">Content</button>
+                            <button class="tablinks" onclick="openCity(event, 'viewer3')">View</button>
+                        </div>
+                        <div class='flex mb-5 tabcontent' id="editor" style="display:block;">
+                            <label class='m-2 text-2xl font-bold'>Content</label>
+                            <textarea id='text3000' maxlength='3000' type='text' name="text" onkeyup='val(this);'
+                                class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full' placeholder="Enter Markdown content..." required></textarea>
+                        </div>
+                        <div id="viewer3" class="tabcontent">
+                            <div id='viewer'>
+                                <label class='m-2 text-2xl font-bold'>View</label>
                                 <article id="preview" data-text="Output of Markdown shown here..." contenteditable="false" 
-                                    class='w-min break-words md:overflow-scroll overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80 md:min-w-full'>
+                                    class='w-min break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80'>
                                 </article>
                             </div>
                         </div>
-                        <div class="flex justify-center">
+                        <div class="flex my-3 justify-center">
                             <input type="submit" class="cursor-pointer rounded-lg bg-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-2 font-semibold text-2xl text-gray-700" value="Create Question">
                         </div>
                     </div>
@@ -121,11 +162,26 @@
     </script>
     
     <script>
+
+        function openCity(evt, cityName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " active";
+        }
+
         function val(e) {
             ghf = e.value;
             console.log(marked.parse(ghf))
             codeblock = marked.parse(ghf);
-            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View/Editor:</label><article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
+            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View:</label><article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
         }
         // function qwerty(e) {
         //     ghf = e.value;

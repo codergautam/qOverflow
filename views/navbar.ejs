@@ -1,5 +1,5 @@
 <html>
-<nav class="bg-teal-600 py-1 relative max-h-screen w-full">
+<nav class="bg-teal-600 py-1 relative max-h-screen w-full grid">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dosis&family=Edu+Sa+Beginner&family=Helvetica&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap');
   </style>
@@ -152,15 +152,41 @@
 
   </div>
   <div
-    class="w-max md:text-right place-self-end place-content-end lg:place-content-center h-full md:space-x-2 lg:justify-start w-full grid lg:flex"
+    class="lg:hidden hidden mr-4 md:text-right place-self-end place-content-end lg:place-content-center h-full md:space-x-2 lg:justify-start w-full grid"
     id="menu">
     <!--Mail Icon-->
-    <div
-      class="block w-min justify-self-end md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-      <a href="/logout" class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-staat text-white ">Logout</a>
-    </div>
     <!-- Home Icon -->
-
+    <a href="/dashboard" class="w-fill place-content-center grid align-middle">
+      <!-- Dashboard Icon -->
+      <div class="w-max shadow-purple-900 align-middle px-2 grid transition
+                delay-75 duration-300">
+        <div class="flex w-full flex-col">
+          <!-- profile img-->
+          <% if(typeof user !=undefined) { %>
+            <div class="flex flex-row">
+              <img class="h-8 mr-1 xl:h-9 rounded-full"
+                src="https://s.gravatar.com/avatar/a0e6e8c282a3953d22f0f0d1ee267910?s=200&amp;r=x " alt="">
+              <h2
+                class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
+                <%= user?.username %>
+              </h2>
+            </div>
+            <!-- user level and points text-->
+            <div class="group shadow-purple-900 flex align-middle place-self-end rounded-full">
+              <h4
+                class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
+                id="user-level">Level: <%= user?.level %>
+              </h4>
+              &nbsp;
+              <h4
+                class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-white transition-all delay-75 duration-300 ease-in-out"
+                id="user-points">Points: <%= user?.points %>
+              </h4>
+            </div>
+        </div>
+        <hr>
+        <% } %>
+    </a>
     <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
       <div
         class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
@@ -174,6 +200,7 @@
           class="block md:flex xs:text-xl wavy-hover text-xl md:text-2xl xl:text-3xl group-hover:visible my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
           Home</h2>
       </div>
+      <hr>
     </a>
     <a href="/mail" class="lg:place-content-center w-min justify-self-end w-fill md:grid md:align-middle">
       <!-- Mail Icon -->
@@ -188,38 +215,13 @@
           class="block md:flex xs:text-xl wavy-hover group-hover:visible text-xl md:text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
           Mail</h2>
       </div>
+      <hr>
     </a>
-
-    <a href="/dashboard" class="w-fill md:place-content-center md:grid align-middle">
-      <!-- Dashboard Icon -->
-      <div class="group hover:shadow-2xl w-max shadow-purple-900 align-middle lg:px-2 transition ease-in-out
-                delay-75 duration-300 hover:-translate-y-2">
-        <div class="flex w-full flex-col pr-3">
-          <!-- profile img-->
-          <% if(typeof user !=undefined) { %>
-            <div class="flex flex-row">
-              <img class="h-8 mr-1 xl:h-9 rounded-full"
-                src="https://s.gravatar.com/avatar/a0e6e8c282a3953d22f0f0d1ee267910?s=200&amp;r=x " alt="">
-              <h2
-                class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
-                <%= user?.username %>
-              </h2>
-            </div>
-            <!-- user level and points text-->
-            <div class="group shadow-purple-900 flex align-middle rounded-full">
-              <h4
-                class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
-                id="user-level">Level: <%= user?.level %>
-              </h4>
-              &nbsp;
-              <h4
-                class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-white transition-all delay-75 duration-300 ease-in-out"
-                id="user-points">Points: <%= user?.points %>
-              </h4>
-            </div>
-        </div>
-        <% } %>
-    </a>
+    <div
+    class="w-full place-content-end grid justify-self-end md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+    <a href="/logout"
+      class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-staat text-white ">Logout</a>
+  </div>
   </div>
   </div>
 
@@ -241,6 +243,8 @@
       const menu = document.querySelector('#menu');
       const search = document.querySelector('#search');
       const logo = document.querySelector('#logo');
+      // const logout = document.querySelector('#logout');
+      // const logout2 = document.querySelector('#logout2');
 
       burger.addEventListener('click', (e) => {
         if (menu.classList.contains('hidden')) {
