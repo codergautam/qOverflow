@@ -365,7 +365,7 @@ class Api {
     });
   }
 
-  async changeEmailOf(username) {
+  async changeEmailOf(username, newEmail) {
     username = encodeURIComponent(username);
     return await this.sendRequest("/users/" + username, "PATCH", {
       email: newEmail,

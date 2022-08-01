@@ -526,13 +526,14 @@ app.post('/password', (req, res) => {
 })
 
 app.post('/emailChange', async (req, res) => {
+  console.log("Changing email")
   const { username, newEmail } = req.body
-  let data = await api.changeEmailOf(username).then((data) => {
-    if(data.success) {
-      return data
-    }
+  let data = await api.changeEmailOf(username, newEmail).then((data) => {
+    return data
   })
-  if(data.success) res.redirect("/dashboard")
+  if(data.success) {
+    res.redirect("/dashboard")
+  }
 })
 
 app.get('/logout', async (req, res) => {
