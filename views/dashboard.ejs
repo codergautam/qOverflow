@@ -190,7 +190,7 @@
                                     d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                             </svg>
                         </form>
-                        <form action="./deleteAccount" method="POST" class="flex group mt-2 justify-end mr-6">
+                        <form  onsubmit="return confirm('Do you really want to delete your account?\nThis cannot be undone.');" action="./deleteAccount" method="POST" class="flex group mt-2 justify-end mr-6">
                             <input type="hidden" name="username" value="<%= user.username %> ">
                             <input value="Delete Account" type="submit"
                                 class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out hover:ring-2 hover:ring-red-400 hover:ring-offset-1" />
