@@ -628,7 +628,6 @@ app.get('/auth/login', (req, res) => {
 });
 app.get('/auth/signup', (req, res) => {
   if(req.session.loggedIn) return res.redirect('/')
-
   res.render('signup', {})
 });
 

@@ -1359,6 +1359,11 @@ video {
   justify-content: space-between;
 }
 
+.gap-x-5 {
+  -moz-column-gap: 1.25rem;
+       column-gap: 1.25rem;
+}
+
 .space-y-0 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(0px * calc(1 - var(--tw-space-y-reverse)));
@@ -2477,6 +2482,22 @@ video {
   line-height: 1.25rem;
 }
 
+.selection\:flex *::-moz-selection {
+  display: flex;
+}
+
+.selection\:flex *::selection {
+  display: flex;
+}
+
+.selection\:flex::-moz-selection {
+  display: flex;
+}
+
+.selection\:flex::selection {
+  display: flex;
+}
+
 .hover\:-translate-y-2:hover {
   --tw-translate-y: -0.5rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
@@ -2516,6 +2537,11 @@ video {
 .hover\:border-blue-300:hover {
   --tw-border-opacity: 1;
   border-color: rgb(147 197 253 / var(--tw-border-opacity));
+}
+
+.hover\:border-gray-300:hover {
+  --tw-border-opacity: 1;
+  border-color: rgb(209 213 219 / var(--tw-border-opacity));
 }
 
 .hover\:bg-indigo-700:hover {
@@ -2566,6 +2592,11 @@ video {
 .hover\:bg-teal-700:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(15 118 110 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-blue-100:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(219 234 254 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-opacity-90:hover {
@@ -2880,6 +2911,10 @@ video {
     display: none;
   }
 
+  .sm\:h-5 {
+    height: 1.25rem;
+  }
+
   .sm\:w-full {
     width: 100%;
   }
@@ -2943,6 +2978,11 @@ video {
     line-height: 1.25rem;
   }
 
+  .sm\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
   .sm\:leading-5 {
     line-height: 1.25rem;
   }
@@ -2987,6 +3027,10 @@ video {
 
   .md\:h-20 {
     height: 5rem;
+  }
+
+  .md\:h-7 {
+    height: 1.75rem;
   }
 
   .md\:w-3\/4 {
@@ -3129,6 +3173,11 @@ video {
   .md\:text-5xl {
     font-size: 3rem;
     line-height: 1;
+  }
+
+  .md\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 }
 
@@ -3275,6 +3324,11 @@ video {
     font-size: 1rem;
     line-height: 1.5rem;
   }
+
+  .lg\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
 }
 
 @media (min-width: 1280px) {
@@ -3339,8 +3393,19 @@ video {
     line-height: 1.75rem;
   }
 
+  .xl\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
   .xl\:font-bold {
     font-weight: 700;
+  }
+
+  @media (min-width: 1024px) {
+    .xl\:lg\:w-11\/12 {
+      width: 91.666667%;
+    }
   }
 }
 
