@@ -7,6 +7,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link rel="stylesheet" href="/index.css">
+    <style>
+        ol {
+            margin: 0 0 1.5em;
+            padding: 0;
+            counter-reset: item;
+        }
+
+        ol>li {
+            margin: 0;
+            padding: 0 0 0 2em;
+            text-indent: -2em;
+            list-style-type: none;
+            counter-increment: item;
+        }
+
+        ol>li:before {
+            display: inline-block;
+            width: 1.5em;
+            padding-right: 0.5em;
+            font-weight: bolder;
+            text-align: right;
+            content: counter(item) ".";
+        }
+    </style>
 </head>
 
 <body>
@@ -52,8 +76,8 @@
                             <input type="submit"
                                 class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
                                 value="Change Your Email" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500"
-                                fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
@@ -64,8 +88,8 @@
                             <input type="submit"
                                 class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
                                 value="Change Your Password" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500"
-                                fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
                             </svg>
@@ -83,13 +107,15 @@
                             You Can...
                         </div>
                         <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
-                            <% if(user.abilities) { %>
-                                <% user.abilities.map((ability)=> { %>
-                                    <li class="font-extrabold">
-                                        <%= ability %>
-                                    </li>
-                                    <% }) %>
-                                        <% } %>
+                            <ol>
+                                <% if(user.abilities) { %>
+                                    <% user.abilities.map((ability)=> { %>
+                                        <li>
+                                            <%= ability %>
+                                        </li>
+                                        <% }) %>
+                                            <% } %>
+                            </ol>
                         </div>
                     </div>
                 </div>
