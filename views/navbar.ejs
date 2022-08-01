@@ -30,12 +30,12 @@
               </button>
           </form>
       </div>
-      <div class="flex  items-center align-right">
-        <div class="relative ">
-          <div class="">
+      <div class="flex items-center">
+        <div class="relative">
+          <div class="flex">
             <% if(loggedIn) { %>
               <!-- Profile picture -->
-              <div class="">
+              <div class="w-full">
                 <div class="flex lg:hidden top-3 place-content-end">
                   <div class="outline-none pr-2" id="burger">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
@@ -122,35 +122,26 @@
               <% } else { %>
                 <% if (typeof login=="undefined" || !login) { %>
                   <!--Not logged in-->
-                  <script>
-                    const search2 = document.querySelector('#search2');
-                    search2.classList.remove('fixed');
-                    const one = document.querySelector('#1');
-                    one.classList.remove('w-40');
-                    one.classList.add('w-full');
-                  </script>
-                  <div class="flex mr-3">
-                    <button onclick="location.href = '/auth/login'"
-                      class="md:p-2 md:px-3 p-1 px-2 mr-2 bg-blue-600 hover:bg-blue-500 hover:text-gray-900  text-white text-sm md:text-lg md:mr-4 font-semibold rounded-md transition-all ease-in-out delay-75 duration-300">
-                      <% } else { %>
-                        <div class="flex">
-                          <button onclick="location.href = '/auth/login'"
-                            class="md:p-2 md:px-3 p-1 px-2 mr-2 bg-green-400 hover:bg-green-300 hover:text-text  text-black text-sm md:text-lg md:mr-4 font-semibold rounded-md transition-all ease-in-out delay-75 duration-300">
-                            <% } %>
-                              Login
-                          </button>
-                          <% if (typeof signup=="undefined" || !signup) { %>
-                            <!--Not Signed In-->
-                            <button onclick="location.href = '/auth/signup'"
-                              class="md:p-2 md:px-3 p-1 px-2 bg-blue-600  hover:bg-blue-500 hover:text-black  text-white text-sm md:text-lg lg:mr-4 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
-                              <% } else { %>
-                                <button onclick="location.href = '/auth/signup'"
-                                  class="md:p-2 md:px-3 p-1 px-2 bg-green-400 hover:bg-green-300 hover:text-black  text-black text-sm md:text-lg lg:mr-4 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
-                                  <% } %>
-                                    Signup
-                                </button>
-                        </div>
+                  <button onclick="location.href = '/auth/login'"
+                    class="mr-2 border-b-2 border-spacing-1 border-transparent hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                    <% } else { %>
+                      <button onclick="location.href = '/auth/login'"
+                        class="mr-2 px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 text-lg font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
                         <% } %>
+                          Login
+                      </button>
+                      &nbsp;
+                      <% if (typeof signup=="undefined" || !signup) { %>
+                        <!--Not Signed In-->
+                        <button onclick="location.href = '/auth/signup'"
+                          class="border-b-2 border-transparent border-spacing-1 hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                          <% } else { %>
+                            <button onclick="location.href = '/auth/signup'"
+                              class="px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 text-lg font-semibold mr-4 rounded-md  transition-all ease-in-out delay-75 duration-300">
+                              <% } %>
+                                Signup
+                            </button>
+                            <% } %>
                   </div>
           </div>
         </div>
