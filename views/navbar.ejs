@@ -240,7 +240,6 @@
         fetch('/getBasicData?user=<%= locals.user.username %>')
           .then(response => response.json())
           .then(data => {
-            console.log(data);
             if (data) {
               document.querySelector('#user-level').innerHTML = "Level: " + data.level;
               document.querySelector('#user-points').innerHTML = "Points: " + data.points;
