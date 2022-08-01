@@ -91,24 +91,24 @@
                         delay-75 duration-300 hover:-translate-y-2">
                       <div class="flex w-full flex-col pr-3">
                         <!-- profile img-->
-                        <% if(typeof user !=undefined) { %>
+                        <% if(typeof user !="undefined") { %>
                           <div class="flex flex-row">
-                            <img class="h-8 mr-1 xl:h-9 rounded-full" src="<%= user?.img%> " alt="">
+                            <img class="h-8 mr-1 xl:h-9 rounded-full" src="<%= locals.user.img%> " alt="">
                             <h2
                               class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
-                              <%= user?.username %>
+                              <%= locals.user.username %>
                             </h2>
                           </div>
                           <!-- user level and points text-->
                           <div class="group shadow-purple-900 flex align-middle rounded-full">
                             <h4
                               class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
-                              id="user-level">Level: <%= user?.level %>
+                              id="user-level">Level: <%= locals.user.level %>
                             </h4>
                             &nbsp;
                             <h4
                               class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-white transition-all delay-75 duration-300 ease-in-out"
-                              id="user-points">Points: <%= user?.points %>
+                              id="user-points">Points: <%= locals.user.points %>
                             </h4>
                           </div>
                       </div>
@@ -163,25 +163,25 @@
                 delay-75 duration-300">
         <div class="flex w-full flex-col">
           <!-- profile img-->
-          <% if(typeof user !=undefined) { %>
+          <% if(typeof user !="undefined") { %>
             <div class="flex flex-row">
               <img class="h-8 mr-1 xl:h-9 rounded-full"
                 src="https://s.gravatar.com/avatar/a0e6e8c282a3953d22f0f0d1ee267910?s=200&amp;r=x " alt="">
               <h2
                 class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
-                <%= user?.username %>
+                <%= user.username %>
               </h2>
             </div>
             <!-- user level and points text-->
             <div class="group shadow-purple-900 flex align-middle place-self-end rounded-full">
               <h4
                 class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
-                id="user-level">Level: <%= user?.level %>
+                id="user-level">Level: <%= user.level %>
               </h4>
               &nbsp;
               <h4
                 class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-white transition-all delay-75 duration-300 ease-in-out"
-                id="user-points">Points: <%= user?.points %>
+                id="user-points">Points: <%= user.points %>
               </h4>
             </div>
         </div>
@@ -227,10 +227,10 @@
   </div>
 
   </div>
-  <% if(typeof user !="undefined" ) { %>
+  <% if(typeof user != "undefined" ) { %>
     <script>
       setInterval(function () {
-        fetch('/getBasicData?user=<%= user?.username %>')
+        fetch('/getBasicData?user=<%= locals.user.username %>')
           .then(response => response.json())
           .then(data => {
             console.log(data);

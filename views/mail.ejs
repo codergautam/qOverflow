@@ -10,9 +10,9 @@
 </head>
 
 <body>
-    <%- include('./navbar'), { loggedIn: true, login: false, } %>
+        <%- include('./navbar'), { loggedIn: true, login: false, } %>
         <div class="grid grid-cols-12 bg-white">
-            <div class="relative flex justify-center col-span-12">
+            <div class="relative flex justify-center col-span-4">
                 <div class="flex-col w-full ml-2 ">
                     <div class="flex text-5xl text-gray-700 font-bold mt-4">
                         <div class="text-start border-b-2 pb-2">
@@ -71,7 +71,7 @@
                     </form>
                 </div>
             </div>
-            <div class="col-span-12 relative flex overflow-hidden overflow-y-auto  bg-gray-100 h-screen bg-fixed">
+            <div class="col-span-3 relative flex overflow-hidden overflow-y-auto  bg-gray-100 bg-fixed">
                 <div class="flex-col w-11/12 mx-auto h-screen" id="inbox">
                     <% if(messageFeed.length==0) { %>
                         <div id="noMail" class="flex-col w-full">
@@ -97,7 +97,7 @@
                         <% } %>
                 </div>
             </div>
-            <div class="col-span-12 relative flex">
+            <div class="col-span-5 relative flex">
                 <div class="flex-col">
                     <p class="text-5xl text-stone-900 text-start font-staat ml-4 mt-4 border-b-2 w-min">
                         Preview
