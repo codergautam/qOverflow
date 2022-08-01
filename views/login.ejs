@@ -14,7 +14,7 @@
   <div class="flex flex-col">
       <%- include('../views/navbar.ejs', {loggedIn: false, login: true}); %>
     <div class="flex justify-center items-center flex-grow">
-      <div class="content-center px-4 py-6 my-9 bg-white rounded-3xl shadow-2xl shadow-indigo-600">
+      <div id="mainf" class="content-center px-4 py-6 my-9 bg-white rounded-3xl shadow-2xl shadow-indigo-600">
         <div class="min-h-full flex items-center justify-center px-4 sm:px-6 lg:px-8" id="login">
           <div class="max-w-md w-full space-y-0">
             <div>
@@ -81,7 +81,6 @@
                   id="errAlert" role="alert">
                   <strong class="font-bold block sm:inline place-self-center text-sm md:text:md">Login Failed!</strong>
                   <span class="block sm:inline  place-self-center text-sm md:text:md text-center">
-                    dfgsdg
                   </span>
 
                   <br />
@@ -112,10 +111,6 @@
         </div>
       </div>
     </div>
-    <script>
-      const search2 = document.querySelector('#search2');
-      search2.classList.remove('fixed');
-    </script>
     <script>
       onLoadAnim = (elemId, remove, add) => {
         let text = document.getElementById(elemId)
@@ -173,7 +168,17 @@
         }
       if (localStorage.getItem("attemptsLeft") <= 0 && Date.now() < Number(localStorage.getItem("lastAttempt"))) {
         document.getElementById("login").remove();
-        document.getElementById("attemptsLeft").innerHTML = "You have no attempts left.<br>Try again in " + msToTime(Number(localStorage.getItem("lastAttempt")) - Date.now());
+        document.getElementById("mainf").innerHTML+=`
+        <div class="content-center  my-9 ">
+        <div
+        class="bg-red-100 border place-content-center place-self-center grid border-red-400 text-red-700 px-4 py-3 rounded relative hidden"
+        id="errAlert" role="alert">
+        <span class="block sm:inline place-self-center text-sm md:text:md text-center"
+          id="attemptsLeft"></span>
+
+      </div>
+      `
+        document.getElementById("attemptsLeft").innerHTML = "You have no login attempts left.<br>Try again in " + msToTime(Number(localStorage.getItem("lastAttempt")) - Date.now());
         document.getElementById("errAlert").classList.remove("hidden");
       } else if (localStorage.getItem("attemptsLeft") <= 0) {
         localStorage.setItem("attemptsLeft", 3);
