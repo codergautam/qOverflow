@@ -101,43 +101,6 @@
                         </form>
                     </div>
                 </div>
-                <div class="ml-4 z-10 px-4 pt-2">
-                    <div class="inline-block py-4">
-                        <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
-                            You Can...
-                        </div>
-                        <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
-                            <ol>
-                                <% if(user.abilities) { %>
-                                    <% user.abilities.map((ability)=> { %>
-                                        <li>
-                                            <%= ability %>
-                                        </li>
-                                        <% }) %>
-                                            <% } %>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-                <div class="ml-4 z-10  mt-2 px-4 pt-2">
-                    <div class="inline-block py-4">
-                        <div
-                            class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-t-md border-b-4 border-white">
-                            <span class="font-staat font-light">Email:</span>
-                            <%- user.email %>
-                        </div>
-                        <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-100 px-2 py-1 rounded-none">
-                            <span class="font-staat font-light">Questions:</span>
-                            <%- user.questions %>
-                        </div>
-                        <div
-                            class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-b-md border-t-4 border-white">
-                            <span class="font-staat font-light">Answers:</span>
-                            <%- user.answers%>
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div class="ml-4 z-10 px-4 pt-2">
                 <div class="inline-block py-4">
                     <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
@@ -300,7 +263,7 @@
                     // console.log("Current: " + _lastResult)
                     let feed = document.getElementById("questionFeed")
                     feed.lastChild.remove()
-                    var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
+                    var loader = `    <div class="loader flex items-center justify-center flex-col px-[30px]">
                 <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
                 <div class="px-4 py-4 ">
                     <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
@@ -311,16 +274,15 @@
                     feed.insertAdjacentHTML("beforeend", loader)
                     let data = await getQuestions(size, _lastResultQ)
                     if (data) {
-                        if (feed.childElementCount > 0 && !document.getElementById("noQuestions")) {
-                            feed.children.item(feed.children.length - 1).remove()
-                        }
                         lastResultQ = data[data.length - 1].question_id
                         // console.log("New: " + lastResult)
                         data.forEach(appendQuestion)
                         // searchFeed.lastChild.remove()
                         implementMore(moreToComeQ)
+                        feed.querySelector(".loader").remove()
                         return
                     }
+                    feed.querySelector(".loader").remove()
                 }
 
                 async function loadLess(size) {
@@ -458,7 +420,7 @@
                     // console.log("Current: " + _lastResult)
                     let feed = document.getElementById("answerFeed")
                     feed.lastChild.remove()
-                    var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
+                    var loader = `    <div class="loader flex items-center justify-center flex-col px-[30px]">
                 <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
                 <div class="px-4 py-4 ">
                     <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
@@ -469,17 +431,16 @@
                     feed.insertAdjacentHTML("beforeend", loader)
                     let data = await getQuestionsA(size, _lastResultA)
                     if (data) {
-                        if (feed.childElementCount > 0 && !document.getElementById("noQuestions")) {
-                            feed.children.item(feed.children.length - 1).remove()
-                        }
                         console.log(data)
                         lastResultA = data[data.length - 1].answer_id
                         // console.log("New: " + lastResult)
                         data.forEach(appendAnswer)
                         // searchFeed.lastChild.remove()
                         implementMoreA(moreToComeA)
+                        feed.querySelector(".loader").remove()
                         return
                     }
+                    feed.querySelector(".loader").remove()
                 }
 
                 async function loadLessA(size) {
