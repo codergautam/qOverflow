@@ -138,39 +138,65 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-6 lg:col-span-3 bg-gray-50 bg-fixed">
-                <div class="relative flex-col">
-                    <div class="mt-6 flex-col z-10">
-                        <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
-                            <p class="font-staat text-5xl text-gray-700">
-                                Your Feed:
-                            </p>
-                        </div>
-                        <div class="flex-col">
-                            <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
-                                Questions
-                            </p>
-                            <div class="flex-col mt-4 mb-6 overflow-y-auto h-80" id="questionFeed">
-                                <% if(questionFeed.length <=0) { %>
-                                    <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                        You Have No Questions Right Now
-                                    </div>
-                                    <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path
-                                                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                        </svg>
-                                    </span>
-                                    <% } %>
-                            </div>
-                        </div>
-                        <div class="flex-col">
-                            <p class="ml-6 mt-2 text-gray-700 font-semibold text-3xl">
-                                Answers
-                            </p>
-                            <div class="flex-col mt-4 mb-12 overflow-y-auto h-80" id="answerFeed">
-                                <% if(answerFeed.length <=0) { %>
+            <div class="ml-4 z-10 px-4 pt-2">
+                <div class="inline-block py-4">
+                    <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
+                        You Can...
+                    </div>
+                    <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
+                        <% if(user.abilities) { %> 
+                            <% user.abilities.map((ability) => { %> 
+                                <li><%= ability %></li>
+                            <% }) %> 
+                        <% } %> 
+                    </div>
+                </div>
+            </div>
+            <div class="ml-4 z-10  mt-2 px-4 pt-2">
+                <div class="inline-block py-4">
+                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-t-md border-b-4 border-white">
+                        <span class="font-staat font-light">Email:</span> <%- user.email %> 
+                    </div>
+                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-100 px-2 py-1 rounded-none">
+                        <span class="font-staat font-light">Questions:</span> <%- user.questions %> 
+                    </div>
+                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-b-md border-t-4 border-white">
+                        <span class="font-staat font-light">Answers:</span> <%- user.answers%> 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-3 bg-gray-50 bg-fixed">
+            <div class="relative flex-col">
+                <div class="mt-6 flex-col z-10">
+                    <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
+                        <p class="font-staat text-5xl text-gray-700">
+                            Your Feed:
+                        </p>
+                    </div>
+                    <div class="flex-col">
+                        <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
+                            Questions
+                        </p>
+                        <div class="flex-col mt-4 mb-6 overflow-y-auto max-h-80" id="questionFeed">
+                            <% if(questionFeed.length <= 0) { %>
+                                <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                    You Have No Questions Right Now
+                                </div>
+                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                      </svg>
+                                </span>
+                            <% } %>
+                        </div> 
+                    </div> 
+                    <div class="flex-col">
+                        <p class="ml-6 mt-2 text-gray-700 font-semibold text-3xl">
+                            Answers
+                        </p>
+                            <div class="flex-col mt-4 mb-12 overflow-y-auto max-h-80" id="answerFeed">
+                                <% if(answerFeed.length <= 0) { %>
                                     <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
                                         You Have No Answers Right Now
                                     </div>
