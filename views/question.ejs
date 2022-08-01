@@ -145,11 +145,12 @@
       max-width: 50%;
     }
   </style>
+    <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
 
   <body>
     <script src="/socket.io/socket.io.js"></script>
-    <%- include('../views/navbar.ejs', {signup: false, loggedIn}); %>
-      <div class="flex flex-col">
+
+     
         <!-- <div class="flex justify-center items-center flex-grow"> -->
         <div class="min-h-full">
 
@@ -203,10 +204,10 @@
                                           ongoingVotes.before != "protected") || basicData.level >= 7)) { %>
                                           <br />
                                           <p class="text-sm">You can vote to change the status of this question </p>
-                                          <script>
+                                          <!-- <script>
                                             const search2 = document.querySelector('#search2');
                                             search2.classList.remove('fixed');
-                                          </script>
+                                          </script> -->
                                           <script>
 
                                             console.log("<%= JSON.stringify(ongoingVotes )%>");
