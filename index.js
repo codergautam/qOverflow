@@ -528,9 +528,10 @@ app.post('/password', (req, res) => {
 app.post('/emailChange', async (req, res) => {
   console.log("Changing email")
   const { username, newEmail } = req.body
-  let data = await api.changeEmailOf(username, newEmail).then((data) => {
+  let data = await api.changeEmailOf(username.trim(), newEmail.trim()).then((data) => {
     return data
   })
+  console.log(data)
   if(data.success) {
     res.redirect("/dashboard")
   }
@@ -588,22 +589,25 @@ app.post('/questions',  async (req, res) => {
 
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
+  console.log("Username: " + username)
   const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
   if(newPassword.length <= 10) {
     res.send({success: false, error: "Password must be at least 10 characters long"})
   }
-  let data = await api.changePasswordOf(username, keyString, saltString).then((data) => {
+  let data = await api.changePasswordOf(username.trim(), keyString, saltString).then((data) => {
     if(data.success) {
       console.log("Password Changed!")
       return data
     }
   })
-  if(data.success) res.redirect("/dashboard")
+  if(data) {
+    res.redirect("/dashboard") 
+  } 
 
 })
 app.post('/deleteAccount', async (req, res) => {
   const { username } = req.body
-  let data = await api.deleteUser(username).then((data) => {
+  let data = await api.deleteUser(username.trim()).then((data) => {
     if(data.success) {
       return data
     } else {
