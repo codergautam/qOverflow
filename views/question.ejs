@@ -1075,7 +1075,11 @@ try {
       if(j.success) {
         console.log("comments", j.comments);
         var comments = j.comments;
-        if(comments.length < 1) destroyCommentSpinner(id);
+        if(comments.length < 1) {
+          destroyCommentSpinner();
+          document.getElementById("commentsList"+id).innerHTML = "<br/>No comments found.";
+          return;
+        } 
         var commentsList = document.getElementById("commentsList"+id);
         commentsList.innerHTML = "";
         for(var i = 0; i < comments.length; i++) {
@@ -1590,8 +1594,14 @@ async function showComments(where="") {
 appendCommentSpinner()
       fetch("/questionComments?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
       document.getElementById("showComments"+where).disabled = false;
-    if(j.success && j.comments.length < 1) destroyCommentSpinner();
-        
+    if(j.success && j.comments.length < 1) { 
+      destroyCommentSpinner();
+          document.getElementById("commentsList"+where).innerHTML = "<br/>No comments found.";
+          return;
+      
+      return
+    }
+         
         if(j.success) {
           for (var i = 0; i < j.comments.length; i++) {
             if(i > 4) {
