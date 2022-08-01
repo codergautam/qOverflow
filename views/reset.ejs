@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Reset Password</title>
   <link rel="stylesheet" href="/index.css">
 </head>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -39,6 +39,29 @@
             </label>
             <div class="mt-1 rounded-md shadow-sm">
               <input id="password" type="password" name="password" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5" required>
+              <label id="passwordLabel" style="color: red;" for="password"></label>
+              <!-- password strength -->
+              <script>
+                document.getElementById("password").oninput = () => {
+                  var value = document.getElementById("password").value;
+                  if(value.length == 0) {
+                    document.getElementById("passwordLabel").innerHTML = "";
+                  } 
+                  else if(value.length <= 10) {
+                    document.getElementById("passwordLabel").innerHTML = "Weak Password";
+                    // red color
+                    document.getElementById("passwordLabel").style.color = "red";
+                  } else if(value.length <= 17) {
+                    document.getElementById("passwordLabel").innerHTML = "Moderate Password";
+                    // yellow color
+                    document.getElementById("passwordLabel").style.color = "orange";
+                  } else {
+                    document.getElementById("passwordLabel").innerHTML = "Strong Password";
+                    // green color
+                    document.getElementById("passwordLabel").style.color = "green";
+                  }
+                }
+              </script>
             </div>
           </div>
         </div>
@@ -47,6 +70,10 @@
           <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
            Reset
           </button>
+          <script>
+            const search2 = document.querySelector('#search2');
+            search2.classList.remove('fixed');
+        </script>
         </div>
       </form>
     </div>

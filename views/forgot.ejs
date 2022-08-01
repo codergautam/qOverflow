@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>Forgot Password?</title>
   <link rel="stylesheet" href="/index.css">
 </head>
 <script src="https://cdn.tailwindcss.com"></script>
@@ -28,6 +28,7 @@
       <div>
         <!-- <img class="mx-auto h-12 w-auto" src="" alt=""> -->
         <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Forgot your password?</h2>
+        
       </div>
       <form class="mt-8 space-y-6" action="/forgot" method="POST">
         <input type="hidden" name="remember" value="true">
@@ -50,6 +51,10 @@
       </form>
     </div>
   </div>
+  <script>
+    const search2 = document.querySelector('#search2');
+    search2.classList.remove('fixed');
+  </script>
 </div>
 </div>
 </body>

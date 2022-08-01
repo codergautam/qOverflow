@@ -224,7 +224,8 @@ app.get('/search', async (req, res) => {
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: questions,
-      user: req.session.user
+      user: req.session.user,
+      error: data.success ? undefined : true
     })
   } else {
     res.render('searchResult', {
@@ -269,11 +270,16 @@ app.get('/mailResults/:after', async (req, res) => {
   if(after == 0) {
     console.log("recieved null")
     let data = await api.getUserMail(username)
-    data = data.messages
+    data = data?.messages
+    if(data) {
     data.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
+  
     res.send(JSON.stringify(data))
+  } else {
+    res.send({success:false, failed: true})
+  }
   } else {
     let data = await api.getUserMail(username, after)
     data = data.messages
@@ -404,12 +410,15 @@ app.post('/search', async (req, res) => {
     questions.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
     })
+    
     res.render('searchResult', {
       loggedIn: req.session.loggedIn,
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: questions, 
-      user: req.session.user
+      user: req.session.user,
+      error: data.success ? undefined : true
+
     })
   } else {
     res.render('searchResult', {
@@ -417,7 +426,8 @@ app.post('/search', async (req, res) => {
       searchQuery: searchQuery,
       sort: sort,
       searchFeed: [],
-      user: req.session.user
+      user: req.session.user,
+      error: true
     })
   }
 })
@@ -425,7 +435,8 @@ app.post('/search', async (req, res) => {
 
 
 app.get('/dashboard', async (req, res) => {
-  console.log(req.session)
+  console.log(req.session.user)
+  if(!req.session.loggedIn) return res.redirect('/')
   if(Object.keys(req.session.user).length != 0) {
       let data = await api.getUser(req.session.user.username).then(
         (data) => {
@@ -455,6 +466,7 @@ app.get('/dashboard', async (req, res) => {
         }
         const questionData = await api.getUserQuestions(user.username)
         const answerData = await api.getUserAnswers(user.username)
+      if(questionData.success && answerData.success) {
         let questionFeed = (questionData.success) ? questionData.questions : null
         let answerFeed = (answerData.success) ? answerData.answers : null
         questionFeed.forEach((question) => {
@@ -489,6 +501,14 @@ app.get('/dashboard', async (req, res) => {
         req.session.loggedIn = false
         res.redirect('/auth/login')
       }
+    } else {
+      res.render('error', {
+        loggedIn: req.session.loggedIn,
+        user: req.session.user,
+        error: true
+
+      })
+    }
   } else {
       req.session.loggedIn = false
       res.redirect('/auth/login')
@@ -506,13 +526,15 @@ app.post('/password', (req, res) => {
 })
 
 app.post('/emailChange', async (req, res) => {
+  console.log("Changing email")
   const { username, newEmail } = req.body
-  let data = await api.changeEmailOf(username).then((data) => {
-    if(data.success) {
-      return data
-    }
+  let data = await api.changeEmailOf(username.trim(), newEmail.trim()).then((data) => {
+    return data
   })
-  if(data.success) res.redirect("/dashboard")
+  console.log(data)
+  if(data.success) {
+    res.redirect("/dashboard")
+  }
 })
 
 app.get('/logout', async (req, res) => {
@@ -553,7 +575,7 @@ app.post('/questions',  async (req, res) => {
     if (dataStatus) { 
       res.redirect('/')
     } else {
-      res.redirect('/questionEditor', {username: username})
+      res.redirect('/questionEditor')
     }
  await modifyPoints(1, username)
 
@@ -567,19 +589,25 @@ app.post('/questions',  async (req, res) => {
 
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
+  console.log("Username: " + username)
   const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
-  let data = await api.changePasswordOf(username, keyString, saltString).then((data) => {
+  if(newPassword.length <= 10) {
+    res.send({success: false, error: "Password must be at least 10 characters long"})
+  }
+  let data = await api.changePasswordOf(username.trim(), keyString, saltString).then((data) => {
     if(data.success) {
       console.log("Password Changed!")
       return data
     }
   })
-  if(data.success) res.redirect("/dashboard")
+  if(data) {
+    res.redirect("/dashboard") 
+  } 
 
 })
 app.post('/deleteAccount', async (req, res) => {
   const { username } = req.body
-  let data = await api.deleteUser(username).then((data) => {
+  let data = await api.deleteUser(username.trim()).then((data) => {
     if(data.success) {
       return data
     } else {
@@ -621,11 +649,24 @@ app.post("/auth/signup", (req,res) => {
     })
   }
 
+  if(password.length < 10 ) {
+    return res.render('signup', {
+      error: {msg: "Password must be at least 10 characters long"}
+    })
+  }
+
   console.log("Creating user: " + username, password)
   // create user
   api.createUser(username, email, password).then(data => {
     if(data.success) {
       req.session.loggedIn = true
+      if(req.body.remember) {
+        req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7 * 30;
+        req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
+     } else {
+        req.session.cookie.maxAge = 1000 * 60 * 30;
+        req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 30);
+     }
       req.session.user = {
         username: data.user.username,
         user_id: data.user.user_id,
@@ -636,8 +677,9 @@ app.post("/auth/signup", (req,res) => {
       res.redirect('/')
     } else {
       var err = data.error;
-      if(err == "an item with that \"email\" already exists") err = "Email taken!"
-      else if(err == "an item with that \"username\" already exists") err = "Username taken!";
+      console.log(err)
+      if(err == "an item with that \"email\" already exists") err = "An account with that email already exists!"
+      else if(err == "an item with that \"username\" already exists") err = "An account with that username already exists!";
 
       res.render('signup', {
         error: {msg: err}
@@ -646,6 +688,23 @@ app.post("/auth/signup", (req,res) => {
   });
 
 })
+
+app.get('/answer/:id', async (req, res) => {
+  var answerId = req.params.id;
+  var createdAt = req.query.at;
+  var accepted = req.query.accepted;
+  api.getQuestionId(answerId, createdAt, accepted).then(data => {
+    console.log(data)
+    if(data.success) {
+      res.redirect(`/question/${data.questionId}`)
+    } else {
+      res.render('error', {
+        error: "Answer not found"
+      })
+    }
+  });
+
+});
 
 app.get('/mail', async (req, res) => {
   if(req.session.loggedIn) {
@@ -677,7 +736,8 @@ app.get("/messageEditor", async (req, res) => {
   console.log(username)
   username = (username) ? username : req.session.user.username
   res.render('messageEditor', {
-    username: username
+    username: username, 
+    error: req.query.error
   })
 })
 app.get('/getAnswers', async (req, res) => {
@@ -707,9 +767,7 @@ app.post("/messages", async (req, res) => {
   if(data.success) {
     res.redirect('/mail')
   } else {
-    res.redirect('/messageEditor', {
-      username: username
-    })
+    res.redirect('/messageEditor?error='+(data.error.startsWith("user \"") ? receiver+" wasn't found" : "Something went wrong, please try again"))
   }
 })
 
@@ -738,7 +796,10 @@ app.post("/auth/login", async (req,res) => {
     console.log("Missing username or password")
     return
   }
-
+  res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+  res.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+  res.setHeader("Expires", "0"); // Proxies.
+  
   var user = await api.getUser(username);
   // console.log(user)
   if(user.success && user) {
@@ -747,6 +808,14 @@ app.post("/auth/login", async (req,res) => {
     api.loginUser(username, password, salt).then(data => {
         if(data.success) {
             req.session.loggedIn = true
+            console.log(req.body, "RMEMFDMG")
+           if(req.body.remember) {
+              req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7 * 30;
+              req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
+           } else {
+              req.session.cookie.maxAge = 1000 * 60 * 30;
+              req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 30);
+           }
             req.session.user = {
                 username: user.user.username,
                 user_id: user.user.user_id,
@@ -756,11 +825,18 @@ app.post("/auth/login", async (req,res) => {
             }
             res.redirect('/')
         } else {
+          if(data.failed) {
+            res.render('login', {
+              error: {msg: user.failed ? "Something went wrong, please try again later.": "Invalid username"}
+            })
+          } else {
+            
             res.render('login', {
                 error: {msg: "Incorrect password"},
                 badPassword: true
             })
         }
+      }
     
     })
 } else {
@@ -953,7 +1029,7 @@ var basicDataCache = {};
 function getBasicData(username) {
   return new Promise((resolve, reject) => {
 
-  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 300000) {
+  if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 5000) {
     resolve({success:true, ...basicDataCache[username].data})
 
   } else {
@@ -982,7 +1058,14 @@ function getBasicData(username) {
 }
 app.get("/getBasicData", (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
+
     getBasicData(req.query.user).then(data => {
+
+      if(data.success && req.session.loggedIn && req.session.user && req.session.user.username == req.query.user) {
+        req.session.user.points = data.points;
+        req.session.user.img = data.pfp;
+        req.session.user.level = data.level;
+      }
       res.send(data)
     });
   } else res.send(JSON.stringify({success: false}))
@@ -1154,6 +1237,12 @@ app.post("/reset/:token", (req, res) => {
           })
           return
         }
+        if(password.length <= 10) {
+          res.render('reset', {
+            username: username,
+            error: {msg: "Password must be at least 10 characters long"}
+          })
+        }
         api.resetPassword(username, password).then(data => {
           if(data.success) {
             res.render('login', {
@@ -1204,7 +1293,9 @@ app.post("/api/question/:id/:type", (req,res) => {
   }
   type += "s";
   api.voteQuestion(id, req.session.user?.username, type, action).then(async data => {
+   
     res.send(JSON.stringify(data))
+    if(!data.success) return;
     var dir = action == "increment" ? 1 : -1;
     if(!questionOwnerCache[id]) questionOwnerCache[id] = await api.getQuestionOwner(id);
     var owner = questionOwnerCache[id];
@@ -1232,7 +1323,9 @@ app.post("/api/answer/:id/:type", (req,res) => {
   }
   type += "s";
   api.voteAnswer( question , id, req.session.user?.username, type, action).then(async data => {
+   
     res.send(JSON.stringify(data))
+    if(!data.success) return;
     var dir = action == "increment" ? 1 : -1;
     if(!answerOwnerCache[id]) answerOwnerCache[id] = await api.getAnswerOwner(question, id);
     var owner = answerOwnerCache[id];
@@ -1266,6 +1359,7 @@ app.post("/api/comment/:id/:type", (req,res) => {
   type += "s";
   api.voteComment( user, id, type, action, question, answer).then(data => {
     res.send(JSON.stringify(data))
+    if(!data.success) return;
     var dir = action == "increment" ? 1 : -1;
     dir *= type == "upvotes" ? 1 : -1;
     if(data.success) {
@@ -1279,14 +1373,99 @@ var liveCache = {
   views: {},
   answerCount: {},
 };
+
+var answerVoteCache = {};
+var questionCommentCache = {};
+
+var answerCommentCache = {};
+
 io.on('connection', (socket) => {
-  // console.log('a user connected');
+  console.log('a user connected');
   var lastRecieved = 0;
+
+
+  socket.on('questionCommentVoteCount', async (questionId, commentId) => {
+    if(questionCommentCache[questionId] && questionCommentCache[questionId][commentId] && Date.now() - questionCommentCache[questionId][commentId].time < 15000) {
+      socket.emit('questionCommentVoteCount', [questionId, commentId, questionCommentCache[questionId][commentId].votes, questionCommentCache[questionId][commentId].time]);
+      return;
+    } else {
+    var comments = await api.getAllQuestionComments(questionId);
+    if(comments.success) {
+      if(!questionCommentCache[questionId]) questionCommentCache[questionId] = {};
+    var comment = comments.comments.find(c => c.comment_id == commentId);
+    if(comment) {
+      questionCommentCache[questionId][commentId] = {
+        votes: comment.upvotes - comment.downvotes,
+        time: Date.now()
+      };
+      socket.emit("questionCommentVoteCount", [questionId, commentId, comment.upvotes - comment.downvotes, Date.now()]);
+
+
+      comments.comments.forEach(c => {
+        questionCommentCache[questionId][c.comment_id] = {
+          votes: c.upvotes - c.downvotes,
+          time: Date.now()
+        }
+        });
+    }
+  }
+}
+  })
+
+  socket.on('answerCommentVoteCount', async (questionId, answerId, commentId) => {
+    if(answerCommentCache[questionId] && answerCommentCache[questionId][answerId] && answerCommentCache[questionId][answerId][commentId] && Date.now() - answerCommentCache[questionId][answerId][commentId].time < 15000) {
+      socket.emit('answerCommentVoteCount', [questionId, answerId , commentId, answerCommentCache[questionId][answerId][commentId].votes, answerCommentCache[questionId][answerId][commentId].time]);
+      return;
+    } else {
+    var comments = await api.getAllAnswerComments(questionId, answerId);
+    if(comments.success) {
+      if(!answerCommentCache[questionId]) answerCommentCache[questionId] = {};
+      if(!answerCommentCache[questionId][answerId]) answerCommentCache[questionId][answerId] = {};
+    var comment = comments.comments.find(c => c.comment_id == commentId);
+    if(comment) {
+      answerCommentCache[questionId][answerId][commentId] = {
+        votes: comment.upvotes - comment.downvotes,
+        time: Date.now()
+      };
+      socket.emit("answerCommentVoteCount", [questionId, answerId , commentId, comment.upvotes - comment.downvotes, Date.now()]);
+
+
+      comments.comments.forEach(c => {
+        answerCommentCache[questionId][answerId][c.comment_id] = {
+          votes: c.upvotes - c.downvotes,
+          time: Date.now()
+        }
+        });
+    }
+  }
+}
+  });
+
+  socket.on('answerVoteCount', (a) => {
+    
+    var answer = a[0];
+    var question = a[1];
+    if(answerVoteCache[question] && answerVoteCache[question][answer] && Date.now() - answerVoteCache[question][answer].time < 10000) {
+      socket.emit("answerVoteCount", [answer, question, answerVoteCache[question][answer].votes, answerVoteCache[question][answer].time]);
+
+    } else {
+    api.getAnswer(question, answer).then(data => {
+      if(data.answer_id) {
+        if(!answerVoteCache[question])  answerVoteCache[question] = {};
+        var count = data.upvotes + data.downvotes;
+        answerVoteCache[question][answer] = {votes: count, time: Date.now()};
+
+          socket.emit("answerVoteCount", [question, answer, count, Date.now()]);
+        console.log("answerVoteCount", question, answer, count)
+      }
+    });
+  }
+  })
   socket.on("getVotes", (qId) => {
-    if(Date.now() - lastRecieved < 100)  return
+    // if(Date.now() - lastRecieved < 100)  return
      lastRecieved = Date.now();
     if(liveCache.votes[qId] && Date.now() - liveCache.votes[qId].time < 10000) {
-      socket.emit("questionVotes", liveCache.votes[qId].data, qId);
+      socket.emit("questionVotes", liveCache.votes[qId].data, qId, liveCache.votes[qId].time);
     } else {
       console.log(liveCache.views[qId])
       if(liveCache.votes[qId]) {
@@ -1308,18 +1487,21 @@ io.on('connection', (socket) => {
           time: Date.now(),
           data: data.question.answers
         }
-        socket.emit("questionVotes", liveCache.votes[qId].data, qId);
+        socket.emit("questionVotes", liveCache.votes[qId].data, qId, liveCache.votes[qId].time);
       }
 
     });
   }
   })
   socket.on("getViews", (qId) => {
-    if(Date.now() - lastRecieved < 100)  return
+
+    // if(Date.now() - lastRecieved < 100)  return
+    console.log("getViews", qId)
 
 
-    if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 10) {
-      socket.emit("questionViews", liveCache.views[qId].data, qId);
+    if(liveCache.views[qId] && Date.now() - liveCache.views[qId].time < 1000 * 5) {
+      socket.emit("questionViews", liveCache.views[qId].data, qId, liveCache.views[qId].time);
+
     } else {
       console.log(liveCache.views[qId])
       if(liveCache.votes[qId]) {
@@ -1341,7 +1523,8 @@ io.on('connection', (socket) => {
           time: Date.now(),
           data: data.question.answers
         }
-        socket.emit("questionViews", liveCache.views[qId].data,qId);
+        socket.emit("questionViews", liveCache.views[qId].data,qId, liveCache.views[qId].time);
+
       }
     });
   }
@@ -1351,9 +1534,8 @@ io.on('connection', (socket) => {
 
 
      lastRecieved = Date.now();
-
-    if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 10) {
-      socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
+    if(liveCache.answerCount[qId] && Date.now() - liveCache.answerCount[qId].time < 1000 * 5) {
+      socket.emit("answerCount", liveCache.answerCount[qId].data,qId, liveCache.answerCount[qId].time);
     } else {
       console.log(liveCache.views[qId])
       if(liveCache.votes[qId]) {
@@ -1375,7 +1557,7 @@ io.on('connection', (socket) => {
           time: Date.now(),
           data: data.question.answers
         }
-        socket.emit("answerCount", liveCache.answerCount[qId].data,qId);
+        socket.emit("answerCount", liveCache.answerCount[qId].data,qId, liveCache.answerCount[qId].time);
       }
     });
   }
