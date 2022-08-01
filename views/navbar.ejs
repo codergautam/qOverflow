@@ -22,7 +22,7 @@
       <div class="flex items-center w-full place-content-center" id="search">
         <div class="w-fill fixed flex group pr-2 md:pr-0 text-left lg:relative place-content-center" id="search2">
           <form class="flex" action="/search" method="POST">
-            <input id="one" name="searchQuery" type="text" required
+            <input id="1" name="searchQuery" type="text" required
               class="h-9 w-40 sm:w-80 sm:h-12 lg:h-12 lg:w-80 xl:h-14 xl:w-96 appearance-none rounded-none rounded-l-lg relative block px-3 pr-3 lg:py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 text-sm sm:text-lg lg:text-lg xl-text-xl font-semibold focus:ring-1"
               placeholder="What is an apple?">
             <svg xmlns="http://www.w3.org/2000/svg"
@@ -127,12 +127,12 @@
                   <!--Not logged in-->
                   <script>
                     const search2 = document.querySelector('#search2');
-                    const one = document.querySelector('#1');
                     search2.classList.remove('fixed');
-                    one.classList.remove('w-full');
+                    const one = document.querySelector('#1');
                     one.classList.remove('w-40');
-                </script>
-                  <div class="flex">
+                    one.classList.add('w-full');
+                  </script>
+                  <div class="flex mr-3">
                     <button onclick="location.href = '/auth/login'"
                       class="md:p-2 md:px-3 p-1 px-2 mr-2 bg-blue-600 hover:bg-blue-500 hover:text-gray-900  text-white text-sm md:text-lg md:mr-4 font-semibold rounded-md transition-all ease-in-out delay-75 duration-300">
                       <% } else { %>
