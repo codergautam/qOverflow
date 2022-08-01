@@ -732,7 +732,8 @@ app.get("/messageEditor", async (req, res) => {
   console.log(username)
   username = (username) ? username : req.session.user.username
   res.render('messageEditor', {
-    username: username
+    username: username, 
+    error: req.query.error
   })
 })
 app.get('/getAnswers', async (req, res) => {
@@ -762,9 +763,7 @@ app.post("/messages", async (req, res) => {
   if(data.success) {
     res.redirect('/mail')
   } else {
-    res.redirect('/messageEditor', {
-      username: username
-    })
+    res.redirect('/messageEditor?error='+(data.error.startsWith("user \"") ? receiver+" wasn't found" : "Something went wrong, please try again"))
   }
 })
 
@@ -1411,7 +1410,7 @@ io.on('connection', (socket) => {
 
   socket.on('answerCommentVoteCount', async (questionId, answerId, commentId) => {
     if(answerCommentCache[questionId] && answerCommentCache[questionId][answerId] && answerCommentCache[questionId][answerId][commentId] && Date.now() - answerCommentCache[questionId][answerId][commentId].time < 15000) {
-      socket.emit('questionCommentVoteCount', [questionId, answerId , commentId, answerCommentCache[questionId][answerId][commentId].votes, answerCommentCache[questionId][answerId][commentId].time]);
+      socket.emit('answerCommentVoteCount', [questionId, answerId , commentId, answerCommentCache[questionId][answerId][commentId].votes, answerCommentCache[questionId][answerId][commentId].time]);
       return;
     } else {
     var comments = await api.getAllAnswerComments(questionId, answerId);
