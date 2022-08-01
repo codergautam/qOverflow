@@ -13,7 +13,7 @@
         <%- include('./navbar'), { loggedIn: true, login: false, } %>
         <div class="grid grid-cols-12 bg-white">
             <div class="relative flex justify-center col-span-4">
-                <div class="flex-col w-full ml-2 ">
+                <div class="flex-col w-full ml-2 " id="one">
                     <div class="flex text-5xl text-gray-700 font-bold mt-4">
                         <div class="text-start border-b-2 pb-2">
                             INBOX
@@ -25,13 +25,13 @@
                                 Welcome,
                             </div>
                             <div class="flex align-middle">
-                                <img src="https://s.gravatar.com/avatar/a0e6e8c282a3953d22f0f0d1ee267910?s=200&amp;r=x"
+                                <img src=" <%= typeof user !== "undefined" ? user.img : "" %>"
                                     alt=""
                                     class="rounded-full w-14 border-4 border-gray-50 hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
                                 <div class="grid place-content-center">
                                     <div
                                         class="text-4xl mb-1 h-full grid align-middle h-min font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300 w-min">
-                                        werf3etfw3efg24s
+                                        <%= typeof user !== "undefined" ? user.username : "" %>
                                     </div>
                                 </div>
                             </div>
@@ -109,11 +109,10 @@
                             </p>
                             <p id="previewAuthor" class="text-lg text-gray-700 text-start font-bold ml-4 mt-2 mr-2"
                                 id="previewSubject">
-                                <span class="text-gray-500 font-semibold">From</span> Anonymous
+                                <span class="text-gray-500 font-semibold"></span>
                             </p>
                         </div>
                         <p class="text-xl text-gray-500 text-start ml-4" id="previewText">
-                            Message Text: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do....
                         </p>
                     </div>
                 </div>
@@ -121,10 +120,7 @@
         </div>
         <script>
             const search2 = document.querySelector('#search2');
-            const one = document.querySelector('#1');
             search2.classList.remove('fixed');
-            one.classList.remove('w-full');
-            one.classList.add('w-40');
         </script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
@@ -185,8 +181,9 @@
             }
 
             async function getMail(size, lastResult) {
+                try {
                 let mail = await fetch('/mailResults/' + lastResult).then((res) => (res.json()))
-                if (mail.success) {
+                if (typeof mail  == "object") {
                     console.log(mail.length + "Standard: " + size)
                     if (mail.length > size) {
                         console.log("There's more!")
@@ -211,9 +208,12 @@
 
                     feed.lastChild.remove()
 
-                    var error = 
+            // var error = 
 
             }
+        } catch (error) {
+            console.log(error)
+        }
             }
 
             async function loadMore(size, _lastResult) {
@@ -231,6 +231,7 @@
                 </div>`
                 feed.insertAdjacentHTML("beforeend", loader)
                 let data = await getMail(size, _lastResult)
+                console.log(data)
                 if (data) {
                     if (feed.childElementCount > 0 && !document.getElementById("noMail")) {
                         feed.children.item(feed.children.length - 1).remove()

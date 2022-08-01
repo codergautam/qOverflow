@@ -237,7 +237,8 @@
                     feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                 <div class="px-4 py-4 ">
                                 <div class="hidden questionId">${question.question_id}</div>
-                                <div class="font-bold text-lg mb-2">${question.title}</div>
+                                <div class="font-bold text-lg mb-2">${question.title.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';'})}</div>
                                 </div>
                                 <div class="pl-3 pr-6 pt-4 pb-2 ">
                                 <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: ${question.creator} </span>
@@ -393,7 +394,8 @@
                                             <div class="px-4 py-4 ">
                                               <div class="text-base font-semibold mb-2">ACCEPTED: <span class="font-bold ${color}">${answer.accepted}</span></div>
                                               <p class="font-bold text-gray-700 text-lg w-5/6">
-                                               ${answer.text} 
+                                               ${answer.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';'})} 
                                               </p>
                                             </div>
                                             <div class="pl-3 pr-6 pt-4 pb-2 ">

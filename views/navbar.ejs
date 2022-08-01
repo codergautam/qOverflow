@@ -93,7 +93,7 @@
                         <!-- profile img-->
                         <% if(typeof user !="undefined" ) { %>
                           <div class="flex flex-row">
-                            <img class="h-8 mr-1 xl:h-9 rounded-full" src="<%= locals.user.img%> " alt="">
+                            <img class="h-8 mr-1 xl:h-9 rounded-full" src="<%= locals.user?.img%> " alt="">
                             <h2
                               class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-blue-700 transition-all delay-75 duration-100 ease-in-out" style="color: #566FD6;">
                               <%= locals.user.username %>
@@ -234,10 +234,10 @@
   </div>
 
   </div>
-  <% if(typeof user !="undefined" ) { %>
+  <% if(typeof user !="undefined" && loggedIn ) { %>
     <script>
       setInterval(function () {
-        fetch('/getBasicData?user=<%= locals.user.username %>')
+        fetch('/getBasicData?user=<%= locals.user?.username %>')
           .then(response => response.json())
           .then(data => {
             if (data) {
