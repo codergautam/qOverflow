@@ -8,141 +8,85 @@
     overflow-x: hidden;
    }
   </style>
-  <div class=" w-full py-2 lg:py-3 xl:py-4 mx-auto px-2 md:px-3 lg:px-4 flex ">
-    <div class="w-full flex justify-between max-h-screen relative">
+  <div class=" w-full py-2 lg:py-3 xl:py-4 mx-auto px-2 md:px-3 lg:px-4 flex justify-between">
+    <div class="w-full flex max-h-screen relative">
       <a href="/" id="logo" class="flex items-baseline">
         <!-- Logo -->
           <img class="h-8 w-auto" src="../BDPALogo.png">
           <img class="hidden h-14 w-auto sm:hidden md:inline lg:inline xl:inline" src="../qOverflowLogoSmall.png">
         </a>
       </div>
-      <div class="flex mr-4 group" id="search">
-          <form class="flex  md:w-1/6 sm:w-1/5 lg:w-1/3 xl:w-full 2xl:w-full" action="/search" method="POST">
-            <input id="1" name="searchQuery" type="text" required
-              class="transition delay-75 duration-100 ease-in-out focus:bg-gray-50 focus:rounded-lg focus:border-none border-b-2 border-gray-100 border-spacing-1 focus:outline-none py-1 appearance-none px-3 placeholder-gray-500 text-gray-900 focus:z-10 text-sm lg:text-base font-semibold"
-              placeholder="Search">
-              <button type="submit">
-                <svg xmlns="http://www.w3.org/2000/svg" type="submit"
-                  class="transition delay-75 duration-200 ease-in-out mt-auto hover:scale-110 cursor-pointer w-auto xl:h-11 lg:h-9 md:h-7 sm:h-5 stroke-gray-500 group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 group-focus:ring-1"
-                  fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-          </form>
-      </div>
-      <div class="flex items-center">
-        <div class="relative">
-          <div class="flex">
-            <% if(loggedIn) { %>
-              <!-- Profile picture -->
-              <div class="w-full">
-                <div class="flex lg:hidden top-3 place-content-end">
-                  <div class="outline-none pr-2" id="burger">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
-                      stroke="currentColor" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
+      <div class="flex w-full">
+        <div class="mr-4 selection:flex group" id="search">
+            <form class="flex  md:w-1/6 sm:w-1/5 lg:w-1/3 xl:w-full 2xl:w-full" action="/search" method="POST">
+              <input id="1" name="searchQuery" type="text" required
+                class="transition delay-75 duration-100 ease-in-out focus:bg-gray-50 focus:rounded-lg focus:border-none border-b-2 border-gray-100 border-spacing-1 focus:outline-none py-1 appearance-none px-3 placeholder-gray-500 text-gray-900 focus:z-10 text-sm lg:text-base font-semibold"
+                placeholder="Search">
+                <button type="submit">
+                  <svg xmlns="http://www.w3.org/2000/svg" type="submit"
+                    class="transition delay-75 duration-200 ease-in-out mt-auto hover:scale-110 cursor-pointer w-auto xl:h-11 lg:h-9 md:h-7 sm:h-5 stroke-gray-500 group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 group-focus:ring-1"
+                    fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </button>
+            </form>
+        </div>
+        <div class="flex items-center">
+            <div class="flex">
+              <div class="w-full flex space-x-4 items-center">
+              <% if(loggedIn) { %>
+                <!-- Profile picture -->
+                  
+                <a href="/logout">
+                  <div class="group wavy-hover flex">
+                    <h2 class="cursor-pointer sm:text-sm md:text-base lg:text-base xl:text-base border-b-2 border-transparent border-spacing-1 hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
+                      Logout</h2>
                   </div>
-                </div>
-                <div
-                  class="lg:flex md:text-right place-content-end hidden md:place-content-center h-full md:space-x-2 md:justify-start w-full grid lg:flex">
-                  <!--Mail Icon-->
-                  <div
-                    class="block w-min justify-self-end md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                    <a href="/logout"
-                      class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-staat text-blue-500 " style="color: #01B3E7;">Logout</a>
-                  </div>
-                  <!-- Home Icon -->
-
-                  <a href="/" class="lg:place-content-center  md:grid w-min justify-self-end lg:align-middle">
-                    <div
-                      class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-blue-500" style="color: #01B3E7;"
-                        viewBox="0 0 20 20" fill="currentColor">
-                        <path
-                          d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                        </path>
-                      </svg>
-                      <h2
-                        class="block md:flex xs:text-xl wavy-hover text-xl md:text-2xl xl:text-3xl group-hover:visible my-auto font-staat text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
-                        Home</h2>
-                    </div>
-                  </a>
-                  <a href="/mail" class="lg:place-content-center w-min justify-self-end  md:grid md:align-middle">
-                    <!-- Mail Icon -->
-                    <div
-                      class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto h-8 xl:h-9 text-blue-500" style="color: #01B3E7;"
-                        viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-                      </svg>
-                      <h2
-                        class="block md:flex xs:text-xl wavy-hover group-hover:visible text-xl md:text-2xl xl:text-3xl my-auto font-staat text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
-                        Mail</h2>
-                    </div>
-                  </a>
-                  <a href="/dashboard" class=" hide lg-block md:place-content-center lg:grid align-middle">
-                    <!-- Dashboard Icon -->
-                    <div class="group hover:shadow-2xl w-max shadow-purple-900 align-middle lg:px-2 transition ease-in-out
-                        delay-75 duration-300 hover:-translate-y-2">
-                      <div class="flex w-full flex-col pr-3">
-                        <!-- profile img-->
-                        <% if(typeof user !="undefined" ) { %>
-                          <div class="flex flex-row">
-                            <img class="h-8 mr-1 xl:h-9 rounded-full" src="<%= locals.user?.img%> " alt="">
-                            <h2
-                              class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-blue-700 transition-all delay-75 duration-100 ease-in-out" style="color: #566FD6;">
-                              <%= locals.user.username %>
-                            </h2>
-                          </div>
-                          <!-- user level and points text-->
-                          <div class="group shadow-purple-900 flex align-middle rounded-full">
-                            <h4
-                              class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-blue-700 transition-all delay-75 duration-300 ease-in-out" style="color: #566FD6;"
-                              id="user-level">Level: <%= locals.user.level %>
-                            </h4>
-                            &nbsp;
-                            <h4
-                              class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-blue-700 transition-all delay-75 duration-300 ease-in-out" style="color: #566FD6;"
-                              id="user-points">Points: <%= locals.user.points %>
-                            </h4>
-                          </div>
-                      </div>
-                      <% } %>
-
-
-                    </div>
-                </div> <!-- Level + points-->
-
-
                 </a>
-              </div>
-
-              <% } else { %>
-                <% if (typeof login=="undefined" || !login) { %>
-                  <!--Not logged in-->
-                  <button onclick="location.href = '/auth/login'"
-                    class="mr-2 sm:text-sm md:text-base lg:text-base xl:text-base border-b-2 border-spacing-1 border-transparent hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
-                    <% } else { %>
-                      <button onclick="location.href = '/auth/login'"
-                        class="mr-2 sm:text-sm md:text-base lg:text-base xl:text-base px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
-                        <% } %>
-                          Login
-                      </button>
-                      &nbsp;
-                      <% if (typeof signup=="undefined" || !signup) { %>
-                        <!--Not Signed In-->
-                        <button onclick="location.href = '/auth/signup'"
-                          class="sm:text-sm md:text-base lg:text-base xl:text-base border-b-2 border-transparent border-spacing-1 hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
-                          <% } else { %>
-                            <button onclick="location.href = '/auth/signup'"
-                              class="sm:text-sm md:text-base lg:text-base xl:text-base px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 font-semibold mr-4 rounded-md  transition-all ease-in-out delay-75 duration-300">
-                              <% } %>
-                                Signup
-                            </button>
-                            <% } %>
+                <a href="/">
+                  <div class="group wavy-hover flex">
+                    <h2 class="cursor-pointer sm:text-sm md:text-base lg:text-base xl:text-base border-b-2 border-transparent border-spacing-1 hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
+                      Home</h2>
                   </div>
+                </a>
+                <a href="/mail">
+                  <div class="group wavy-hover flex">
+                    <h2 class="cursor-pointer sm:text-sm md:text-base lg:text-base xl:text-base border-b-2 border-transparent border-spacing-1 hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
+                      Inbox</h2>
+                  </div>
+                </a>
+                <a href="/dashboard">
+                  <div class="wavy-hover inline-flex items-top">
+                      <p class="cursor-pointer sm:text-base md:text-lg lg:text-lg xl:text-xl border-b-2 border-transparent border-spacing-1 hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
+                        <%= user.username %>
+                      </p>
+                      <img class="h-8 w-auto ml-2 rounded-full self-center" src="<%= user.img%> " alt="">
+                  </div>
+                </a>
+                <% } else { %>
+                  <% if (typeof login=="undefined" || !login) { %>
+                    <!--Not logged in-->
+                    <button onclick="location.href = '/auth/login'"
+                      class="mr-2 sm:text-sm md:text-base lg:text-base xl:text-base border-b-2 border-spacing-1 border-transparent hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
+                      <% } else { %>
+                        <button onclick="location.href = '/auth/login'"
+                          class="mr-2 sm:text-sm md:text-base lg:text-base xl:text-base px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
+                          <% } %>
+                            Login
+                        </button>
+                        &nbsp;
+                        <% if (typeof signup=="undefined" || !signup) { %>
+                          <!--Not Signed In-->
+                          <button onclick="location.href = '/auth/signup'"
+                            class="sm:text-sm md:text-base lg:text-base xl:text-base border-b-2 border-transparent border-spacing-1 hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
+                            <% } else { %>
+                              <button onclick="location.href = '/auth/signup'"
+                                class="sm:text-sm md:text-base lg:text-base xl:text-base px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 font-semibold mr-4 rounded-md  transition-all ease-in-out delay-75 duration-300">
+                                <% } %>
+                                  Signup
+                              </button>
+                              <% } %>
+                    </div>
           </div>
         </div>
       </div>

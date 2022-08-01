@@ -33,10 +33,10 @@
     </style>
 </head>
 
-<body>
+<body class="bg-blue-500">
     <%- include('./navbar'), { loggedIn: true, login: false, } %>
-        <div class="grid relative grid-cols-6 bg-gray-50 bg-fixed">
-            <div class="relative flex-col col-span-6 lg:col-span-2 bg-white h-full">
+        <div class="grid gap-x-5 grid-cols-6 mt-8 xl:lg:w-11/12 ">
+            <div class="relative flex-col col-span-6 lg:col-span-2 h-full bg-gray-500">
                 <div class="relative ml-8 z-10">
                     <div class="text-4xl font-semibold text-gray-600 mt-9">
                         Welcome,
@@ -129,7 +129,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-span-3 bg-gray-50 bg-fixed">
+        <div class="col-span-3 bg-gray-500">
             <div class="relative flex-col">
                 <div class="mt-6 flex-col z-10">
                     <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
@@ -176,7 +176,7 @@
                     </div>
                 </div>
             </div>
-            <div class="hidden lg:block col-span-1 relative h-screen">
+            <div class="hidden lg:block col-span-1 relative h-screen bg-gray-500">
                 <div class="flex justify-end">
                     <div class="flex-col justify-end">
                         <img src="<%= user.img %>" alt=""
