@@ -137,7 +137,7 @@
     }
 
     code {
-      font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace;
+      font-family:Roboto;
       font-size: 0.83em;
     }
 
@@ -155,6 +155,18 @@
 
 
           <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <% if(locals.loggedIn && locals.user) { %>
+                <a href="/questionEditor">
+                  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded float-right">
+                    Ask a question
+                  </button>
+                </a>
+                <br/>
+          
+              <br/>
+
+
+          <%  } %>
             <% if(question.status=="protected" ) { %>
               <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
                 role="alert">

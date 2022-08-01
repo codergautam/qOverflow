@@ -2,7 +2,7 @@
 <nav class="bg-white lg:mt-2 xl:mt-2 sm:w-full md:w-full lg:w-11/12 xl:w-11/12  sm:rounded-b-lg md:rounded-b-lg lg:rounded-3xl xl:rounded-3xl relative max-h-screen grid mx-auto shadow-2xl shadow-indigo-600">
   <style>
    
-   @import url('https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Dosis&family=Edu+Sa+Beginner&family=Helvetica&family=Arvo&family=Bebas+Neue&family=Oswald&family=Roboto+Slab&family=Staatliches&display=swap');
+   @import url('https://fonts.googleapis.com/css2?family=Staatliches&display=swap');
   
    html{
     overflow-x: hidden;
@@ -23,19 +23,19 @@
               placeholder="Search">
               <button type="submit">
                 <svg xmlns="http://www.w3.org/2000/svg" type="submit"
-                  class="transition delay-75 duration-200 ease-in-out mt-auto hover:scale-110 cursor-pointer w-auto xl:h-11 lg:h-9 md:h-7 sm:h-5 stroke-gray-500 group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 group-focus:ring-1"
+                  class="transition delay-75 duration-200 ease-in-out mt-auto hover:scale-110 cursor-pointer w-auto xl:h-11 lg:h-9 stroke-gray-500 group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 group-focus:ring-1"
                   fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </button>
           </form>
       </div>
-      <div class="flex items-center">
-        <div class="relative">
-          <div class="flex">
+      <div class="flex w-fill items-center align-right">
+        <div class="relative w-fill">
+          <div class="w-fill">
             <% if(loggedIn) { %>
               <!-- Profile picture -->
-              <div class="w-full">
+              <div class="w-fill">
                 <div class="flex lg:hidden top-3 place-content-end">
                   <div class="outline-none pr-2" id="burger">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
@@ -54,7 +54,7 @@
                   </div>
                   <!-- Home Icon -->
 
-                  <a href="/" class="lg:place-content-center  md:grid w-min justify-self-end lg:align-middle">
+                  <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
                     <div
                       class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
                       <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-blue-500" style="color: #01B3E7;"
@@ -68,7 +68,7 @@
                         Home</h2>
                     </div>
                   </a>
-                  <a href="/mail" class="lg:place-content-center w-min justify-self-end  md:grid md:align-middle">
+                  <a href="/mail" class="lg:place-content-center w-min justify-self-end w-fill md:grid md:align-middle">
                     <!-- Mail Icon -->
                     <div
                       class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
@@ -82,7 +82,7 @@
                         Mail</h2>
                     </div>
                   </a>
-                  <a href="/dashboard" class=" hide lg-block md:place-content-center lg:grid align-middle">
+                  <a href="/dashboard" class="w-fill hide lg-block md:place-content-center lg:grid align-middle">
                     <!-- Dashboard Icon -->
                     <div class="group hover:shadow-2xl w-max shadow-purple-900 align-middle lg:px-2 transition ease-in-out
                         delay-75 duration-300 hover:-translate-y-2">
@@ -122,26 +122,35 @@
               <% } else { %>
                 <% if (typeof login=="undefined" || !login) { %>
                   <!--Not logged in-->
-                  <button onclick="location.href = '/auth/login'"
-                    class="mr-2 sm:text-sm md:text-base lg:text-base xl:text-base border-b-2 border-spacing-1 border-transparent hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
-                    <% } else { %>
-                      <button onclick="location.href = '/auth/login'"
-                        class="mr-2 sm:text-sm md:text-base lg:text-base xl:text-base px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
-                        <% } %>
-                          Login
-                      </button>
-                      &nbsp;
-                      <% if (typeof signup=="undefined" || !signup) { %>
-                        <!--Not Signed In-->
-                        <button onclick="location.href = '/auth/signup'"
-                          class="sm:text-sm md:text-base lg:text-base xl:text-base border-b-2 border-transparent border-spacing-1 hover:border-gray-300 text-gray-700 font-semibold transition-all ease-in-out delay-75 duration-300">
-                          <% } else { %>
-                            <button onclick="location.href = '/auth/signup'"
-                              class="sm:text-sm md:text-base lg:text-base xl:text-base px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 font-semibold mr-4 rounded-md  transition-all ease-in-out delay-75 duration-300">
-                              <% } %>
-                                Signup
-                            </button>
+                  <script>
+                    const search2 = document.querySelector('#search2');
+                    search2.classList.remove('fixed');
+                    const one = document.querySelector('#1');
+                    one.classList.remove('w-40');
+                    one.classList.add('w-full');
+                  </script>
+                  <div class="flex mr-3">
+                    <button onclick="location.href = '/auth/login'"
+                      class="md:p-2 md:px-3 p-1 px-2 mr-2 bg-blue-600 hover:bg-blue-500 hover:text-gray-900  text-white text-sm md:text-lg md:mr-4 font-semibold rounded-md transition-all ease-in-out delay-75 duration-300">
+                      <% } else { %>
+                        <div class="flex">
+                          <button onclick="location.href = '/auth/login'"
+                            class="md:p-2 md:px-3 p-1 px-2 mr-2 bg-green-400 hover:bg-green-300 hover:text-text  text-black text-sm md:text-lg md:mr-4 font-semibold rounded-md transition-all ease-in-out delay-75 duration-300">
                             <% } %>
+                              Login
+                          </button>
+                          <% if (typeof signup=="undefined" || !signup) { %>
+                            <!--Not Signed In-->
+                            <button onclick="location.href = '/auth/signup'"
+                              class="md:p-2 md:px-3 p-1 px-2 bg-blue-600  hover:bg-blue-500 hover:text-black  text-white text-sm md:text-lg lg:mr-4 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
+                              <% } else { %>
+                                <button onclick="location.href = '/auth/signup'"
+                                  class="md:p-2 md:px-3 p-1 px-2 bg-green-400 hover:bg-green-300 hover:text-black  text-black text-sm md:text-lg lg:mr-4 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
+                                  <% } %>
+                                    Signup
+                                </button>
+                        </div>
+                        <% } %>
                   </div>
           </div>
         </div>
@@ -153,7 +162,7 @@
       id="menu">
       <!--Mail Icon-->
       <!-- Home Icon -->
-      <a href="/dashboard" class=" place-content-center grid align-middle">
+      <a href="/dashboard" class="w-fill place-content-center grid align-middle">
         <!-- Dashboard Icon -->
         <div class="w-max shadow-purple-900 align-middle px-2 grid transition
                 delay-75 duration-300">
@@ -184,7 +193,7 @@
           <hr>
           <% } %>
       </a>
-      <a href="/" class="lg:place-content-center  md:grid w-min justify-self-end lg:align-middle">
+      <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
         <div
           class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-blue-500" viewBox="0 0 20 20" style="color: #01B3E7;"
@@ -199,7 +208,7 @@
         </div>
         <hr>
       </a>
-      <a href="/mail" class="lg:place-content-center w-min justify-self-end  md:grid md:align-middle">
+      <a href="/mail" class="lg:place-content-center w-min justify-self-end w-fill md:grid md:align-middle">
         <!-- Mail Icon -->
         <div
           class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">

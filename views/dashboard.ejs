@@ -61,7 +61,7 @@
                                         Level <%= nextLevel %> (<%= nextLevelPoints %> pts.) </div>
                             </div>
                             <div
-                                class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
+                                class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-2xl  <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
                                 <%= user.points %>
                                     <% if(user.points> 1 ) { %> pts. <% } else { %> pt. <% } %>
                             </div>
@@ -118,13 +118,13 @@
             <div class="ml-4 z-10  mt-2 px-4 pt-2">
                 <div class="inline-block py-4">
                     <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-t-md border-b-4 border-white">
-                        <span class="font-staat font-light">Email:</span> <%- user.email %> 
+                        <span class=" font-light">Email:</span> <%- user.email %> 
                     </div>
                     <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-100 px-2 py-1 rounded-none">
-                        <span class="font-staat font-light">Questions:</span> <%- user.questions %> 
+                        <span class=" font-light">Questions:</span> <%- user.questions %> 
                     </div>
                     <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-b-md border-t-4 border-white">
-                        <span class="font-staat font-light">Answers:</span> <%- user.answers%> 
+                        <span class=" font-light">Answers:</span> <%- user.answers%> 
                     </div>
                 </div>
             </div>
@@ -133,7 +133,7 @@
             <div class="relative flex-col">
                 <div class="mt-6 flex-col z-10">
                     <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
-                        <p class="font-staat text-5xl text-gray-700">
+                        <p class=" text-5xl text-gray-700">
                             Your Feed:
                         </p>
                     </div>
