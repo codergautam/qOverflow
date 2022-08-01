@@ -85,11 +85,9 @@
                   <span class="block sm:inline  place-self-center text-sm md:text:md text-center">
                     dfgsdg
                   </span>
-
                   <br />
                   <span class="block sm:inline place-self-center text-sm md:text:md text-center"
                     id="attemptsLeft"></span>
-
                 </div>
                 <% } else { %>
                   <div
@@ -97,7 +95,6 @@
                     id="errAlert" role="alert">
                     <span class="block sm:inline place-self-center text-sm md:text:md text-center"
                       id="attemptsLeft"></span>
-
                   </div>
                   <% } %>
                     <% if (typeof success !="undefined" ) { %>
@@ -128,16 +125,10 @@
       function localStorageKeyExists(key) {
         return localStorage.getItem(key) !== null;
       }
-
       if (!localStorageKeyExists("attemptsLeft")) localStorage.setItem("attemptsLeft", 3);
     <% if (typeof badPassword != "undefined") { %>
-
-
         localStorage.setItem("attemptsLeft", Number(localStorage.getItem("attemptsLeft")) - 1);
-
-
         localStorage.setItem("lastAttempt", Date.now() + 3600000);
-
       <% } %>
         document.getElementById("attemptsLeft").innerHTML = "You have " + localStorage.getItem("attemptsLeft") + " attempts left.";
       <% if (typeof badPassword == "undefined") { %>
@@ -151,26 +142,22 @@
             portions.push(days + 'd');
             duration = duration - (days * msInDay);
           }
-
           const msInHour = 1000 * 60 * 60;
           const hours = Math.trunc(duration / msInHour);
           if (hours > 0) {
             portions.push(hours + 'h');
             duration = duration - (hours * msInHour);
           }
-
           const msInMinute = 1000 * 60;
           const minutes = Math.trunc(duration / msInMinute);
           if (minutes > 0) {
             portions.push(minutes + 'm');
             duration = duration - (minutes * msInMinute);
           }
-
           const seconds = Math.trunc(duration / 1000);
           if (seconds > 0) {
             portions.push(seconds + 's');
           }
-
           return portions.join(' ') ?? "soon";
         }
       if (localStorage.getItem("attemptsLeft") <= 0 && Date.now() < Number(localStorage.getItem("lastAttempt"))) {
@@ -182,5 +169,4 @@
       }
     </script>
 </body>
-
 </html>
