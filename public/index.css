@@ -670,8 +670,16 @@ video {
   grid-column: span 2 / span 2;
 }
 
+.col-span-10 {
+  grid-column: span 10 / span 10;
+}
+
 .col-start-5 {
   grid-column-start: 5;
+}
+
+.col-start-2 {
+  grid-column-start: 2;
 }
 
 .row-span-2 {
@@ -1015,6 +1023,14 @@ video {
   height: 2.75rem;
 }
 
+.h-64 {
+  height: 16rem;
+}
+
+.h-72 {
+  height: 18rem;
+}
+
 .max-h-80 {
   max-height: 20rem;
 }
@@ -1333,6 +1349,10 @@ video {
 
 .content-center {
   align-content: center;
+}
+
+.items-start {
+  align-items: flex-start;
 }
 
 .items-center {
@@ -1976,6 +1996,10 @@ video {
 
 .pb-5 {
   padding-bottom: 1.25rem;
+}
+
+.pb-24 {
+  padding-bottom: 6rem;
 }
 
 .text-left {
