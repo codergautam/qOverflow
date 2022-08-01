@@ -1126,7 +1126,7 @@ return;
       }
     }
     if(remainingComments.length > 0) {
-      var btn = `< div class="flex justify-center items-center" >
+      var btn = `<div class="flex justify-center items-center" >
                                           <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
                                             Show more comments
                                           </button>
@@ -1188,7 +1188,7 @@ try {
             if(i == 5) {
               //  append Button in tailwind that says show more
              
-              var btn = `< div class="flex justify-center items-center" >
+              var btn = `<div class="flex justify-center items-center" >
                                           <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
                                             Show more comments
                                           </button>
@@ -1308,7 +1308,7 @@ var remaining = [];
         <% } %>
       }
       function appendShowMore() {
-    var btn = `< div class="flex justify-center items-center" >
+    var btn = `<div class="flex justify-center items-center" >
                                           <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold my-5 py-2 px-4 rounded" id="showMore">
                                             Show more answers
                                           </button>
@@ -1319,7 +1319,7 @@ var remaining = [];
     document.getElementById("answers").appendChild(btnDom.body.firstChild);
     document.getElementById("showMore").onclick = async () => {
       document.getElementById("showMore").remove();
-      document.getElementById("answers").insertAdjacentHTML("beforeend", `< div id = "spinneranswer" class="px-4 py-4 " > <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
+      document.getElementById("answers").insertAdjacentHTML("beforeend", `<div id = "spinneranswer" class="px-4 py-4 " > <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
       await showPage();
       if(remaining.length > 0) {
         appendShowMore();
@@ -1376,7 +1376,7 @@ var remaining = [];
         console.log(err);
       }
       var errorHtml = 
-      `< div class="flex justify-center items-center" >
+      `<div class="flex justify-center items-center" >
                                           <div class="bg-red-500  font-bold my-5 py-2 px-4 rounded" id="error">
                                             Failed to fetch answers, please try refreshing.
                                           </div>
@@ -1436,7 +1436,7 @@ var remaining = [];
         document.getElementById("previewText").innerHTML = "";
         document.getElementById("createDiv").style.display = "none";
         <% } %>
-      document.getElementById("answers").insertAdjacentHTML("beforeend", `< div id = "spinneranswer" class="px-4 py-4 " > <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
+      document.getElementById("answers").insertAdjacentHTML("beforeend", `<div id = "spinneranswer" class="px-4 py-4 " > <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
 
 
         await appendAnswer(j.answer, document.getElementById("showMore") ? true : false);
@@ -1462,7 +1462,7 @@ console.log(comment.comment_id)
 
     var html = `
 
-                                          < div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
+                                          <div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
                                             <div class="flex flex-col items-center justify-between   rounded-lg">
                                               <img class="rounded-lg cursor-pointer min-w-[10px]" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                                                 <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
@@ -1619,7 +1619,7 @@ var remainingComments = [];
   }
   function appendCommentSpinner(where="") {
     var html = `
-                                          < div class="px-4 py-4 " >
+                                          <div class="px-4 py-4 " >
                                             <img class="animate-spin" id="commentSpinner${where}" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
 
                                             </div>
@@ -1663,7 +1663,7 @@ async function showComments(where="") {
      
     }
     if(remainingComments.length > 0) {
-      var btn = `< div class="flex justify-center items-center" >
+      var btn = `<div class="flex justify-center items-center" >
                                           <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
                                             Show more comments
                                           </button>
@@ -1710,7 +1710,7 @@ appendCommentSpinner()
               if(i == 5) {
                              //  append Button in tailwind that says show more
              
-              var btn = `< div class="flex justify-center items-center" >
+              var btn = `<div class="flex justify-center items-center" >
                                           <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
                                             Show more comments
                                           </button>
