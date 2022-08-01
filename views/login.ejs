@@ -10,11 +10,9 @@
 </head>
 <script src="https://cdn.tailwindcss.com"></script>
 
-<body class="bg-blue-500">
-  <div class="flex flex-col">
-    <div class="py-0">
+<body class="h-screen bg-blue-500">
+  <div class="flex flex-col h-full">
       <%- include('../views/navbar.ejs', {loggedIn: false, login: true}); %>
-    </div>
     <div class="flex justify-center items-center flex-grow">
       <div class="content-center px-4 py-6 my-9 bg-white rounded-3xl shadow-2xl shadow-indigo-600">
         <div class="min-h-full flex items-center justify-center px-4 sm:px-6 lg:px-8" id="login">
@@ -85,9 +83,11 @@
                   <span class="block sm:inline  place-self-center text-sm md:text:md text-center">
                     dfgsdg
                   </span>
+
                   <br />
                   <span class="block sm:inline place-self-center text-sm md:text:md text-center"
                     id="attemptsLeft"></span>
+
                 </div>
                 <% } else { %>
                   <div
@@ -95,6 +95,7 @@
                     id="errAlert" role="alert">
                     <span class="block sm:inline place-self-center text-sm md:text:md text-center"
                       id="attemptsLeft"></span>
+
                   </div>
                   <% } %>
                     <% if (typeof success !="undefined" ) { %>
@@ -125,10 +126,16 @@
       function localStorageKeyExists(key) {
         return localStorage.getItem(key) !== null;
       }
+
       if (!localStorageKeyExists("attemptsLeft")) localStorage.setItem("attemptsLeft", 3);
     <% if (typeof badPassword != "undefined") { %>
+
+
         localStorage.setItem("attemptsLeft", Number(localStorage.getItem("attemptsLeft")) - 1);
+
+
         localStorage.setItem("lastAttempt", Date.now() + 3600000);
+
       <% } %>
         document.getElementById("attemptsLeft").innerHTML = "You have " + localStorage.getItem("attemptsLeft") + " attempts left.";
       <% if (typeof badPassword == "undefined") { %>
@@ -142,22 +149,26 @@
             portions.push(days + 'd');
             duration = duration - (days * msInDay);
           }
+
           const msInHour = 1000 * 60 * 60;
           const hours = Math.trunc(duration / msInHour);
           if (hours > 0) {
             portions.push(hours + 'h');
             duration = duration - (hours * msInHour);
           }
+
           const msInMinute = 1000 * 60;
           const minutes = Math.trunc(duration / msInMinute);
           if (minutes > 0) {
             portions.push(minutes + 'm');
             duration = duration - (minutes * msInMinute);
           }
+
           const seconds = Math.trunc(duration / 1000);
           if (seconds > 0) {
             portions.push(seconds + 's');
           }
+
           return portions.join(' ') ?? "soon";
         }
       if (localStorage.getItem("attemptsLeft") <= 0 && Date.now() < Number(localStorage.getItem("lastAttempt"))) {
@@ -169,4 +180,5 @@
       }
     </script>
 </body>
+
 </html>
