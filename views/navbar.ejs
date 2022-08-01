@@ -53,21 +53,21 @@
                   <div
                     class="block w-min justify-self-end md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
                     <a href="/logout"
-                      class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-staat text-black ">Logout</a>
+                      class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-staat text-blue-500 " style="color: #01B3E7;">Logout</a>
                   </div>
                   <!-- Home Icon -->
 
                   <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
                     <div
                       class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-black"
+                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-blue-500" style="color: #01B3E7;"
                         viewBox="0 0 20 20" fill="currentColor">
                         <path
                           d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
                         </path>
                       </svg>
                       <h2
-                        class="block md:flex xs:text-xl wavy-hover text-xl md:text-2xl xl:text-3xl group-hover:visible my-auto font-staat text-black transition-all delay-75 duration-300 ease-in-out">
+                        class="block md:flex xs:text-xl wavy-hover text-xl md:text-2xl xl:text-3xl group-hover:visible my-auto font-staat text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
                         Home</h2>
                     </div>
                   </a>
@@ -75,13 +75,13 @@
                     <!-- Mail Icon -->
                     <div
                       class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto h-8 xl:h-9 text-black"
+                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto h-8 xl:h-9 text-blue-500" style="color: #01B3E7;"
                         viewBox="0 0 20 20" fill="currentColor">
                         <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
                         <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
                       </svg>
                       <h2
-                        class="block md:flex xs:text-xl wavy-hover group-hover:visible text-xl md:text-2xl xl:text-3xl my-auto font-staat text-black transition-all delay-75 duration-300 ease-in-out">
+                        class="block md:flex xs:text-xl wavy-hover group-hover:visible text-xl md:text-2xl xl:text-3xl my-auto font-staat text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
                         Mail</h2>
                     </div>
                   </a>
@@ -95,19 +95,19 @@
                           <div class="flex flex-row">
                             <img class="h-8 mr-1 xl:h-9 rounded-full" src="<%= locals.user.img%> " alt="">
                             <h2
-                              class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-black transition-all delay-75 duration-100 ease-in-out">
+                              class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-blue-700 transition-all delay-75 duration-100 ease-in-out" style="color: #1E8CBE;">
                               <%= locals.user.username %>
                             </h2>
                           </div>
                           <!-- user level and points text-->
                           <div class="group shadow-purple-900 flex align-middle rounded-full">
                             <h4
-                              class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-black transition-all delay-75 duration-300 ease-in-out"
+                              class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-blue-700 transition-all delay-75 duration-300 ease-in-out" style="color: #1E8CBE;"
                               id="user-level">Level: <%= locals.user.level %>
                             </h4>
                             &nbsp;
                             <h4
-                              class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-black transition-all delay-75 duration-300 ease-in-out"
+                              class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-blue-700 transition-all delay-75 duration-300 ease-in-out" style="color: #1E8CBE;"
                               id="user-points">Points: <%= locals.user.points %>
                             </h4>
                           </div>
@@ -176,19 +176,19 @@
                 <img class="h-8 mr-1 xl:h-9 rounded-full"
                   src="https://s.gravatar.com/avatar/a0e6e8c282a3953d22f0f0d1ee267910?s=200&amp;r=x " alt="">
                 <h2
-                  class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-100 ease-in-out">
+                  class="wavy-hover text-2xl xl:text-3xl my-auto font-staat text-blue-500 transition-all delay-75 duration-100 ease-in-out" style="color: #01B3E7;">
                   <%= user.username %>
                 </h2>
               </div>
               <!-- user level and points text-->
               <div class="group shadow-purple-900 flex align-middle place-self-end rounded-full">
                 <h4
-                  class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out"
+                  class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-staat transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;"
                   id="user-level">Level: <%= user.level %>
                 </h4>
                 &nbsp;
                 <h4
-                  class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-white transition-all delay-75 duration-300 ease-in-out"
+                  class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-staat text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;"
                   id="user-points">Points: <%= user.points %>
                 </h4>
               </div>
@@ -199,14 +199,14 @@
       <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
         <div
           class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-white" viewBox="0 0 20 20"
+          <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-blue-500" viewBox="0 0 20 20" style="color: #01B3E7;"
             fill="currentColor">
             <path
               d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
             </path>
           </svg>
           <h2
-            class="block md:flex xs:text-xl wavy-hover text-xl md:text-2xl xl:text-3xl group-hover:visible my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
+            class="block md:flex xs:text-xl wavy-hover text-xl md:text-2xl xl:text-3xl group-hover:visible my-auto font-staat text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
             Home</h2>
         </div>
         <hr>
@@ -215,20 +215,20 @@
         <!-- Mail Icon -->
         <div
           class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto h-8 xl:h-9 text-white" viewBox="0 0 20 20"
+          <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto h-8 xl:h-9 text-blue-500" viewBox="0 0 20 20" style="color: #01B3E7;"
             fill="currentColor">
             <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
             <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
           </svg>
           <h2
-            class="block md:flex xs:text-xl wavy-hover group-hover:visible text-xl md:text-2xl xl:text-3xl my-auto font-staat text-white transition-all delay-75 duration-300 ease-in-out">
+            class="block md:flex xs:text-xl wavy-hover group-hover:visible text-xl md:text-2xl xl:text-3xl my-auto font-staat text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
             Mail</h2>
         </div>
         <hr>
       </a>
       <div
         class="w-full place-content-end grid justify-self-end md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-        <a href="/logout" class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-staat text-white ">Logout</a>
+        <a href="/logout" class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-staat text-blue-500 " style="color: #01B3E7;">Logout</a>
       </div>
     </div>
   </div>

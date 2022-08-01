@@ -12,16 +12,16 @@
 <body>
     <%- include('./navbar'), { loggedIn: true, login: false, } %>
         <div class="grid relative grid-cols-6 bg-gray-50 bg-fixed">
-            <div class="relative flex-col col-span-6 xl:col-span-2 bg-white h-full">
+            <div class="relative flex-col col-span-6 lg:col-span-2 bg-white h-full">
                 <div class="relative ml-8 z-10">
                     <div class="text-4xl font-semibold text-gray-600 mt-9">
                         Welcome,
                     </div>
                 </div>
-                <div class="ml-8 relative z-10 pt-2">
+                <div class="ml-8 relative z-10 pt-2" style="word-break: break-word;">
                     <div class="flex pt-4">
                         <img src="<%= user.img %>" alt=""
-                            class="align-left rounded-full mr-3 w-14 bg-white hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
+                            class="align-left rounded-full mr-3 w-14 h-14 bg-white hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
                         <div
                             class="text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
                             <%= user.username %>
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex ml-8 justify-start xl:hidden">
+                <div class="flex ml-8 justify-start lg:hidden">
                     <div class="flex-col justify-start">
                         <form action="./email" method="POST"
                             class="flex group mt-2 items-center transition-all delay-75 duration-300 ease-in-out">
@@ -85,7 +85,7 @@
                         <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
                             <% if(user.abilities) { %>
                                 <% user.abilities.map((ability)=> { %>
-                                    <li>
+                                    <li class="font-extrabold">
                                         <%= ability %>
                                     </li>
                                     <% }) %>
@@ -112,7 +112,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-6 xl:col-span-3 bg-gray-50 bg-fixed">
+            <div class="col-span-6 lg:col-span-3 bg-gray-50 bg-fixed">
                 <div class="relative flex-col">
                     <div class="mt-6 flex-col z-10">
                         <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
@@ -161,7 +161,7 @@
                     </div>
                 </div>
             </div>
-            <div class="hidden xl:block col-span-1 relative h-screen">
+            <div class="hidden lg:block col-span-1 relative h-screen">
                 <div class="flex justify-end">
                     <div class="flex-col justify-end">
                         <img src="<%= user.img %>" alt=""
