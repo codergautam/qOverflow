@@ -1,192 +1,153 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard</title>
     <link rel="stylesheet" href="/index.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/socket.io/socket.io.js"></script>
 </head>
-
 <body>
-    <%- include('./navbar'), { loggedIn: true, login: false, } %>
-        <div class="grid relative grid-cols-6 bg-gray-50 bg-fixed">
-            <div class="relative w-full flex-col col-span-6 bg-white h-full">
-                <div class="absolute bg-gray-50 left-6 top-4 w-full h-20 z-0 rounded-md">
+    <%- include('./navbar'), { loggedIn: true, login: false,  } %> 
+    <div class="grid relative grid-cols-6 bg-gray-50 bg-fixed">
+        <div class="relative flex-col col-span-2 bg-white h-full">
+            <div class="absolute bg-gray-50 left-6 top-4 w-1/2 h-20 z-0 rounded-md">
+
+            </div>
+            <div class="relative ml-8 z-10">
+                <div class="text-4xl font-semibold text-gray-600 mt-9">
+                    Welcome,
                 </div>
-                <div class="relative ml-8 z-10">
-                    <div class="text-4xl font-semibold text-gray-600 mt-9">
-                        Welcome,
+            </div>
+            <div class="ml-8 relative z-10 pt-2">
+                <div class="flex pt-4">
+                    <div class="text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
+                        <%= user.username %> 
                     </div>
                 </div>
-                <div class="ml-8 relative z-10 pt-2">
-                    <div class="flex pt-4">
-                        <div class="text-4xl md:5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300"
-                            style="word-break:break-word">
-                            <%= user.username %>
+                <div class="flex justify-between">
+                    <div class="inline-block py-2 items-baseline">
+                        <div class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
+                            Level <%= user.level %> <div class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">Level <%= nextLevel %> (<%= nextLevelPoints %> pts.) </div>
                         </div>
-                    </div>
-                    <div class="flex justify-between">
-                        <div class="inline-block py-2 items-baseline">
-                            <div
-                                class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
-                                Level <%= user.level %>
-                                    <div
-                                        class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">
-                                        To get to Level <%= nextLevel %> you need <%= nextLevelPoints %> pts. </div>
-                            </div>
-                            <div
-                                class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
-                                <%= user.points %>
-                                    <% if(user.points> 1 ) { %> pts. <% } else { %> pt. <% } %>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="ml-4 z-10 px-4 pt-2">
-                    <div class="inline-block py-4">
-                        <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
-                            You Can...
-                        </div>
-                        <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
-                            <% if(user.abilities) { %>
-                                <% user.abilities.map((ability)=> { %>
-                                    <li>
-                                        <%= ability %>
-                                    </li>
-                                    <% }) %>
-                                        <% } %>
-                        </div>
-                    </div>
-                </div>
-                <div class="ml-4 z-10  mt-2 px-4 pt-2">
-                    <div class="inline-block py-4">
-                        <div
-                            class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-t-md border-b-4 border-white">
-                            <span class="font-staat font-light">Email:</span>
-                            <%= user.email %>
-                        </div>
-                        <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-100 px-2 py-1 rounded-none">
-                            <span class="font-staat font-light">Questions:</span>
-                            <%= user.questions %>
-                        </div>
-                        <div
-                            class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-b-md border-t-4 border-white">
-                            <span class="font-staat font-light">Answers:</span>
-                            <%= user.answers%>
+                        <div class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-2xl font-staat <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
+                            <%= user.points %> <% if(user.points > 1 ) { %>  pts. <% } else { %> pt. <% } %> 
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-span-6 w-full bg-gray-50 bg-fixed">
-                <div class="relative flex-col">
-                    <div class="mt-6 flex-col z-10">
-                        <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
-                            <p class="font-staat text-5xl text-gray-700">
-                                Your Feed:
-                            </p>
-                        </div>
-                        <div class="flex-col">
-                            <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
-                                Questions
-                            </p>
-                            <div class="flex-col mt-4 mb-6 overflow-y-auto h-80" id="questionFeed">
-                                <% if(questionFeed.length <=0) { %>
-                                    <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                        You Have No Questions Right Now
-                                    </div>
-                                    <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path
-                                                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                        </svg>
-                                    </span>
-                                    <% } %>
-                            </div>
-                        </div>
-                        <div class="flex-col">
-                            <p class="ml-6 mt-2 text-gray-700 font-semibold text-3xl">
-                                Answers
-                            </p>
-                            <div class="flex-col mt-4 mb-12 overflow-y-auto h-80" id="answerFeed">
-                                <% if(answerFeed.length <=0) { %>
-                                    <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                        You Have No Answers Right Now
-                                    </div>
-                                    <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path
-                                                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                        </svg>
-                                    </span>
-                                    <% } %>
-                            </div>
-                        </div>
+            <div class="ml-4 z-10 px-4 pt-2">
+                <div class="inline-block py-4">
+                    <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
+                        You Can...
+                    </div>
+                    <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
+                        <% if(user.abilities) { %> 
+                            <% user.abilities.map((ability) => { %> 
+                                <li><%= ability %></li>
+                            <% }) %> 
+                        <% } %> 
                     </div>
                 </div>
             </div>
-            <div class="col-span-6 w-full relative h-screen">
-                <div class="flex justify-end">
-                    <div class="flex-col justify-end">
-                        <img src="<%= user.img %>" alt=""
-                            class="ml-auto rounded-full w-14 h-14 mr-6 mt-6 bg-white px-2 py-2 border-4 hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
-                        <form action="./email" method="POST"
-                            class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
-                            <input type="hidden" name="username" value="<%= user.username %> ">
-                            <input type="submit"
-                                class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
-                                value="Change Your Email" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500"
-                                fill="none" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                        </form>
-                        <form action="./password" method="POST"
-                            class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
-                            <input type="hidden" name="username" value="<%= user.username %> ">
-                            <input type="submit"
-                                class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
-                                value="Change Your Password" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500"
-                                fill="none" viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                            </svg>
-                        </form>
-                        <form action="./deleteAccount" method="POST" class="flex group mt-2 justify-end mr-6">
-                            <input type="hidden" name="username" value="<%= user.username %> ">
-                            <input value="Delete Account" type="submit"
-                                class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out hover:ring-2 hover:ring-red-400 hover:ring-offset-1" />
-                        </form>
+            <div class="ml-4 z-10  mt-2 px-4 pt-2">
+                <div class="inline-block py-4">
+                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-t-md border-b-4 border-white">
+                        <span class="font-staat font-light">Email:</span> <%- user.email %> 
+                    </div>
+                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-100 px-2 py-1 rounded-none">
+                        <span class="font-staat font-light">Questions:</span> <%- user.questions %> 
+                    </div>
+                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-b-md border-t-4 border-white">
+                        <span class="font-staat font-light">Answers:</span> <%- user.answers%> 
                     </div>
                 </div>
             </div>
         </div>
-        <script>
-            const search2 = document.querySelector('#search2');
-            search2.classList.remove('fixed');
-        </script>
-        <% if (questionFeed || answerFeed) { %>
-            <script>
-                let standard = 3
-                let lastResultQ = 0
-                let moreToComeQ = false
+        <div class="col-span-3 bg-gray-50 bg-fixed">
+            <div class="relative flex-col">
+                <div class="mt-6 flex-col z-10">
+                    <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
+                        <p class="font-staat text-5xl text-gray-700">
+                            Your Feed:
+                        </p>
+                    </div>
+                    <div class="flex-col">
+                        <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
+                            Questions
+                        </p>
+                        <div class="flex-col mt-4 mb-6 overflow-y-auto h-80" id="questionFeed">
+                            <% if(questionFeed.length <= 0) { %>
+                                <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                    You Have No Questions Right Now
+                                </div>
+                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                      </svg>
+                                </span>
+                            <% } %>
+                        </div> 
+                    </div> 
+                    <div class="flex-col">
+                        <p class="ml-6 mt-2 text-gray-700 font-semibold text-3xl">
+                            Answers
+                        </p>
+                            <div class="flex-col mt-4 mb-12 overflow-y-auto h-80" id="answerFeed">
+                                <% if(answerFeed.length <= 0) { %>
+                                    <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                        You Have No Answers Right Now
+                                    </div>
+                                    <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                          </svg>
+                                    </span>
+                                <% } %>
+                            </div>  
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-1 relative h-screen">
+            <div class="flex justify-end">
+                <div class="flex-col justify-end">
+                    <img src="<%= user.img %>" alt="" class="ml-auto rounded-full w-14 h-14 mr-6 mt-6 bg-white px-2 py-2 border-4 hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
+                    <form action="./email" method="POST" class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
+                        <input type="hidden" name="username" value="<%= user.username %> ">
+                        <input type="submit" class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out" value="Change Your Email" />
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                        </svg>
+                    </form>
+                    <form action="./password" method="POST" class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
+                        <input type="hidden" name="username" value="<%= user.username %> ">
+                        <input type="submit" class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out" value="Change Your Password"/>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                        </svg>
+                    </form>
+                    <form action="./deleteAccount" method="POST" class="flex group mt-2 justify-end mr-6">
+                        <input type="hidden" name="username" value="<%= user.username %> ">
+                        <input value="Delete Account" type="submit" class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out hover:ring-2 hover:ring-red-400 hover:ring-offset-1"/>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <% if (questionFeed || answerFeed)  { %> 
+           <script>
+            let standard = 3
+            let lastResultQ = 0
+            let moreToComeQ = false
 
-                appendQuestion = (question) => {
-                    console.log(question)
-                    let feed = document.getElementById("questionFeed")
-                    feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5">
+            appendQuestion = (question) => {
+                console.log(question)
+                let feed = document.getElementById("questionFeed")
+                feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                 <div class="px-4 py-4 ">
                                 <div class="hidden questionId">${question.question_id}</div>
-                                <div class="font-bold text-lg mb-2">${question.title.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
-                        return '&#' + i.charCodeAt(0) + ';';
-                    })}</div>
+                                <div class="font-bold text-lg mb-2">${question.title}</div>
                                 </div>
                                 <div class="pl-3 pr-6 pt-4 pb-2 ">
                                 <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: ${question.creator} </span>
@@ -194,35 +155,35 @@
                                 <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.upvotes - question.downvotes} pts.</span>
                                 </div>
                             </div>`
-                }
+            }
 
-                async function getQuestions(size, lastResultQ) {
-                    let questions = await fetch('/userQuestionResults/' + lastResultQ).then((res) => (res.json()))
-                    console.log(questions.length + "Standard: " + size)
-                    if (questions.length > size) {
-                        console.log("There's more questions!")
-                        moreToComeQ = true
-                    } else {
-                        console.log("Thats all folks!")
-                        moreToComeQ = false
-                    }
-                    console.log(questions)
-                    if (questions.length < size) {
-                        if (questions.length == 1) {
-                            return questions
-                        } else {
-                            return questions.splice(0, questions.length)
-                        }
-                    } else {
-                        return questions.splice(0, size)
-                    }
+            async function getQuestions(size, lastResultQ) {
+                let questions = await fetch('/userQuestionResults/' + lastResultQ).then((res) => (res.json()))
+                console.log(questions.length + "Standard: " + size)
+                if(questions.length > size) {
+                    console.log("There's more questions!")
+                    moreToComeQ = true
+                } else {
+                    console.log("Thats all folks!")
+                    moreToComeQ = false
                 }
+                console.log(questions)
+                if(questions.length < size) {
+                    if(questions.length == 1) {
+                        return questions
+                    } else {
+                        return questions.splice(0, questions.length)
+                    }
+                } else {
+                    return questions.splice(0, size)
+                }
+            }
 
-                async function loadMore(size, _lastResultQ) {
-                    // console.log("Current: " + _lastResult)
-                    let feed = document.getElementById("questionFeed")
-                    feed.lastChild.remove()
-                    var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
+            async function loadMore(size, _lastResultQ) {
+                // console.log("Current: " + _lastResult)
+                let feed = document.getElementById("questionFeed")
+                feed.lastChild.remove()
+                var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
                 <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
                 <div class="px-4 py-4 ">
                     <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
@@ -230,46 +191,46 @@
                 </div>
                 </div>
                 </div>`;
-                    feed.insertAdjacentHTML("beforeend", loader)
-                    let data = await getQuestions(size, _lastResultQ)
-                    if (data) {
-                        if (feed.childElementCount > 0 && !document.getElementById("noQuestions")) {
-                            feed.children.item(feed.children.length - 1).remove()
-                        }
-                        lastResultQ = data[data.length - 1].question_id
-                        // console.log("New: " + lastResult)
-                        data.forEach(appendQuestion)
-                        // searchFeed.lastChild.remove()
-                        implementMore(moreToComeQ)
-                        return
+                feed.insertAdjacentHTML("beforeend", loader)
+                let data = await getQuestions(size, _lastResultQ)
+                if(data) {
+                    if(feed.childElementCount > 0 && !document.getElementById("noQuestions")) {
+                        feed.children.item(feed.children.length-1).remove()
                     }
+                    lastResultQ = data[data.length - 1].question_id
+                    // console.log("New: " + lastResult)
+                    data.forEach(appendQuestion)
+                    // searchFeed.lastChild.remove()
+                    implementMore(moreToComeQ)
+                    return
                 }
+            }
 
-                async function loadLess(size) {
-                    // console.log("Current: " + _lastResult)
-                    let feed = document.getElementById("questionFeed")
-                    console.log(lastResultQ)
-                    feed.lastChild.remove()
-                    for (let i = 0; i < size; i++) {
-                        console.log(i)
-                        let count = feed.childElementCount
-                        feed.children.item(count - 1).remove()
-                    }
-                    let childCount = feed.childElementCount
-                    lastResultQ = feed.children.item(childCount - 2).querySelector(".questionId").innerText
-                    implementMore()
+            async function loadLess(size) {
+                // console.log("Current: " + _lastResult)
+                let feed = document.getElementById("questionFeed")
+                console.log(lastResultQ)
+                feed.lastChild.remove()
+                for(let i = 0; i < size; i++) {
+                    console.log(i)
+                    let count = feed.childElementCount
+                    feed.children.item(count - 1).remove()
                 }
+                let childCount = feed.childElementCount
+                lastResultQ = feed.children.item(childCount-2).querySelector(".questionId").innerText
+                implementMore()
+            }
+            
+            if(!document.getElementById("noQuestions")) {
+                loadMore(standard, lastResultQ)
+            }
 
-                if (!document.getElementById("noQuestions")) {
-                    loadMore(standard, lastResultQ)
-                }
-
-                function implementMore(moreToLoad = true) {
+            function implementMore(moreToLoad = true) {
                     console.log("Adding Loaders")
                     console.log("More to Come: " + moreToLoad)
                     let feed = document.getElementById("questionFeed")
-                    if (moreToLoad) {
-                        if (feed.childElementCount > standard) {
+                    if(moreToLoad) {
+                        if(feed.childElementCount > standard) {
                             let loaderWithLess = `
                                     <div class = "ml-6 flex">
                                         <div class="flex mt-4">
@@ -303,9 +264,9 @@
                             document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loader)
                             return
                         }
-                    } else if (!moreToLoad) {
-                        if (feed.childElementCount > standard) {
-                            let loaderWithLess = `
+                    } else if(!moreToLoad) {
+                            if(feed.childElementCount > standard) {
+                                let loaderWithLess = `
                                         <div class="ml-6 flex mt-4">
                                             <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
                                                 <button class=" text-gray-500 font-semibold text-base" onclick="loadLess(${standard})">
@@ -313,9 +274,9 @@
                                                 </button>
                                             </span>
                                         </div>`
-                            document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loaderWithLess)
-                            return
-                        } else {
+                                document.getElementById("questionFeed").insertAdjacentHTML("beforeend", loaderWithLess)
+                                return
+                            } else {
                             let msg = `<div class="flex-col">
                             <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
                                 That's all folks!
@@ -323,28 +284,26 @@
                             </div>
                         </div>`
                             document.getElementById("questionFeed").insertAdjacentHTML("beforeend", msg)
-                        }
-                        return
+                            }
+                            return
                     }
-                }
-            </script>
-            <!-- For the sake of organizaiton I have seperate script tags that handle the answer templates and question templates--->
-            <!-- Below: Answer, Above: Question -->
-            <script>
-                let standardA = 5
-                let lastResultA = 0
-                let moreToComeA = false
+            }
+        </script>
+        <!-- For the sake of organizaiton I have seperate script tags that handle the answer templates and question templates--->
+        <!-- Below: Answer, Above: Question -->
+        <script>
+            let standardA = 5
+            let lastResultA = 0
+            let moreToComeA = false
 
-                appendAnswer = (answer) => {
-                    let feed = document.getElementById("answerFeed")
-                    let color = (answer.accepted) ? "text-green-500" : "text-red-500"
-                    feed.innerHTML += `<div class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5" onclick="window.location.href='/answer/${answer.answer_id}?at=${answer.createdAt}&accepted=${answer.accepted}'">
+            appendAnswer = (answer) => {
+                let feed = document.getElementById("answerFeed")
+                let color = (answer.accepted) ? "text-green-500" : "text-red-500"
+                feed.innerHTML += `<div class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                             <div class="px-4 py-4 ">
-                                              <div class="text-base font-semibold mb-2"><span class="font-bold ${color}">${answer.accepted ? "Accepted" : "Not accepted"}</span></div>
+                                              <div class="text-base font-semibold mb-2">ACCEPTED: <span class="font-bold ${color}">${answer.accepted}</span></div>
                                               <p class="font-bold text-gray-700 text-lg w-5/6">
-                                               ${answer.text.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
-                        return '&#' + i.charCodeAt(0) + ';';
-                    })} 
+                                               ${answer.text} 
                                               </p>
                                             </div>
                                             <div class="pl-3 pr-6 pt-4 pb-2 ">
@@ -353,35 +312,35 @@
                                               <span class="badge font-semibold text-gray-700 mr-2 mb-2">${answer.upvotes - answer.downvotes}  pts.</span>
                                             </div>
                                         </div>`
-                }
+            }
 
-                async function getQuestionsA(size, lastResultA) {
-                    let questions = await fetch('/userAnswerResults/' + lastResultA).then((res) => (res.json()))
-                    console.log(questions.length + "Standard: " + size)
-                    if (questions.length > size) {
-                        console.log("There's more!")
-                        moreToComeA = true
-                    } else {
-                        console.log("Thats all folks!")
-                        moreToComeA = false
-                    }
-                    console.log(questions)
-                    if (questions.length < size) {
-                        if (questions.length == 1) {
-                            return questions
-                        } else {
-                            return questions.splice(0, questions.length)
-                        }
-                    } else {
-                        return questions.splice(0, size)
-                    }
+            async function getQuestionsA(size, lastResultA) {
+                let questions = await fetch('/userAnswerResults/' + lastResultA).then((res) => (res.json()))
+                console.log(questions.length + "Standard: " + size)
+                if(questions.length > size) {
+                    console.log("There's more!")
+                    moreToComeA = true
+                } else {
+                    console.log("Thats all folks!")
+                    moreToComeA = false
                 }
+                console.log(questions)
+                if(questions.length < size) {
+                    if(questions.length == 1) {
+                        return questions
+                    } else {
+                        return questions.splice(0, questions.length)
+                    }
+                } else {
+                    return questions.splice(0, size)
+                }
+            }
 
-                async function loadMoreA(size, _lastResultA) {
-                    // console.log("Current: " + _lastResult)
-                    let feed = document.getElementById("answerFeed")
-                    feed.lastChild.remove()
-                    var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
+            async function loadMoreA(size, _lastResultA) {
+                // console.log("Current: " + _lastResult)
+                let feed = document.getElementById("answerFeed")
+                feed.lastChild.remove()
+                var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
                 <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
                 <div class="px-4 py-4 ">
                     <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
@@ -389,47 +348,47 @@
                 </div>
                 </div>
                 </div>`;
-                    feed.insertAdjacentHTML("beforeend", loader)
-                    let data = await getQuestionsA(size, _lastResultA)
-                    if (data) {
-                        if (feed.childElementCount > 0 && !document.getElementById("noQuestions")) {
-                            feed.children.item(feed.children.length - 1).remove()
-                        }
-                        console.log(data)
-                        lastResultA = data[data.length - 1].answer_id
-                        // console.log("New: " + lastResult)
-                        data.forEach(appendAnswer)
-                        // searchFeed.lastChild.remove()
-                        implementMoreA(moreToComeA)
-                        return
+                feed.insertAdjacentHTML("beforeend", loader)
+                let data = await getQuestionsA(size, _lastResultA)
+                if(data) {
+                    if(feed.childElementCount > 0 && !document.getElementById("noQuestions")) {
+                        feed.children.item(feed.children.length-1).remove()
                     }
+                    console.log(data)
+                    lastResultA = data[data.length - 1].answer_id
+                    // console.log("New: " + lastResult)
+                    data.forEach(appendAnswer)
+                    // searchFeed.lastChild.remove()
+                    implementMoreA(moreToComeA)
+                    return
                 }
+            }
 
-                async function loadLessA(size) {
-                    // console.log("Current: " + _lastResult)
-                    let feed = document.getElementById("answerFeed")
-                    console.log(lastResultA)
-                    feed.lastChild.remove()
-                    for (let i = 0; i < size; i++) {
-                        console.log(i)
-                        let count = feed.childElementCount
-                        feed.children.item(count - 1).remove()
-                    }
-                    let childCount = feed.childElementCount
-                    lastResultA = feed.children.item(childCount - 1).querySelector(".answerId").innerText
-                    implementMoreA()
+            async function loadLessA(size) {
+                // console.log("Current: " + _lastResult)
+                let feed = document.getElementById("answerFeed")
+                console.log(lastResultA)
+                feed.lastChild.remove()
+                for(let i = 0; i < size; i++) {
+                    console.log(i)
+                    let count = feed.childElementCount
+                    feed.children.item(count - 1).remove()
                 }
+                let childCount = feed.childElementCount
+                lastResultA = feed.children.item(childCount-1).querySelector(".answerId").innerText
+                implementMoreA()
+            }
+            
+            if(!document.getElementById("noAnswers")) {
+                loadMoreA(standardA, lastResultA)
+            }
 
-                if (!document.getElementById("noAnswers")) {
-                    loadMoreA(standardA, lastResultA)
-                }
-
-                function implementMoreA(moreToLoad = true) {
+            function implementMoreA(moreToLoad = true) {
                     console.log("Adding Loaders")
                     let feed = document.getElementById("answerFeed")
                     console.log(feed.childElementCount)
-                    if (moreToLoad) {
-                        if (feed.childElementCount > standardA) {
+                    if(moreToLoad) {
+                        if(feed.childElementCount > standardA) {
                             let loaderWithLess = `
                                     <div class = "flex ml-6 ">
                                         <div class="flex mt-4">
@@ -463,9 +422,9 @@
                             document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loader)
                             return
                         }
-                    } else if (!moreToLoad) {
-                        if (feed.childElementCount > standardA) {
-                            let loaderWithLess = `
+                    } else if(!moreToLoad) {
+                            if(feed.childElementCount > standardA) {
+                                let loaderWithLess = `
                                         <div class="ml-6 flex mt-4">
                                             <span class="rounded-lg flex justify-between px-2 py-2 text-gray-500 bg-gray-300 hover:ring-2 hover:ring-offset-1 hover:ring-gray-300 hover:text-gray-700 w-max">
                                                 <button class=" text-gray-500 font-semibold text-base" onclick="loadLessA(${standard})">
@@ -473,9 +432,9 @@
                                                 </button>
                                             </span>
                                         </div>`
-                            document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loaderWithLess)
-                            return
-                        } else {
+                                document.getElementById("answerFeed").insertAdjacentHTML("beforeend", loaderWithLess)
+                                return
+                            } else {
                             let msg = `<div class="flex-col">
                             <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
                                 That's all folks!
@@ -483,18 +442,16 @@
                             </div>
                         </div>`
                             document.getElementById("answerFeed").insertAdjacentHTML("beforeend", msg)
-                        }
-                        return
+                            }
+                            return
                     }
-                }
-
-            </script>
-            <% } else { %>
-                <script>
-
-                </script>
-                <% } %>
-
+            }
+        </script>
+    <% } else { %>
+        <script>
+            
+        </script>
+    <% } %>  
+ 
 </body>
-
 </html>

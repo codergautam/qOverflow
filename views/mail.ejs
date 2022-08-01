@@ -5,14 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Mail</title>
     <link rel="stylesheet" href="/index.css">
 </head>
 
 <body>
-    <%- include('./navbar'), { loggedIn: true, login: false, } %>
+        <%- include('./navbar'), { loggedIn: true, login: false, } %>
         <div class="grid grid-cols-12 bg-white">
-            <div class="relative flex justify-center col-span-12">
+            <div class="relative flex justify-center col-span-4">
                 <div class="flex-col w-full ml-2 ">
                     <div class="flex text-5xl text-gray-700 font-bold mt-4">
                         <div class="text-start border-b-2 pb-2">
@@ -71,7 +71,7 @@
                     </form>
                 </div>
             </div>
-            <div class="col-span-12 relative flex overflow-hidden overflow-y-auto  bg-gray-100 h-screen bg-fixed">
+            <div class="col-span-3 relative flex overflow-hidden overflow-y-auto  bg-gray-100 bg-fixed">
                 <div class="flex-col w-11/12 mx-auto h-screen" id="inbox">
                     <% if(messageFeed.length==0) { %>
                         <div id="noMail" class="flex-col w-full">
@@ -97,7 +97,7 @@
                         <% } %>
                 </div>
             </div>
-            <div class="col-span-12 relative flex">
+            <div class="col-span-5 relative flex">
                 <div class="flex-col">
                     <p class="text-5xl text-stone-900 text-start font-staat ml-4 mt-4 border-b-2 w-min">
                         Preview
@@ -121,7 +121,10 @@
         </div>
         <script>
             const search2 = document.querySelector('#search2');
+            const one = document.querySelector('#1');
             search2.classList.remove('fixed');
+            one.classList.remove('w-full');
+            one.classList.add('w-40');
         </script>
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
