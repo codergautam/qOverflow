@@ -731,7 +731,8 @@ app.get("/messageEditor", async (req, res) => {
   console.log(username)
   username = (username) ? username : req.session.user.username
   res.render('messageEditor', {
-    username: username
+    username: username, 
+    error: req.query.error
   })
 })
 app.get('/getAnswers', async (req, res) => {
@@ -761,9 +762,7 @@ app.post("/messages", async (req, res) => {
   if(data.success) {
     res.redirect('/mail')
   } else {
-    res.redirect('/messageEditor', {
-      username: username
-    })
+    res.redirect('/messageEditor?error='+(data.error.startsWith("user \"") ? receiver+" wasn't found" : "Something went wrong, please try again"))
   }
 })
 

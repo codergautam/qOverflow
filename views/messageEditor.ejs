@@ -53,8 +53,16 @@
                     <a href="./mail">Go Back</a>
                 </div>
             </div>
+            <% if(locals.error) { %>
+              <center><div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 my-3 rounded relative text-center w-fit place-self-center" role="alert">
+                    <span class="block sm:inline text-lg">Error: <%= error %></span>
+            
+                  </div></center>
+                  <% } %>
         </div>
+  
         <div class="m-5">
+    
             <form action="/messages" method="POST">
                 <div class="flex">
                     <div class="flex-1 items-center justify-center pb-8">
