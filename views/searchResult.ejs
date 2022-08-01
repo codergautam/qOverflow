@@ -12,7 +12,7 @@
         <div class="col-span-12">
             <%- include('./navbar'), { loggedIn: true, login: false, user: user } %> 
         </div>  
-        <div class="flex-col mt-6 col-start-5 col-span-4 items-center relative">
+        <div class="flex-col grid mt-6 col-start-5 col-span-4 items-center relative">
             <div class="flex-col">
                 <p class="mx-auto text-5xl text-center font-bold border-b-4 pb-2 border-gray-200">
                     Search Results
@@ -34,7 +34,7 @@
             <p class="mt-2 text-3xl text-center font-bold">
                 "<%= searchQuery %>"  
             </p>
-            <div class="flex mt-4 w-2/3 mx-auto">
+            <div class="flex mt-4 w-fill align-center mx-auto">
                 <p class="text-2xl font-bold mr-2">By: </p>
                 <% var possible = ["Title", "Text", "Author", "Creation"] %>
                 <% for (var i = 0; i < possible.length; i++) { %>

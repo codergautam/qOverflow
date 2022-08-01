@@ -170,7 +170,7 @@
 });
    
     var question = `
-    <div class="sm:flex items-center justify-center flex-col px-[30px] md:justify-self-center xl:w-1/2 lg:w-9/12 transition-all delay-150" id="mainQuestionDiv${data.question_id}">
+    <div class="sm:flex items-center justify-center flex-col px-[30px] md:justify-self-center 2xl:w-2/3 lg:w-9/12 transition-all delay-150" id="mainQuestionDiv${data.question_id}">
       <div class="transition-all delay-150 my-5 rounded-md sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full cursor-pointer" onclick="location.href = '/question/${data.question_id}'">
         <div class="transition-all delay-150 p-4 pb-2 sm:p-0 sm:pt-2 sm:pl-2 col-span-5 row-span-2 sm:col-span-1 sm:row-span-2 rounded">
           <span class="transition-all delay-150 inline-block align-middle place-content-stretch w-full sm:w-full h-auto max-h-auto bg-gray-200 px-2 py-1 text-xs font-semibold xl:font-bold text-gray-700 mr-2 mb-2 rounded-xl">
@@ -183,7 +183,7 @@
           <br>
         </div>
         <div class="grid transition-all delay-150 w-full py-3 px-7 row-span-2 sm:row-span-2 place-content-evenly sm:col-span-2 col-span-5 place-items-center w-full text-center">
-          <div class="transition-all delay-150 font-bold text-xl xl:text-3xl 2xl:text-4xl mb-2 align-middle lg:text-2xl" style="word-break: break-word; hyphens: auto;">${data.title}</div>
+          <div class="transition-all delay-150 font-semibold text-xl xl:text-3xl mb-2 align-middle lg:text-2xl" style="word-break: break-word; hyphens: auto;">${data.title}</div>
         </div>
         <div class="transition-all delay-150 row-span-1 sm:row-span-1 sm:col-span-3 px-2 col-span-5 place-content-center text-center sm:text-left align-items-center justify-content-center">
           <span class="transition-all delay-150 justify-content-center inline-block text-center bg-gray-200 rounded-full px-3 py-1 text-sm xl:text-lg 2xl:text-xl font-semibold xl:font-bold text-gray-700 mr-1 mb-2">${msToTime(Date.now() - data.createdAt)} ago</span>
@@ -289,50 +289,26 @@ getQuestionsOnScreen().forEach((e) => {
 });
 }, 21000);
 
-var cacheUpdates = {};
-var startTime = Date.now();
 
 
-socket.on("questionViews", (cnt, id, checkedTime) => {
+
+socket.on("questionViews", (cnt, id) => {
   if(domIdExists(id+"views")) {
-    if(!cacheUpdates[id]) cacheUpdates[id] = {
-      views: startTime,
-      answers: startTime,
-      votes: startTime
-    };
-    if(cacheUpdates[id].views <= checkedTime) {
-      cacheUpdates[id].views = checkedTime;
-      document.getElementById(id+"views").innerHTML = cnt+" views";
-    }
+    document.getElementById(id+"views").innerHTML = cnt + " views";
   }
 })
 
-socket.on("answerCount", (cnt, id, checkedTime) => {
+socket.on("answerCount", (cnt, id) => {
   if(domIdExists(id+"answers")) {
-    if(!cacheUpdates[id]) cacheUpdates[id] = {
-      views: startTime,
-      answers: startTime,
-      votes: startTime
-    };
-    if(cacheUpdates[id].answers <= checkedTime) {
-      cacheUpdates[id].answers = checkedTime;
-      document.getElementById(id+"answers").innerHTML = cnt+" answers";
-    }
+//  alert(cnt);
+    document.getElementById(id+"answers").innerHTML = cnt + " answers";
   }
 })
 
 socket.on("questionVotes", (cnt, id) => {
 
   if(domIdExists(id+"points")) {
-    if(!cacheUpdates[id]) cacheUpdates[id] = {
-      views: startTime,
-      answers: startTime,
-      votes: startTime
-    };
-    if(cacheUpdates[id].votes <= checkedTime) {
-      cacheUpdates[id].votes = checkedTime;
-      document.getElementById(id+"answers").innerHTML = cnt+" answers";
-    }
+    document.getElementById(id+"points").innerHTML = (cnt.upvotes - cnt.downvotes) + " points";
   }
 })
 

@@ -33,8 +33,8 @@
           </form>
         </div>
       </div>
-      <div class="flex w-fill items-center md:pr-2 align-right">
-        <div class="md:ml-3 relative w-fill">
+      <div class="flex w-fill items-center align-right">
+        <div class="relative w-fill">
           <div class="w-fill">
             <% if(loggedIn) { %>
               <!-- Profile picture -->
@@ -125,25 +125,26 @@
               <% } else { %>
                 <% if (typeof login=="undefined" || !login) { %>
                   <!--Not logged in-->
+                  <div class="flex">
                   <button onclick="location.href = '/auth/login'"
-                    class="border-b-2 border-transparent hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                    class="md:p-2 md:px-3 p-1 px-2 mr-2 bg-blue-600 hover:bg-blue-500 hover:text-gray-900  text-white text-sm md:text-lg md:mr-4 font-semibold rounded-md transition-all ease-in-out delay-75 duration-300">
                     <% } else { %>
                       <button onclick="location.href = '/auth/login'"
-                        class="px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 text-lg font-semibold mr-4 rounded-md  transition-all ease-in-out delay-75 duration-300">
+                      class="md:p-2 md:px-3 p-1 px-2 mr-2 bg-green-400 hover:bg-green-300 hover:text-text  text-black text-sm md:text-lg md:mr-4 font-semibol rounded-md transition-all ease-in-out delay-75 duration-300">
                         <% } %>
                           Login
                       </button>
-                      &nbsp;
                       <% if (typeof signup=="undefined" || !signup) { %>
                         <!--Not Signed In-->
                         <button onclick="location.href = '/auth/signup'"
-                          class="border-b-2 border-transparent hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                          class="md:p-2 md:px-3 p-1 px-2 bg-blue-600  hover:bg-blue-500 hover:text-black  text-white text-sm md:text-lg lg:mr-4 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
                           <% } else { %>
                             <button onclick="location.href = '/auth/signup'"
-                              class="px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 text-lg font-semibold mr-4 rounded-md  transition-all ease-in-out delay-75 duration-300">
+                              class="md:p-2 md:px-3 p-1 px-2 bg-green-400 hover:bg-green-300 hover:text-black  text-black text-sm md:text-lg lg:mr-4 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
                               <% } %>
                                 Signup
                             </button>
+                          </div>
                             <% } %>
           </div>
         </div>
