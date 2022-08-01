@@ -28,7 +28,7 @@
       <div
         class="fixed bottom-4 right-4 group px-2 py-2 bg-gray-200 bg-opacity-75 rounded-3xl flex items-center hover:bg-opacity-90 hover:shadow-inner transition-all duration-300 ease-in-out">
         <svg xmlns="http://www.w3.org/2000/svg"
-          class="sm:flex group-hover:flex w-12 h-12 stroke-gray-700 transition-all duration-500 " fill="none"
+          class="sm:flex group-hover:flex w-6 h-6 stroke-gray-700 transition-all duration-500 " fill="none"
           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -36,7 +36,7 @@
         <form action="/questionEditor" method="GET">
           <input type="hidden" name="username" value="<%= user.username %> ">
           <input value="Create a Question" type="submit"
-            class="flex-none hidden transition-all duration-500 group-hover:flex text-lg md:text-2xl cursor-pointer text-gray-700 mr-2 font-semibold">
+            class="flex-none  ease-in-out delay-150 duration-500 group-hover:flex text-lg md:text-l cursor-pointer text-gray-700 mr-2 font-semibold">
         </form>
       </div>
       <% } %>
@@ -88,7 +88,7 @@
             console.log(lastQuestionId);
             var loader = `
     <div class="sm:flex items-center justify-center flex-col px-[30px] md:justify-self-center 2xl:w-2/3 lg:w-9/12 transition-all delay-150">
-      <div class="transition-all delay-150 my-5 shadow-blue-900 rounded-2xl sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full cursor-pointer bg-white px-5 py-5 ">
+      <div class="transition-all delay-150 my-5 shadow-blue-900 rounded-2xl sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full bg-white px-5 py-5 ">
         <div class="transition-all delay-150 p-4 pb-2 sm:p-0 sm:pt-2 sm:pl-2 col-span-5 row-span-2 sm:col-span-1 sm:row-span-2 ">
             <center class="align-middle cursor-default" style="hyphens: auto;">
          <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
@@ -170,7 +170,7 @@
 
             var question = `
     <div class="sm:flex items-center justify-center flex-col px-[30px] md:justify-self-center 2xl:w-2/3 lg:w-9/12 transition-all delay-150 " id="mainQuestionDiv${data.question_id}">
-      <div class="transition-all delay-150 my-5 shadow-blue-900 rounded-2xl sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full cursor-pointer bg-white px-5 py-5 " onclick="location.href = '/question/${data.question_id}'">
+      <div class="tition-all delay-150 my-5 shadow-blue-900 rounded-2xl sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full cursor-pointer bg-white px-5 py-5 " onclick="location.href = '/question/${data.question_id}'">
         <div class="transition-all delay-150 p-4 pb-2 sm:p-0 sm:pt-2 sm:pl-2 col-span-5 row-span-2 sm:col-span-1 sm:row-span-2 ">
           <span class="transition-all delay-150 inline-block align-middle place-content-stretch w-full sm:w-full h-auto max-h-auto bg-gray-200 px-2 py-1 text-xs font-semibold xl:font-bold text-gray-700 mr-2 mb-2 rounded-xl">
             <center class="align-middle cursor-default" style="hyphens: auto;">

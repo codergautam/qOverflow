@@ -547,7 +547,7 @@ app.get('/questionEditor', async (req, res) => {
   if(!(req.session.loggedIn && req.session.user)) return res.redirect('/')
   let username = req.session.username
   console.log("User: " + username)
-  res.render('questionEditor', {username: username})
+  res.render('questionEditor', {username: username, user: req.session.user})
 })
 var answerOwnerCache = {};
 
@@ -739,7 +739,8 @@ app.get("/messageEditor", async (req, res) => {
   username = (username) ? username : req.session.user.username
   res.render('messageEditor', {
     username: username, 
-    error: req.query.error
+    error: req.query.error,
+    user: req.session.user
   })
 })
 app.get('/getAnswers', async (req, res) => {
