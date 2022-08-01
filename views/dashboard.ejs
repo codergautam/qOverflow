@@ -74,7 +74,7 @@
                             class="flex group mt-2 items-center transition-all delay-75 duration-300 ease-in-out">
                             <input type="hidden" name="username" value="<%= user.username %> ">
                             <input type="submit"
-                                class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                                class="cursor-pointer text-sm font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
                                 value="Change Your Email" />
                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500" fill="none"
                                 viewBox="0 0 24 24" stroke-width="2">
@@ -86,7 +86,7 @@
                             class="flex group mt-1 items-center transition-all delay-75 duration-300 ease-in-out">
                             <input type="hidden" name="username" value="<%= user.username %> ">
                             <input type="submit"
-                                class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                                class="cursor-pointer text-sm text-md font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
                                 value="Change Your Password" />
                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500" fill="none"
                                 viewBox="0 0 24 24" stroke-width="2">
@@ -234,7 +234,7 @@
                 appendQuestion = (question) => {
                     console.log(question)
                     let feed = document.getElementById("questionFeed")
-                    feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                    feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5" style="word-break:break-word">
                                 <div class="px-4 py-4 ">
                                 <div class="hidden questionId">${question.question_id}</div>
                                 <div class="font-bold text-lg mb-2">${question.title.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
