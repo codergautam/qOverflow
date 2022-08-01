@@ -1410,7 +1410,7 @@ io.on('connection', (socket) => {
 
   socket.on('answerCommentVoteCount', async (questionId, answerId, commentId) => {
     if(answerCommentCache[questionId] && answerCommentCache[questionId][answerId] && answerCommentCache[questionId][answerId][commentId] && Date.now() - answerCommentCache[questionId][answerId][commentId].time < 15000) {
-      socket.emit('questionCommentVoteCount', [questionId, answerId , commentId, answerCommentCache[questionId][answerId][commentId].votes, answerCommentCache[questionId][answerId][commentId].time]);
+      socket.emit('answerCommentVoteCount', [questionId, answerId , commentId, answerCommentCache[questionId][answerId][commentId].votes, answerCommentCache[questionId][answerId][commentId].time]);
       return;
     } else {
     var comments = await api.getAllAnswerComments(questionId, answerId);
