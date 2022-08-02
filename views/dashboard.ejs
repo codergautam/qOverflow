@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<!-- GoldPlatinumDiaMond500% -->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -60,14 +60,14 @@
                                     <% if(nextLevel <= 7) { %> 
                                         <div
                                             class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">
-                                            Level <%= nextLevel %> (<%= nextLevelPoints %> PTS.) </div>
+                                            <%= nextLevelPoints - user.points %> pts. to Level <%= nextLevel %></div>
                                     <% } %> 
                                 </div>
                                 <div
                                     class="font-bold text-2xl hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
-                                    <%= user.points %>
+                                    <%= user.points.toLocaleString('en-US') %>
                                         <% if(user.points> 1 ) { %> PTS. <% } else { %> PT. <% } %>
-                                </div>
+                                </div> 
                             </div>
                         </div>
                     </div>
