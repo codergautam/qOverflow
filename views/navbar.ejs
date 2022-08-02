@@ -17,10 +17,10 @@
           <img class="hidden h-14 w-auto sm:hidden md:hidden lg:inline xl:inline nav" src="../qOverflowLogoSmall.png">
         </a>
       </div>
-      <div class="flex w-full mr-4 group" id="search">
+      <div class="flex w-full mr-4 group " id="search">
           <form class="flex w-full sm:w-4/5 xl:w-full 2xl:w-full" action="/search" method="POST">
-            <input id="1" name="searchQuery" type="text" required
-              class="transition delay-75 w-full duration-100 ease-in-out focus:bg-gray-50 focus:rounded-lg focus:border-none border-b-2 border-gray-100 border-spacing-1 focus:outline-none py-1 appearance-none px-3 placeholder-gray-500 text-gray-900 focus:z-10 text-sm lg:text-base font-semibold"
+            <input id="1" name="searchQuery" type="text" required maxlength="100"
+              class="transition delay-75  w-full duration-100 ease-in-out focus:bg-gray-50 focus:rounded-lg focus:border-none border-b-2 border-gray-100 border-spacing-1 focus:outline-none py-1 appearance-none px-3 placeholder-gray-500 text-gray-900 focus:z-10 text-sm lg:text-base font-semibold"
               placeholder="Search" value="<%= locals.searchQuery %>">
               <button type="submit">
                 <svg xmlns="http://www.w3.org/2000/svg" type="submit"

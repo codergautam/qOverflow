@@ -1202,6 +1202,8 @@ try {
   } catch(e) {
   console.log(e);
 }
+document.getElementById("answerUp"+answer.answer_id).classList.remove("cursor-wait");
+                                         document.getElementById("answerDown"+answer.answer_id).classList.remove("cursor-wait");
   };
 
   var toggled = false;
