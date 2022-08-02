@@ -21,7 +21,7 @@
           <form class="flex w-full sm:w-4/5 xl:w-full 2xl:w-full" action="/search" method="POST">
             <input id="1" name="searchQuery" type="text" required
               class="transition delay-75 w-full duration-100 ease-in-out focus:bg-gray-50 focus:rounded-lg focus:border-none border-b-2 border-gray-100 border-spacing-1 focus:outline-none py-1 appearance-none px-3 placeholder-gray-500 text-gray-900 focus:z-10 text-sm lg:text-base font-semibold"
-              placeholder="Search">
+              placeholder="Search" value="<%= locals.searchQuery %>">
               <button type="submit">
                 <svg xmlns="http://www.w3.org/2000/svg" type="submit"
                   class="transition delay-75 duration-200 ease-in-out mt-auto hover:scale-110 cursor-pointer w-auto xl:h-7 lg:h-5 stroke-gray-500 group-focus:ring-indigo-500 group-focus:border-indigo-500 group-focus:z-10 group-focus:ring-1"
@@ -55,7 +55,6 @@
                       class="wavy-hover text-l md:text-xl xl:text-2xl  my-auto font-dummy text-blue-500 " style="color: #01B3E7;">Logout</a>
                   </div>
                   <!-- Home Icon -->
-
                   <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
                     <div
                       class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
@@ -107,7 +106,7 @@
                             &nbsp;
                             <h4
                               class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-dummy text-blue-700 transition-all delay-75 duration-300 ease-in-out" style="color: #566FD6;"
-                              id="user-points">Points: <%= locals.user.points %>
+                              id="user-points">Points: <%= Number(locals.user.points).toLocaleString() %>
                             </h4>
                           </div>
                       </div>
@@ -241,7 +240,7 @@
           .then(data => {
             if (data) {
               document.querySelector('#user-level').innerHTML = "Level: " + data.level;
-              document.querySelector('#user-points').innerHTML = "Points: " + data.points;
+              document.querySelector('#user-points').innerHTML = "Points: " + Number(data.points).toLocaleString( );
             }
           });
       }, 1000);

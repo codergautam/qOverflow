@@ -227,7 +227,8 @@ app.get('/search', async (req, res) => {
       sort: sort,
       searchFeed: questions,
       user: req.session.user,
-      error: data.success ? undefined : true
+      error: data.success ? undefined : true,
+      formatError: sort == "Creation" && data.error && data.error.includes("value type")
     })
   } else {
     res.render('searchResult', {
@@ -236,7 +237,8 @@ app.get('/search', async (req, res) => {
       sort: sort,
       searchFeed: [],
       user: req.session.user,
-      error: true
+      error: true,
+      formatError: sort == "Creation" && data.error && data.error.includes("value type")
     })
   }
 })
@@ -632,8 +634,9 @@ app.get("/api/autocomplete", async (req, res) => {
 })
 
 app.post('/questions',  async (req, res) => {
-  let {username, title, text } = req.body 
-  username = (username != " ") ? username : req.session.user.username
+  if(!(req.session.loggedIn && req.session.user)) return res.redirect('/')
+  let { title, text } = req.body 
+  username = req.session.user.username
   if(username != " ") {
     console.log(`User ${username}, making Question [Title: ${title}, Text ${text.slice(0, 16)}]`)
     let data = await api.createQuestion(username, title, text)
@@ -760,18 +763,22 @@ app.post("/auth/signup", (req,res) => {
 })
 
 app.get('/answer/:id', async (req, res) => {
-  var answerId = req.params.id;
-  var createdAt = req.query.at;
-  var accepted = req.query.accepted;
-  api.getQuestionId(answerId, createdAt, accepted).then(data => {
-    console.log(data)
-    if(data.success) {
-      res.redirect(`/question/${data.questionId}`)
-    } else {
-      res.render('error', {
-        error: "Answer not found"
-      })
-    }
+  // var answerId = req.params.id;
+  // var createdAt = req.query.at;
+  // var accepted = req.query.accepted;
+  // api.getQuestionId(answerId, createdAt, accepted).then(data => {
+  //   console.log(data)
+  //   if(data.success) {
+  //     res.redirect(`/question/${data.questionId}`)
+  //   } else {
+  //     res.render('error', {
+  //       error: "Answer not found"
+  //     })
+  //   }
+  // });
+
+  res.render('error', {
+    'error': "No longer supported"
   });
 
 });
