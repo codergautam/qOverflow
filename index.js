@@ -91,6 +91,7 @@ app.get('/', async (req, res) => { //Homepage
     user: req.session.user,
     sort,
     basicData,
+    success: req.query.success,
   })
 });
 
@@ -589,7 +590,7 @@ app.post('/questions',  async (req, res) => {
     let data = await api.createQuestion(username, title, text)
     let dataStatus = data.success
     if (dataStatus) { 
-      res.redirect('/')
+      res.redirect('/?success=Your question has been created!')
     } else {
       res.redirect('/questionEditor')
     }
@@ -740,12 +741,14 @@ app.get('/mail', async (req, res) => {
     mailData.messages.forEach((message) => {
       message.timeElapsed = msToTime(Date.now() - message.createdAt)
     })
+
     console.log(mailData)
     res.render('mail', {
       loggedIn: req.session.loggedIn,
       user: user,
       messageFeed: mailData.messages,
-      messageCount: mailData.messages.length
+      messageCount: mailData.messages.length,
+      success: req.query.success,
     })
   } else res.redirect('/')
 })
@@ -753,6 +756,7 @@ app.get('/mail', async (req, res) => {
 
 app.get("/messageEditor", async (req, res) => {
   if(!(req.session.loggedIn && req.session.user)) return res.redirect('/')
+
 
   let username = req.session.user.username
   console.log(username)
@@ -788,9 +792,9 @@ app.post("/messages", async (req, res) => {
   console.log(data)
   console.log(data.success)
   if(data.success) {
-    res.redirect('/mail')
+    res.redirect('/mail?success=Mail sent!')
   } else {
-    res.redirect('/messageEditor?error='+(data.error.startsWith("user \"") ? receiver+" wasn't found" : "Something went wrong, please try again"))
+    res.redirect('/messageEditor?error='+(data.error.startsWith("user \"") ? "The user '"+receiver+"' wasn't found" : "Something went wrong, please try again"))
   }
 })
 

@@ -297,8 +297,8 @@
                                                                       Vote</button>
                                                                     <% } %>
                                                                       <script>
-                                                                        const search2 = document.querySelector('#search2');
-                                                                        search2.classList.remove('fixed');
+                                                                        // const search2 = document.querySelector('#search2');
+                                                                        // search2.classList.remove('fixed');
                                                                       </script>
                                                                       <script>
                                                                         var startTime = Date.now();
@@ -391,7 +391,7 @@
                                               class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
                                               <center>
                                                 <p>By: <%= question.creator%>
-                                                </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp"
+                                                </p> <img src='' onerror="this.src='/person.webp'"  style="" width="50" height="50" id="qPfp"
                                                   class="max-w-full h-auto rounded-full">
                                                 <p id="levelText"></p>
                                               </center>
@@ -575,13 +575,19 @@
                                               } else {
                                                 document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
                                               }
+                                              console.log(
+                                                  "quesiton upvote",
+                                                  Date.now()
+                                                )
                                               if (!window.timecache["<%= question.question_id %>"]) {
+                                               
                                                 window.timecache["<%= question.question_id %>"] = {
                                                   votes: Date.now(),
                                                   answers: startTime,
                                                   views: startTime
                                                 };
                                               }
+                                              window.timecache["<%= question.question_id %>"].votes = Date.now();
                                             }
                                           } catch (e) {
                                             console.log(e);
@@ -619,6 +625,9 @@
                                               } else {
                                                 document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
                                               }
+                                              console.log(
+                                                  "quesiton downvote", Date.now()
+                                                )
                                               if (!window.timecache["<%= question.question_id %>"]) {
                                                 window.timecache["<%= question.question_id %>"] = {
                                                   votes: Date.now(),
@@ -626,6 +635,7 @@
                                                   views: startTime
                                                 };
                                               }
+                                              window.timecache["<%= question.question_id %>"].votes = Date.now();
                                             }
                                           } catch (e) {
                                             console.log(e);
@@ -638,17 +648,48 @@
                                         }
 
                                         document.getElementById("questionUp").addEventListener("click", async () => {
+
+                                          if(document.getElementById("questionUp").classList.contains("cursor-wait")){
+                                            return
+                                          }
+
+                                          document.getElementById("questionUp").classList.add("cursor-wait");
+                                         document.getElementById("questionDown").classList.add("cursor-wait");
+
+                                         try {
                                           if (document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length - 1] == "voteSelected.png") {
                                             await questionDown();
                                           }
-                                          questionUp();
+                                         await questionUp();
+                                        } catch (e) {
+                                          console.log(e);
+                                        }
+                                         document.getElementById("questionUp").classList.remove("cursor-wait");
+                                         document.getElementById("questionDown").classList.remove("cursor-wait");
+
+
                                         })
 
                                         document.getElementById("questionDown").addEventListener("click", async () => {
+                                          if(document.getElementById("questionUp").classList.contains("cursor-wait")){
+                                            return
+                                          }
+
+                                          document.getElementById("questionUp").classList.add("cursor-wait");
+                                         document.getElementById("questionDown").classList.add("cursor-wait");
+                                          
+                                         try {
                                           if (document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length - 1] == "voteSelected.png") {
                                             await questionUp();
                                           }
-                                          questionDown();
+                                          await questionDown();
+                                        } catch (e) {
+                                          console.log(e)
+                                        }
+
+                                          document.getElementById("questionUp").classList.remove("cursor-wait");
+                                         document.getElementById("questionDown").classList.remove("cursor-wait");
+
                                         })
 
 
@@ -799,6 +840,8 @@
                                             }
                                           }
 
+                                          console.log(data, window.timecache[id].votes, time);
+
                                           if (window.timecache[id].votes <= time) {
                                             window.timecache[id].votes = time;
 
@@ -914,7 +957,7 @@
               </div>
             </div>
             <div class="px-6 pt-4 pb-2 text-right">
-              <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${answer.creator} </p> <img src='' style="opacity:0%" width="50" height="50" id="aPfp${answer.answer_id}" class="max-w-full h-auto rounded-full"><p id="levelText${answer.answer_id}"></p></center></span>
+              <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${answer.creator} </p> <img src='' onerror="this.src='/person.webp'"  style="" width="50" height="50" id="aPfp${answer.answer_id}" class="max-w-full h-auto rounded-full"><p id="levelText${answer.answer_id}"></p></center></span>
                <br>
                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - answer.createdAt) ?? "just now"} ago</span>
                                </div>
@@ -1061,6 +1104,8 @@ if( document.getElementById("acceptAnswer"+answer.answer_id)) {
                 };
               }
 
+              window.timecache[answer.answer_id].votes = Date.now();
+
         // document.getElementById("answerUp"+answer.answer_id).src = action === "increment" ? "/vote.png" : "/downvoted.png";
       }
   }
@@ -1097,22 +1142,55 @@ j =await j.json();
                   votes: Date.now(),
                 };
               }
+
+              window.timecache[answer.answer_id].votes = Date.now();
   }
 
 return;
   }
 
   document.getElementById("answerUp"+answer.answer_id).onclick = async () => {
+    if(document.getElementById("answerUp"+answer.answer_id).classList.contains("cursor-wait")){
+                                            return
+                                          }
+
+                                          document.getElementById("answerUp"+answer.answer_id).classList.add("cursor-wait");
+                                         document.getElementById("answerDown"+answer.answer_id).classList.add("cursor-wait");
+                                          
+try {
     if( document.getElementById("answerDown"+answer.answer_id).src.split("/")[document.getElementById("answerDown"+answer.answer_id).src.split("/").length-1] == "voteSelected.png") {
       await answerDown();
     }
     await answerUp();
-  };
+  } catch(e) {
+  console.log(e);
+}
+
+
+                                        
+
+  document.getElementById("answerUp"+answer.answer_id).classList.remove("cursor-wait");
+                                         document.getElementById("answerDown"+answer.answer_id).classList.remove("cursor-wait");
+  }
+
+
   document.getElementById("answerDown"+answer.answer_id).onclick = async () => {
+    if(document.getElementById("answerUp"+answer.answer_id).classList.contains("cursor-wait")){
+                                            return
+                                          }
+
+                                          document.getElementById("answerUp"+answer.answer_id).classList.add("cursor-wait");
+                                         document.getElementById("answerDown"+answer.answer_id).classList.add("cursor-wait");
+
+
+try {
     if( document.getElementById("answerUp"+answer.answer_id).src.split("/")[document.getElementById("answerUp"+answer.answer_id).src.split("/").length-1] == "voteSelected.png") {
       await answerUp();
     }
     await answerDown();
+  } catch(e) {
+  console.log(e);
+}
   };
 
   var toggled = false;
@@ -1477,8 +1555,9 @@ console.log(comment.comment_id)
 
                                           <div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
                                             <div class="flex flex-col items-center justify-between   rounded-lg">
-                                              <img class="rounded-lg cursor-pointer min-w-[10px]" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
-                                                <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
+                                              <img class="rounded-lg rotate-0  cursor-pointer min-w-[10px]" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                                
+                                              <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
                                                 <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px]" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                                                 </div>
 
@@ -1490,7 +1569,6 @@ console.log(comment.comment_id)
    </div >
 </div >
                                           `
-console.log("WTF")
 
 
 // dom parser
@@ -1561,6 +1639,12 @@ var commenty = htmlDoc.body.firstChild;
             document.getElementById("voteC"+comment.comment_id).innerHTML = curVoteCount - 1;
             
           }
+          if (!window.timecache[comment.comment_id]) {
+                                            window.timecache[comment.comment_id] = {
+                                              votes: startTime,
+                                            }
+                                          }
+                                          window.timecache[comment.comment_id].votes = Date.now();
         }
       
     }
@@ -1595,6 +1679,12 @@ var commenty = htmlDoc.body.firstChild;
             
             
           }
+          if (!window.timecache[comment.comment_id]) {
+                                            window.timecache[comment.comment_id] = {
+                                              votes: startTime,
+                                            }
+                                          }
+                                          window.timecache[comment.comment_id].votes = Date.now();
         }
       
     }
@@ -1602,17 +1692,46 @@ var commenty = htmlDoc.body.firstChild;
    console.log( document.getElementById("commentDown"+comment.comment_id));
 
  document.getElementById("commentUp"+comment.comment_id).addEventListener("click", async () => {
+  if(document.getElementById("commentUp"+comment.comment_id).classList.contains("cursor-wait")){
+                                            return
+                                          }
+
+                                          document.getElementById("commentUp"+comment.comment_id).classList.add("cursor-wait");
+                                         document.getElementById("commentDown"+comment.comment_id).classList.add("cursor-wait");
+                                          
+  try {
   if(document.getElementById("commentDown"+comment.comment_id).src.split("/")[document.getElementById("commentDown"+comment.comment_id).src.split("/").length-1] === "voteSelected.png") {
     await downvoteComment();
   }
   await upvoteComment();
+  } catch(err) {
+    console.log(err);
+  }
+
+                                          document.getElementById("commentUp"+comment.comment_id).classList.remove("cursor-wait");
+                                         document.getElementById("commentDown"+comment.comment_id).classList.remove("cursor-wait");
+                                        
   
  });
   document.getElementById("commentDown"+comment.comment_id).addEventListener("click", async () => {
+
+  if(document.getElementById("commentUp"+comment.comment_id).classList.contains("cursor-wait")){
+                                            return
+                                          }
+
+                                          document.getElementById("commentUp"+comment.comment_id).classList.add("cursor-wait");
+                                         document.getElementById("commentDown"+comment.comment_id).classList.add("cursor-wait");
+                                        
+                                         try {
     if(document.getElementById("commentUp"+comment.comment_id).src.split("/")[document.getElementById("commentUp"+comment.comment_id).src.split("/").length-1] === "voteSelected.png") {
     await upvoteComment();
   }
   await downvoteComment();
+  } catch(err) {
+    console.log(err);
+  }
+                                          document.getElementById("commentUp"+comment.comment_id).classList.remove("cursor-wait");
+                                         document.getElementById("commentDown"+comment.comment_id).classList.remove("cursor-wait");
   });
 
   destroyCommentSpinner(where);

@@ -90,6 +90,17 @@
                 </div>
             </div>
         <div class="w-full">
+            <% if(locals.error) { %>
+                <br/>
+                <center>
+            <div class="bg-red-100 border text-center self-center border-red-400 text-lg text-red-700 px-4 py-3 w-fit rounded relative" role="alert">
+               
+                <span class="block sm:inline text-center"><b>Error:</b><br/><%= error %></span>
+        
+              </div>
+            </center>
+              <% } %>
+        
             <form class="w-full" action="/messages" method="POST">
                 <div class="flex">
                     <div class="flex-1 w-full">

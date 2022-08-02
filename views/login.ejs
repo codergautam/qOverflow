@@ -63,11 +63,20 @@
                 </div>
             </form>
             <div class="grid">
+              <% if (typeof success !="undefined" ) { %>
+                <div
+                  class="bg-green-100 border place-content-center place-self-center grid border-green-400 text-green-700 px-4 py-3 sm:w-2/3 rounded relative"
+                  role="alert">
+                  <strong class="font-bold place-self-center text-sm md:text:md text-center">
+                    <%= success.msg %>
+                  </strong>
+                </div>
+                <% } %>
               <% if (typeof error !="undefined" ) { %>
                 <div
                   class="bg-red-100 border place-content-center place-self-center grid border-red-400 text-red-700 px-4 py-3 sm:w-2/3 rounded relative"
                   id="errAlert" role="alert">
-                  <strong class="font-bold block sm:inline place-self-center text-sm md:text:md">Login Failed!</strong>
+                  <strong class="font-bold block sm:inline place-self-center text-sm md:text:md"><%= error.msg %></strong>
                   <span class="block sm:inline  place-self-center text-sm md:text:md text-center">
                   </span>
 
@@ -85,15 +94,7 @@
 
                   </div>
                   <% } %>
-                    <% if (typeof success !="undefined" ) { %>
-                      <div
-                        class="bg-green-100 border place-content-center place-self-center grid border-green-400 text-green-700 px-4 py-3 sm:w-2/3 rounded relative"
-                        role="alert">
-                        <strong class="font-bold place-self-center text-sm md:text:md text-center">
-                          sdfsd
-                        </strong>
-                      </div>
-                      <% } %>
+
             </div>
           </div>
         </div>
@@ -111,7 +112,7 @@
       }
 
       if (!localStorageKeyExists("attemptsLeft")) localStorage.setItem("attemptsLeft", 3);
-    <% if (typeof badPassword != "undefined") { %>
+    <% if (typeof error != "undefined") { %>
 
 
         localStorage.setItem("attemptsLeft", Number(localStorage.getItem("attemptsLeft")) - 1);
