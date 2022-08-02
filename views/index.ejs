@@ -14,7 +14,7 @@
 <body class="bg-blue-500">
   <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
 <div  >
-    <div class=" lg:px-[65px] md:px-[30px] py-3 text-md md:text-lg lg:text-xl xl:text-2xl bg-bu">
+    <div class=" lg:px-[65px] px-2 md:px-[30px] py-3 text-md md:text-lg lg:text-xl xl:text-2xl bg-bu">
       <% var possible = ["Recent", "Best", "Interesting", "Hottest"] %>
       <!-- <p class="px-3">Sort Order: </p> -->
       <% for (var i = 0; i < possible.length; i++) { %>

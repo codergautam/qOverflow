@@ -102,13 +102,13 @@
   </style>
 <body class="bg-blue-500">
     <%- include('./navbar'), { loggedIn: true, login: false, } %>
-    <div class="grid grid-cols-12 h-full my-5 ">
+    <div class="grid grid-cols-12 my-5 h-screen">
 
-        <div class="col-span-5 relative flex bg-fixed">
+        <div class="md:col-span-5 col-span-12 relative place-content-center flex bg-fixed">
 
 
-            <div class="flex-col mx-auto h-max self-center text-center" id="inbox">
-                <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-9 rounded-full mx-auto mt-4 mb-2"
+            <div class="flex-col mx-auto h-max text-center" id="inbox">
+                <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-3 md:px-9 rounded-full mx-auto mt-4 mb-2"
                 id="newMessage" onclick="window.location.href='/messageEditor'">
                 New Message
             </button>
@@ -129,7 +129,7 @@
                     <% } %>
             </div>
         </div>
-        <div class="col-span-7 flex bg-fixed bg-white w-1/2 h-auto min-h-[80%] rounded-xl fixed float-right right-20">
+        <div class="md:col-span-7 col-span-12 flex bg-fixed bg-white w-full h-full rounded-xl relative">
             <div class="flex-col">
                 <div>
                     <div class="flex justify-between items-baseline">
