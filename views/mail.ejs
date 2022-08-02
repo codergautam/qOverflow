@@ -90,7 +90,7 @@
         <div class="sm:col-span-12 md:col-span-12 lg:col-span-3 xl:col-span-3 col-span-12 relative bg-transparent place-content-center flex w-full ">
 
 
-            <div class="flex flex-col w-full items-center h-max text-center py-6 bg-white rounded-3xl shadow-lg shadow-indigo-600" id="inbox">
+            <div class="flex flex-col w-full justify-items-center h-max text-center py-6 bg-white rounded-3xl shadow-lg shadow-indigo-600">
                 <div class="mt-2 text-5xl font-bold text-gray-900">
                     Inbox
                 </div>
@@ -114,6 +114,9 @@
                 id="newMessage" onclick="window.location.href='/messageEditor'">
                 + New Message
                 </button>
+                
+                <div class="w-full flex flex-col items-center max-h-84 overflow-y-auto" id="inbox">
+                </div>
                 <% if(messageFeed.length == 0) { %>
                     <div id="noMail" class="z-10 flex-col w-full">
                         <svg xmlns="http://www.w3.org/2000/svg"
