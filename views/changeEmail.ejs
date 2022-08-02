@@ -9,22 +9,25 @@
 </head>
 <script src="https://cdn.tailwindcss.com"></script>
 
-<body>  
-  <div class="flex flex-col h-screen">
-    <div class="py-0">
+<body class="bg-blue-500">  
       <%-  include('../views/navbar.ejs', {signup: false, loggedIn: true}); %>
-    </div>
-    <div class="flex justify-center items-center flex-grow">
+    <div class="mt-6 flex justify-center items-center flex-grow">
  
    
-   <div class="content-center ">
+   <div class="relative mt-20 content-center px-4 py-6 bg-white rounded-3xl shadow-lg shadow-indigo-600">
    <div class="min-h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-0 ">
+      <div class="flex mt-2 justify-center">
+        <div
+          class="cursor-pointer rounded-lg bg-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-1 font-semibold text-2xl text-gray-700">
+          <a href="./dashboard">Go Back</a>
+        </div>
+      </div>
       <div>
         <!-- <img class="mx-auto h-12 w-auto" src="" alt=""> -->
         <% if (typeof error != "undefined") { %>
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <strong class="font-bold">Signup Failed!</strong>
+        <div class="text-center mt-4 mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <strong class="block font-bold">Can't Change Email!</strong>
           <span class="block sm:inline"><%= error.msg %></span>
         </div>
         <% } %>
@@ -35,8 +38,7 @@
         <input type="hidden" name="username" value="<%= username %> ">
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
-            <label for="2" class="sr-only">Password</label>
-            <input id="2" name="newEmail" type="email" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Confirm New Email">
+            <input  onkeyup="checkLength()"  id="newEmail" name="newEmail" type="email" required class="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Confirm New Email">
           </div>
         </div>
   
@@ -44,11 +46,29 @@
           <button type="submit" class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
             Change Email
           </button>
+          <div id="characterCount" class="text-base text-gray-700 font-bold">
+            # Characters
+          </div>
         </div>
       </form>
     </div>
   </div>
 </div>
-</div>
+<script>
+  checkLength()
+  function checkLength() {
+    console.log("Being called")
+    let length = document.getElementById("newEmail").value.length
+    if(length > 10) {
+      document.getElementById("characterCount").classList.remove("text-rose-500")
+      document.getElementById("characterCount").classList.add("text-green-500")
+
+    } else {
+      document.getElementById("characterCount").classList.remove("text-green-500")
+      document.getElementById("characterCount").classList.add("text-rose-500")
+    }
+    document.getElementById("characterCount").innerText = `${length} Characters (Must be more than 10)`
+  }
+</script>
 </body>
 </html>
