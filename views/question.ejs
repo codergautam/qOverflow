@@ -466,9 +466,9 @@
                                     <!-- create answer -->
                                     <% if(loggedIn && ((question.status=="open" && basicData.points>= 1) ||
                                       (question.status == "protected" && basicData.level >= 5))) { %>
-                                      <div class="flex items-center justify-center flex-col bg-white px-[30px]" id="createDiv"
+                                      <div class="flex items-center justify-center rounded-3xl flex-col bg-white px-[30px]" id="createDiv"
                                         style="display: none;">
-                                        <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                                        <div class=" my-5 rounded overflow-hidden min-w-full ">
                                           <div class="px-4 py-4 ">
                                             <p> Know the solution? Then create an answer!</p>
                                             <br>
@@ -481,7 +481,7 @@
                                                   id="answerText" name="answer" rows="3"></textarea>
                                               </div>
                                               <br />
-                                              <div id="preview">
+                                              <div id="preview" class="hidden">
                                                 <div class="flex flex-col">
                                                   <label class="text-gray-700 text-sm font-bold mb-2"
                                                     for="answer">Preview</label>
@@ -1492,6 +1492,7 @@ var remaining = [];
 
     if(document.getElementById("answerText").value.length == 0) {
       document.getElementById("createAnswer").disabled = true;
+      document.getElementById("preview").classList.add("hidden");
 
       document.getElementById("createAnswer").classList.add("bg-gray-500");
 
@@ -1500,6 +1501,8 @@ var remaining = [];
 
     } else {
       document.getElementById("createAnswer").disabled = false;
+      document.getElementById("preview").classList.remove("hidden");
+
 
       document.getElementById("createAnswer").classList.remove("bg-gray-500");
 
