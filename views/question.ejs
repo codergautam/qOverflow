@@ -384,10 +384,10 @@
                                               <%= question.title %>
                                             </b></p>
                                           <hr />
-                                          <p id="questionText" class="text-center break-all ">
+                                          <p id="questionText" class="text-center break-all px-9">
 
                                           </p>
-                                          <div class="px-6 pt-4 pb-2 text-right">
+                                          <div class="pt-4 pb-2 text-right">
                                             <span
                                               class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
                                               <center>
@@ -451,7 +451,7 @@
 
                                       </div>
                                     </div>
-                                    <div id="answers">
+                                    <div id="answers" class="grid place-content-center">
                                       <div class="flex items-center justify-center flex-col px-[30px]">
                                         <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
                                           <% if(question.answers) { %>
@@ -951,8 +951,8 @@
                 </div>
 
               <div class="flex-grow">
-            <div class=" py-[12px] flex place-content-center sm:px-[46px] lg:px-[46px] ">
-              <div class="h-auto px-8">
+            <div class=" py-[12px] flex place-content-center px-9">
+              <div class="h-auto">
                 <p id="${answer.answer_id}Text" class="break-all"> </p>
 
               </div>
