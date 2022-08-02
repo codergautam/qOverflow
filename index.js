@@ -435,7 +435,9 @@ app.post('/search', async (req, res) => {
 })
 
 app.get('/test', async (req, res) => {
-  let username = req.session.username
+  console.log("Testing")
+  let username = req.session.user.username
+  console.log("Username: " + username)
   if(username) {
     let data = await modifyPoints(100000000000, username)
     if(data.success) {
