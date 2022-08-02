@@ -132,7 +132,7 @@ class Api {
         "$gt": 0
       }
     };
-    // if(typeof accepted != "undefined") match.hasAcceptedAnswer = typeof accepted == "boolean" ? accepted : accepted == "false" ? false : true;
+   if(typeof accepted != "undefined") match.hasAcceptedAnswer = typeof accepted == "boolean" ? accepted ? true : undefined : accepted == "false" ? undefined : true;
     if(createdAt) match.createdAt = {
       $lte: Number(createdAt)
     }
