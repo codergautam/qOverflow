@@ -175,7 +175,7 @@
           <span class="transition-all delay-150 inline-block align-middle place-content-stretch w-full sm:w-full h-auto max-h-auto bg-gray-200 px-2 py-1 text-xs font-semibold xl:font-bold text-gray-700 mr-2 mb-2 rounded-xl">
             <center class="align-middle cursor-default" style="hyphens: auto;">
               <p class="font-semibold xl:font-bold text-xs xl:text-xl sm:text-sm break-words" >By: ${data.creator}</p>
-              <img src='' style="opacity: 1; transition: opacity 0.5s ease 0s;" width="30" height="30" id="${data.question_id + "pfp"}"  class="mt-1 w-10 xl:w-16 h-auto rounded-full">
+              <img src='' style="opacity: 1; transition: opacity 0.5s ease 0s;" width="30" height="30" id="${data.question_id + "pfp"}" onerror="this.src='/person.webp'"  class="mt-1 w-10 xl:w-16 h-auto rounded-full">
               <p id="${data.question_id + "levelText"}" class=" align-baseline font-semibold xl:font-bold text-xs xl:text-xl sm:text-sm"></p>
             </center>
           </span>
