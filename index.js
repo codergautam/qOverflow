@@ -761,18 +761,22 @@ app.post("/auth/signup", (req,res) => {
 })
 
 app.get('/answer/:id', async (req, res) => {
-  var answerId = req.params.id;
-  var createdAt = req.query.at;
-  var accepted = req.query.accepted;
-  api.getQuestionId(answerId, createdAt, accepted).then(data => {
-    console.log(data)
-    if(data.success) {
-      res.redirect(`/question/${data.questionId}`)
-    } else {
-      res.render('error', {
-        error: "Answer not found"
-      })
-    }
+  // var answerId = req.params.id;
+  // var createdAt = req.query.at;
+  // var accepted = req.query.accepted;
+  // api.getQuestionId(answerId, createdAt, accepted).then(data => {
+  //   console.log(data)
+  //   if(data.success) {
+  //     res.redirect(`/question/${data.questionId}`)
+  //   } else {
+  //     res.render('error', {
+  //       error: "Answer not found"
+  //     })
+  //   }
+  // });
+
+  res.render('error', {
+    'error': "No longer supported"
   });
 
 });
