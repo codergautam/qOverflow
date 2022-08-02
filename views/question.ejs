@@ -540,10 +540,19 @@
 
                                           return portions[0] ?? "Just now";
                                         }
+                                        function convertHTMLEntity(text){
+    const span = document.createElement('span');
+
+    return text
+    .replace(/&[#A-Za-z0-9]+;/gi, (entity,position,text)=> {
+        span.innerHTML = entity;
+        return span.innerText;
+    });
+}
                                         document.getElementById('questionText').innerHTML =
-                                          marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`).replace(/[\u00A0-\u9999<>\&]/g, function (i) {
-                                            return '&#' + i.charCodeAt(0) + ';';
-                                          }));
+                                          marked.parse(convertHTMLEntity(atob((`<%= btoa(question.text) %>`))), {
+                                            sanitize: true
+                                          });
 
                                         var actiongoing = false;
                                         async function questionUp() {
