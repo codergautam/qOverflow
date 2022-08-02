@@ -98,7 +98,7 @@
                     View your messages
                 </div>
                 <div class="mt-4">
-                    <img src="<%= user.img %> " alt="" class="w-42 mx-auto rounded-full hover:-translate-y-2 transition-all delay-75 duration-200 ease-in-out">
+                    <img src="<%= user.img %> " alt="" class="w-30 mx-auto rounded-full hover:-translate-y-2 transition-all delay-75 duration-200 ease-in-out">
                 </div>
                 <% if(locals.success) { %>
                     <div class="mt-4 bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
@@ -115,7 +115,7 @@
                 + New Message
                 </button>
                 
-                <div class="w-full flex flex-col items-center max-h-84 overflow-y-auto" id="inbox">
+                <div class="w-full flex flex-col items-center max-h-80 overflow-y-auto" id="inbox">
                 </div>
                 <% if(messageFeed.length == 0) { %>
                     <div id="noMail" class="z-10 flex-col w-full">
@@ -190,15 +190,15 @@
             let feed = document.getElementById("inbox")
             feed.innerHTML += `<div onclick="preview('${mail.mail_id}')" class="bg-white hover:bg-gray-50 w-5/6 group cursor-pointer mt-4 flex-col px-2 pl-2 pb-2 border-b-2 border-spacing-2 border-gray- transition delay-75 duration-300 ease-in-out">
                     <div class="flex justify-between items-baseline w-full">
-                        <p class=" text-base text-gray-400 font-bold mb-0">
+                        <p class="text-start text-base text-gray-400 font-bold mb-0">
                             ${mail.sender}
                         </p>
-                        <p class="text-sm text-gray-700 font-semibold mt-1 badge">
+                        <p class="text-start text-sm text-gray-700 font-semibold mt-1 badge">
                             ${mail.timeElapsed} ago
                         </p>
                     </div>
                     <div class="flex">
-                        <p class="mt text-2xl text-gray-700 font-semibold">
+                        <p class="text-start mt text-2xl text-gray-700 font-semibold line-clamp-1">
                             ${mail.subject}
                         </p>
                     </div>

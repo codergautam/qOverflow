@@ -33,7 +33,7 @@
             <div class="flex mt-4 w-fill align-center mx-auto">
                 <% var possible = ["Title", "Text", "Author", "Creation"] %>
                 <% for (var i = 0; i < possible.length; i++) { %>
-                    <a href="/search/?sort=<%= possible[i] %>&searchQuery=<%= searchQuery %>&loggedIn=<%= loggedIn %>" class="h-min inline-block px-3 <%= sort == possible[i] ? 'bg-teal-200 text-black' : '' %> py-2 text-sm leading-5 font-medium text-white hover:text-gray-300 focus:outline-none focus:text-black focus:bg-blue-200">
+                    <a href="/search/?sort=<%= possible[i] %>&searchQuery=<%= searchQuery %>&loggedIn=<%= loggedIn %>" class="h-min inline-block px-3 <%= sort == possible[i] ? 'bg-cyan-300 text-white' : '' %> py-2 text-sm leading-5 font-medium text-white hover:text-gray-300 focus:outline-none focus:text-black focus:bg-blue-200">
                         <%= possible[i] %>
                     </a>
                 <% } %>
