@@ -3,10 +3,8 @@
 @tailwind utilities;
 
 .wavy-hover {
-    @apply underline-offset-2 group-hover:underline group-hover:decoration-wavy group-hover:decoration-2 group-hover:decoration-white ;
 }
 
 .badge {
-    @apply inline-block bg-gray-200 rounded-full px-3 py-1 text-sm;
 }
 
