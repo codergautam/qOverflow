@@ -892,6 +892,10 @@ video {
   margin-top: 0.75rem;
 }
 
+.mr-\[9000px\] {
+  margin-right: 9000px;
+}
+
 .box-content {
   box-sizing: content-box;
 }
@@ -1473,6 +1477,10 @@ video {
   overflow-x: hidden;
 }
 
+.text-clip {
+  text-overflow: clip;
+}
+
 .break-words {
   overflow-wrap: break-word;
 }
@@ -2005,6 +2013,14 @@ video {
 
 .pl-8 {
   padding-left: 2rem;
+}
+
+.pr-\[900px\] {
+  padding-right: 900px;
+}
+
+.pr-\[9000px\] {
+  padding-right: 9000px;
 }
 
 .text-left {

@@ -1325,6 +1325,7 @@ app.post("/reset/:token", (req, res) => {
             username: username,
             error: {msg: "Password must be at least 10 characters long"}
           })
+          return;
         }
         api.resetPassword(username, password).then(data => {
           if(data.success) {
