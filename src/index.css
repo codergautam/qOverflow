@@ -2,9 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-.wavy-hover {
-}
-
 .badge {
+    @apply inline-block bg-gray-200 rounded-full px-3 py-1 text-sm;
 }
 
