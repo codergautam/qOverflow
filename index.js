@@ -665,8 +665,8 @@ app.post("/auth/signup", (req,res) => {
         req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7 * 30;
         req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
      } else {
-        req.session.cookie.maxAge = 1000 * 60 * 30;
-        req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 30);
+        req.session.cookie.maxAge = 1000 * 60 * 15;
+        req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 15);
      }
       req.session.user = {
         username: data.user.username,
@@ -817,8 +817,8 @@ app.post("/auth/login", async (req,res) => {
               req.session.cookie.maxAge = 1000 * 60 * 60 * 24 * 7 * 30;
               req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 30);
            } else {
-              req.session.cookie.maxAge = 1000 * 60 * 30;
-              req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 30);
+              req.session.cookie.maxAge = 1000 * 60 * 15;
+              req.session.cookie.expires = new Date(Date.now() + 1000 * 60 * 15);
            }
             req.session.user = {
                 username: user.user.username,
