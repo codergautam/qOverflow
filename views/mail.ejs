@@ -8,41 +8,128 @@
     <title>Mail</title>
     <link rel="stylesheet" href="/index.css">
 </head>
+<style>
+    h1 {
+      font-size: 2em;
+      font-weight: normal;
+      margin: 0.67em 0;
+    }
 
-<body>
+    h2 {
+      font-size: 1.5em;
+      font-weight: normal;
+      margin: 0.83em 0;
+    }
+
+    h3 {
+      font-size: 1.17em;
+      font-weight: normal;
+      margin: 1em 0;
+    }
+
+    h4 {
+      font-size: 1em;
+      font-weight: normal;
+      margin: 1.33em 0;
+    }
+
+    h5 {
+      font-size: 0.83em;
+      font-weight: normal;
+      margin: 1.67em 0;
+    }
+
+    h6 {
+      font-size: 0.67em;
+      font-weight: normal;
+      margin: 2.33em 0;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      align-items: center;
+      align-self: center;
+      align-content: center;
+      outline: solid;
+      width: 100%;
+    }
+
+    a {
+      color: #0366d6;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    blockquote {
+      background: #f9f9f9;
+      border-left: 10px solid #ccc;
+      margin: 1.5em 10px;
+      padding: 0.5em 10px;
+    }
+
+    ul {
+      margin: 1.33em 0;
+      padding: 0.5em 1em;
+
+
+      list-style: disc;
+
+      list-style-position: inside;
+    }
+
+    ol {
+      margin: 1.33em 0;
+      padding: 0.5em 1em;
+      list-style: decimal;
+      list-style-position: inside;
+    }
+
+    li {
+      margin-bottom: 0.33em;
+    }
+
+    code {
+      font-family:Roboto;
+      font-size: 0.83em;
+    }
+
+    img:not(.nav) {
+      max-width: 50%;
+    }
+  </style>
+<body class="bg-blue-500">
     <%- include('./navbar'), { loggedIn: true, login: false, } %>
-    <div class="grid grid-cols-12 h-full">
+    <div class="grid grid-cols-12 h-full my-5 ">
 
-        <div class="col-span-5 relative flex bg-gray-100 bg-fixed">
+        <div class="col-span-5 relative flex bg-fixed">
 
 
-            <div class="flex-col mx-auto h-max" id="inbox">
+            <div class="flex-col mx-auto h-max self-center text-center" id="inbox">
+                <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-9 rounded-full mx-auto mt-4 mb-2"
+                id="newMessage" onclick="window.location.href='/messageEditor'">
+                New Message
+            </button>
                 <% if(messageFeed.length==0) { %>
                     <div id="noMail" class="flex-col w-full">
                         <svg xmlns="http://www.w3.org/2000/svg"
-                            class="mx-auto z-10 relative h-28 w-28 mt-4 stroke-gray-500" fill="none" viewBox="0 0 24 24"
+                            class="mx-auto z-10 relative h-28 w-28 mt-4 stroke-white" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" o
                                 d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76" />
                         </svg>
-                        <div class="absolute h-24 w-96 top-12 bg-gray-100 z-0">
 
-                        </div>
-
-
-                        <p class="text-center relative z-10 mt-4 text-xl text-gray-500 font-semibold">
+                        <p class="text-center relative z-10 mt-4 text-xl text-white font-semibold">
                             You Have an Empty Inbox
                         </p>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-6 w-6 stroke-gray-500" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
-                        </svg>
+
                     </div>
                     <% } %>
             </div>
         </div>
-        <div class="col-span-7 relative flex bg-gray-100 bg-fixed">
+        <div class="col-span-7 flex bg-fixed bg-white w-1/2 h-auto min-h-[80%] rounded-xl fixed float-right right-20">
             <div class="flex-col">
                 <div>
                     <div class="flex justify-between items-baseline">
@@ -58,22 +145,10 @@
                     </p>
                 </div>
             </div>
+            
         </div>
-        <form action="/messageEditor" method="GET"
-        class="bg-white items-center rounded-xl group  hover:bg-gray-100 transition-all ease-in-out delay-75 duration-300 flex cursor-pointer mt-2">
-        <input type="hidden" name="username" value="<%= user.username %>">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 stroke-gray-700" fill="none"
-            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
-        <input type="submit" value="Write Message"
-            class="cursor-pointer text-3xl text-gray-700 font-semibold group-hover:text-gray-900">
-    </form>
-    </div>
-    <script>
-        const search2 = document.querySelector('#search2');
-        search2.classList.remove('fixed');
-    </script>
+        <!-- button that takes you to question editor -->
+      
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
@@ -271,9 +346,7 @@
                     return
                 } else {
                     let msg = `<div class="flex-col">
-                        <div id="noQuestions" class="mt-4 text-gray-500 text-center font-semibold text-xl">
-                            That's all folks!
-                            <br>...
+                        <div id="noQuestions" class="mt-4 text-white text-center font-semibold text-xl">
                         </div>
                     </div>`
                     document.getElementById("inbox").insertAdjacentHTML("beforeend", msg)
