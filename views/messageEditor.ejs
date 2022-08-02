@@ -174,7 +174,7 @@
                         </div>
                               <div class="flex flex-col flex-wrap mb-10 space-x-4 place-content-center">
                             <label class="text-2xl font-bold">Send To:</label>
-                            <input required name="receiver"
+                            <input autocomplete="off" required name="receiver"
                                 class="p-3 text-2xl  outline-black rounded outline outline-4 text-left font-bold block h-8 w-full  md:h-10 md:w-96">
                                
                                 <div class=" mt-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
@@ -228,23 +228,24 @@
                                     Markdown Syntax
                                 </button>
                             </div>
+                            <br/>
+                            <div class="flex justify-center">
                         <a id="contentButton" onclick="openCity(event, 'editor')" class="inline-block bg-green-500 mx-3 px-3 py-2 text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 cursor-pointer focus:border-gray-300 focus:border-blue-300">
                             Editor
                            </a>
                            <a id="editorButton" onclick="openCity(event, 'viewer3')" class="inline-block px-3 py-2 text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 cursor-pointer focus:border-gray-300 focus:border-blue-300">
                              Preview
                             </a>
+                        </div>
                   
                         <div class='flex mb-5 tabcontent' id="editor" style="display:block;">
-                            <label class='m-2 text-2xl font-bold'>Content</label>
                             <textarea id='text3000' maxlength='512' type='text' name="text" onkeyup='val(this);'
-                                class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full' placeholder="Enter Markdown content..." required></textarea>
+                                class='m-2 p-3 text-2xl outline-black rounded  text-left font-bold block h-48 w-full md:h-80 md:w-full' placeholder="Enter Markdown content..." required></textarea>
                         </div>
                         <div id="viewer3" class="tabcontent">
                             <div id='viewer'>
-                                <label class='m-2 text-2xl font-bold'>View</label>
                                 <article id="preview" data-text="Output of Markdown shown here..." contenteditable="false" 
-                                    class='w-min bg-white break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80'>
+                                    class='w-min bg-white break-words overflow-scroll m-2 p-3 outline-black rounded  text-left block text-gray-400 h-48 min-w-full md:h-80'>
                                 </article>
                             </div>
                         </div>
@@ -368,7 +369,7 @@
 });
             console.log(marked.parse(ghf))
             codeblock = marked.parse(ghf);
-            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View:</label><article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words bg-white overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
+            document.getElementById("viewer").innerHTML = "<article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words bg-white overflow-scroll m-2 p-3 outline-black rounded text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
         }
         // function qwerty(e) {
         //     ghf = e.value;
