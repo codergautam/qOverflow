@@ -352,7 +352,7 @@
                                   </div>
                                   <% } %>
 
-                                    <div class="px-9 py-6 sm:px-0 rounded-3xl overflow-hidden shadow-lg  bg-white">
+                                    <div class="px-9 py-6 sm:px-0 rounded-3xl text-  shadow-lg  bg-white">
                                       <div class="flex flex-row">
                                         <div class="flex content-center flex-col w-1/12 px-3">
                                           <img
@@ -383,12 +383,12 @@
                                               <%= question.title %>
                                             </b></p>
                                           <hr />
-                                          <p id="questionText" class=" break-words ">
+                                          <p id="questionText" class=" break-all ">
 
                                           </p>
                                           <div class="px-6 pt-4 pb-2 text-right my-9">
                                             <span
-                                              class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                              class="inline-block place-content-fit bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
                                               <center>
                                                 <p>By: <%= question.creator%>
                                                 </p> <img src=''  onerror="this.src='/person.webp'" width="50" height="50" id="qPfp"
@@ -540,17 +540,14 @@
 
                                           return portions[0] ?? "Just now";
                                         }
-                                        function convertHTMLEntity(text){
-    const span = document.createElement('span');
-
-    return text
-    .replace(/&[#A-Za-z0-9]+;/gi, (entity,position,text)=> {
-        span.innerHTML = entity;
-        return span.innerText;
-    });
+                                        function decodeHtml(html) {
+    var txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
 }
+
                                         document.getElementById('questionText').innerHTML =
-                                          marked.parse(convertHTMLEntity(atob((`<%= btoa(question.text) %>`))), {
+                                          marked.parse(decodeHtml(atob((`<%= btoa(question.text) %>`))), {
                                             sanitize: true
                                           });
 
@@ -961,7 +958,7 @@
               <div class="flex-grow">
             <div class=" py-[12px] sm:px-[46px] lg:px-[46px] ">
               <div class="h-auto px-8">
-                <p id="${answer.answer_id}Text" class="break-all"> </p>
+                <p id="${answer.answer_id}Text" class="break-all "> </p>
 
               </div>
             </div>
@@ -1011,9 +1008,10 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
 } else {
   document.getElementById("showMore").parentElement.insertAdjacentHTML("beforebegin", t);
 }
-  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(decodeURIComponent(answer.text).replace(/[\u00A0-\u9999<>\&]/g, function(i) {
-   return '&#'+i.charCodeAt(0)+';';
-}));
+  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(answer.text, {
+    sanitize: true
+  });
+  
 
 if( document.getElementById("acceptAnswer"+answer.answer_id)) {
 
@@ -1499,9 +1497,9 @@ var remaining = [];
   <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
 
   document.getElementById("answerText").addEventListener("keyup", () => {
-    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
-   return '&#'+i.charCodeAt(0)+';';
-}));
+    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value, {
+      sanitize: true
+    });
 
     if(document.getElementById("answerText").value.length == 0) {
       document.getElementById("createAnswer").disabled = true;
