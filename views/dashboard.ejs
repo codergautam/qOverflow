@@ -376,6 +376,10 @@
                     }
                 }
             </script>
+            
+            <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+
             <!-- For the sake of organizaiton I have seperate script tags that handle the answer templates and question templates--->
             <!-- Below: Answer, Above: Question -->
             <script>
@@ -389,9 +393,9 @@
                     feed.innerHTML += `<div onclick="location.href='/answer/${answer.answer_id}?accepted=${answer.accepted}&at=${answer.createdAt}'"  class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                             <div class="px-4 py-4 ">
                                               <div class="text-base font-semibold mb-2"><span class="font-bold ${color}">${answer.accepted ? "Accepted" : ""}</span></div>
-                                              <p class="font-bold text-gray-700 text-lg w-5/6">
-                                               ${answer.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
-   return '&#'+i.charCodeAt(0)+';'})} 
+                                              <p class="font-bold text-gray-700 text-xl w-5/6">
+                                               ${marked.parse(answer.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+   return '&#'+i.charCodeAt(0)+';'}))} 
                                               </p>
                                             </div>
                                             <div class="pl-3 pr-6 pt-4 pb-2 ">
