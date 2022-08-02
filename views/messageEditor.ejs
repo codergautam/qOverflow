@@ -42,7 +42,6 @@
 /* Style the tab */
 .tab {
   overflow: hidden;
-  border: 1px solid #ccc;
   background-color: #f1f1f1;
 }
 
@@ -72,21 +71,21 @@
 .tabcontent {
   display: none;
   padding: 6px 12px;
-  border: 1px solid #ccc;
   border-top: none;
 }
     </style>
 </head>
 
-<body class="bg-gray-200">
+<body class="bg-blue-500">
+    <%- include('../views/navbar.ejs', {loggedIn: true, user: user}); %>
 
-<div class="m-5 bg-white shadow-md rounded-lg hover:shadow-xl text-4xl">
+<div class="m-5 bg-blue-200 shadow-md rounded-lg hover:shadow-xl text-4xl">
     <div class="m-4">
-        <h1 class="p-3 text-center text-3xl font-extrabold md:text-5xl decoration-gray-300 underline underline-offset-1">Create a message</h1>
+        <h1 class="p-3 text-center text-3xl font-extrabold md:text-5xl ">Create a message</h1>
         </div>
             <div class="flex justify-center">
                 <div class="cursor-pointer rounded-lg bg-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-1 font-semibold text-2xl text-gray-700">
-                    <a href="./mail">Go Back</a>
+                    <a href="/mail">Go Back</a>
                 </div>
             </div>
         <div class="w-full">
@@ -108,12 +107,66 @@
                         <div class="grid sm:flex place-content-center mb-10 mt-5 w-full">
                             <label class="text-2xl mr-3 text-center md:text-left font-extrabold block">Title:</label>
                             <input required maxlength="75" type="text" id="text75" name="subject"
-                                class="text-xl outline-black rounded outline outline-4 text-center flex place-self-center font-bold block h-10 w-full md:w-3/4" required/>
+                                class="text-xl outline-black rounded outline outline-4 text-center place-self-center font-bold flex flex-row h-10 w-full md:w-3/4" required/>
                         </div>
-                        <div class="tab">
-                            <button class="tablinks" type="button" onclick="openCity(event, 'editor')">Content</button>
-                            <button class="tablinks" type="button" onclick="openCity(event, 'viewer3')">View</button>
-                        </div>
+                              <div class="flex flex-col flex-wrap mb-10 space-x-4 place-content-center">
+                            <label class="text-2xl font-bold">Send To:</label>
+                            <input required name="receiver"
+                                class="p-3 text-2xl  outline-black rounded outline outline-4 text-left font-bold block h-8 w-full  md:h-10 md:w-96">
+                               
+                                <div class=" mt-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                                   
+                                    <div class="py-1 hidden" id="autocomplete" role="none">
+                                    </div>
+                                  </div>
+                                  <script>
+                                    document.querySelector('input[name="receiver"]').onfocus = () => {
+                                       if(document.getElementById("autocomplete").children.length > 0) document.querySelector('#autocomplete').classList.remove('hidden');
+                                    }
+
+                                    document.querySelector('input[name="receiver"]').addEventListener('keyup', function(e) {
+                                      var text = e.target.value;
+                                      if(text.length > 0) {
+                                        function somefunction(e) {
+                                            console.log(e.target.innerText)
+                                            return false
+                                        }
+
+                                        window.somefunction = somefunction;
+
+                                        fetch('/api/autocomplete?current='+encodeURIComponent(text)).then((e) => e.json()).then((e) => {
+                                            if(e.success) {
+                                                document.getElementById("autocomplete").classList.remove("hidden");
+                                                document.getElementById("autocomplete").innerHTML = e.data.map(function(e) {
+                                                    return '<button type="button" id="'+e.u+'" class="text-gray-700 mt-2 block px-4 py-2 text-sm" role="menuitem" tabindex="-1" id="menu-item-'+e.u+'"><img style="display: inline-block;" class="rounded-full w-5 h-5" src="'+e.img+'">&nbsp'+e.u+'</a>';
+                                                }).join('');
+                                                e.data.forEach((f) => {
+                                                        document.getElementById(f.u).addEventListener("click", () => {
+                                                            document.querySelector('input[name="receiver"]').value = f.u;
+                                                    document.getElementById("autocomplete").classList.add("hidden");
+
+                                                        })
+                                                })
+                                                if(e.data.length == 0) {
+                                                    document.getElementById("autocomplete").classList.add("hidden");
+                                                }
+                                            }
+                                        })
+                                      } else {
+                                        document.getElementById("autocomplete").classList.add("hidden");
+
+                                      }
+                                    });
+                                  </script>
+                        
+                            </div>
+                        <a id="contentButton" onclick="openCity(event, 'editor')" class="inline-block bg-green-500 mx-3 px-3 py-2 text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 cursor-pointer focus:border-gray-300 focus:border-blue-300">
+                            Editor
+                           </a>
+                           <a id="editorButton" onclick="openCity(event, 'viewer3')" class="inline-block px-3 py-2 text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 cursor-pointer focus:border-gray-300 focus:border-blue-300">
+                             Preview
+                            </a>
+                  
                         <div class='flex mb-5 tabcontent' id="editor" style="display:block;">
                             <label class='m-2 text-2xl font-bold'>Content</label>
                             <textarea id='text3000' maxlength='3000' type='text' name="text" onkeyup='val(this);'
@@ -123,17 +176,13 @@
                             <div id='viewer'>
                                 <label class='m-2 text-2xl font-bold'>View</label>
                                 <article id="preview" data-text="Output of Markdown shown here..." contenteditable="false" 
-                                    class='w-min break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80'>
+                                    class='w-min bg-white break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80'>
                                 </article>
                             </div>
                         </div>
-                        <div class="flex flex-wrap mb-10 space-x-4 place-content-center">
-                            <label class="text-2xl font-bold">Send To:</label>
-                            <textarea required name="receiver"
-                                class="p-3 text-2xl  outline-black rounded outline outline-4 text-left font-bold block h-16 w-full md:h-20 md:w-96"></textarea><br>
-                        </div>
+                  
                         <div class="flex my-3 justify-center">
-                            <input type="submit" class="cursor-pointer rounded-lg bg-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-2 font-semibold text-2xl text-gray-700" value="Create Message">
+                            <input type="submit" class="cursor-pointer rounded-lg bg-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-2 font-semibold text-2xl text-gray-700" value="Send Message">
                         </div>
                     </div>
             </form>
@@ -143,7 +192,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
-
+   document.getElementById("contentButton").addEventListener("click", function () {
+            document.getElementById("contentButton").classList.add("bg-green-500");
+            document.getElementById("editorButton").classList.remove("bg-green-500");
+        });
+        document.getElementById("editorButton").addEventListener("click", function () {
+           // classlist add
+            document.getElementById("editorButton").classList.add("bg-green-500");
+            document.getElementById("contentButton").classList.remove("bg-green-500");
+           
+        });
         $(document).ready(function () {
             $("#text75").keypress(function (e) {
                 var length = this.value.length;
@@ -198,7 +256,7 @@
 });
             console.log(marked.parse(ghf))
             codeblock = marked.parse(ghf);
-            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View:</label><article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
+            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View:</label><article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words bg-white overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
         }
         // function qwerty(e) {
         //     ghf = e.value;

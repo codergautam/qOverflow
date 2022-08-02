@@ -595,6 +595,42 @@ app.post('/acceptAnswer',  (req, res) => {
 
 });
 
+var allUsersCache = {time: 0, data: {}};
+
+function autocomplete(input, array) {
+  var reg = new RegExp(input.split('').join('\\w*').replace(/\W/, ""), 'i');
+  return array.filter(function(a) {
+    if (a.u.match(reg)) {
+      return a;
+    }
+  });
+}
+
+
+app.get("/api/autocomplete", async (req, res) => {
+  var current = req.query.current;
+  if(!current) return res.send({success: true, data: []});
+  if(Date.now() - allUsersCache.time > 1000 * 60 * 10) {
+   var allUsers = await api.getAllUsers()
+    if(allUsers.success) {
+      allUsersCache.time = Date.now();
+      allUsersCache.data = allUsers.users.map((user) => {
+        return {
+          u: user.username,
+          img: gravatarGen(user.email)
+        }
+      })
+    } else {
+      return res.send({success: false, data: []});
+    }
+  }
+
+  var users = autocomplete(current, allUsersCache.data).slice(0,5);
+  res.send({success: true, data: users});
+
+  
+})
+
 app.post('/questions',  async (req, res) => {
   let {username, title, text } = req.body 
   username = (username != " ") ? username : req.session.user.username

@@ -100,7 +100,7 @@ class Api {
           try {
             var r = await req.text();
             r = JSON.parse(r);
-            // console.log(r);
+            console.log(r);
             return r;
           } catch (e) {
             console.log(e);
@@ -276,6 +276,31 @@ class Api {
   async getUser(username) {
     username = encodeURIComponent(username);
     return this.sendRequest("/users/" + username, "GET");
+  }
+
+  async getUsers(after) {
+    return this.sendRequest("/users"+(after ? "?after=" + after : ""), "GET");
+  }
+
+  async getAllUsers() {
+    var users = [];
+    var lastUser = null;
+    var success = true;
+    while (true) {
+      var data = await this.getUsers(lastUser);
+      if (data.success) {
+        if (data.users.length == 0) {
+          break;
+        }
+        users = users.concat(data.users);
+        lastUser = data.users[data.users.length - 1].user_id;
+        if (data.users.length < 100) break;
+      } else {
+        success = false;
+        break;
+      }
+    }
+    return { success: success, users: users };
   }
 
   async updateQuestion(id, status, title, text, views, upvotes, downvotes) {

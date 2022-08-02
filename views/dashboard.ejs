@@ -71,38 +71,38 @@
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="flex ml-8 justify-start lg:hidden">
-                    <div class="flex-col justify-start">
-                        <form action="./email" method="POST"
-                            class="flex group mt-2 items-center transition-all delay-75 duration-300 ease-in-out">
-                            <input type="hidden" name="username" value="<%= user.username %> ">
-                            <input type="submit"
-                                class="cursor-pointer text-sm font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
-                                value="Change Your Email" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500" fill="none"
-                                viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                            </svg>
-                        </form>
-                        <form action="./password" method="POST"
-                            class="flex group mt-1 items-center transition-all delay-75 duration-300 ease-in-out">
-                            <input type="hidden" name="username" value="<%= user.username %> ">
-                            <input type="submit"
-                                class="cursor-pointer text-sm text-md font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
-                                value="Change Your Password" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500" fill="none"
-                                viewBox="0 0 24 24" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                            </svg>
-                        </form>
-                        <form action="./deleteAccount" method="POST" class="flex group mt-2">
-                            <input type="hidden" name="username" value="<%= user.username %> ">
-                            <input value="Delete Account" type="submit"
-                                class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out hover:ring-2 hover:ring-red-400 hover:ring-offset-1" />
-                        </form>
+                    <div class="flex ml-8 justify-start lg:hidden">
+                        <div class="flex-col justify-start">
+                            <form action="./email" method="POST"
+                                class="flex group mt-2 items-center transition-all delay-75 duration-300 ease-in-out">
+                                <input type="hidden" name="username" value="<%= user.username %> ">
+                                <input type="submit"
+                                    class="cursor-pointer text-sm font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                                    value="Change Your Email" />
+                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500" fill="none"
+                                    viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </form>
+                            <form action="./password" method="POST"
+                                class="flex group mt-1 items-center transition-all delay-75 duration-300 ease-in-out">
+                                <input type="hidden" name="username" value="<%= user.username %> ">
+                                <input type="submit"
+                                    class="cursor-pointer text-sm text-md font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                                    value="Change Your Password" />
+                                <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 stroke-gray-500" fill="none"
+                                    viewBox="0 0 24 24" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                                </svg>
+                            </form>
+                            <form action="./deleteAccount" method="POST" class="flex group mt-2">
+                                <input type="hidden" name="username" value="<%= user.username %> ">
+                                <input value="Delete Account" type="submit"
+                                    class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out hover:ring-2 hover:ring-red-400 hover:ring-offset-1" />
+                            </form>
+                        </div>
                     </div>
                 </div>
                 <div class="flex-col px-2 rounded-3xl bg-white pt-2 pb-8 mt-4">
@@ -135,7 +135,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-3">
+            <div class="col-span-6 lg:col-span-3">
             <div class="relative flex-col">
                 <div class="flex-col z-10">
                     <div class="ml-2 relative w-max">
