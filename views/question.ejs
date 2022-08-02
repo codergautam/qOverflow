@@ -1379,7 +1379,7 @@ hideThisCommentList();
   console.log(document.getElementById("mainAnswerDiv"+answer.answer_id))
 
 };
-var pageSize = 1;
+var pageSize = 5;
 var remaining = [];
 
   fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
