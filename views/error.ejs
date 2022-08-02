@@ -9,21 +9,32 @@
 </head>
 <script src="https://cdn.tailwindcss.com"></script>
 
-<body>  
-  <div class="flex flex-col h-screen">
-    <div class="py-0">
-      <%-  include('../views/navbar.ejs', {loggedIn: true, login: false, user: typeof user !="undefined" ? user : undefined}); %>
+<body class="bg-blue-500">  
+  <%-  include('../views/navbar.ejs', {loggedIn: true, login: false, user: typeof user !="undefined" ? user : undefined, a:true}); %>
+
+  <div class="flex h-screen justify-center items-center">
+
+  <div class="text-center">
+  </div>
+    <div class="py-0 ">
     </div>
-    <div class="flex justify-center items-center flex-grow">
+    <div class="flex">
+    <div class="flex justify-center items-center flex-grow ">
    
-   <div class="content-center ">
+   <div class="content-center m-auto flex">
    <div class="min-h-full flex items-center justify-center px-4 sm:px-6 lg:px-8">
     <div class="max-w-md w-full space-y-0 ">
      
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+      <div class="bg-red-100 border border-red-400 text-3xl text-red-700 px-4 py-3 rounded-xl relative" role="alert">
         <strong class="font-bold">Something went wrong!</strong>
         <br/>
         <span class="block sm:inline"><%= error %></span>
+        <br/>
+       <br/>
+
+        <button style="transform: translateX(60%);"  class="bg-red-500 self-center place-content-center plac hover:bg-red-700 text-white font-bold py-2 px-4 rounded-xl">
+         <a href="/">Go home</a>
+        </button>
 
       </div>
 
@@ -31,6 +42,10 @@
   </div>
 </div>
 </div>
+</div> 
+  </div>
+</div>
+      <!-- -->
 
 </body>
 </html>

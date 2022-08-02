@@ -1058,7 +1058,7 @@ app.get("/question/:id", (req, res) => {
 
     if(!data.success) {
       res.render('error', {
-        error: "Failed to get question, please try again later."
+        error: data.failed ? "Failed to get question, please try again later." : "This question doesn't exist."
       });
       return;
     }
