@@ -732,12 +732,14 @@ app.get('/mail', async (req, res) => {
     mailData.messages.forEach((message) => {
       message.timeElapsed = msToTime(Date.now() - message.createdAt)
     })
+
     console.log(mailData)
     res.render('mail', {
       loggedIn: req.session.loggedIn,
       user: user,
       messageFeed: mailData.messages,
-      messageCount: mailData.messages.length
+      messageCount: mailData.messages.length,
+      success: req.query.success,
     })
   } else res.redirect('/')
 })
@@ -781,7 +783,7 @@ app.post("/messages", async (req, res) => {
   console.log(data)
   console.log(data.success)
   if(data.success) {
-    res.redirect('/mail')
+    res.redirect('/mail?success=Mail sent!')
   } else {
     res.redirect('/messageEditor?error='+(data.error.startsWith("user \"") ? "The user '"+receiver+"' wasn't found" : "Something went wrong, please try again"))
   }

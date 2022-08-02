@@ -1806,6 +1806,10 @@ video {
   background-clip: padding-box;
 }
 
+.fill-current {
+  fill: currentColor;
+}
+
 .stroke-gray-500 {
   stroke: #6b7280;
 }
@@ -2270,6 +2274,11 @@ video {
 .text-rose-500 {
   --tw-text-opacity: 1;
   color: rgb(244 63 94 / var(--tw-text-opacity));
+}
+
+.text-teal-500 {
+  --tw-text-opacity: 1;
+  color: rgb(20 184 166 / var(--tw-text-opacity));
 }
 
 .underline {
