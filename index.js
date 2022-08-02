@@ -227,7 +227,8 @@ app.get('/search', async (req, res) => {
       sort: sort,
       searchFeed: questions,
       user: req.session.user,
-      error: data.success ? undefined : true
+      error: data.success ? undefined : true,
+      formatError: sort == "Creation" && data.error && data.error.includes("value type")
     })
   } else {
     res.render('searchResult', {
@@ -236,7 +237,8 @@ app.get('/search', async (req, res) => {
       sort: sort,
       searchFeed: [],
       user: req.session.user,
-      error: true
+      error: true,
+      formatError: sort == "Creation" && data.error && data.error.includes("value type")
     })
   }
 })

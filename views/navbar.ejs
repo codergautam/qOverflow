@@ -106,7 +106,7 @@
                             &nbsp;
                             <h4
                               class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-dummy text-blue-700 transition-all delay-75 duration-300 ease-in-out" style="color: #566FD6;"
-                              id="user-points">Points: <%= locals.user.points %>
+                              id="user-points">Points: <%= Number(locals.user.points).toLocaleString() %>
                             </h4>
                           </div>
                       </div>
@@ -240,7 +240,7 @@
           .then(data => {
             if (data) {
               document.querySelector('#user-level').innerHTML = "Level: " + data.level;
-              document.querySelector('#user-points').innerHTML = "Points: " + data.points;
+              document.querySelector('#user-points').innerHTML = "Points: " + Number(data.points).toLocaleString( );
             }
           });
       }, 1000);

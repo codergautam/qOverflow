@@ -14,23 +14,26 @@
         </div>  
         <div class="flex-col grid mt-6 col-start-5 col-span-4 items-center relative">
             <div class="flex-col">
-                <p class="mx-auto text-5xl text-center font-bold  pb-2 border-gray-200">
+                <p class="mx-auto text-5xl text-center font-bold text-white  pb-2 border-gray-200">
                     Search Results
            
                 </p>  
-                <!-- <p class="mx-auto text-lg text-center font-semibold text-gray-500">
-                    Dates should be put:
-                    <span class="underline decoration-2 decoration-gray-300 underline-offset-1">MM/DD/YY</span> or 
-                    <span class="underline decoration-2 decoration-gray-300 underline-offset-1">Month Day Year</span>
-                </p> -->
+            
             </div>
-            <p class="mt-2 text-3xl text-center font-bold">
+            <p class="mt-2 text-3xl text-center text-white font-bold">
                 "<%= searchQuery %>"  
             </p>
+            <% if(sort == "Creation") { %>
+                <p class="mx-auto text-lg text-center font-semibold text-white">
+                    Dates should be put:
+                    <span class="underline decoration-2 decoration-gray-300 underline-offset-1">MM/DD/YY</span> or 
+                   <span class="underline decoration-2 decoration-gray-300 underline-offset-1">Month Day Year</span>
+                </p> 
+                <% } %>
             <div class="flex mt-4 w-fill align-center mx-auto">
                 <% var possible = ["Title", "Text", "Author", "Creation"] %>
                 <% for (var i = 0; i < possible.length; i++) { %>
-                    <a href="/search/?sort=<%= possible[i] %>&searchQuery=<%= searchQuery %>&loggedIn=<%= loggedIn %>" class="h-min inline-block px-3 <%= sort == possible[i] ? 'bg-green-800' : '' %> py-2 text-sm leading-5 font-medium text-white hover:text-gray-100 focus:outline-none focus:text-black focus:bg-green-200">
+                    <a href="/search/?sort=<%= possible[i] %>&searchQuery=<%= searchQuery %>&loggedIn=<%= loggedIn %>" class="h-min inline-block px-3 <%= sort == possible[i] ? 'bg-teal-200 text-black' : '' %> py-2 text-sm leading-5 font-medium text-white hover:text-gray-300 focus:outline-none focus:text-black focus:bg-blue-200">
                         <%= possible[i] %>
                     </a>
                 <% } %>
@@ -40,9 +43,8 @@
             <div class="flex-col w-1/2 mx-auto pb-8" id="searchFeed">
                 <% if(searchFeed.length <= 0) { %>
                     <div class="flex-col">
-                        <div id="noQuestions" class="text-gray-500 text-center font-semibold text-xl">
-                           <%= typeof error !="undefined" ? "Something went wrong.. Please try again later" : "Sorry we're stumped!" %>
-                            <br>...
+                        <div id="noQuestions" class="text-white text-center font-semibold text-xl">
+                           <%= typeof error !="undefined" ? locals.formatError ? "Invalid format!" : "Something went wrong.. Please try again later" : "Sorry we're stumped!" %>
                         </div>
                     </div>
                 <% } %> 
@@ -98,7 +100,7 @@
                 let searchFeed = document.getElementById("searchFeed")
                 searchFeed.lastChild.remove()
                 var loader = `    <div class="flex items-center justify-center flex-col px-[30px]">
-                <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                <div class=" my-5 rounded overflow-hidden min-w-full ">
                 <div class="px-4 py-4 ">
                     <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
                 
