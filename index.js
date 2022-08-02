@@ -91,6 +91,7 @@ app.get('/', async (req, res) => { //Homepage
     user: req.session.user,
     sort,
     basicData,
+    success: req.query.success,
   })
 });
 
@@ -581,7 +582,7 @@ app.post('/questions',  async (req, res) => {
     let data = await api.createQuestion(username, title, text)
     let dataStatus = data.success
     if (dataStatus) { 
-      res.redirect('/')
+      res.redirect('/?success=Your question has been created!')
     } else {
       res.redirect('/questionEditor')
     }
