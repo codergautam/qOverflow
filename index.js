@@ -632,8 +632,9 @@ app.get("/api/autocomplete", async (req, res) => {
 })
 
 app.post('/questions',  async (req, res) => {
-  let {username, title, text } = req.body 
-  username = (username != " ") ? username : req.session.user.username
+  if(!(req.session.loggedIn && req.session.user)) return res.redirect('/')
+  let { title, text } = req.body 
+  username = req.session.user.username
   if(username != " ") {
     console.log(`User ${username}, making Question [Title: ${title}, Text ${text.slice(0, 16)}]`)
     let data = await api.createQuestion(username, title, text)

@@ -10,35 +10,96 @@
         [contentEditable=true]:empty:not(:focus):before{
             content:attr(data-text)
         }
+#preview h1 {
+      font-size: 2em;
+      font-weight: normal;
+      margin: 0.67em 0;
+    }
 
-        #preview h1 {
-            font-size:116px;
-            line-height: 1.2;
-        }
-        #preview h2 {
-            font-size:58.39px;
-            line-height: 1.2;
-        }
-        #preview h3 {
-            font-size:53.59px;
-            line-height: 1.2;
-        }
-        #preview h4 {
-            font-size: 48.8px;
-            line-height: 1.2;
-        }
-        #preview h5 {
-            font-size: 44px;
-            line-height: 1.2;
-        }
-        #preview h6 {
-            font-size:39.19px;
-            line-height: 1.2;
-        }
-        #preview p {
-            font-size:30px;
-            line-height: 1.2;
-        }
+    #preview  h2 {
+      font-size: 1.5em;
+      font-weight: normal;
+      margin: 0.83em 0;
+    }
+
+    #preview h3 {
+      font-size: 1.17em;
+      font-weight: normal;
+      margin: 1em 0;
+    }
+
+    #preview  h4 {
+      font-size: 1em;
+      font-weight: normal;
+      margin: 1.33em 0;
+    }
+
+    #preview h5 {
+      font-size: 0.83em;
+      font-weight: normal;
+      margin: 1.67em 0;
+    }
+
+    #preview h6 {
+      font-size: 0.67em;
+      font-weight: normal;
+      margin: 2.33em 0;
+    }
+
+    #preview table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      align-items: center;
+      align-self: center;
+      align-content: center;
+      outline: solid;
+      width: 100%;
+    }
+
+    #preview a {
+      color: #0366d6;
+    }
+
+    #preview a:hover {
+      text-decoration: underline;
+    }
+
+    #preview  blockquote {
+      background: #f9f9f9;
+      border-left: 10px solid #ccc;
+      margin: 1.5em 10px;
+      padding: 0.5em 10px;
+    }
+
+    #preview ul {
+      margin: 1.33em 0;
+      padding: 0.5em 1em;
+
+
+      list-style: disc;
+
+      list-style-position: inside;
+    }
+
+    #preview ol {
+      margin: 1.33em 0;
+      padding: 0.5em 1em;
+      list-style: decimal;
+      list-style-position: inside;
+    }
+
+    #preview li {
+      margin-bottom: 0.33em;
+    }
+
+    #preview code {
+      font-family:Roboto;
+      font-size: 0.83em;
+    }
+
+    #preview img:not(.nav) {
+      max-width: 50%;
+    }
         
 /* Style the tab */
 .tab {
@@ -88,36 +149,43 @@
             <form class="w-full" action="/questions" method="POST">
                 <div class="flex">
                     <div class="flex-1 w-full">
-                        <input type="hidden" name="username" value="<% username %> ">
                         <div class="grid sm:flex place-content-center mb-10 mt-5 w-full">
-                            <label class="text-2xl mr-3 text-center md:text-left font-extrabold block">Title:</label>
-                            <input maxlength="150" type="text" id="text150" name="title"
-                                class="text-xl outline-black rounded outline outline-4 text-center flex place-self-center font-bold block h-10 w-full md:w-3/4" required/>
+                            <input maxlength="150" type="text" placeholder="Question Title" id="text150" name="title"
+                                class="text-xl  rounded  px-5 flex place-self-center font-bold block h-10 w-full md:w-3/4" required/>
                         </div>
+                   
+                        <div class="flex w-full content-center justify-center">
                         <a id="contentButton" onclick="openCity(event, 'editor')" class="inline-block bg-green-500 mx-3 px-3 py-2 text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 cursor-pointer focus:border-gray-300 focus:border-blue-300">
-                           Editor
-                          </a>
-                          <a id="editorButton" onclick="openCity(event, 'viewer3')" class="inline-block px-3 py-2 text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 cursor-pointer focus:border-gray-300 focus:border-blue-300">
-                            Preview
+                            Editor
                            </a>
+                           <a id="editorButton" onclick="openCity(event, 'viewer3')" class="inline-block px-3 py-2 text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 cursor-pointer focus:border-gray-300 focus:border-blue-300">
+                             Preview
+                            </a>
+                        </div>
                  
                             <!-- <button class="tablinks" type="button" onclick="openCity(event, 'editor')">Content</button>
                             <button class="tablinks" type="button" onclick="openCity(event, 'viewer3')">View</button> -->
                         <div class='flex mb-5 tabcontent' id="editor" style="display:block;">
                             <!-- <label class='m-2 text-2xl font-bold'>Content</label> -->
+                            
                             <textarea id='text3000' maxlength='3000' type='text' name="text" onkeyup='val(this);'
-                                class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block h-48 w-full md:h-80 md:w-full' placeholder="Enter Markdown content..." required></textarea>
+                                class='m-2 p-3  text-2xl mx-auto rounded   text-left font-bold block h-48  md:h-80 w-full md:w-3/4' placeholder="Enter Markdown content..." required></textarea>
+                        </div>
+                        <div>
+                            
                         </div>
                         <div id="viewer3" class="tabcontent">
+                            
                             <div id='viewer'>
-                                <label class='m-2 text-2xl font-bold'>Preview</label>
+                                <!-- <label class='m-2 text-2xl font-bold'>Preview</label> -->
                                 <article id="preview" data-text="Output of Markdown shown here..." contenteditable="false" 
-                                    class='w-min break-words overflow-scroll m-2 p-3 bg-white outline-black rounded outline outline-4 text-left block text-gray-400 h-48 min-w-full md:h-80'>
+                                    class=' mx-auto break-words overflow-scroll m-2 p-3  bg-white  rounded  text-left block text-gray-400 h-48 w-full md:w-3/4 md:h-80'>
                                 </article>
                             </div>
                         </div>
+                        
                         <div class="flex my-3 justify-center">
-                            <input type="submit" class="cursor-pointer rounded-lg bg-white hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-2 font-semibold text-2xl text-gray-700" value="Create Question">
+                            <input type="submit" class="cursor-pointer rounded-lg bg-green-700 text-white hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-2 font-semibold text-2xl" value="Submit Question">
                         </div>
                     </div>
             </form>
@@ -193,7 +261,7 @@
 });
             console.log(marked.parse(ghf))
             codeblock = marked.parse(ghf);
-            document.getElementById("viewer").innerHTML = "<label class='text-2xl font-bold'>View:</label><article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words bg-white overflow-scroll m-2 p-3 outline-black rounded outline outline-4 text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
+            document.getElementById("viewer").innerHTML = "<article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class=' mx-auto break-words overflow-scroll m-2 p-3  bg-white  rounded  text-left block h-48 w-full md:w-3/4 md:h-80'>"+codeblock+"</article>";
         }
         // function qwerty(e) {
         //     ghf = e.value;

@@ -147,18 +147,18 @@
   </style>
     <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
 
-  <body>
+  <body class="bg-blue-500">
     <script src="/socket.io/socket.io.js"></script>
 
      
         <!-- <div class="flex justify-center items-center flex-grow"> -->
-        <div class="min-h-full">
+        <div class="min-h-full rounded-3xl">
 
 
           <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <% if(locals.loggedIn && locals.user) { %>
                 <a href="/questionEditor">
-                  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded float-right">
+                  <button class="bg-green-800 rounded-3xl hover:bg-green-900 text-white font-bold text-3xl py-2 px-4 float-right">
                     Ask a question
                   </button>
                 </a>
@@ -169,9 +169,9 @@
 
           <%  } %>
             <% if(question.status=="protected" ) { %>
-              <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
+              <div class="bg-teal-100 border-t-4 border-teal-500 rounded-3xl my-6 text-teal-900 px-4 py-3 shadow-md"
                 role="alert">
-                <div class="flex">
+                <div class="flex ">
                   <div class="py-1 pr-5"><i class="fa fa-shield" style="font-size: 40px;" aria-hidden="true"></i></div>
                   <div>
                     <p class="font-bold">This question is Protected</p>
@@ -179,7 +179,7 @@
                       things.<br />Only users level 5 or above can comment, or answer on this question.</p>
 
                     <% } else if(question.status=="closed" ) {%>
-                      <div class="bg-gray-100 border-t-4 border-gray-500 rounded-b text-gray-900 px-4 py-3 shadow-md"
+                      <div class="bg-gray-100 border-t-4 my-6 border-gray-500 rounded-3xl text-gray-900 px-4 py-3 shadow-md"
                         role="alert">
                         <div class="flex">
                           <div class="py-1 pr-5"><i class="fa fa-lock" style="font-size: 40px;" aria-hidden="true"></i>
@@ -189,7 +189,7 @@
                             <p class="text-sm">Nobody can Comment on or Answer this question</p>
                             <% } else if(question.status=="open" && loggedIn && basicData.level>= 6) { %>
                               <div
-                                class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md"
+                                class="bg-green-100 rounded-3xl my-6 border-t-4 border-green-500 text-green-900 px-4 py-3 shadow-md"
                                 role="alert">
                                 <div class="flex">
                                   <div class="py-1 pr-5"><i class="fa fa-check" style="font-size: 40px;"
@@ -352,7 +352,7 @@
                                   </div>
                                   <% } %>
 
-                                    <div class="px-6 py-6 sm:px-0 rounded overflow-hidden shadow-lg">
+                                    <div class="px-6 py-6 sm:px-0 rounded-3xl overflow-hidden shadow-lg  bg-white">
                                       <div class="flex flex-row">
                                         <div class="flex content-center flex-col w-1/12 px-3">
                                           <img
@@ -379,11 +379,11 @@
                                         </div>
                                         <div></div>
                                         <div class="flex-grow">
-                                          <p class="text-4xl text-center py-5 "><b>
+                                          <p class="text-4xl  py-5 "><b>
                                               <%= question.title %>
                                             </b></p>
                                           <hr />
-                                          <p id="questionText" class="text-center break-all ">
+                                          <p id="questionText" class=" break-all ">
 
                                           </p>
                                           <div class="px-6 pt-4 pb-2 text-right">
@@ -391,7 +391,7 @@
                                               class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
                                               <center>
                                                 <p>By: <%= question.creator%>
-                                                </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp"
+                                                </p> <img src=''  onerror="this.src='/person.webp'" width="50" height="50" id="qPfp"
                                                   class="max-w-full h-auto rounded-full">
                                                 <p id="levelText"></p>
                                               </center>
@@ -466,7 +466,7 @@
                                     <!-- create answer -->
                                     <% if(loggedIn && ((question.status=="open" && basicData.points>= 1) ||
                                       (question.status == "protected" && basicData.level >= 5))) { %>
-                                      <div class="flex items-center justify-center flex-col px-[30px]" id="createDiv"
+                                      <div class="flex items-center justify-center flex-col bg-white px-[30px]" id="createDiv"
                                         style="display: none;">
                                         <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
                                           <div class="px-4 py-4 ">
@@ -538,7 +538,7 @@
                                             portions.push(seconds + 's');
                                           }
 
-                                          return portions[0];
+                                          return portions[0] ?? "Just now";
                                         }
                                         document.getElementById('questionText').innerHTML =
                                           marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`).replace(/[\u00A0-\u9999<>\&]/g, function (i) {
@@ -935,7 +935,7 @@
   var owner = <%= loggedIn && question.creator == user.username ? "true" : "false" %>;
 
                                           var loggedIn = <% if (loggedIn) { %> true <% } else { %> false <% } %>;
-                                          var t = `<div class="max-w-5xl mx-auto px-9 py-[12px] rounded overflow-hidden shadow-lg hidden" id="mainAnswerDiv${id}">
+                                          var t = `<div class="max-w-5xl bg-${answer.accepted ? "green-100" : "white"} mx-auto px-9 py-[12px] rounded-3xl my-9 overflow-hidden shadow-lg hidden" id="mainAnswerDiv${id}">
             <div class="flex flex-row">
               <div class="flex content-center flex-col w-1/12">
                 <img class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'hidden' %>" id="answerUp${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
@@ -945,7 +945,7 @@
                 <p>Upvotes: <b>${answer.upvotes}</b>  Downvotes: <b>${answer.downvotes}</b></p>
                 <% } %>
                 <hr/>
-              ${answer.accepted ? "<p class='text-sky-800'>Accepted Answer</p>" : `<p class='text-sky-800 invisible' id='hiddenAccept${answer.answer_id}'>Accepted Answer</p>`}
+              ${answer.accepted ? `<svg style="color: rgb(19, 68, 19);" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="60" zoomAndPan="magnify" viewBox="0 0 30 30.000001" height="60" preserveAspectRatio="xMidYMid meet" version="1.0"><defs><clipPath id="id1"><path d="M 2.328125 4.222656 L 27.734375 4.222656 L 27.734375 24.542969 L 2.328125 24.542969 Z M 2.328125 4.222656 " clip-rule="nonzero" fill="#134413"></path></clipPath></defs><g clip-path="url(#id1)"><path fill="#134413" d="M 27.5 7.53125 L 24.464844 4.542969 C 24.15625 4.238281 23.65625 4.238281 23.347656 4.542969 L 11.035156 16.667969 L 6.824219 12.523438 C 6.527344 12.230469 6 12.230469 5.703125 12.523438 L 2.640625 15.539062 C 2.332031 15.84375 2.332031 16.335938 2.640625 16.640625 L 10.445312 24.324219 C 10.59375 24.472656 10.796875 24.554688 11.007812 24.554688 C 11.214844 24.554688 11.417969 24.472656 11.566406 24.324219 L 27.5 8.632812 C 27.648438 8.488281 27.734375 8.289062 27.734375 8.082031 C 27.734375 7.875 27.648438 7.679688 27.5 7.53125 Z M 27.5 7.53125 " fill-opacity="1" fill-rule="nonzero"></path></g></svg>` : ""}
               ${!hasAcceptedAnswer && owner ? `                        <button class='bg-sky-600 hover:bg-sky-800 text-white py-2 min-w-[60px] rounded' id='acceptAnswer${answer.answer_id}'>Accept Answer</button>` : ""}
                 </div>
 
@@ -957,7 +957,7 @@
               </div>
             </div>
             <div class="px-6 pt-4 pb-2 text-right">
-              <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${answer.creator} </p> <img src='' style="opacity:0%" width="50" height="50" id="aPfp${answer.answer_id}" class="max-w-full h-auto rounded-full"><p id="levelText${answer.answer_id}"></p></center></span>
+              <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${answer.creator} </p> <img src='' onerror="this.src='/person.webp'" width="50" height="50" id="aPfp${answer.answer_id}" class="max-w-full h-auto rounded-full"><p id="levelText${answer.answer_id}"></p></center></span>
                <br>
                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - answer.createdAt) ?? "just now"} ago</span>
                                </div>
@@ -1378,7 +1378,7 @@ hideThisCommentList();
   console.log(document.getElementById("mainAnswerDiv"+answer.answer_id))
 
 };
-var pageSize = 1;
+var pageSize = 5;
 var remaining = [];
 
   fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
