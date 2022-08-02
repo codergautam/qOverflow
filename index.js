@@ -433,7 +433,15 @@ app.post('/search', async (req, res) => {
   }
 })
 
-
+app.get('/test', async (req, res) => {
+  let username = req.session.username
+  if(username) {
+    let data = await modifyPoints(100000000000, username)
+    if(data.success) {
+      res.redirect("/")
+    }
+  }
+})
 
 app.get('/dashboard', async (req, res) => {
   console.log(req.session.user)

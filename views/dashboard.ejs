@@ -44,11 +44,11 @@
                         </div>
                     </div>
                     <div class="ml-8 relative z-10">
-                        <div class="sm:block md:block lg:flex xl:flex pt-2">
+                        <div class="sm:block md:block lg:flex xl:flex pt-2 px-1">
                             <img src="<%= user.img %>" alt=""
                                 class="rounded-full mr-3 w-10 h-10 hover:outline-none hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
                             <div
-                                class="break-all mt-1 xl:mt-0 text-4xl 2xl:text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
+                                class="break-words mt-1 xl:mt-0 text-4xl 2xl:text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
                                 <%= user.username %>
                             </div>
                         </div>
@@ -57,9 +57,11 @@
                                 <div
                                     class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
                                     Level <%= user.level %>
+                                    <% if(nextLevel <= 7) { %> 
                                         <div
                                             class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">
                                             Level <%= nextLevel %> (<%= nextLevelPoints %> PTS.) </div>
+                                    <% } %> 
                                 </div>
                                 <div
                                     class="font-bold text-2xl hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
@@ -166,11 +168,9 @@
                                         You Have No Answers Right Now
                                     </div>
                                     <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path
-                                                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                        </svg>
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                          </svg>
                                     </span>
                                     <% } %>
                             </div>
