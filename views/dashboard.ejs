@@ -35,35 +35,37 @@
 
 <body class="bg-blue-500">
     <%- include('./navbar'), { loggedIn: true, login: false, } %>
-        <div class="grid gap-x-5 grid-cols-6 mt-8 xl:lg:w-11/12 ">
-            <div class="relative flex-col col-span-6 lg:col-span-2 h-full bg-gray-500">
-                <div class="relative ml-8 z-10">
-                    <div class="text-4xl font-semibold text-gray-600 mt-9">
-                        Welcome,
-                    </div>
-                </div>
-                <div class="ml-8 relative z-10 pt-2" style="word-break: break-word;">
-                    <div class="flex pt-4">
-                        <img src="<%= user.img %>" alt=""
-                            class="align-left rounded-full mr-3 w-14 h-14 bg-white hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
-                        <div
-                            class="mt-1 xl:mt-0 text-4xl 2xl:text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
-                            <%= user.username %>
+        <div class="grid gap-x-5 grid-cols-6 mt-8 xl:lg:w-11/12 mx-auto relative">
+            <div class="relative flex-col col-span-6 lg:col-span-2 h-full">
+                <div class="flex-col px-2 rounded-3xl bg-white pt-2 pb-8">
+                    <div class="ml-8 relative z-10">
+                        <div class="text-4xl font-semibold text-gray-600 mt-4">
+                            Welcome,
                         </div>
                     </div>
-                    <div class="flex justify-between">
-                        <div class="inline-block py-2 items-baseline">
+                    <div class="ml-8 relative z-10">
+                        <div class="flex pt-2">
+                            <img src="<%= user.img %>" alt=""
+                                class="rounded-full mr-3 w-12 h-auto hover:outline-none hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
                             <div
-                                class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
-                                Level <%= user.level %>
-                                    <div
-                                        class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">
-                                        Level <%= nextLevel %> (<%= nextLevelPoints %> pts.) </div>
+                                class="mt-1 xl:mt-0 text-4xl 2xl:text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300">
+                                <%= user.username %>
                             </div>
-                            <div
-                                class=" hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out text-2xl  <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
-                                <%= user.points %>
-                                    <% if(user.points> 1 ) { %> pts. <% } else { %> pt. <% } %>
+                        </div>
+                        <div class="flex justify-between">
+                            <div class="inline-block py-2 items-baseline">
+                                <div
+                                    class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
+                                    Level <%= user.level %>
+                                        <div
+                                            class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">
+                                            Level <%= nextLevel %> (<%= nextLevelPoints %> PTS.) </div>
+                                </div>
+                                <div
+                                    class="font-bold text-2xl hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
+                                    <%= user.points %>
+                                        <% if(user.points> 1 ) { %> PTS. <% } else { %> PT. <% } %>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -101,47 +103,47 @@
                         </form>
                     </div>
                 </div>
-            <div class="ml-4 z-10 px-4 pt-2">
-                <div class="inline-block py-4">
-                    <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
-                        You Can...
+                <div class="flex-col px-2 rounded-3xl bg-white pt-2 pb-8 mt-4">
+                    <div class="ml-4 z-10 px-4 mt-4">
+                        <div class="inline-block pt-2 pb-6">
+                            <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
+                                You Can...
+                            </div>
+                            <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
+                                <% if(user.abilities) { %> 
+                                    <% user.abilities.map((ability) => { %> 
+                                        <li><%= ability %></li>
+                                    <% }) %> 
+                                <% } %> 
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
-                        <% if(user.abilities) { %> 
-                            <% user.abilities.map((ability) => { %> 
-                                <li><%= ability %></li>
-                            <% }) %> 
-                        <% } %> 
+                    <div class="ml-6 inline-block mx-auto break-words">
+                        <div class="text-xl font-semibold text-gray-700 pb-1">
+                            <span class=" font-bold">Email:</span> <%- user.email %> 
+                        </div>
+                        <div class="text-xl font-semibold text-gray-700 pb-1 ">
+                            <span class=" font-bold">Questions:</span> <%- user.questions %> 
+                        </div>
+                        <div class="text-xl font-semibold text-gray-700 pb-1">
+                            <span class=" font-bold">Answers:</span> <%- user.answers%> 
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="ml-4 z-10  mt-2 px-4 pt-2">
-                <div class="inline-block py-4">
-                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-t-md border-b-4 border-white">
-                        <span class=" font-light">Email:</span> <%- user.email %> 
-                    </div>
-                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-100 px-2 py-1 rounded-none">
-                        <span class=" font-light">Questions:</span> <%- user.questions %> 
-                    </div>
-                    <div class="text-xl font-semibold text-gray-700 pb-1 bg-gray-50 px-2 py-1 rounded-none rounded-b-md border-t-4 border-white">
-                        <span class=" font-light">Answers:</span> <%- user.answers%> 
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-span-3 bg-gray-500">
+            <div class="col-span-3">
             <div class="relative flex-col">
-                <div class="mt-6 flex-col z-10">
-                    <div class="ml-4 bg-white rounded-md px-4 py-2 relative w-max">
-                        <p class=" text-5xl text-gray-700">
+                <div class="flex-col z-10">
+                    <div class="ml-2 relative w-max">
+                        <p class="font-bold text-5xl text-white">
                             Your Feed:
                         </p>
                     </div>
-                    <div class="flex-col">
-                        <p class="ml-6 mt-6 text-gray-700 font-semibold text-3xl">
+                    <div class="flex-col py-1 bg-white rounded-3xl shadow-2xl shadow-indigo-600 mt-6">
+                        <p class="ml-6 mt-4 text-gray-700 font-semibold text-3xl">
                             Questions
                         </p>
-                        <div class="flex-col mt-4 mb-6 overflow-y-auto max-h-80" id="questionFeed">
+                        <div class="flex-col mt-4 mb-8 overflow-y-auto max-h-80" id="questionFeed">
                             <% if(questionFeed.length <= 0) { %>
                                 <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
                                     You Have No Questions Right Now
@@ -154,11 +156,11 @@
                             <% } %>
                         </div> 
                     </div> 
-                    <div class="flex-col">
-                        <p class="ml-6 mt-2 text-gray-700 font-semibold text-3xl">
+                    <div class="flex-col py-1 bg-white rounded-3xl shadow-2xl shadow-indigo-600 mt-6">
+                        <p class="ml-6 mt-4 text-gray-700 font-semibold text-3xl">
                             Answers
                         </p>
-                            <div class="flex-col mt-4 mb-12 overflow-y-auto max-h-80" id="answerFeed">
+                            <div class="flex-col mt-4 mb-8 overflow-y-auto max-h-80" id="answerFeed">
                                 <% if(answerFeed.length <= 0) { %>
                                     <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
                                         You Have No Answers Right Now
@@ -176,7 +178,7 @@
                     </div>
                 </div>
             </div>
-            <div class="hidden lg:block col-span-1 relative h-screen bg-gray-500">
+            <div class="hidden lg:block col-span-1 relative h-screen">
                 <div class="flex justify-end">
                     <div class="flex-col justify-end">
                         <img src="<%= user.img %>" alt=""
@@ -185,9 +187,9 @@
                             class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
                             <input type="hidden" name="username" value="<%= user.username %> ">
                             <input type="submit"
-                                class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                                class="cursor-pointer text-xs font-bold text-white group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-100  transition-all delay-75 duration-300 ease-in-out"
                                 value="Change Your Email" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500"
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-white"
                                 fill="none" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
@@ -197,9 +199,9 @@
                             class="flex group mt-2 items-center justify-end mr-2 hover:border-r-8 hover:border-blue-300 transition-all delay-75 duration-300 ease-in-out">
                             <input type="hidden" name="username" value="<%= user.username %> ">
                             <input type="submit"
-                                class="cursor-pointer text-xs font-bold text-gray-600 group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-300 group-hover:text-gray-700 transition-all delay-75 duration-300 ease-in-out"
+                                class="cursor-pointer text-xs font-bold text-white group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-100  transition-all delay-75 duration-300 ease-in-out"
                                 value="Change Your Password" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-gray-500"
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-white"
                                 fill="none" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
