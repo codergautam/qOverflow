@@ -145,15 +145,14 @@
       max-width: 50%;
     }
   </style>
-    
-
-  <body class="bg-blue-500">
     <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
+
+  <body>
     <script src="/socket.io/socket.io.js"></script>
 
      
         <!-- <div class="flex justify-center items-center flex-grow"> -->
-        <div class="min-h-full mt-9 bg-white rounded-3xl shadow-lg shadow-indigo-600">
+        <div class="min-h-full">
 
 
           <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
@@ -353,9 +352,9 @@
                                   </div>
                                   <% } %>
 
-                                    <div class="px-6 py-6 sm:px-0 rounded overflow-hidden shadow-lg border-t-8 border-gray-600">
+                                    <div class="px-6 py-6 sm:px-0 rounded overflow-hidden shadow-lg">
                                       <div class="flex flex-row">
-                                        <div class="flex content-center flex-col w-1/12 px-3 border-r-2 border-black">
+                                        <div class="flex content-center flex-col w-1/12 px-3">
                                           <img
                                             class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'invisible' %>"
                                             src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>"
@@ -384,15 +383,15 @@
                                               <%= question.title %>
                                             </b></p>
                                           <hr />
-                                          <p id="questionText" class="text-center break-all px-9">
+                                          <p id="questionText" class="text-center break-all ">
 
                                           </p>
-                                          <div class="pt-4 pb-2 text-right">
+                                          <div class="px-6 pt-4 pb-2 text-right">
                                             <span
                                               class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
                                               <center>
                                                 <p>By: <%= question.creator%>
-                                                </p> <img src='' onerror="this.src='/person.webp'"  style="" width="50" height="50" id="qPfp"
+                                                </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp"
                                                   class="max-w-full h-auto rounded-full">
                                                 <p id="levelText"></p>
                                               </center>
@@ -451,7 +450,7 @@
 
                                       </div>
                                     </div>
-                                    <div id="answers" class="grid place-content-center">
+                                    <div id="answers">
                                       <div class="flex items-center justify-center flex-col px-[30px]">
                                         <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
                                           <% if(question.answers) { %>
@@ -936,9 +935,9 @@
   var owner = <%= loggedIn && question.creator == user.username ? "true" : "false" %>;
 
                                           var loggedIn = <% if (loggedIn) { %> true <% } else { %> false <% } %>;
-                                          var t = `<div class="max-w-5xl border-gray-500 border-t-4 py-[12px] rounded overflow-hidden shadow-lg hidden" id="mainAnswerDiv${id}">
+                                          var t = `<div class="max-w-5xl mx-auto px-9 py-[12px] rounded overflow-hidden shadow-lg hidden" id="mainAnswerDiv${id}">
             <div class="flex flex-row">
-              <div class="flex content-center flex-col w-1/12 border-r-2 border-black">
+              <div class="flex content-center flex-col w-1/12">
                 <img class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'hidden' %>" id="answerUp${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                 <p class="text-center odometer text-3xl <%= loggedIn && basicData.level >= 4 ? '' : 'pt-9' %>" id="voteA${answer.answer_id}">${answer.upvotes - answer.downvotes}</p>
                 <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 4 ? '' : 'invisible' %>" id="answerDown${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;"  src="/vote.png" alt="">
@@ -951,14 +950,14 @@
                 </div>
 
               <div class="flex-grow">
-            <div class=" py-[12px] flex place-content-center px-9">
-              <div class="h-auto">
+            <div class=" py-[12px] sm:px-[46px] lg:px-[46px] ">
+              <div class="h-auto px-8">
                 <p id="${answer.answer_id}Text" class="break-all"> </p>
 
               </div>
             </div>
             <div class="px-6 pt-4 pb-2 text-right">
-              <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${answer.creator} </p> <img src='' onerror="this.src='/person.webp'"  style="" width="50" height="50" id="aPfp${answer.answer_id}" class="max-w-full h-auto rounded-full"><p id="levelText${answer.answer_id}"></p></center></span>
+              <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${answer.creator} </p> <img src='' style="opacity:0%" width="50" height="50" id="aPfp${answer.answer_id}" class="max-w-full h-auto rounded-full"><p id="levelText${answer.answer_id}"></p></center></span>
                <br>
                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - answer.createdAt) ?? "just now"} ago</span>
                                </div>
@@ -1379,7 +1378,7 @@ hideThisCommentList();
   console.log(document.getElementById("mainAnswerDiv"+answer.answer_id))
 
 };
-var pageSize = 5;
+var pageSize = 1;
 var remaining = [];
 
   fetch("/getAnswers?question=<%= question.question_id %>").then(response => response.json()).then(async (j) => {
@@ -1562,7 +1561,7 @@ console.log(comment.comment_id)
                                                 <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px]" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                                                 </div>
 
-                                                <div class="flex flex-col items-center place-content-center mb-1 w-fit rounded-lg break-all" id="comment${comment.comment_id}">
+                                                <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
                                                   <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5" ${commentt} - ${comment.creator}</div>
 
 
