@@ -137,7 +137,7 @@
     }
 
     code {
-      font-family:Roboto;
+      font-family: Roboto;
       font-size: 0.83em;
     }
 
@@ -145,670 +145,640 @@
       max-width: 50%;
     }
   </style>
-    
+
 
   <body>
     <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
-    <script src="/socket.io/socket.io.js"></script>
-
-     
-        <!-- <div class="flex justify-center items-center flex-grow"> -->
-        <div class="min-h-full mt-9">
+      <script src="/socket.io/socket.io.js"></script>
 
 
-          <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            <% if(locals.loggedIn && locals.user) { %>
-                <a href="/questionEditor">
-                  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded float-right">
-                    Ask a question
-                  </button>
-                </a>
-                <br/>
-          
-              <br/>
+      <!-- <div class="flex justify-center items-center flex-grow"> -->
+      <div class="min-h-full mt-9">
 
 
-          <%  } %>
-            <% if(question.status=="protected" ) { %>
-              <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
-                role="alert">
-                <div class="flex">
-                  <div class="py-1 pr-5"><i class="fa fa-shield" style="font-size: 40px;" aria-hidden="true"></i></div>
-                  <div>
-                    <p class="font-bold">This question is Protected</p>
-                    <p class="text-sm">This is to help protect the question against spam and other unwanted
-                      things.<br />Only users level 5 or above can comment, or answer on this question.</p>
+        <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+          <% if(locals.loggedIn && locals.user) { %>
+            <a href="/questionEditor">
+              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded float-right">
+                Ask a question
+              </button>
+            </a>
+            <br />
 
-                    <% } else if(question.status=="closed" ) {%>
-                      <div class="bg-gray-100 border-t-4 border-gray-500 rounded-b text-gray-900 px-4 py-3 shadow-md"
-                        role="alert">
-                        <div class="flex">
-                          <div class="py-1 pr-5"><i class="fa fa-lock" style="font-size: 40px;" aria-hidden="true"></i>
-                          </div>
-                          <div>
-                            <p class="font-bold">This question is Closed</p>
-                            <p class="text-sm">Nobody can Comment on or Answer this question</p>
-                            <% } else if(question.status=="open" && loggedIn && basicData.level>= 6) { %>
-                              <div
-                                class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md"
-                                role="alert">
-                                <div class="flex">
-                                  <div class="py-1 pr-5"><i class="fa fa-check" style="font-size: 40px;"
-                                      aria-hidden="true"></i></div>
-                                  <div>
-                                    <p class="font-bold">This question is Open</p>
-                                    <p class="text-sm">Anyone can Comment on or Answer this question</p>
-                                    <% } %>
-                                      <% if((question.status=="open" && loggedIn && basicData.level>= 6) ||
-                                        question.status != "open") { %>
-                                        <% if( basicData.level>= 6 && ((ongoingVotes.before != "closed" &&
-                                          ongoingVotes.before != "protected") || basicData.level >= 7)) { %>
-                                          <br />
-                                          <p class="text-sm">You can vote to change the status of this question </p>
-                                          <!-- <script>
+            <br />
+
+
+            <% } %>
+              <% if(question.status=="protected" ) { %>
+                <div class="bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md"
+                  role="alert">
+                  <div class="flex">
+                    <div class="py-1 pr-5"><i class="fa fa-shield" style="font-size: 40px;" aria-hidden="true"></i>
+                    </div>
+                    <div>
+                      <p class="font-bold">This question is Protected</p>
+                      <p class="text-sm">This is to help protect the question against spam and other unwanted
+                        things.<br />Only users level 5 or above can comment, or answer on this question.</p>
+
+                      <% } else if(question.status=="closed" ) {%>
+                        <div class="bg-gray-100 border-t-4 border-gray-500 rounded-b text-gray-900 px-4 py-3 shadow-md"
+                          role="alert">
+                          <div class="flex">
+                            <div class="py-1 pr-5"><i class="fa fa-lock" style="font-size: 40px;"
+                                aria-hidden="true"></i>
+                            </div>
+                            <div>
+                              <p class="font-bold">This question is Closed</p>
+                              <p class="text-sm">Nobody can Comment on or Answer this question</p>
+                              <% } else if(question.status=="open" && loggedIn && basicData.level>= 6) { %>
+                                <div
+                                  class="bg-green-100 border-t-4 border-green-500 rounded-b text-green-900 px-4 py-3 shadow-md"
+                                  role="alert">
+                                  <div class="flex">
+                                    <div class="py-1 pr-5"><i class="fa fa-check" style="font-size: 40px;"
+                                        aria-hidden="true"></i></div>
+                                    <div>
+                                      <p class="font-bold">This question is Open</p>
+                                      <p class="text-sm">Anyone can Comment on or Answer this question</p>
+                                      <% } %>
+                                        <% if((question.status=="open" && loggedIn && basicData.level>= 6) ||
+                                          question.status != "open") { %>
+                                          <% if( basicData.level>= 6 && ((ongoingVotes.before != "closed" &&
+                                            ongoingVotes.before != "protected") || basicData.level >= 7)) { %>
+                                            <br />
+                                            <p class="text-sm">You can vote to change the status of this question </p>
+                                            <!-- <script>
                                             const search2 = document.querySelector('#search2');
                                             search2.classList.remove('fixed');
                                           </script> -->
-                                          <script>
+                                            <script>
 
-                                            console.log("<%= JSON.stringify(ongoingVotes )%>");
-                                            function voteQuestionStatus(status) {
-                                              fetch(`/api/statusVote/${status}/<%= question.question_id %>`, {
-                                                method: 'POST',
-                                                headers: {
-                                                  'Content-Type': 'application/json'
-                                                }
-                                              }).then(function (response) {
-                                                return response.json();
-                                              }).then(function (data) {
-                                                if (data.success) {
-                                                  window.location.reload();
-                                                  console.log(data);
+                                              console.log("<%= JSON.stringify(ongoingVotes )%>");
+                                              function voteQuestionStatus(status) {
+                                                fetch(`/api/statusVote/${status}/<%= question.question_id %>`, {
+                                                  method: 'POST',
+                                                  headers: {
+                                                    'Content-Type': 'application/json'
+                                                  }
+                                                }).then(function (response) {
+                                                  return response.json();
+                                                }).then(function (data) {
+                                                  if (data.success) {
+                                                    window.location.reload();
+                                                    console.log(data);
 
-                                                }
-                                              });
-                                            }
+                                                  }
+                                                });
+                                              }
 
 
-                                          </script>
-                                          <% if(!ongoingVotes.after) {%>
-                                            <% if(question.status=="open" ) { %>
-                                              <% if(basicData.level>= 7) { %>
-                                                <button id="voteClose"
-                                                  class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote
-                                                  to Close</button>
-                                                <% } %>
-                                                  <button id="voteProtect"
+                                            </script>
+                                            <% if(!ongoingVotes.after) {%>
+                                              <% if(question.status=="open" ) { %>
+                                                <% if(basicData.level>= 7) { %>
+                                                  <button id="voteClose"
                                                     class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote
-                                                    to Protect</button>
-                                                  <script>
+                                                    to Close</button>
+                                                  <% } %>
+                                                    <button id="voteProtect"
+                                                      class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote
+                                                      to Protect</button>
+                                                    <script>
                       <% if (basicData.level >= 7) { %>
 
-                                                      document.getElementById("voteClose").onclick = function() {
-                                                        voteQuestionStatus("closed");
-                                                      };
+                                                        document.getElementById("voteClose").onclick = function() {
+                                                          voteQuestionStatus("closed");
+                                                        };
                        <% } %>
 
-                                                      document.getElementById("voteProtect").onclick = function() {
-                                                        voteQuestionStatus("protected");
-                                                      };
-                                                  </script>
-                                                  <% } %>
-                                                    <% if(question.status=="closed" ) { %>
-                                                      <button id="voteOpen"
-                                                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote
-                                                        to Re-open</button>
-
-                                                      <script>
-
-                                                        document.getElementById("voteOpen").onclick = function () {
-                                                          voteQuestionStatus("open");
+                                                        document.getElementById("voteProtect").onclick = function() {
+                                                          voteQuestionStatus("protected");
                                                         };
-                                                      </script>
-                                                      <% } %>
-                                                        <% if(question.status=="protected" ) { %>
-                                                          <button id="voteClose"
-                                                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote
-                                                            to Close</button>
+                                                    </script>
+                                                    <% } %>
+                                                      <% if(question.status=="closed" ) { %>
+                                                        <button id="voteOpen"
+                                                          class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote
+                                                          to Re-open</button>
 
-                                                          <script>
+                                                        <script>
 
-                                                            document.getElementById("voteClose").onclick = function () {
-                                                              voteQuestionStatus("closed");
-                                                            };
-                                                          </script>
-                                                          <% } %>
+                                                          document.getElementById("voteOpen").onclick = function () {
+                                                            voteQuestionStatus("open");
+                                                          };
+                                                        </script>
+                                                        <% } %>
+                                                          <% if(question.status=="protected" ) { %>
+                                                            <button id="voteClose"
+                                                              class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote
+                                                              to Close</button>
 
-                                                            <% } else {%>
-                                                              <p>Ongoing vote: <%= ongoingVotes.after=="closed"
-                                                                  ? "Closing" : ongoingVotes.after=="open" ? "Re-open"
-                                                                  : "Protecting" %>
-                                                              </p>
-                                                              <br />
-                                                              <p>
-                                                                <%= "Current voters: " +ongoingVotes.votes.join(", ") %></p>
+                                                            <script>
+
+                                                              document.getElementById("voteClose").onclick = function () {
+                                                                voteQuestionStatus("closed");
+                                                              };
+                                                            </script>
+                                                            <% } %>
+
+                                                              <% } else {%>
+                                                                <p>Ongoing vote: <%= ongoingVotes.after=="closed"
+                                                                    ? "Closing" : ongoingVotes.after=="open" ? "Re-open"
+                                                                    : "Protecting" %>
+                                                                </p>
+                                                                <br />
+                                                                <p>
+                                                                  <%= "Current voters: " +ongoingVotes.votes.join(", ") %></p>
                       <br>
                       <!-- remove votebtn-->
                       <% if(ongoingVotes.votes.includes(user.username)) { %>
                       <button id=" removeVote" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                                                                  Remove Vote</button>
-                                                                  <% } else { %>
-                                                                    <button id="addVote"
-                                                                      class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add
-                                                                      Vote</button>
-                                                                    <% } %>
-                                                                      <script>
-                                                                        const search2 = document.querySelector('#search2');
-                                                                        search2.classList.remove('fixed');
-                                                                      </script>
-                                                                      <script>
-                                                                        var startTime = Date.now();
-
-                                                                        function removeVote() {
-                                                                          fetch(`/api/removeStatusVote/<%= question.question_id %>`, {
-                                                                            method: 'POST',
-                                                                            headers: {
-                                                                              'Content-Type': 'application/json'
-                                                                            }
-                                                                          }).then(function (response) {
-                                                                            return response.json();
-                                                                          }).then(function (data) {
-                                                                            if (data.success) {
-                                                                              window.location.reload();
-                                                                              console.log(data);
-
-                                                                            }
-                                                                          });
-                                                                        }
-                                                                        if (document.getElementById("removeVote")) {
-                                                                          document.getElementById("removeVote").onclick = function () {
-                                                                            removeVote();
-                                                                          };
-                                                                        } else {
-
-                                                                          document.getElementById("addVote").onclick = function () {
-                                                                            voteQuestionStatus("<%= ongoingVotes.after %>");
-                                                                          };
-                                                                        }
-
-                                                                      </script>
+                                                                    Remove Vote</button>
+                                                                    <% } else { %>
+                                                                      <button id="addVote"
+                                                                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Add
+                                                                        Vote</button>
                                                                       <% } %>
+                                                                        <script>
+                                                                          const search2 = document.querySelector('#search2');
+                                                                          search2.classList.remove('fixed');
+                                                                        </script>
+                                                                        <script>
+                                                                          var startTime = Date.now();
+
+                                                                          function removeVote() {
+                                                                            fetch(`/api/removeStatusVote/<%= question.question_id %>`, {
+                                                                              method: 'POST',
+                                                                              headers: {
+                                                                                'Content-Type': 'application/json'
+                                                                              }
+                                                                            }).then(function (response) {
+                                                                              return response.json();
+                                                                            }).then(function (data) {
+                                                                              if (data.success) {
+                                                                                window.location.reload();
+                                                                                console.log(data);
+
+                                                                              }
+                                                                            });
+                                                                          }
+                                                                          if (document.getElementById("removeVote")) {
+                                                                            document.getElementById("removeVote").onclick = function () {
+                                                                              removeVote();
+                                                                            };
+                                                                          } else {
+
+                                                                            document.getElementById("addVote").onclick = function () {
+                                                                              voteQuestionStatus("<%= ongoingVotes.after %>");
+                                                                            };
+                                                                          }
+
+                                                                        </script>
                                                                         <% } %>
-                                  </div>
-                                </div>
-                              </div>
-                              <% } %>
-                                <% if((!loggedIn || ((ongoingVotes.after=="closed" || ongoingVotes.after=="open" ) ?
-                                  (basicData.level <=6) : (basicData.level <=5))) && ongoingVotes.votes.length>= 1) { %>
-                                  <div class="text-center py-4 lg:px-4">
-                                    <div
-                                      class="p-2 bg-teal-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex"
-                                      role="alert">
-                                      <span
-                                        class="flex rounded-full bg-teal-500 uppercase px-2 py-1 text-xs font-bold mr-3">Ongoing
-                                        vote</span>
-                                      <span class=" mr-2 text-left flex-auto">Changing to <%= ongoingVotes.after %>
-                                          <br />Voted by: <%= ongoingVotes.votes.join(",") %></span>
+                                                                          <% } %>
                                     </div>
                                   </div>
-                                  <% } %>
-
-                                    <div class="px-6 py-6 sm:px-0 rounded overflow-hidden shadow-lg border-t-8 border-gray-600">
-                                      <div class="flex flex-row">
-                                        <div class="flex content-center flex-col w-1/12 px-3 border-r-2 border-black">
-                                          <img
-                                            class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'invisible' %>"
-                                            src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>"
-                                            id="questionUp" style="width: 50%; margin-left: auto; margin-right: auto; "
-                                            alt="">
-                                          <p class="text-center odometer text-3xl md:text-2xl sm:text-sm" id="voteQ">
-                                            <%= question.upvotes - question.downvotes %>
-                                          </p>
-                                          <img
-                                            class="rounded-lg rotate-180 cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 4 ? '' : 'invisible' %>"
-                                            id="questionDown" style="width: 50%; margin-left: auto; margin-right: auto;"
-                                            src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>"
-                                            alt="">
-                                          <br />
-                                          <% if(loggedIn && basicData.level>= 5) { %>
-                                            <p>Upvotes: <b>
-                                                <%= question.upvotes %>
-                                              </b> Downvotes: <b>
-                                                <%= question.downvotes %>
-                                              </b></p>
-                                            <% } %>
-                                        </div>
-                                        <div></div>
-                                        <div class="flex-grow">
-                                          <p class="text-4xl text-center py-5 "><b>
-                                              <%= question.title %>
-                                            </b></p>
-                                          <hr />
-                                          <p id="questionText" class="text-center break-all px-9">
-
-                                          </p>
-                                          <div class="pt-4 pb-2 text-right">
-                                            <span
-                                              class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                                              <center>
-                                                <p>By: <%= question.creator%>
-                                                </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp"
-                                                  class="max-w-full h-auto rounded-full">
-                                                <p id="levelText"></p>
-                                              </center>
-                                            </span>
-                                            <br>
-                                            <span
-                                              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                                              <%= msToTime(Date.now() - question.createdAt) ?? "just now" %> ago
-                                            </span>
-                                            <span id="viewCount"
-                                              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-                                              <%= question.views %> views
-                                            </span>
-
-                                            <span id="answerCount"
-                                              class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "
-                                              text-green-800" : "" }">
-                                              <%= question.answers %> answers
-                                            </span>
-                                          </div>
-                                          <!-- show comments btn -->
-
-
-                                        </div>
+                                </div>
+                                <% } %>
+                                  <% if((!loggedIn || ((ongoingVotes.after=="closed" || ongoingVotes.after=="open" ) ?
+                                    (basicData.level <=6) : (basicData.level <=5))) && ongoingVotes.votes.length>= 1) {
+                                    %>
+                                    <div class="text-center py-4 lg:px-4">
+                                      <div
+                                        class="p-2 bg-teal-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex"
+                                        role="alert">
+                                        <span
+                                          class="flex rounded-full bg-teal-500 uppercase px-2 py-1 text-xs font-bold mr-3">Ongoing
+                                          vote</span>
+                                        <span class=" mr-2 text-left flex-auto">Changing to <%= ongoingVotes.after %>
+                                            <br />Voted by: <%= ongoingVotes.votes.join(",") %></span>
                                       </div>
-                                      <div class="flex flex-col justify-center items-center">
-                                        <button
-                                          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-                                          id="showComments">Show Comments (<%= question.comments %>)</button>
+                                    </div>
+                                    <% } %>
+
+                                      <div
+                                        class="px-6 py-6 sm:px-0 rounded overflow-hidden shadow-lg border-t-8 border-gray-600">
+                                        <div class="flex flex-row">
+                                          <div class="flex content-center flex-col w-1/12 px-3 border-r-2 border-black">
+                                            <img
+                                              class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'invisible' %>"
+                                              src="<%= voted.voted && voted.vote == 'upvoted' ? '/voteSelected.png' : '/vote.png' %>"
+                                              id="questionUp"
+                                              style="width: 50%; margin-left: auto; margin-right: auto; " alt="">
+                                            <p class="text-center odometer text-3xl md:text-2xl sm:text-sm" id="voteQ">
+                                              <%= question.upvotes - question.downvotes %>
+                                            </p>
+                                            <img
+                                              class="rounded-lg rotate-180 cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 4 ? '' : 'invisible' %>"
+                                              id="questionDown"
+                                              style="width: 50%; margin-left: auto; margin-right: auto;"
+                                              src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>"
+                                              alt="">
+                                            <br />
+                                            <% if(loggedIn && basicData.level>= 5) { %>
+                                              <p>Upvotes: <b>
+                                                  <%= question.upvotes %>
+                                                </b> Downvotes: <b>
+                                                  <%= question.downvotes %>
+                                                </b></p>
+                                              <% } %>
+                                          </div>
+                                          <div></div>
+                                          <div class="flex-grow">
+                                            <p class="text-4xl text-center py-5 "><b>
+                                                <%= question.title %>
+                                              </b></p>
+                                            <hr />
+                                            <p id="questionText" class="text-center break-all px-9">
+
+                                            </p>
+                                            <div class="pt-4 pb-2 text-right">
+                                              <span
+                                                class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                                <center>
+                                                  <p>By: <%= question.creator%>
+                                                  </p> <img src='' style="opacity:0%" width="50" height="50" id="qPfp"
+                                                    class="max-w-full h-auto rounded-full">
+                                                  <p id="levelText"></p>
+                                                </center>
+                                              </span>
+                                              <br>
+                                              <span
+                                                class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                                <%= msToTime(Date.now() - question.createdAt) ?? "just now" %> ago
+                                              </span>
+                                              <span id="viewCount"
+                                                class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
+                                                <%= question.views %> views
+                                              </span>
+
+                                              <span id="answerCount"
+                                                class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2 ${data.hasAcceptedAnswer ? "
+                                                text-green-800" : "" }">
+                                                <%= question.answers %> answers
+                                              </span>
+                                            </div>
+                                            <!-- show comments btn -->
 
 
-
-                                        <div id="commentsList">
-
+                                          </div>
                                         </div>
-                                        <br />
-                                        <!--
+                                        <div class="flex flex-col justify-center items-center">
+                                          <button
+                                            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                                            id="showComments">Show Comments (<%= question.comments %>)</button>
+
+
+
+                                          <div id="commentsList">
+
+                                          </div>
+                                          <br />
+                                          <!--
               post comment
             -->
 
 
 
-                                        <% if(loggedIn && ((question.status=="open" && (basicData.level>= 3 ||
-                                          question.creator == user.username)) || (question.status == "protected" &&
-                                          (basicData.level >= 5)))) { %>
-                                          <div class="flex flex-col justify-center items-center w-[50%]">
+                                          <% if(loggedIn && ((question.status=="open" && (basicData.level>= 3 ||
+                                            question.creator == user.username)) || (question.status == "protected" &&
+                                            (basicData.level >= 5)))) { %>
+                                            <div class="flex flex-col justify-center items-center w-[50%]">
 
-                                            <textarea maxlength="150" rows="2"
-                                              class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500"
-                                              id="commentText" type="text" placeholder="Comment"></textarea>
-                                            <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded"
-                                              id="postComment">Post comment</button>
-                                          </div>
-                                          <% } %>
-
-
-                                      </div>
-                                    </div>
-                                    <div id="answers" class="grid place-content-center">
-                                      <div class="flex items-center justify-center flex-col px-[30px]">
-                                        <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-                                          <% if(question.answers) { %>
-
-                                            <div id="spinneranswer" class="px-4 py-4 "><img class="animate-spin"
-                                                width="100" height="100"
-                                                src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>
-
-                                            <% } %>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <!-- create answer -->
-                                    <% if(loggedIn && ((question.status=="open" && basicData.points>= 1) ||
-                                      (question.status == "protected" && basicData.level >= 5))) { %>
-                                      <div class="flex items-center justify-center flex-col px-[30px]" id="createDiv"
-                                        style="display: none;">
-                                        <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
-                                          <div class="px-4 py-4 ">
-                                            <p> Know the solution? Then create an answer!</p>
-                                            <br>
-                                            <form id="createAnswerForm">
-                                              <div class="flex flex-col">
-                                                <label class="text-gray-700 text-sm font-bold mb-2" for="answer">Your
-                                                  Answer</label>
-                                                <textarea wrap="hard" maxlength="3000"
-                                                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                                                  id="answerText" name="answer" rows="3"></textarea>
-                                              </div>
-                                              <br />
-                                              <div id="preview">
-                                                <div class="flex flex-col">
-                                                  <label class="text-gray-700 text-sm font-bold mb-2"
-                                                    for="answer">Preview</label>
-                                                  <div class="flex flex-col">
-                                                    <p class="text-gray-700 text-sm font-bold mb-2 border border-spacing-2 border-solid"
-                                                      id="previewText"></p>
-                                                  </div>
-
-                                                </div>
-                                              </div>
-
-                                            </form>
-                                            <br />
-                                            <!-- btn -->
-                                            <div class="flex flex-col">
-                                              <button
-                                                class="bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                                disabled type="button" id="createAnswer">
-                                                Create Answer
-                                              </button>
+                                              <textarea maxlength="150" rows="2"
+                                                class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500"
+                                                id="commentText" type="text" placeholder="Comment"></textarea>
+                                              <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded"
+                                                id="postComment">Post comment</button>
                                             </div>
-                                          </div>
-                                          <% } %>
+                                            <% } %>
+
+
                                         </div>
-                                        <!-- </div> -->
-                                        <!-- create answer form-->
                                       </div>
-                                      <script defer>
-                                        function msToTime(duration) {
-                                          const portions = [];
-                                          const msInDay = 1000 * 60 * 60 * 24;
-                                          const days = Math.trunc(duration / msInDay);
-                                          if (days > 0) {
-                                            portions.push(days + 'd');
-                                            duration = duration - (days * msInDay);
+                                      <div id="answers" class="grid place-content-center">
+                                        <div class="flex items-center justify-center flex-col px-[30px]">
+                                          <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                                            <% if(question.answers) { %>
+
+                                              <div id="spinneranswer" class="px-4 py-4 "><img class="animate-spin"
+                                                  width="100" height="100"
+                                                  src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>
+
+                                              <% } %>
+                                          </div>
+                                        </div>
+                                      </div>
+                                      <!-- create answer -->
+                                      <% if(loggedIn && ((question.status=="open" && basicData.points>= 1) ||
+                                        (question.status == "protected" && basicData.level >= 5))) { %>
+                                        <div class="flex items-center justify-center flex-col px-[30px]" id="createDiv"
+                                          style="display: none;">
+                                          <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                                            <div class="px-4 py-4 ">
+                                              <p> Know the solution? Then create an answer!</p>
+                                              <br>
+                                              <form id="createAnswerForm">
+                                                <div class="flex flex-col">
+                                                  <label class="text-gray-700 text-sm font-bold mb-2" for="answer">Your
+                                                    Answer</label>
+                                                  <textarea wrap="hard" maxlength="3000"
+                                                    class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                    id="answerText" name="answer" rows="3"></textarea>
+                                                </div>
+                                                <br />
+                                                <div id="preview">
+                                                  <div class="flex flex-col">
+                                                    <label class="text-gray-700 text-sm font-bold mb-2"
+                                                      for="answer">Preview</label>
+                                                    <div class="flex flex-col">
+                                                      <p class="text-gray-700 text-sm font-bold mb-2 border border-spacing-2 border-solid"
+                                                        id="previewText"></p>
+                                                    </div>
+
+                                                  </div>
+                                                </div>
+
+                                              </form>
+                                              <br />
+                                              <!-- btn -->
+                                              <div class="flex flex-col">
+                                                <button
+                                                  class="bg-gray-500 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                                  disabled type="button" id="createAnswer">
+                                                  Create Answer
+                                                </button>
+                                              </div>
+                                            </div>
+                                            <% } %>
+                                          </div>
+                                          <!-- </div> -->
+                                          <!-- create answer form-->
+                                        </div>
+                                        <script defer>
+                                          function msToTime(duration) {
+                                            const portions = [];
+                                            const msInDay = 1000 * 60 * 60 * 24;
+                                            const days = Math.trunc(duration / msInDay);
+                                            if (days > 0) {
+                                              portions.push(days + 'd');
+                                              duration = duration - (days * msInDay);
+                                            }
+
+                                            const msInHour = 1000 * 60 * 60;
+                                            const hours = Math.trunc(duration / msInHour);
+                                            if (hours > 0) {
+                                              portions.push(hours + 'h');
+                                              duration = duration - (hours * msInHour);
+                                            }
+
+                                            const msInMinute = 1000 * 60;
+                                            const minutes = Math.trunc(duration / msInMinute);
+                                            if (minutes > 0) {
+                                              portions.push(minutes + 'm');
+                                              duration = duration - (minutes * msInMinute);
+                                            }
+
+                                            const seconds = Math.trunc(duration / 1000);
+                                            if (seconds > 0) {
+                                              portions.push(seconds + 's');
+                                            }
+
+                                            return portions[0];
+                                          }
+                                          document.getElementById('questionText').innerHTML =
+                                            marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`).replace(/[\u00A0-\u9999<>\&]/g, function (i) {
+                                              return '&#' + i.charCodeAt(0) + ';';
+                                            }));
+
+                                          var actiongoing = false;
+                                          async function questionUp() {
+                                            try {
+                                              actiongoing = true;
+                                              var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length - 1] === "vote.png" ? "increment" : "decrement";
+                                              var f = await fetch('/api/question/<%= question.question_id %>/upvote', {
+                                                method: 'POST',
+                                                body: JSON.stringify({
+                                                  action
+                                                }),
+                                                headers: {
+                                                  'Content-Type': 'application/json'
+                                                }
+                                              })
+                                              var j = await f.json();
+                                              setTimeout(() => {
+                                                actiongoing = false;
+                                              }, 3000);
+                                              if (j.success) {
+                                                document.getElementById("questionUp").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+                                                // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+                                                var curVotes = document.getElementById("voteQ").innerHTML;
+                                                if (action === "increment") {
+                                                  document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
+
+
+
+                                                } else {
+                                                  document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
+                                                }
+                                                if (!window.timecache["<%= question.question_id %>"]) {
+                                                  window.timecache["<%= question.question_id %>"] = {
+                                                    votes: Date.now(),
+                                                    answers: startTime,
+                                                    views: startTime
+                                                  };
+                                                }
+                                              }
+                                            } catch (e) {
+                                              console.log(e);
+                                              setTimeout(() => {
+                                                actiongoing = false;
+                                              }, 3000);
+                                            }
+
                                           }
 
-                                          const msInHour = 1000 * 60 * 60;
-                                          const hours = Math.trunc(duration / msInHour);
-                                          if (hours > 0) {
-                                            portions.push(hours + 'h');
-                                            duration = duration - (hours * msInHour);
-                                          }
+                                          async function questionDown() {
 
-                                          const msInMinute = 1000 * 60;
-                                          const minutes = Math.trunc(duration / msInMinute);
-                                          if (minutes > 0) {
-                                            portions.push(minutes + 'm');
-                                            duration = duration - (minutes * msInMinute);
-                                          }
-
-                                          const seconds = Math.trunc(duration / 1000);
-                                          if (seconds > 0) {
-                                            portions.push(seconds + 's');
-                                          }
-
-                                          return portions[0];
-                                        }
-                                        document.getElementById('questionText').innerHTML =
-                                          marked.parse(decodeURIComponent(`<%= encodeURIComponent(question.text) %>`).replace(/[\u00A0-\u9999<>\&]/g, function (i) {
-                                            return '&#' + i.charCodeAt(0) + ';';
-                                          }));
-
-                                        var actiongoing = false;
-                                        async function questionUp() {
-                                          try {
                                             actiongoing = true;
-                                            var action = document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length - 1] === "vote.png" ? "increment" : "decrement";
-                                            var f = await fetch('/api/question/<%= question.question_id %>/upvote', {
-                                              method: 'POST',
-                                              body: JSON.stringify({
-                                                action
-                                              }),
-                                              headers: {
-                                                'Content-Type': 'application/json'
+                                            try {
+                                              var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length - 1] === "vote.png" ? "increment" : "decrement";
+                                              var f = await fetch('/api/question/<%= question.question_id %>/downvote', {
+                                                method: 'POST',
+                                                body: JSON.stringify({
+                                                  action
+                                                }),
+                                                headers: {
+                                                  'Content-Type': 'application/json'
+                                                }
+                                              })
+                                              var j = await f.json();
+                                              setTimeout(() => {
+                                                actiongoing = false;
+                                              }, 3000);
+                                              if (j.success) {
+                                                document.getElementById("questionDown").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
+                                                // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
+                                                var curVotes = document.getElementById("voteQ").innerHTML;
+                                                if (action === "increment") {
+                                                  document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
+                                                } else {
+                                                  document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
+                                                }
+                                                if (!window.timecache["<%= question.question_id %>"]) {
+                                                  window.timecache["<%= question.question_id %>"] = {
+                                                    votes: Date.now(),
+                                                    answers: startTime,
+                                                    views: startTime
+                                                  };
+                                                }
                                               }
-                                            })
-                                            var j = await f.json();
-                                            setTimeout(() => {
-                                              actiongoing = false;
-                                            }, 3000);
-                                            if (j.success) {
-                                              document.getElementById("questionUp").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
-                                              // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
-                                              var curVotes = document.getElementById("voteQ").innerHTML;
-                                              if (action === "increment") {
-                                                document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
+                                            } catch (e) {
+                                              console.log(e);
 
-
-
-                                              } else {
-                                                document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
-                                              }
-                                              if (!window.timecache["<%= question.question_id %>"]) {
-                                                window.timecache["<%= question.question_id %>"] = {
-                                                  votes: Date.now(),
-                                                  answers: startTime,
-                                                  views: startTime
-                                                };
-                                              }
+                                              setTimeout(() => {
+                                                actiongoing = false;
+                                              }, 3000);
                                             }
-                                          } catch (e) {
-                                            console.log(e);
-                                            setTimeout(() => {
-                                              actiongoing = false;
-                                            }, 3000);
+
                                           }
 
-                                        }
-
-                                        async function questionDown() {
-
-                                          actiongoing = true;
-                                          try {
-                                            var action = document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length - 1] === "vote.png" ? "increment" : "decrement";
-                                            var f = await fetch('/api/question/<%= question.question_id %>/downvote', {
-                                              method: 'POST',
-                                              body: JSON.stringify({
-                                                action
-                                              }),
-                                              headers: {
-                                                'Content-Type': 'application/json'
-                                              }
-                                            })
-                                            var j = await f.json();
-                                            setTimeout(() => {
-                                              actiongoing = false;
-                                            }, 3000);
-                                            if (j.success) {
-                                              document.getElementById("questionDown").src = action === "increment" ? "/voteSelected.png" : "/vote.png";
-                                              // document.getElementById("questionDown").src = action === "increment" ? "/vote.png" : "/downvoted.png";
-                                              var curVotes = document.getElementById("voteQ").innerHTML;
-                                              if (action === "increment") {
-                                                document.getElementById("voteQ").innerHTML = parseInt(curVotes) - 1;
-                                              } else {
-                                                document.getElementById("voteQ").innerHTML = parseInt(curVotes) + 1;
-                                              }
-                                              if (!window.timecache["<%= question.question_id %>"]) {
-                                                window.timecache["<%= question.question_id %>"] = {
-                                                  votes: Date.now(),
-                                                  answers: startTime,
-                                                  views: startTime
-                                                };
-                                              }
+                                          document.getElementById("questionUp").addEventListener("click", async () => {
+                                            if (document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length - 1] == "voteSelected.png") {
+                                              await questionDown();
                                             }
-                                          } catch (e) {
-                                            console.log(e);
+                                            questionUp();
+                                          })
 
-                                            setTimeout(() => {
-                                              actiongoing = false;
-                                            }, 3000);
-                                          }
-
-                                        }
-
-                                        document.getElementById("questionUp").addEventListener("click", async () => {
-                                          if (document.getElementById("questionDown").src.split("/")[document.getElementById("questionDown").src.split("/").length - 1] == "voteSelected.png") {
-                                            await questionDown();
-                                          }
-                                          questionUp();
-                                        })
-
-                                        document.getElementById("questionDown").addEventListener("click", async () => {
-                                          if (document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length - 1] == "voteSelected.png") {
-                                            await questionUp();
-                                          }
-                                          questionDown();
-                                        })
-
-
-                                        var curVotes = <%= question.upvotes - question.downvotes %>;
-                                        const socket = io();
-                                        // socket.on("voteQ", ([id, dir]) => {
-                                        //   if(id == "<%= question.question_id %>") {
-                                        //     curVotes += dir;
-                                        //     console.log(curVotes);
-                                        //     document.getElementById("voteQ").innerHTML = curVotes;
-                                        //   }
-                                        // })
-                                        // socket.on("voteA", ([q, id, dir]) => {
-                                        //   if(q == "<%= question.question_id %>") {
-                                        //     var curNum = Number(document.getElementById("voteA"+id).innerHTML)
-                                        //     curNum += dir;
-                                        //     document.getElementById("voteA"+id).innerHTML = curNum;
-                                        //   }
-                                        // })
-                                        // socket.on("voteC", ([q, id, dir]) => {
-                                        //   console.log(q, id, dir, document.getElementById("voteC"+id) != null);
-                                        //   if(q == "<%= question.question_id %>" && document.getElementById("voteC"+id) != null) {
-                                        //     var curNum = Number(document.getElementById("voteC"+id).innerHTML)
-                                        //     curNum += dir;
-                                        //     document.getElementById("voteC"+id).innerHTML = curNum;
-                                        //   }
-                                        // })
-
-                                        // socket.on("newAnswer", (q) => {
-                                        //   if(q == "<%= question.question_id %>") {
-                                        //     //update answer count
-                                        //     var curNum = parseInt(document.getElementById("answerCount").innerHTML)
-                                        //     curNum += 1;
-                                        //     document.getElementById("answerCount").innerHTML = curNum + " answers";
-                                        //   }
-                                        // })
-                                        // socket.on("increaseView", (q) => {
-                                        //   if(q == "<%= question.question_id %>") {
-                                        //     //update answer count
-                                        //     var curNum = parseInt(document.getElementById("viewCount").innerHTML)
-                                        //     curNum += 1;
-                                        //     document.getElementById("viewCount").innerHTML = curNum + " views";
-                                        //   }
-                                        // })
-
-
-                                        function isElementInViewport(el) {
-
-                                          // Special bonus for those using jQuery
-                                          if (typeof jQuery === "function" && el instanceof jQuery) {
-                                            el = el[0];
-                                          }
-
-                                          var rect = el.getBoundingClientRect();
-
-                                          return (
-                                            rect.top >= 0 &&
-                                            rect.left >= 0 &&
-                                            rect.bottom <= ((window.innerHeight || document.documentElement.clientHeight) * 1.5) && /* or $(window).height() */
-                                            rect.right <= ((window.innerWidth || document.documentElement.clientWidth) * 1.5) /* or $(window).width() */
-                                          );
-                                        }
-
-
-                                        var getVisibleComments = () => {
-                                          var visibleAnswers = document.querySelectorAll('[id^="mainCommentDiv"]');
-                                          var visibleAnswersArray = Array.from(visibleAnswers);
-                                          visibleAnswersArray = visibleAnswersArray.filter(isElementInViewport).map((i) => { return { id: i.id.slice("mainCommentDiv".length), answer: i.getAttribute("where") } });
-                                          return visibleAnswersArray;
-                                        }
-
-                                        var getVisibleAnswers = () => {
-                                          // get elements id prefixed mainAnswerDiv
-                                          var visibleAnswers = document.querySelectorAll('[id^="mainAnswerDiv"]');
-                                          var visibleAnswersArray = Array.from(visibleAnswers);
-                                          visibleAnswersArray = visibleAnswersArray.filter(isElementInViewport).map((i) => i.id.slice("mainAnswerDiv".length));
-                                          return visibleAnswersArray;
-                                        }
-
-                                        setInterval(() => {
-                                          var visibleAnswers = getVisibleAnswers();
-                                          if (visibleAnswers.length > 0) {
-                                            visibleAnswers.forEach((i) => {
-                                              socket.emit("answerVoteCount", [i, "<%= question.question_id %>"])
-                                            })
-                                          }
-                                        }, 10000);
-                                        setInterval(() => {
-                                          var visibleComments = getVisibleComments();
-                                          if (visibleComments.length > 0) {
-                                            visibleComments.forEach((i) => {
-                                              if (i.answer) {
-                                                socket.emit("answerCommentVoteCount", "<%= question.question_id %>", i.answer, i.id)
-
-                                              } else {
-                                                socket.emit("questionCommentVoteCount", "<%= question.question_id %>", i.id)
-
-                                              }
-                                            })
-                                          }
-                                        }, 30000)
-
-
-
-                                        setInterval(() => {
-
-                                          socket.emit("getViews", "<%= question.question_id %>");
-
-
-
-                                        }, 3600);
-                                        setInterval(() => {
-                                          socket.emit("getVotes", "<%= question.question_id %>");
-                                        }, 6930);
-                                        setInterval(() => {
-                                          socket.emit("getAnswerCount", "<%= question.question_id %>");
-                                        }, 5000);
-
-                                        var startTime = Date.now();
-
-                                        socket.on("questionViews", (cnt, id, time) => {
-                                          if (!(id == "<%= question.question_id %>")) {
-                                            return;
-                                          }
-                                          if (!window.timecache[id]) {
-                                            window.timecache[id] = {
-                                              views: startTime,
-                                              votes: startTime,
-                                              answers: startTime,
+                                          document.getElementById("questionDown").addEventListener("click", async () => {
+                                            if (document.getElementById("questionUp").src.split("/")[document.getElementById("questionUp").src.split("/").length - 1] == "voteSelected.png") {
+                                              await questionUp();
                                             }
-                                          }
+                                            questionDown();
+                                          })
 
-                                          if (window.timecache[id].views <= time) {
-                                            window.timecache[id].views = time;
-                                            document.getElementById("viewCount").innerHTML = cnt + " views";
-                                          }
-                                        })
 
-                                        socket.on("questionVotes", (data, id, time) => {
-                                          if (!(id == "<%= question.question_id %>")) {
-                                            return;
-                                          }
-                                          if (!window.timecache[id]) {
-                                            window.timecache[id] = {
-                                              views: startTime,
-                                              votes: startTime,
-                                              answers: startTime,
+                                          var curVotes = <%= question.upvotes - question.downvotes %>;
+                                          const socket = io();
+                                          // socket.on("voteQ", ([id, dir]) => {
+                                          //   if(id == "<%= question.question_id %>") {
+                                          //     curVotes += dir;
+                                          //     console.log(curVotes);
+                                          //     document.getElementById("voteQ").innerHTML = curVotes;
+                                          //   }
+                                          // })
+                                          // socket.on("voteA", ([q, id, dir]) => {
+                                          //   if(q == "<%= question.question_id %>") {
+                                          //     var curNum = Number(document.getElementById("voteA"+id).innerHTML)
+                                          //     curNum += dir;
+                                          //     document.getElementById("voteA"+id).innerHTML = curNum;
+                                          //   }
+                                          // })
+                                          // socket.on("voteC", ([q, id, dir]) => {
+                                          //   console.log(q, id, dir, document.getElementById("voteC"+id) != null);
+                                          //   if(q == "<%= question.question_id %>" && document.getElementById("voteC"+id) != null) {
+                                          //     var curNum = Number(document.getElementById("voteC"+id).innerHTML)
+                                          //     curNum += dir;
+                                          //     document.getElementById("voteC"+id).innerHTML = curNum;
+                                          //   }
+                                          // })
+
+                                          // socket.on("newAnswer", (q) => {
+                                          //   if(q == "<%= question.question_id %>") {
+                                          //     //update answer count
+                                          //     var curNum = parseInt(document.getElementById("answerCount").innerHTML)
+                                          //     curNum += 1;
+                                          //     document.getElementById("answerCount").innerHTML = curNum + " answers";
+                                          //   }
+                                          // })
+                                          // socket.on("increaseView", (q) => {
+                                          //   if(q == "<%= question.question_id %>") {
+                                          //     //update answer count
+                                          //     var curNum = parseInt(document.getElementById("viewCount").innerHTML)
+                                          //     curNum += 1;
+                                          //     document.getElementById("viewCount").innerHTML = curNum + " views";
+                                          //   }
+                                          // })
+
+
+                                          function isElementInViewport(el) {
+
+                                            // Special bonus for those using jQuery
+                                            if (typeof jQuery === "function" && el instanceof jQuery) {
+                                              el = el[0];
                                             }
+
+                                            var rect = el.getBoundingClientRect();
+
+                                            return (
+                                              rect.top >= 0 &&
+                                              rect.left >= 0 &&
+                                              rect.bottom <= ((window.innerHeight || document.documentElement.clientHeight) * 1.5) && /* or $(window).height() */
+                                              rect.right <= ((window.innerWidth || document.documentElement.clientWidth) * 1.5) /* or $(window).width() */
+                                            );
                                           }
 
-                                          if (window.timecache[id].votes <= time) {
-                                            window.timecache[id].votes = time;
 
-                                            if (!actiongoing) document.getElementById("voteQ").innerHTML = data.upvotes - data.downvotes;
+                                          var getVisibleComments = () => {
+                                            var visibleAnswers = document.querySelectorAll('[id^="mainCommentDiv"]');
+                                            var visibleAnswersArray = Array.from(visibleAnswers);
+                                            visibleAnswersArray = visibleAnswersArray.filter(isElementInViewport).map((i) => { return { id: i.id.slice("mainCommentDiv".length), answer: i.getAttribute("where") } });
+                                            return visibleAnswersArray;
                                           }
-                                        })
 
-                                        socket.on("answerCount", (cnt, id, time) => {
-                                          if (id == "<%= question.question_id %>") {
+                                          var getVisibleAnswers = () => {
+                                            // get elements id prefixed mainAnswerDiv
+                                            var visibleAnswers = document.querySelectorAll('[id^="mainAnswerDiv"]');
+                                            var visibleAnswersArray = Array.from(visibleAnswers);
+                                            visibleAnswersArray = visibleAnswersArray.filter(isElementInViewport).map((i) => i.id.slice("mainAnswerDiv".length));
+                                            return visibleAnswersArray;
+                                          }
+
+                                          setInterval(() => {
+                                            var visibleAnswers = getVisibleAnswers();
+                                            if (visibleAnswers.length > 0) {
+                                              visibleAnswers.forEach((i) => {
+                                                socket.emit("answerVoteCount", [i, "<%= question.question_id %>"])
+                                              })
+                                            }
+                                          }, 10000);
+                                          setInterval(() => {
+                                            var visibleComments = getVisibleComments();
+                                            if (visibleComments.length > 0) {
+                                              visibleComments.forEach((i) => {
+                                                if (i.answer) {
+                                                  socket.emit("answerCommentVoteCount", "<%= question.question_id %>", i.answer, i.id)
+
+                                                } else {
+                                                  socket.emit("questionCommentVoteCount", "<%= question.question_id %>", i.id)
+
+                                                }
+                                              })
+                                            }
+                                          }, 30000)
+
+
+
+                                          setInterval(() => {
+
+                                            socket.emit("getViews", "<%= question.question_id %>");
+
+
+
+                                          }, 3600);
+                                          setInterval(() => {
+                                            socket.emit("getVotes", "<%= question.question_id %>");
+                                          }, 6930);
+                                          setInterval(() => {
+                                            socket.emit("getAnswerCount", "<%= question.question_id %>");
+                                          }, 5000);
+
+                                          var startTime = Date.now();
+
+                                          socket.on("questionViews", (cnt, id, time) => {
+                                            if (!(id == "<%= question.question_id %>")) {
+                                              return;
+                                            }
                                             if (!window.timecache[id]) {
                                               window.timecache[id] = {
                                                 views: startTime,
@@ -817,83 +787,118 @@
                                               }
                                             }
 
-                                            if (window.timecache[id].answers <= time) {
-                                              window.timecache[id].answers = time;
-                                              document.getElementById("answerCount").innerHTML = cnt + " answers";
+                                            if (window.timecache[id].views <= time) {
+                                              window.timecache[id].views = time;
+                                              document.getElementById("viewCount").innerHTML = cnt + " views";
                                             }
-                                          }
-                                        })
+                                          })
 
-                                        socket.on("answerVoteCount", ([question, answer, count, time]) => {
-                                          // alert(question, answer, count);
-                                          if (question == "<%= question.question_id %>") {
+                                          socket.on("questionVotes", (data, id, time) => {
+                                            if (!(id == "<%= question.question_id %>")) {
+                                              return;
+                                            }
+                                            if (!window.timecache[id]) {
+                                              window.timecache[id] = {
+                                                views: startTime,
+                                                votes: startTime,
+                                                answers: startTime,
+                                              }
+                                            }
 
-                                            if (document.getElementById("voteA" + answer)) {
-                                              if (!window.timecache[answer]) {
-                                                window.timecache[answer] = {
+                                            if (window.timecache[id].votes <= time) {
+                                              window.timecache[id].votes = time;
+
+                                              if (!actiongoing) document.getElementById("voteQ").innerHTML = data.upvotes - data.downvotes;
+                                            }
+                                          })
+
+                                          socket.on("answerCount", (cnt, id, time) => {
+                                            if (id == "<%= question.question_id %>") {
+                                              if (!window.timecache[id]) {
+                                                window.timecache[id] = {
+                                                  views: startTime,
                                                   votes: startTime,
+                                                  answers: startTime,
                                                 }
                                               }
 
-                                              if (window.timecache[answer].votes <= time) {
-                                                window.timecache[answer].votes = time;
-                                                document.getElementById("voteA" + answer).innerHTML = count;
+                                              if (window.timecache[id].answers <= time) {
+                                                window.timecache[id].answers = time;
+                                                document.getElementById("answerCount").innerHTML = cnt + " answers";
                                               }
                                             }
-                                          }
-                                        })
+                                          })
 
-                                        socket.on("questionCommentVoteCount", ([question, comment, votes, time]) => {
-                                          if (!question == "<%= question.question_id %>") {
-                                            return;
-                                          }
-                                          if (!window.timecache[comment]) {
-                                            window.timecache[comment] = {
-                                              votes: startTime,
+                                          socket.on("answerVoteCount", ([question, answer, count, time]) => {
+                                            // alert(question, answer, count);
+                                            if (question == "<%= question.question_id %>") {
+
+                                              if (document.getElementById("voteA" + answer)) {
+                                                if (!window.timecache[answer]) {
+                                                  window.timecache[answer] = {
+                                                    votes: startTime,
+                                                  }
+                                                }
+
+                                                if (window.timecache[answer].votes <= time) {
+                                                  window.timecache[answer].votes = time;
+                                                  document.getElementById("voteA" + answer).innerHTML = count;
+                                                }
+                                              }
                                             }
-                                          }
-                                          if (window.timecache[comment].votes <= time) {
-                                            window.timecache[comment].votes = time;
-                                            document.getElementById("voteC" + comment).innerHTML = votes;
-                                          }
+                                          })
 
-                                        });
-
-
-                                        socket.on("answerCommentVoteCount", ([question, answer, comment, votes, time]) => {
-                                          if (!question == "<%= question.question_id %>") {
-                                            return;
-                                          }
-                                          if (!window.timecache[comment]) {
-                                            window.timecache[comment] = {
-                                              votes: startTime,
+                                          socket.on("questionCommentVoteCount", ([question, comment, votes, time]) => {
+                                            if (!question == "<%= question.question_id %>") {
+                                              return;
                                             }
-                                          }
-                                          if (window.timecache[comment].votes <= time) {
-                                            window.timecache[comment].votes = time;
-                                            document.getElementById("voteC" + comment).innerHTML = votes;
-                                          }
-                                        });
+                                            if (!window.timecache[comment]) {
+                                              window.timecache[comment] = {
+                                                votes: startTime,
+                                              }
+                                            }
+                                            if (window.timecache[comment].votes <= time) {
+                                              window.timecache[comment].votes = time;
+                                              document.getElementById("voteC" + comment).innerHTML = votes;
+                                            }
+
+                                          });
 
 
-                                        fetch("/getBasicData?user=<%= question.creator %>").then(response => response.json()).then((j) => {
-                                          if (j.success) {
-                                            document.getElementById("qPfp").src = j.pfp;
-                                            document.getElementById("qPfp").style.opacity = 1;
-                                            document.getElementById("levelText").innerHTML = "Level " + j.level
-                                          }
-                                        })
+                                          socket.on("answerCommentVoteCount", ([question, answer, comment, votes, time]) => {
+                                            if (!question == "<%= question.question_id %>") {
+                                              return;
+                                            }
+                                            if (!window.timecache[comment]) {
+                                              window.timecache[comment] = {
+                                                votes: startTime,
+                                              }
+                                            }
+                                            if (window.timecache[comment].votes <= time) {
+                                              window.timecache[comment].votes = time;
+                                              document.getElementById("voteC" + comment).innerHTML = votes;
+                                            }
+                                          });
+
+
+                                          fetch("/getBasicData?user=<%= question.creator %>").then(response => response.json()).then((j) => {
+                                            if (j.success) {
+                                              document.getElementById("qPfp").src = j.pfp;
+                                              document.getElementById("qPfp").style.opacity = 1;
+                                              document.getElementById("levelText").innerHTML = "Level " + j.level
+                                            }
+                                          })
 
 
 
-                                        async function appendAnswer(answer, beforeShowMore = false) {
-                                          var id = answer.answer_id;
-                                          var answerComments = answer.comments;
-                                          var hasAcceptedAnswer = <%= question.hasAcceptedAnswer %>
+                                          async function appendAnswer(answer, beforeShowMore = false) {
+                                            var id = answer.answer_id;
+                                            var answerComments = answer.comments;
+                                            var hasAcceptedAnswer = <%= question.hasAcceptedAnswer %>
   var owner = <%= loggedIn && question.creator == user.username ? "true" : "false" %>;
 
-                                          var loggedIn = <% if (loggedIn) { %> true <% } else { %> false <% } %>;
-                                          var t = `<div class="max-w-5xl border-gray-500 border-t-4 py-[12px] rounded overflow-hidden shadow-lg hidden" id="mainAnswerDiv${id}">
+                                            var loggedIn = <% if (loggedIn) { %> true <% } else { %> false <% } %>;
+                                            var t = `<div class="max-w-5xl border-gray-500 border-t-4 py-[12px] rounded overflow-hidden shadow-lg hidden" id="mainAnswerDiv${id}">
             <div class="flex flex-row">
               <div class="flex content-center flex-col w-1/12 border-r-2 border-black">
                 <img class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'hidden' %>" id="answerUp${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
@@ -945,7 +950,7 @@ ${(loggedIn && ((<%= question.status == "open" %> && (<%= (basicData.level >= 3)
                         <button class="bg-blue-600 hover:bg-blue-800 text-white py-2 px-4 rounded" id="postComment${id}">Post comment</button>
                       </div>
                       ` : ""
-                                        }
+                                          }
                       
                   
                 </div >
@@ -1140,10 +1145,10 @@ return;
       }
     }
     if(remainingComments.length > 0) {
-      var btn = `<div class="flex justify-center items-center" >
-                                          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
-                                            Show more comments
-                                          </button>
+      var btn = `< div class="flex justify-center items-center" >
+                                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
+                                              Show more comments
+                                            </button>
             </div > `
             // dom parser
             var parser = new DOMParser();
@@ -1202,10 +1207,10 @@ try {
             if(i == 5) {
               //  append Button in tailwind that says show more
              
-              var btn = `<div class="flex justify-center items-center" >
-                                          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
-                                            Show more comments
-                                          </button>
+              var btn = `< div class="flex justify-center items-center" >
+                                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore${id}">
+                                              Show more comments
+                                            </button>
             </div > `
             // dom parser
             var parser = new DOMParser();
@@ -1322,10 +1327,10 @@ var remaining = [];
         <% } %>
       }
       function appendShowMore() {
-    var btn = `<div class="flex justify-center items-center" >
-                                          <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold my-5 py-2 px-4 rounded" id="showMore">
-                                            Show more answers
-                                          </button>
+    var btn = `< div class="flex justify-center items-center" >
+                                            <button class="bg-teal-500 hover:bg-teal-700 text-white font-bold my-5 py-2 px-4 rounded" id="showMore">
+                                              Show more answers
+                                            </button>
     </div > `
     // dom parser
     var parser = new DOMParser();
@@ -1333,7 +1338,7 @@ var remaining = [];
     document.getElementById("answers").appendChild(btnDom.body.firstChild);
     document.getElementById("showMore").onclick = async () => {
       document.getElementById("showMore").remove();
-      document.getElementById("answers").insertAdjacentHTML("beforeend", `<div id = "spinneranswer" class="px-4 py-4 " > <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
+      document.getElementById("answers").insertAdjacentHTML("beforeend", `< div id = "spinneranswer" class="px-4 py-4 " > <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
       await showPage();
       if(remaining.length > 0) {
         appendShowMore();
@@ -1390,12 +1395,12 @@ var remaining = [];
         console.log(err);
       }
       var errorHtml = 
-      `<div class="flex justify-center items-center" >
-                                          <div class="bg-red-500  font-bold my-5 py-2 px-4 rounded" id="error">
-                                            Failed to fetch answers, please try refreshing.
-                                          </div>
+      `< div class="flex justify-center items-center" >
+                                            <div class="bg-red-500  font-bold my-5 py-2 px-4 rounded" id="error">
+                                              Failed to fetch answers, please try refreshing.
+                                            </div>
         </div >
-                                          `
+                                            `
       // dom parser
       var parser = new DOMParser();
       var errorDom = parser.parseFromString(errorHtml, "text/html");
@@ -1450,7 +1455,7 @@ var remaining = [];
         document.getElementById("previewText").innerHTML = "";
         document.getElementById("createDiv").style.display = "none";
         <% } %>
-      document.getElementById("answers").insertAdjacentHTML("beforeend", `<div id = "spinneranswer" class="px-4 py-4 " > <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
+      document.getElementById("answers").insertAdjacentHTML("beforeend", `< div id = "spinneranswer" class="px-4 py-4 " > <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png"></div>`)
 
 
         await appendAnswer(j.answer, document.getElementById("showMore") ? true : false);
@@ -1476,21 +1481,21 @@ console.log(comment.comment_id)
 
     var html = `
 
-                                          <div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
-                                            <div class="flex flex-col place-content-center w-min rounded-lg break-all">
-                                              <img class="rounded-lg cursor-pointer min-w-[10px]" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
-                                                <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
-                                                <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px]" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
-                                                </div>
+                                            < div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
+                                              <div class="flex flex-col place-content-center w-min rounded-lg break-all">
+                                                <img class="rounded-lg cursor-pointer min-w-[10px]" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                                  <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
+                                                  <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px]" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                                  </div>
 
-                                                <div class="flex flex-col items-center place-content-center mb-1 w-fit rounded-lg break-all" id="comment${comment.comment_id}">
-                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5" ${commentt} - ${comment.creator}</div>
+                                                  <div class="flex flex-col items-center place-content-center mb-1 w-fit rounded-lg break-all" id="comment${comment.comment_id}">
+                                                    <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5" ${commentt} - ${comment.creator}</div>
 
 
-                                            </div>
+                                              </div>
    </div >
 </div >
-                                          `
+                                            `
 console.log("WTF")
 
 
@@ -1633,11 +1638,11 @@ var remainingComments = [];
   }
   function appendCommentSpinner(where="") {
     var html = `
-                                          <div class="px-4 py-4 " >
-                                            <img class="animate-spin" id="commentSpinner${where}" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
+                                            < div class="px-4 py-4 " >
+                                              <img class="animate-spin" id="commentSpinner${where}" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
 
-                                            </div>
-                                        `
+                                              </div>
+                                          `
                
     // document.getElementById("commentsList"+where).insertAdjacentHTML("beforeend", html);
 
@@ -1677,10 +1682,10 @@ async function showComments(where="") {
      
     }
     if(remainingComments.length > 0) {
-      var btn = `<div class="flex justify-center items-center" >
-                                          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
-                                            Show more comments
-                                          </button>
+      var btn = `< div class="flex justify-center items-center" >
+                                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
+                                              Show more comments
+                                            </button>
             </div > `
             // dom parser
             var parser = new DOMParser();
@@ -1724,10 +1729,10 @@ appendCommentSpinner()
               if(i == 5) {
                              //  append Button in tailwind that says show more
              
-              var btn = `<div class="flex justify-center items-center" >
-                                          <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
-                                            Show more comments
-                                          </button>
+              var btn = `< div class="flex justify-center items-center" >
+                                            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" id="showMore">
+                                              Show more comments
+                                            </button>
             </div >`
             // dom parser
             var parser = new DOMParser();
@@ -1797,8 +1802,8 @@ appendCommentSpinner()
 
 
 
-                                      </script>
-                                      </script>
+                                        </script>
+                                        </script>
   </body>
 
 </html>
