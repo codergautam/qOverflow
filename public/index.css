@@ -1156,6 +1156,10 @@ video {
   width: 50%;
 }
 
+.w-7 {
+  width: 1.75rem;
+}
+
 .min-w-full {
   min-width: 100%;
 }
@@ -2969,6 +2973,14 @@ video {
     width: 80%;
   }
 
+  .sm\:w-6 {
+    width: 1.5rem;
+  }
+
+  .sm\:w-7 {
+    width: 1.75rem;
+  }
+
   .sm\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -3012,6 +3024,16 @@ video {
   .sm\:text-sm {
     font-size: 0.875rem;
     line-height: 1.25rem;
+  }
+
+  .sm\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+
+  .sm\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
   }
 
   .sm\:leading-5 {
@@ -3068,6 +3090,14 @@ video {
     height: 20rem;
   }
 
+  .md\:h-7 {
+    height: 1.75rem;
+  }
+
+  .md\:w-full {
+    width: 100%;
+  }
+
   .md\:w-3\/4 {
     width: 75%;
   }
@@ -3076,8 +3106,12 @@ video {
     width: 24rem;
   }
 
-  .md\:w-full {
-    width: 100%;
+  .md\:w-11\/12 {
+    width: 91.666667%;
+  }
+
+  .md\:w-6 {
+    width: 1.5rem;
   }
 
   .md\:min-w-full {
@@ -3168,6 +3202,27 @@ video {
   }
 }
 
+@media (min-width: 360px) {
+  @media (min-width: 400px) {
+    .sm\:md\:mt-4 {
+      margin-top: 1rem;
+    }
+
+    .sm\:md\:rounded-2xl {
+      border-radius: 1rem;
+    }
+
+    .sm\:md\:bg-white {
+      --tw-bg-opacity: 1;
+      background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+    }
+
+    .sm\:md\:align-middle {
+      vertical-align: middle;
+    }
+  }
+}
+
 @media (min-width: 1024px) {
   .lg\:col-span-2 {
     grid-column: span 2 / span 2;
@@ -3221,6 +3276,10 @@ video {
     height: 1.25rem;
   }
 
+  .lg\:w-3\/4 {
+    width: 75%;
+  }
+
   .lg\:w-9\/12 {
     width: 75%;
   }
@@ -3247,6 +3306,11 @@ video {
 
   .lg\:rounded-full {
     border-radius: 9999px;
+  }
+
+  .lg\:bg-white {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
   }
 
   .lg\:px-8 {
@@ -3332,12 +3396,12 @@ video {
     height: 2.25rem;
   }
 
-  .xl\:w-16 {
-    width: 4rem;
-  }
-
   .xl\:w-11\/12 {
     width: 91.666667%;
+  }
+
+  .xl\:w-16 {
+    width: 4rem;
   }
 
   .xl\:w-full {
@@ -3346,6 +3410,11 @@ video {
 
   .xl\:rounded-3xl {
     border-radius: 1.5rem;
+  }
+
+  .xl\:bg-white {
+    --tw-bg-opacity: 1;
+    background-color: rgb(255 255 255 / var(--tw-bg-opacity));
   }
 
   .xl\:py-4 {
