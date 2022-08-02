@@ -147,19 +147,20 @@
   </style>
 
 
-  <body>
+  <body class="bg-blue-500">
+    <div>
     <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
       <script src="/socket.io/socket.io.js"></script>
 
 
       <!-- <div class="flex justify-center items-center flex-grow"> -->
-      <div class="min-h-full mt-9">
+      <div class="min-h-full mt-9 bg-blue-500">
 
 
         <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <% if(locals.loggedIn && locals.user) { %>
             <a href="/questionEditor">
-              <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded float-right">
+              <button class="bg-white hover:bg-gray-300 text-blue-600 font-bold py-2 px-4 rounded float-right">
                 Ask a question
               </button>
             </a>
@@ -357,7 +358,7 @@
                                     <% } %>
 
                                       <div
-                                        class="px-6 py-6 sm:px-0 rounded overflow-hidden shadow-lg border-t-8 border-gray-600">
+                                        class="px-6 py-6 sm:px-0 rounded-lg overflow-hidden bg-white shadow-lg border-t-8 border-gray-600">
                                         <div class="flex flex-row">
                                           <div class="flex content-center flex-col w-1/12 px-3 border-r-2 border-black">
                                             <img
@@ -474,7 +475,7 @@
                                         (question.status == "protected" && basicData.level >= 5))) { %>
                                         <div class="flex items-center justify-center flex-col px-[30px]" id="createDiv"
                                           style="display: none;">
-                                          <div class=" my-5 rounded overflow-hidden shadow-lg min-w-full ">
+                                          <div class=" my-5 rounded-lg bg-white overflow-hidden shadow-lg min-w-full ">
                                             <div class="px-4 py-4 ">
                                               <p> Know the solution? Then create an answer!</p>
                                               <br>
