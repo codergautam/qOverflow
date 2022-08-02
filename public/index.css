@@ -896,8 +896,13 @@ video {
   margin-top: 0px;
 }
 
+<<<<<<< HEAD
+.mb-8 {
+  margin-bottom: 2rem;
+=======
 .mr-9 {
   margin-right: 2.25rem;
+>>>>>>> 4f7e3e95fbfc682b9986f05f822e2e8616a265d3
 }
 
 .box-content {
@@ -1036,6 +1041,8 @@ video {
   height: 18rem;
 }
 
+<<<<<<< HEAD
+=======
 .h-1\/2 {
   height: 50%;
 }
@@ -1044,6 +1051,7 @@ video {
   height: 0.25rem;
 }
 
+>>>>>>> 4f7e3e95fbfc682b9986f05f822e2e8616a265d3
 .max-h-80 {
   max-height: 20rem;
 }
@@ -1664,6 +1672,11 @@ video {
   border-color: rgb(191 219 254 / var(--tw-border-opacity));
 }
 
+.border-blue-50 {
+  --tw-border-opacity: 1;
+  border-color: rgb(239 246 255 / var(--tw-border-opacity));
+}
+
 .bg-gray-200 {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity));
@@ -1779,9 +1792,14 @@ video {
   background-color: rgb(191 219 254 / var(--tw-bg-opacity));
 }
 
+<<<<<<< HEAD
+.bg-transparent {
+  background-color: transparent;
+=======
 .bg-blue-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(219 234 254 / var(--tw-bg-opacity));
+>>>>>>> 4f7e3e95fbfc682b9986f05f822e2e8616a265d3
 }
 
 .bg-opacity-75 {
@@ -1987,8 +2005,21 @@ video {
   padding-bottom: 6rem;
 }
 
+<<<<<<< HEAD
+.pb-4 {
+  padding-bottom: 1rem;
+}
+
+.pb-28 {
+  padding-bottom: 7rem;
+}
+
+.pb-6 {
+  padding-bottom: 1.5rem;
+=======
 .pr-9 {
   padding-right: 2.25rem;
+>>>>>>> 4f7e3e95fbfc682b9986f05f822e2e8616a265d3
 }
 
 .text-left {
@@ -2638,6 +2669,11 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.hover\:outline-none:hover {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
 .hover\:ring-2:hover {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
@@ -2794,6 +2830,11 @@ video {
 .group:hover .group-hover\:border-gray-300 {
   --tw-border-opacity: 1;
   border-color: rgb(209 213 219 / var(--tw-border-opacity));
+}
+
+.group:hover .group-hover\:border-gray-100 {
+  --tw-border-opacity: 1;
+  border-color: rgb(243 244 246 / var(--tw-border-opacity));
 }
 
 .group:hover .group-hover\:bg-pink-600 {
