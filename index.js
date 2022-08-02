@@ -534,6 +534,12 @@ app.post('/emailChange', async (req, res) => {
   console.log(data)
   if(data.success) {
     res.redirect("/dashboard")
+  } else {
+    res.render('changeEmail', {
+      user: req.session.user,
+      username: username, 
+      error: {msg: data.error}
+    })
   }
 })
 
@@ -591,19 +597,24 @@ app.post('/questions',  async (req, res) => {
 app.post('/passwordChange', async (req, res) => {
   const { username, newPassword } = req.body
   console.log("Username: " + username)
-  const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
   if(newPassword.length <= 10) {
-    res.send({success: false, error: "Password must be at least 10 characters long"})
+    res.render('changePassword', {
+      error: {msg: "Password must be more than 10 Characters"},
+      username: username,
+      user: req.session.user
+    })
+  } else {
+    const { keyString, saltString } = await passwordUtils.deriveKeyFromPassword(newPassword);
+    let data = await api.changePasswordOf(username.trim(), keyString, saltString).then((data) => {
+      if(data.success) {
+        console.log("Password Changed!")
+        return data
+      }
+    })
+    if(data) {
+      res.redirect("/dashboard") 
+    } 
   }
-  let data = await api.changePasswordOf(username.trim(), keyString, saltString).then((data) => {
-    if(data.success) {
-      console.log("Password Changed!")
-      return data
-    }
-  })
-  if(data) {
-    res.redirect("/dashboard") 
-  } 
 
 })
 app.post('/deleteAccount', async (req, res) => {
