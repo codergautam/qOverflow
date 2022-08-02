@@ -746,6 +746,7 @@ app.get('/mail', async (req, res) => {
 app.get("/messageEditor", async (req, res) => {
   if(!(req.session.loggedIn && req.session.user)) return res.redirect('/')
 
+
   let username = req.session.user.username
   console.log(username)
   username = (username) ? username : req.session.user.username
@@ -782,7 +783,7 @@ app.post("/messages", async (req, res) => {
   if(data.success) {
     res.redirect('/mail')
   } else {
-    res.redirect('/messageEditor?error='+(data.error.startsWith("user \"") ? receiver+" wasn't found" : "Something went wrong, please try again"))
+    res.redirect('/messageEditor?error='+(data.error.startsWith("user \"") ? "The user '"+receiver+"' wasn't found" : "Something went wrong, please try again"))
   }
 })
 
