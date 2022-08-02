@@ -13,7 +13,7 @@
       <a href="/" id="logo" class="flex items-baseline">
         <!-- Logo -->
           <img  class="w-8 nav" src="../BDPALogo.png">
-          <img class="hidden h-14 w-auto sm:hidden md:inline lg:inline xl:inline nav" src="../qOverflowLogoSmall.png">
+          <img class="h-14 w-auto hidden sm:hidden md:hidden lg:inline xl:inline nav" src="../qOverflowLogoSmall.png">
         </a>
       </div>
       <div class="flex w-full mr-4 group" id="search">
@@ -30,203 +30,83 @@
               </button>
           </form>
       </div>
-      <div class="flex w-fill items-center align-right">
-        <div class="relative w-fill">
-          <div class="w-fill">
+      <div class="flex items-center">
+        <div class="relative">
+          <div class="flex">
             <% if(loggedIn) { %>
               <!-- Profile picture -->
-              <div class="w-fill">
-                <div class="flex lg:hidden top-3 place-content-end">
-                  <div class="outline-none pr-2" id="burger">
+                <div id="burger" class="flex sm:md:flex xl:lg:hidden top-3 place-content-end">
+                  <div class="outline-none pr-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
                       stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
                     </svg>
                   </div>
                 </div>
-                <div
-                  class="lg:flex md:text-right place-content-end hidden md:place-content-center h-full md:space-x-2 md:justify-start w-full grid lg:flex">
-                  <!--Mail Icon-->
-                  <div
-                    class="block w-min justify-self-end md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                    
-                    <a href="/logout"
-                      class="wavy-hover text-l md:text-xl xl:text-2xl  my-auto font-dummy text-blue-500 " style="color: #01B3E7;">Logout</a>
+                <div class="top-3 place-content-end space-x-4 xl:lg:flex md:sm:hidden hidden">
+                  <div class="cursor-pointer border-b-2 border-spacing-1 border-transparent hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                    Logout
                   </div>
-                  <!-- Home Icon -->
+                  <div class="cursor-pointer border-b-2 border-spacing-1 border-transparent hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                    Home
+                  </div>
+                  <div class="cursor-pointer border-b-2 border-spacing-1 border-transparent hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                    Inbox
+                  </div>
+                  <div class="cursor-pointer flex">
+                    <p class="border-b-2 border-spacing-1 border-transparent hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                      <%= user.username %> 
+                    </p>
+                    <img class="w-8 nav" src="<%= user.img %> " alt="">
 
-                  <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
-                    <div
-                      class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-blue-500" style="color: #01B3E7;"
-                        viewBox="0 0 20 20" fill="currentColor">
-                        <path
-                          d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-                        </path>
-                      </svg>
-                      <h2
-                        class="block md:flex xs:text-xl wavy-hover text-xl md:text-xl xl:text-2xl group-hover:visible my-auto font-dummy text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
-                        Home</h2>
-                    </div>
-                  </a>
-                  <a href="/mail" class="lg:place-content-center w-min justify-self-end w-fill md:grid md:align-middle">
-                    <!-- Mail Icon -->
-                    <div
-                      class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto h-8 xl:h-9 text-blue-500" style="color: #01B3E7;"
-                        viewBox="0 0 20 20" fill="currentColor">
-                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-                      </svg>
-                      <h2
-                        class="block md:flex xs:text-xl wavy-hover group-hover:visible text-l md:text-xl xl:text-2xl my-auto font-dummy text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
-                        Mail</h2>
-                    </div>
-                  </a>
-                  <a href="/dashboard" class="w-fill hide lg-block md:place-content-center lg:grid align-middle">
-                    <!-- Dashboard Icon -->
-                    <div class="group hover:shadow-2xl w-max shadow-purple-900 align-middle lg:px-2 transition ease-in-out
-                        delay-75 duration-300 hover:-translate-y-2">
-                      <div class="flex w-full flex-col pr-3">
-                        <!-- profile img-->
-                        <% if(locals.user) { %>
-                          <div class="flex flex-row">
-                            <img class="h-8 mr-1 xl:h-9 rounded-full" src="<%= locals.user?.img%> " alt="">
-                            <h2
-                              class="wavy-hover text-2xl xl:text-3xl my-auto font-dummy text-blue-700 transition-all delay-75 duration-100 ease-in-out" style="color: #566FD6;">
-                              <%= locals.user.username %>
-                            </h2>
-                          </div>
-                          <!-- user level and points text-->
-                          <div class="group shadow-purple-900 flex align-middle rounded-full">
-                            <h4
-                              class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-dummy text-blue-700 transition-all delay-75 duration-300 ease-in-out" style="color: #566FD6;"
-                              id="user-level">Level: <%= locals.user.level %>
-                            </h4>
-                            &nbsp;
-                            <h4
-                              class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-dummy text-blue-700 transition-all delay-75 duration-300 ease-in-out" style="color: #566FD6;"
-                              id="user-points">Points: <%= locals.user.points %>
-                            </h4>
-                          </div>
-                      </div>
-                      <% } %>
+                  </div>
+                </div>
 
-
-                    </div>
-                </div> <!-- Level + points-->
-
-
-                </a>
-              </div>
-
+              
               <% } else { %>
                 <% if (typeof login=="undefined" || !login) { %>
                   <!--Not logged in-->
-                  <script>
-                    // const search2 = document.querySelector('#search2');
-                    // search2.classList.remove('fixed');
-                    // const one = document.querySelector('#1');
-                    // one.classList.remove('w-40');
-                    // one.classList.add('w-full');
-                  </script>
-                  <div class="flex mr-3">
-                    <button onclick="location.href = '/auth/login'"
-                      class="md:p-2 md:px-3 p-1 px-2 mr-2 bg-blue-600 hover:bg-blue-500 hover:text-gray-900  text-white text-sm md:text-lg md:mr-4 font-semibold rounded-md transition-all ease-in-out delay-75 duration-300">
-                      <% } else { %>
-                        <div class="flex">
-                          <button onclick="location.href = '/auth/login'"
-                            class="md:p-2 md:px-3 p-1 px-2 mr-2 bg-green-400 hover:bg-green-300 hover:text-text  text-black text-sm md:text-lg md:mr-4 font-semibold rounded-md transition-all ease-in-out delay-75 duration-300">
-                            <% } %>
-                              Login
-                          </button>
-                          <% if (typeof signup=="undefined" || !signup) { %>
-                            <!--Not Signed In-->
-                            <button onclick="location.href = '/auth/signup'"
-                              class="md:p-2 md:px-3 p-1 px-2 bg-blue-600  hover:bg-blue-500 hover:text-black  text-white text-sm md:text-lg lg:mr-4 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
-                              <% } else { %>
-                                <button onclick="location.href = '/auth/signup'"
-                                  class="md:p-2 md:px-3 p-1 px-2 bg-green-400 hover:bg-green-300 hover:text-black  text-black text-sm md:text-lg lg:mr-4 font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
-                                  <% } %>
-                                    Signup
-                                </button>
-                        </div>
+                  <button onclick="location.href = '/auth/login'"
+                    class="mr-2 border-b-2 border-spacing-1 border-transparent hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                    <% } else { %>
+                      <button onclick="location.href = '/auth/login'"
+                        class="mr-2 px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 text-lg font-semibold rounded-md  transition-all ease-in-out delay-75 duration-300">
                         <% } %>
+                          Login
+                      </button>
+                      &nbsp;
+                      <% if (typeof signup=="undefined" || !signup) { %>
+                        <!--Not Signed In-->
+                        <button onclick="location.href = '/auth/signup'"
+                          class="border-b-2 border-transparent border-spacing-1 hover:border-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+                          <% } else { %>
+                            <button onclick="location.href = '/auth/signup'"
+                              class="px-4 py-3 bg-indigo-50 hover:bg-blue-100 hover:text-gray-900  text-gray-700 text-lg font-semibold mr-4 rounded-md  transition-all ease-in-out delay-75 duration-300">
+                              <% } %>
+                                Signup
+                            </button>
+                            <% } %>
                   </div>
           </div>
         </div>
       </div>
 
     </div>
-    <div
-      class="lg:hidden hidden mr-4 md:text-right place-self-end place-content-end lg:place-content-center h-full md:space-x-2 lg:justify-start w-full grid"
+    <div class="lg:hidden mr-4 md:text-right place-self-end place-content-end lg:place-content-center h-full md:space-x-2 lg:justify-start w-full grid"
       id="menu">
-      <!--Mail Icon-->
-      <!-- Home Icon -->
-      <a href="/dashboard" class="w-fill place-content-center grid align-middle">
-        <!-- Dashboard Icon -->
-        <div class="w-max shadow-purple-900 align-middle px-2 grid transition
-                delay-75 duration-300">
-          <div class="flex w-full flex-col">
-            <!-- profile img-->
-            <% if(typeof user !="undefined" ) { %>
-              <div class="flex flex-row">
-                <img class="h-8 mr-1 xl:h-9 rounded-full"
-                  src="https://s.gravatar.com/avatar/a0e6e8c282a3953d22f0f0d1ee267910?s=200&amp;r=x " alt="">
-                <h2
-                  class="wavy-hover text-2xl xl:text-3xl my-auto font-dummy text-blue-500 transition-all delay-75 duration-100 ease-in-out" style="color: #01B3E7;">
-                  <%= user.username %>
-                </h2>
-              </div>
-              <!-- user level and points text-->
-              <div class="group shadow-purple-900 flex align-middle place-self-end rounded-full">
-                <h4
-                  class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-dummy transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;"
-                  id="user-level">Level: <%= user.level %>
-                </h4>
-                &nbsp;
-                <h4
-                  class="group-hover:visible text-lg xl:text-xl my-auto 2xl:text-2xl font-dummy text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;"
-                  id="user-points">Points: <%= user.points %>
-                </h4>
-              </div>
-          </div>
-          <hr>
-          <% } %>
-      </a>
-      <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
-        <div
-          class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-blue-500" viewBox="0 0 20 20" style="color: #01B3E7;"
-            fill="currentColor">
-            <path
-              d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z">
-            </path>
-          </svg>
-          <h2
-            class="block md:flex xs:text-xl wavy-hover text-xl md:text-2xl xl:text-3xl group-hover:visible my-auto font-dummy text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
-            Home</h2>
+      <div class="top-3 place-content-end space-x-4 block">
+        <div class="cursor-pointer hover:underline decoration-2 underline-offset-1 decoration-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+          Logout
         </div>
-        <hr>
-      </a>
-      <a href="/mail" class="lg:place-content-center w-min justify-self-end w-fill md:grid md:align-middle">
-        <!-- Mail Icon -->
-        <div
-          class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-          <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto h-8 xl:h-9 text-blue-500" viewBox="0 0 20 20" style="color: #01B3E7;"
-            fill="currentColor">
-            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
-            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
-          </svg>
-          <h2
-            class="block md:flex xs:text-xl wavy-hover group-hover:visible text-xl md:text-2xl xl:text-3xl my-auto font-dummy text-blue-500 transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;">
-            Mail</h2>
+        <div class="cursor-pointer hover:underline decoration-2 underline-offset-1 decoration-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+          Home
         </div>
-        <hr>
-      </a>
-      <div
-        class="w-full place-content-end grid justify-self-end md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
-        <a href="/logout" class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-dummy text-blue-500 " style="color: #01B3E7;">Logout</a>
+        <div class="cursor-pointer hover:underline decoration-2 underline-offset-1 decoration-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+          Inbox
+        </div>
+        <div class="cursor-pointer hover:underline decoration-2 underline-offset-1 decoration-gray-300 text-gray-700 text-lg font-semibold transition-all ease-in-out delay-75 duration-300">
+          Dashboard
+        </div>
       </div>
     </div>
   </div>
@@ -252,6 +132,7 @@
       // const logout2 = document.querySelector('#logout2');
 
       burger.addEventListener('click', (e) => {
+        console.log("beingClicked")
         if (menu.classList.contains('hidden')) {
           menu.classList.remove('hidden');
           logo.classList.add('h-full');
