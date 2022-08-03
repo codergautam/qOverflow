@@ -2398,6 +2398,11 @@ video {
           text-decoration-color: #be123c;
 }
 
+.decoration-red-700 {
+  -webkit-text-decoration-color: #b91c1c;
+          text-decoration-color: #b91c1c;
+}
+
 .decoration-2 {
   text-decoration-thickness: 2px;
 }
