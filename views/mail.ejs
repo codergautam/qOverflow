@@ -110,6 +110,16 @@
                         </div>
                     </div>
                 <% } %>
+                <% if(locals.error) { %>
+                    <div class="mt-4 bg-red-100 border-t-4 border-red-500 rounded-b text-red-900 px-4 py-3 shadow-md" role="alert">
+                        <div class="flex">
+                        <div class="py-1"><svg class="fill-current h-6 w-6 text-teal-500 mr-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M2.93 17.07A10 10 0 1 1 17.07 2.93 10 10 0 0 1 2.93 17.07zm12.73-1.41A8 8 0 1 0 4.34 4.34a8 8 0 0 0 11.32 11.32zM9 11V9h2v6H9v-4zm0-6h2v2H9V5z"/></svg></div>
+                        <div>
+                            <p class="font-bold"><%= locals.error %></p>
+                        </div>
+                        </div>
+                    </div>
+                <% } %>
                 <button class="border-b-2 border-spacing-2 border-gray-300 hover:border-gray-500 hover:scale-110 text-gray-700 font-bold mx-auto mt-4 mb-2 transition-all delay-75 duration-300 ease-in-out"
                 id="newMessage" onclick="window.location.href='/messageEditor'">
                 + New Message
@@ -131,7 +141,7 @@
                 <% } %>
             </div>
         </div>
-        <div class="sm:col-span-12 md:col-span-12 sm:h-screen md:h-screen lg:mt-0 xl:mt-0 sm:mt-8 md:mt-8 mt-8 mr-4 lg:col-span-9 xl:col-span-9 col-span-12 flex  bg-white shadow-lg w-full rounded-3xl relative shadow-indigo-600">
+        <div class="overflow-x-hidden break-words sm:col-span-12 md:col-span-12 sm:h-screen md:h-screen lg:mt-0 xl:mt-0 sm:mt-8 md:mt-8 mt-8 mr-4 lg:col-span-9 xl:col-span-9 col-span-12 flex  bg-white shadow-lg w-full rounded-3xl relative shadow-indigo-600">
             <div class="flex-col">
                 <div>
                     <div class="block justify-between items-baseline">
@@ -143,7 +153,7 @@
                             <span class="text-gray-500 font-semibold"></span>
                         </p>
                     </div>
-                    <p class="text-xl text-gray-500 text-start ml-4" id="previewText">
+                    <p class="text-xl text-gray-500 text-start ml-4 break-all" id="previewText">
                     </p>
                 </div>
             </div>

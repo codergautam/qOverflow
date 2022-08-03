@@ -268,6 +268,12 @@ app.get('/searchResults/:after', async (req, res) => {
 })
 
 app.get('/mailResults/:after', async (req, res) => {
+  if(!req.session.loggedIn) {
+    res.send(JSON.stringify({
+      success: false,
+      error: "You are not logged in"
+    }))
+  }
   const after = req.params.after
   const username = req.session.user.username
   console.log("After: " + after)
@@ -295,6 +301,13 @@ app.get('/mailResults/:after', async (req, res) => {
 })
 
 app.get('/userAnswerResults/:after', async (req, res) => {
+  if(!req.session.loggedIn) {
+    res.send(JSON.stringify({
+      success: false,
+      error: "You are not logged in"
+    }))
+    return;
+  }
   const after = req.params.after
   const username = req.session.user.username
   if(after == 0) {
@@ -317,6 +330,13 @@ app.get('/userAnswerResults/:after', async (req, res) => {
 })
 
 app.get('/userQuestionResults/:after', async (req, res) => {
+  if(!req.session.loggedIn) {
+    res.send(JSON.stringify({
+      success: false,
+      error: "You are not logged in"
+    }))
+    return;
+  }
   const after = req.params.after
   const username = req.session.user.username
   if(after == 0) {
@@ -341,6 +361,10 @@ app.get('/userQuestionResults/:after', async (req, res) => {
 })
 
 app.get('/userMail/:mail_id', async (req, res) => {
+  if(!req.session.loggedIn) {
+    res.redirect('/login')
+    return
+  }
   let username = req.session.user.username
   let mailId = req.params.mail_id
   let data = await api.getUserMail(username)
@@ -438,6 +462,10 @@ app.post('/search', async (req, res) => {
 
 app.get('/test', async (req, res) => {
   console.log("Testing")
+  if(!req.session.loggedIn) {
+    res.redirect('/login')
+    return
+  }
   let username = req.session.user.username
   console.log("Username: " + username)
   if(username) {
@@ -449,6 +477,10 @@ app.get('/test', async (req, res) => {
 })
 app.get('/remove', async (req, res) => {
   console.log("Testing")
+  if(!req.session.loggedIn) {
+    res.redirect('/login')
+    return
+  }
   let username = req.session.user.username
   console.log("Username: " + username)
   if(username) {
@@ -840,11 +872,18 @@ app.get('/getAnswers', async (req, res) => {
     });
 });
 app.post("/messages", async (req, res) => {
+  if(!req.session.loggedIn) {
+    res.redirect('/login')
+    return
+  }
   let { username, receiver, subject, text } = req.body 
   username = (username) ? username : req.session.user.username
   console.log(`Reciever: ${receiver}, Sender: ${username}`)
   console.log(username)
   let data = await api.sendMessage(username, receiver, subject, text)
+  if(text.length > 512) {
+    res.redirect(`/messageEditor?error=Message too long, max 512 characters`)
+  } else {
   console.log(data)
   console.log(data.success)
   if(data.success) {
@@ -852,12 +891,13 @@ app.post("/messages", async (req, res) => {
   } else {
     res.redirect('/messageEditor?error='+(data.error.startsWith("user \"") ? "The user '"+receiver+"' wasn't found" : "Something went wrong, please try again"))
   }
+}
 })
 
 app.post('/api/answer', async (req, res) => {
   if(!req.session.loggedIn) return res.send({success: false})
   let { question, text } = req.body
-  let username = req.session.user.username
+  let username = req.session.user?.username
   console.log(`Question: ${question}, Answer: ${text}`);
   api.addAnswer(question, username, text).then(async data => {
     console.log(data)
@@ -1179,6 +1219,11 @@ app.post("/answerComments", (req, res) => {
 });
 
 app.post("/addCommentQuestion", (req, res) => {
+  if(!req.session.loggedIn) {
+    res.send(JSON.stringify({success: false}))
+
+    return
+  }
   var question = req.body.question;
   var comment = req.body.text;
   var user = req.session.user.username;
@@ -1216,6 +1261,9 @@ app.get("/hasUserVotedComment", (req, res) => {
 
 
 app.post("/addCommentAnswer", (req, res) => {
+  if(!req.session.loggedIn) {
+    return res.send(JSON.stringify({success: false}))
+  }
   var answer = req.body.answer;
   var comment = req.body.text;
   var user = req.session.user.username;
