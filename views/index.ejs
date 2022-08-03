@@ -14,7 +14,7 @@
 <body class="bg-blue-500">
   <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
 <div  >
-  <div class="justify-between sm:block block md:lg:xl:2xl:flex lg:w-3/4 md:w-11/12 xl:w-11/12 mx-auto bg-white rounded-lg lg:xl:rounded-none sm:md:bg-white sm:md:mt-4 sm:md:rounded-2xl sm:md:align-middle">
+  <div class="justify-between block w-3/4 lg:w-3/4 md:w-11/12 xl:w-3/4 mx-auto bg-white rounded-lg sm:md:mt-4 sm:md:align-middle">
     <div class="mx-auto justify between w-min flex mt-6 lg:bg-white xl:bg-white rounded-2xl lg:px-[65px] px-2 md:px-[30px] py-3 text-md md:text-lg lg:text-xl xl:text-2xl bg-bu">
       <% var possible = ["Recent", "Best", "Interesting", "Hottest"] %>
       <!-- <p class="px-3">Sort Order: </p> -->
@@ -27,7 +27,7 @@
     </div>
     <% if(loggedIn && basicData.points>= 1) { %>
       <div
-        class="w-min mt-0 sm:mt-0 sm:pb-2 md:lg:xl:2xl:mt-4 mx-auto group px-2 lg:bg-white xl:bg-white rounded-xl flex items-center hover:bg-opacity-90 hover:shadow-inner transition-all duration-300 ease-in-out">
+        class="w-min mt-0 sm:mt-0 sm:pb-2 md:lg:xl:2xl:mt-4 mx-auto group px-2 lg:bg-white xl:bg-white rounded-xl flex items-center ">
         <svg xmlns="http://www.w3.org/2000/svg"
           class="sm:flex group-hover:flex w-8 h-8 sm:w-7 md:h-7 stroke-gray-700 transition-all duration-500 " fill="none"
           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -37,7 +37,7 @@
         <form action="/questionEditor" method="GET">
           <input type="hidden" name="username" value="<%= user.username %> ">
           <input value="Create a Question" type="submit"
-            class="flex-none  ease-in-out delay-150 duration-500 group-hover:flex text-base sm:text-base  md:lg:xl:2xl:text-xl cursor-pointer text-gray-700 mr-2 font-semibold">
+            class="ease-in-out delay-150 duration-500 group-hover:underline group-hover:decoration-2 underline-offset-2 decoration-gray-300 text-base sm:text-base  md:lg:xl:2xl:text-xl cursor-pointer text-gray-700 mr-2 font-semibold transition-all">
         </form>
       </div>
       <% } %>
