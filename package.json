@@ -8,7 +8,7 @@
     "nodemon-watch": "nodemon index.js",
     "build-css": "tailwindcss build ./src/index.css -o ./public/index.css",
     "watch-css": "tailwindcss build ./src/index.css -o ./public/index.css --watch",
-    "start": "concurrently --kill-others \"npm run build-css\" \"pm2 start . --exp-backoff-restart-delay=100\""
+    "start": "npm run build-css && pm2 start . --exp-backoff-restart-delay=100"
   },
   "repository": {
     "type": "git",
