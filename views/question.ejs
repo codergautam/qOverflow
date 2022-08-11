@@ -599,7 +599,7 @@
 }
 
                                         document.getElementById('questionText').innerHTML =
-                                          marked.parse(decodeHtml(atob((`<%= btoa(question.text) %>`))), {
+                                          marked.parse(decodeHtml(atob((`<%= Buffer.from(question.text, 'binary').toString('base64') %>`))), {
                                             sanitize: true
                                           });
 
