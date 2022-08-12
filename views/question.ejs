@@ -1420,7 +1420,7 @@ try {
         var comments = j.comments;
         if(comments.length < 1) {
           destroyCommentSpinner();
-          document.getElementById("commentsList"+id).innerHTML = "<br/>No comments found.";
+          document.getElementById("commentsList"+id).innerHTML = "<br/><p class=\"text-white\">No comments found.</p>";
           return;
         } 
         var commentsList = document.getElementById("commentsList"+id);
@@ -1983,7 +1983,8 @@ appendCommentSpinner()
       document.getElementById("showComments"+where).disabled = false;
     if(j.success && j.comments.length < 1) { 
       destroyCommentSpinner();
-          document.getElementById("commentsList"+where).innerHTML = "<br/>No comments found.";
+          document.getElementById("commentsList"+where).innerHTML = "<br/><p class=\"text-white\">No comments found.</p>";
+
           return;
       
       return
