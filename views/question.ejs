@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 <script>
@@ -25,33 +26,53 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <!-- <link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
 <script src="http://github.hubspot.com/odometer/odometer.js"></script> -->
-<% function msToTime(duration) { const portions=[]; const msInDay=1000 * 60 * 60 * 24; const days=Math.trunc(duration /
-  msInDay); if (days> 0) {
-  portions.push(days + 'd');
-  duration = duration - (days * msInDay);
+<% function msToTime(duration) {
+  const portions = [];
+
+  const msInYear = 1000 * 60 * 60 * 24 * 365;
+  const years = Math.trunc(duration / msInYear);
+
+  if (years > 0) {
+      portions.push(`${years} year${years > 1 ? 's' : ''}`);
+      duration -= years * msInYear;
+  }
+
+  const msInMonth = 1000 * 60 * 60 * 24 * 30;
+  const months = Math.trunc(duration / msInMonth);
+  if (months > 0) {
+      portions.push(months + ' month'+(months > 1 ? 's' : ''));
+      duration -= months * msInMonth;
+  }
+
+    const msInDay = 1000 * 60 * 60 * 24;
+  const days = Math.trunc(duration / msInDay);
+  if (days > 0) {
+    portions.push(days + 'd');
+    duration = duration - (days * msInDay);
   }
 
   const msInHour = 1000 * 60 * 60;
   const hours = Math.trunc(duration / msInHour);
   if (hours > 0) {
-  portions.push(hours + 'h');
-  duration = duration - (hours * msInHour);
+    portions.push(hours + 'h');
+    duration = duration - (hours * msInHour);
   }
 
   const msInMinute = 1000 * 60;
   const minutes = Math.trunc(duration / msInMinute);
   if (minutes > 0) {
-  portions.push(minutes + 'm');
-  duration = duration - (minutes * msInMinute);
+    portions.push(minutes + 'm');
+    duration = duration - (minutes * msInMinute);
   }
 
   const seconds = Math.trunc(duration / 1000);
   if (seconds > 0) {
-  portions.push(seconds + 's');
+    portions.push(seconds + 's');
   }
 
-  return portions[0];
-  }
+  return portions[0] ? portions[0] : 'Just now';
+}
+
   %>
   <style>
     h1 {
@@ -600,36 +621,53 @@
                                         <!-- create answer form-->
                                       </div>
                                       <script defer>
-                                        function msToTime(duration) {
-                                          const portions = [];
-                                          const msInDay = 1000 * 60 * 60 * 24;
-                                          const days = Math.trunc(duration / msInDay);
-                                          if (days > 0) {
-                                            portions.push(days + 'd');
-                                            duration = duration - (days * msInDay);
-                                          }
+         function msToTime(duration) {
+    const portions = [];
 
-                                          const msInHour = 1000 * 60 * 60;
-                                          const hours = Math.trunc(duration / msInHour);
-                                          if (hours > 0) {
-                                            portions.push(hours + 'h');
-                                            duration = duration - (hours * msInHour);
-                                          }
+    const msInYear = 1000 * 60 * 60 * 24 * 365;
+    const years = Math.trunc(duration / msInYear);
 
-                                          const msInMinute = 1000 * 60;
-                                          const minutes = Math.trunc(duration / msInMinute);
-                                          if (minutes > 0) {
-                                            portions.push(minutes + 'm');
-                                            duration = duration - (minutes * msInMinute);
-                                          }
+    if (years > 0) {
+        portions.push(`${years} year${years > 1 ? 's' : ''}`);
+        duration -= years * msInYear;
+    }
 
-                                          const seconds = Math.trunc(duration / 1000);
-                                          if (seconds > 0) {
-                                            portions.push(seconds + 's');
-                                          }
+    const msInMonth = 1000 * 60 * 60 * 24 * 30;
+    const months = Math.trunc(duration / msInMonth);
+    if (months > 0) {
+        portions.push(months + ' month'+(months > 1 ? 's' : ''));
+        duration -= months * msInMonth;
+    }
 
-                                          return portions[0] ?? "Just now";
-                                        }
+      const msInDay = 1000 * 60 * 60 * 24;
+    const days = Math.trunc(duration / msInDay);
+    if (days > 0) {
+      portions.push(days + 'd');
+      duration = duration - (days * msInDay);
+    }
+  
+    const msInHour = 1000 * 60 * 60;
+    const hours = Math.trunc(duration / msInHour);
+    if (hours > 0) {
+      portions.push(hours + 'h');
+      duration = duration - (hours * msInHour);
+    }
+  
+    const msInMinute = 1000 * 60;
+    const minutes = Math.trunc(duration / msInMinute);
+    if (minutes > 0) {
+      portions.push(minutes + 'm');
+      duration = duration - (minutes * msInMinute);
+    }
+  
+    const seconds = Math.trunc(duration / 1000);
+    if (seconds > 0) {
+      portions.push(seconds + 's');
+    }
+  
+    return portions[0] ? portions[0] : 'Just now';
+  }
+
                                         function decodeHtml(html) {
     var txt = document.createElement("textarea");
     txt.innerHTML = html;
@@ -637,9 +675,9 @@
 }
 
                                         document.getElementById('questionText').innerHTML =
-                                          marked.parse(decodeHtml(atob((`<%= btoa(question.text) %>`))), {
-                                            sanitize: true
-                                          });
+                                          marked.parse(DOMPurify.sanitize((atob((`<%= Buffer.from(question.text, 'binary').toString('base64') %>`))), {
+                                            sanitize: false
+                                          }));
 
                                         var actiongoing = false;
                                         async function questionUp() {
@@ -1099,9 +1137,9 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
 } else {
   document.getElementById("showMore").parentElement.insertAdjacentHTML("beforebegin", t);
 }
-  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(answer.text, {
-    sanitize: true
-  });
+  document.getElementById(answer.answer_id+"Text").innerHTML = DOMPurify.sanitize(marked.parse(answer.text, {
+    sanitize: false
+  }));
   
 
 if( document.getElementById("acceptAnswer"+answer.answer_id)) {
@@ -1590,9 +1628,9 @@ var remaining = [];
   <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
 
   document.getElementById("answerText").addEventListener("keyup", () => {
-    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value, {
-      sanitize: true
-    });
+    document.getElementById("previewText").innerHTML = DOMPurify.sanitize(marked.parse(document.getElementById("answerText").value, {
+      sanitize: false
+    }));
 
     if(document.getElementById("answerText").value.length == 0) {
       document.getElementById("createAnswer").disabled = true;

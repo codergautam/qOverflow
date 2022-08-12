@@ -73,6 +73,7 @@ app.use(session({
   ),
   saveUninitialized: true
 }))
+
 app.get('/lightMode', async (req, res) => {
   let prefferedMode = req.query.lightMode
   if(prefferedMode) {
@@ -1128,7 +1129,6 @@ app.get("/question/:id", (req, res) => {
       io.emit("increaseView", id)
       // console.timeEnd("getQuestion")
       getBasicData(req.session.user?.username).then(basicData => {
-        console.log(ongoingVotes[id])
     res.render('question', {
       question: data.question,
       user: req.session.user,
