@@ -57,7 +57,6 @@ function replaceCharacters (str) {
 app.use(session({
   secret: process.env.secret,
   resave: false,
-  saveUninitialized: true,
   cookie: { secure: false },
   store: app.use(
     session({
@@ -69,10 +68,24 @@ app.use(session({
         }
       }),
       secret: "keyboard cat",
-      resave: false,
+      resave: false
     })
-  )
+  ),
+  saveUninitialized: true
 }))
+
+//------------- DARK MODE STUFF -------------------
+app.get('/lightMode', async (req, res) => {
+  let prefferedMode = req.query.lightMode
+  if(prefferedMode) {
+    req.session.lightMode = prefferedMode
+  } else if(!prefferedMode && !req.session.lightMode) {
+    req.session.lightMode = "default"
+  }
+  res.send(JSON.stringify(req.session.lightMode))
+})
+
+//------------- DARK MODE STUFF -------------------
 
 app.get('/', async (req, res) => { //Homepage
   // console.log(req.session)

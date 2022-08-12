@@ -12,22 +12,45 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <body class="bg-blue-500">
+  <style>
+    .bg-white {
+      background-color: rgb(34, 34, 34);
+    }
+    .bg-gray-50 {
+      background-color: rgb(51, 51, 51);
+    }
+    .bg-gray-200 {
+      background-color: rgb(66, 66, 66);
+    }
+    .bg-green-200 {
+      background-color: rgb(70, 167, 135);
+    }
+    .bg-blue-500 {
+      background-color: rgb(41, 61, 129);
+    }
+    .text-black {
+      color: rgb(255, 255, 255);
+    }
+    .text-gray-700 {
+      color: rgb(224, 224, 224);
+    }
+  </style>
   <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
 <div  >
   <div class="justify-between block w-3/4 lg:w-3/4 md:w-11/12 xl:w-3/4 mx-auto bg-white rounded-lg sm:md:mt-4 sm:md:align-middle">
-    <div class="mx-auto justify between w-min flex mt-6 lg:bg-white xl:bg-white rounded-2xl lg:px-[65px] px-2 md:px-[30px] py-3 text-md md:text-lg lg:text-xl xl:text-2xl bg-bu">
+    <div class="mx-auto justify between w-min flex mt-6 rounded-2xl lg:px-[65px] px-2 md:px-[30px] py-3 text-md md:text-lg lg:text-xl xl:text-2xl">
       <% var possible = ["Recent", "Best", "Interesting", "Hottest"] %>
       <!-- <p class="px-3">Sort Order: </p> -->
       <% for (var i = 0; i < possible.length; i++) { %>
        
-        <a href="/?sort=<%= possible[i].toLowerCase() %>" class="inline-block px-3 <%= sort.toLowerCase() == possible[i].toLowerCase() ? 'bg-green-200' : '' %> py-2 text-base sm:text-base md:lg:xl:2xl:text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 focus:border-gray-300 focus:border-blue-300">
+        <a href="/?sort=<%= possible[i].toLowerCase() %>" class="inline-block px-3 <%= sort.toLowerCase() == possible[i].toLowerCase() ? 'bg-green-200' : '' %> hover:-translate-y-2 py-2 text-base sm:text-base md:lg:xl:2xl:text-lg rounded-2xl leading-5 font-medium text-black focus:outline-none focus:bg-gray-50 transition-all ease-in-out delay-75 duration-300">
           <%= possible[i] %>
         </a>
        <% } %>
     </div>
     <% if(loggedIn && basicData.points>= 1) { %>
       <div
-        class="w-min mt-0 sm:mt-0 sm:pb-2 md:lg:xl:2xl:mt-4 mx-auto group px-2 lg:bg-white xl:bg-white rounded-xl flex items-center ">
+        class="w-min mt-0 sm:mt-0 sm:pb-2 md:lg:xl:2xl:mt-4 mx-auto group px-2 rounded-xl flex items-center ">
         <svg xmlns="http://www.w3.org/2000/svg"
           class="sm:flex group-hover:flex w-8 h-8 sm:w-7 md:h-7 stroke-gray-700 transition-all duration-500 " fill="none"
           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -76,6 +99,20 @@
 
         <script>
           // alert("Temporary dev, styling in progress! Won't always be like this! :-)")
+          
+          async function getLightMode() {
+            let lightMode = await fetch('/lightMode');
+            lightMode = await lightMode.json();
+            console.log(lightMode);
+            // lightMode = await lightMode.json();
+            if(lightMode == "light" || lightMode == "default") {
+              console.log("Light Mode!")
+            } else if(lightMode == "dark") {
+              console.log("Dark Mode!")
+            }
+            // console.log(!lightMode);
+          }
+
           lastQuestionId = undefined;
           var pageSize = 6;
           var questionsShown = 0;
@@ -197,7 +234,7 @@
           <br>
         </div>
         <div class="grid transition-all delay-150 w-full py-3 px-7 row-span-2 sm:row-span-2 place-content-evenly sm:col-span-2 col-span-5 place-items-center w-full text-center">
-          <div class="transition-all delay-150 font-semibold text-xl xl:text-3xl mb-2 align-middle lg:text-2xl" style="word-break: break-word; hyphens: auto;">${data.title}</div>
+          <div class="transition-all delay-150 font-semibold text-xl xl:text-3xl mb-2 align-middle lg:text-2xl text-black" style="word-break: break-word; hyphens: auto;">${data.title}</div>
         </div>
         <div class="transition-all delay-150 row-span-1 sm:row-span-1 sm:col-span-3 px-2 col-span-5 place-content-center text-center sm:text-left align-items-center justify-content-center">
           <span class="transition-all delay-150 justify-content-center inline-block text-center bg-gray-200 rounded-full px-3 py-1 text-sm xl:text-lg 2xl:text-xl font-semibold xl:font-bold text-gray-700 mr-1 mb-2">${msToTime(Date.now() - data.createdAt) ? msToTime(Date.now() - data.createdAt) +" ago": "Just now"}</span>
