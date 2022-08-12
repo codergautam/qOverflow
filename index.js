@@ -74,6 +74,18 @@ app.use(session({
   )
 }))
 
+
+//------------- DARK MODE STUFF -------------------
+req.session.lightMode = "light"
+app.get('/lightMode', async (req, res) => {
+  let prefferedMode = req.query.lightMode
+  if(prefferedMode) {
+    req.session.lightMode = prefferedMode
+  }
+  res.send(JSON.stringify(req.session.lightMode))
+})
+
+//------------- DARK MODE STUFF -------------------
 app.get('/', async (req, res) => { //Homepage
   // console.log(req.session)
   var sort = req.query.sort ?? "recent";
