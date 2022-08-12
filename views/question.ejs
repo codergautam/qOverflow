@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 <script>
@@ -25,33 +26,53 @@
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <!-- <link rel="stylesheet" href="http://github.hubspot.com/odometer/themes/odometer-theme-default.css" />
 <script src="http://github.hubspot.com/odometer/odometer.js"></script> -->
-<% function msToTime(duration) { const portions=[]; const msInDay=1000 * 60 * 60 * 24; const days=Math.trunc(duration /
-  msInDay); if (days> 0) {
-  portions.push(days + 'd');
-  duration = duration - (days * msInDay);
+<% function msToTime(duration) {
+  const portions = [];
+
+  const msInYear = 1000 * 60 * 60 * 24 * 365;
+  const years = Math.trunc(duration / msInYear);
+
+  if (years > 0) {
+      portions.push(`${years} year${years > 1 ? 's' : ''}`);
+      duration -= years * msInYear;
+  }
+
+  const msInMonth = 1000 * 60 * 60 * 24 * 30;
+  const months = Math.trunc(duration / msInMonth);
+  if (months > 0) {
+      portions.push(months + ' month'+(months > 1 ? 's' : ''));
+      duration -= months * msInMonth;
+  }
+
+    const msInDay = 1000 * 60 * 60 * 24;
+  const days = Math.trunc(duration / msInDay);
+  if (days > 0) {
+    portions.push(days + 'd');
+    duration = duration - (days * msInDay);
   }
 
   const msInHour = 1000 * 60 * 60;
   const hours = Math.trunc(duration / msInHour);
   if (hours > 0) {
-  portions.push(hours + 'h');
-  duration = duration - (hours * msInHour);
+    portions.push(hours + 'h');
+    duration = duration - (hours * msInHour);
   }
 
   const msInMinute = 1000 * 60;
   const minutes = Math.trunc(duration / msInMinute);
   if (minutes > 0) {
-  portions.push(minutes + 'm');
-  duration = duration - (minutes * msInMinute);
+    portions.push(minutes + 'm');
+    duration = duration - (minutes * msInMinute);
   }
 
   const seconds = Math.trunc(duration / 1000);
   if (seconds > 0) {
-  portions.push(seconds + 's');
+    portions.push(seconds + 's');
   }
 
-  return portions[0];
-  }
+  return portions[0] ? portions[0] : 'Just now';
+}
+
   %>
   <style>
     h1 {
@@ -157,10 +178,95 @@
     img:not(.nav) {
       max-width: 50%;
     }
+
+    .checkpath {
+      fill: #134413;
+    }
+
+
   </style>
     <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
 
   <body class="bg-blue-500">
+    <style>
+          .bg-white {
+    background-color: rgb(34, 34, 34);
+  }
+  
+  .bg-gray-50 {
+    background-color: rgb(51, 51, 51);
+  }
+  .bg-gray-200 {
+    background-color: rgb(66, 66, 66);
+  }
+  .bg-green-200 {
+    background-color: rgb(70, 167, 135);
+  }
+  .bg-blue-500 {
+    background-color: rgb(11, 13, 18);
+  }
+  .text-black {
+    color: rgb(255, 255, 255);
+  }
+  .kindagray {
+    background-color: rgb(25, 25, 26);
+  }
+  .tag {
+      background-color: rgb(11, 11, 17);
+  }
+  .text-gray-700 {
+    color: rgb(224, 224, 224);
+  }
+  textarea.text-gray-700.bg-gray-200 {
+    color: black;
+  }
+  .text-gray-900 {
+    color: rgb(224, 224, 224);
+  }
+  input.text-gray-900 {
+    color: black;
+  }
+  input.text-gray-900 {
+          color: black;
+        }
+
+    
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  code,
+  pre,
+  blockquote,
+  li,
+  ul,
+  p {
+      color:white;
+  }
+
+  .bg-blue-200 {
+    background-color: rgb(49, 54, 65);
+
+
+  }
+
+  .bg-gray-100 {
+    color: rgb(0, 0, 0);
+  }
+
+  textarea {
+    background-color: black;
+  }
+
+  .bg-green-100 {
+    background-color: #013220;
+  }
+  .checkpath {
+    fill: lightgreen
+  }
+    </style>
     <script src="/socket.io/socket.io.js"></script>
 
      
@@ -492,7 +598,7 @@
                                                 <label class="text-gray-700 text-sm font-bold mb-2" for="answer">Your
                                                   Answer</label>
                                                 <textarea wrap="hard" maxlength="3000"
-                                                  class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                                  class="shadow appearance-none border rounded w-full py-2  px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                                   id="answerText" name="answer" rows="3"></textarea>
                                               </div>
                                               <br />
@@ -525,36 +631,53 @@
                                         <!-- create answer form-->
                                       </div>
                                       <script defer>
-                                        function msToTime(duration) {
-                                          const portions = [];
-                                          const msInDay = 1000 * 60 * 60 * 24;
-                                          const days = Math.trunc(duration / msInDay);
-                                          if (days > 0) {
-                                            portions.push(days + 'd');
-                                            duration = duration - (days * msInDay);
-                                          }
+         function msToTime(duration) {
+    const portions = [];
 
-                                          const msInHour = 1000 * 60 * 60;
-                                          const hours = Math.trunc(duration / msInHour);
-                                          if (hours > 0) {
-                                            portions.push(hours + 'h');
-                                            duration = duration - (hours * msInHour);
-                                          }
+    const msInYear = 1000 * 60 * 60 * 24 * 365;
+    const years = Math.trunc(duration / msInYear);
 
-                                          const msInMinute = 1000 * 60;
-                                          const minutes = Math.trunc(duration / msInMinute);
-                                          if (minutes > 0) {
-                                            portions.push(minutes + 'm');
-                                            duration = duration - (minutes * msInMinute);
-                                          }
+    if (years > 0) {
+        portions.push(`${years} year${years > 1 ? 's' : ''}`);
+        duration -= years * msInYear;
+    }
 
-                                          const seconds = Math.trunc(duration / 1000);
-                                          if (seconds > 0) {
-                                            portions.push(seconds + 's');
-                                          }
+    const msInMonth = 1000 * 60 * 60 * 24 * 30;
+    const months = Math.trunc(duration / msInMonth);
+    if (months > 0) {
+        portions.push(months + ' month'+(months > 1 ? 's' : ''));
+        duration -= months * msInMonth;
+    }
 
-                                          return portions[0] ?? "Just now";
-                                        }
+      const msInDay = 1000 * 60 * 60 * 24;
+    const days = Math.trunc(duration / msInDay);
+    if (days > 0) {
+      portions.push(days + 'd');
+      duration = duration - (days * msInDay);
+    }
+  
+    const msInHour = 1000 * 60 * 60;
+    const hours = Math.trunc(duration / msInHour);
+    if (hours > 0) {
+      portions.push(hours + 'h');
+      duration = duration - (hours * msInHour);
+    }
+  
+    const msInMinute = 1000 * 60;
+    const minutes = Math.trunc(duration / msInMinute);
+    if (minutes > 0) {
+      portions.push(minutes + 'm');
+      duration = duration - (minutes * msInMinute);
+    }
+  
+    const seconds = Math.trunc(duration / 1000);
+    if (seconds > 0) {
+      portions.push(seconds + 's');
+    }
+  
+    return portions[0] ? portions[0] : 'Just now';
+  }
+
                                         function decodeHtml(html) {
     var txt = document.createElement("textarea");
     txt.innerHTML = html;
@@ -562,9 +685,9 @@
 }
 
                                         document.getElementById('questionText').innerHTML =
-                                          marked.parse(decodeHtml(atob((`<%= btoa(question.text) %>`))), {
-                                            sanitize: true
-                                          });
+                                          marked.parse(DOMPurify.sanitize((atob((`<%= Buffer.from(question.text, 'binary').toString('base64') %>`))), {
+                                            sanitize: false
+                                          }));
 
                                         var actiongoing = false;
                                         async function questionUp() {
@@ -966,7 +1089,8 @@
                 <p>Upvotes: <b>${answer.upvotes}</b>  Downvotes: <b>${answer.downvotes}</b></p>
                 <% } %>
                 <hr/>
-              <div id="hiddenAccept${answer.answer_id}" class="${answer.accepted?"":"invisible"}"><svg style="color: rgb(19, 68, 19);" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="60" zoomAndPan="magnify" viewBox="0 0 30 30.000001" height="60" preserveAspectRatio="xMidYMid meet" version="1.0"><defs><clipPath id="id1"><path d="M 2.328125 4.222656 L 27.734375 4.222656 L 27.734375 24.542969 L 2.328125 24.542969 Z M 2.328125 4.222656 " clip-rule="nonzero" fill="#134413"></path></clipPath></defs><g clip-path="url(#id1)"><path fill="#134413" d="M 27.5 7.53125 L 24.464844 4.542969 C 24.15625 4.238281 23.65625 4.238281 23.347656 4.542969 L 11.035156 16.667969 L 6.824219 12.523438 C 6.527344 12.230469 6 12.230469 5.703125 12.523438 L 2.640625 15.539062 C 2.332031 15.84375 2.332031 16.335938 2.640625 16.640625 L 10.445312 24.324219 C 10.59375 24.472656 10.796875 24.554688 11.007812 24.554688 C 11.214844 24.554688 11.417969 24.472656 11.566406 24.324219 L 27.5 8.632812 C 27.648438 8.488281 27.734375 8.289062 27.734375 8.082031 C 27.734375 7.875 27.648438 7.679688 27.5 7.53125 Z M 27.5 7.53125 " fill-opacity="1" fill-rule="nonzero"></path></g></svg></div>
+              <div id="hiddenAccept${answer.answer_id}" class="${answer.accepted?"":"invisible"}">
+                <svg class="checkpath" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="60" zoomAndPan="magnify" viewBox="0 0 30 30.000001" height="60" preserveAspectRatio="xMidYMid meet" version="1.0"><defs><clipPath id="id1"><path class="checkpath" d="M 2.328125 4.222656 L 27.734375 4.222656 L 27.734375 24.542969 L 2.328125 24.542969 Z M 2.328125 4.222656 " clip-rule="nonzero" ></path></clipPath></defs><g clip-path="url(#id1)"><path d="M 27.5 7.53125 L 24.464844 4.542969 C 24.15625 4.238281 23.65625 4.238281 23.347656 4.542969 L 11.035156 16.667969 L 6.824219 12.523438 C 6.527344 12.230469 6 12.230469 5.703125 12.523438 L 2.640625 15.539062 C 2.332031 15.84375 2.332031 16.335938 2.640625 16.640625 L 10.445312 24.324219 C 10.59375 24.472656 10.796875 24.554688 11.007812 24.554688 C 11.214844 24.554688 11.417969 24.472656 11.566406 24.324219 L 27.5 8.632812 C 27.648438 8.488281 27.734375 8.289062 27.734375 8.082031 C 27.734375 7.875 27.648438 7.679688 27.5 7.53125 Z M 27.5 7.53125 " fill-opacity="1" fill-rule="nonzero" class="checkpath"></path></g></svg></div>
               ${!hasAcceptedAnswer && owner ? `                        <button class='bg-sky-600 hover:bg-sky-800 text-white py-2 min-w-[60px] rounded' id='acceptAnswer${answer.answer_id}'>Accept Answer</button>` : ""}
                 </div>
 
@@ -1023,9 +1147,9 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
 } else {
   document.getElementById("showMore").parentElement.insertAdjacentHTML("beforebegin", t);
 }
-  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(answer.text, {
-    sanitize: true
-  });
+  document.getElementById(answer.answer_id+"Text").innerHTML = DOMPurify.sanitize(marked.parse(answer.text, {
+    sanitize: false
+  }));
   
 
 if( document.getElementById("acceptAnswer"+answer.answer_id)) {
@@ -1296,7 +1420,7 @@ try {
         var comments = j.comments;
         if(comments.length < 1) {
           destroyCommentSpinner();
-          document.getElementById("commentsList"+id).innerHTML = "<br/>No comments found.";
+          document.getElementById("commentsList"+id).innerHTML = "<br/><p class=\"text-white\">No comments found.</p>";
           return;
         } 
         var commentsList = document.getElementById("commentsList"+id);
@@ -1514,9 +1638,9 @@ var remaining = [];
   <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
 
   document.getElementById("answerText").addEventListener("keyup", () => {
-    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value, {
-      sanitize: true
-    });
+    document.getElementById("previewText").innerHTML = DOMPurify.sanitize(marked.parse(document.getElementById("answerText").value, {
+      sanitize: false
+    }));
 
     if(document.getElementById("answerText").value.length == 0) {
       document.getElementById("createAnswer").disabled = true;
@@ -1593,7 +1717,7 @@ console.log(comment.comment_id)
                                                 </div>
 
                                                 <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
-                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5" ${commentt} - ${comment.creator}</div>
+                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator}</div>
 
 
                                             </div>
@@ -1859,7 +1983,8 @@ appendCommentSpinner()
       document.getElementById("showComments"+where).disabled = false;
     if(j.success && j.comments.length < 1) { 
       destroyCommentSpinner();
-          document.getElementById("commentsList"+where).innerHTML = "<br/>No comments found.";
+          document.getElementById("commentsList"+where).innerHTML = "<br/><p class=\"text-white\">No comments found.</p>";
+
           return;
       
       return

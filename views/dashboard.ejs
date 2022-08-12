@@ -31,9 +31,60 @@
             content: counter(item) ".";
         }
     </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 
 <body class="bg-blue-500">
+    <style>
+        .bg-white {
+          background-color: rgb(34, 34, 34);
+        }
+        .bg-gray-50 {
+          background-color: rgb(51, 51, 51);
+        }
+        .bg-gray-200 {
+          background-color: rgb(66, 66, 66);
+        }
+        .bg-green-200 {
+          background-color: rgb(70, 167, 135);
+        }
+        .bg-blue-500 {
+          background-color: rgb(11, 13, 18);
+        }
+        .text-black {
+          color: rgb(255, 255, 255);
+        }
+        .kindagray {
+          background-color: rgb(25, 25, 26);
+        }
+        .tag {
+            background-color: rgb(11, 11, 17);
+        }
+        .text-gray-700 {
+          color: rgb(224, 224, 224);
+        }
+        .text-gray-900 {
+          color: rgb(224, 224, 224);
+        }
+        input.text-gray-900 {
+          color: black;
+        }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        code,
+        pre,
+        blockquote,
+        li,
+        ul,
+        p {
+            color:white;
+        }
+      </style>
     <%- include('./navbar'), { loggedIn: true, login: false, } %>
         <div class="grid gap-x-5 grid-cols-6 mt-8 xl:lg:w-11/12 mx-auto relative">
             <div class="relative flex-col col-span-6 lg:col-span-2 h-full">
@@ -232,16 +283,16 @@
                 appendQuestion = (question) => {
                     console.log(question)
                     let feed = document.getElementById("questionFeed")
-                    feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5" style="word-break:break-word">
-                                <div class="px-4 py-4 ">
+                    feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 kindagray hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5" style="word-break:break-word">
+                                <div class="px-4 py-4">
                                 <div class="hidden questionId">${question.question_id}</div>
-                                <div class="font-bold text-lg mb-2">${question.title.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
+                                <div class="font-bold text-lg text-black mb-2">${question.title.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
    return '&#'+i.charCodeAt(0)+';'})}</div>
                                 </div>
                                 <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: ${question.creator} </span>
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.timeElapsed} ago</span>
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.upvotes - question.downvotes} pts.</span>
+                                <span class="badge tag font-semibold text-gray-700 mr-2 mb-2">By: ${question.creator} </span>
+                                <span class="badge tag font-semibold text-gray-700 mr-2 mb-2">${question.timeElapsed} ago</span>
+                                <span class="badge tag font-semibold text-gray-700 mr-2 mb-2">${question.upvotes - question.downvotes} pts.</span>
                                 </div>
                             </div>`
                 }
@@ -391,18 +442,17 @@
                 appendAnswer = (answer) => {
                     let feed = document.getElementById("answerFeed")
                     let color = (answer.accepted) ? "text-green-500" : "text-red-500"
-                    feed.innerHTML += `<div onclick="location.href='/question/${answer.question_id}'"  class="cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
+                    feed.innerHTML += `<div onclick="location.href='/question/${answer.question_id}'"  class="kindagray cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 ml-6 bg-white rounded overflow-hidden shadow-lg w-4/5">
                                             <div class="px-4 py-4 ">
                                               <div class="text-base font-semibold mb-2"><span class="font-bold ${color}">${answer.accepted ? "Accepted" : ""}</span></div>
                                               <p class="font-bold text-gray-700 text-xl w-5/6">
-                                               ${marked.parse(answer.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
-   return '&#'+i.charCodeAt(0)+';'}))} 
+                                               ${DOMPurify.sanitize(marked.parse(answer.text))} 
                                               </p>
                                             </div>
                                             <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: ${answer.creator}  </span>
-                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">${answer.timeElapsed}  ago</span>
-                                              <span class="badge font-semibold text-gray-700 mr-2 mb-2">${answer.upvotes - answer.downvotes}  pts.</span>
+                                              <span class="badge font-semibold text-gray-700 tag mr-2 mb-2">By: ${answer.creator}  </span>
+                                              <span class="badge font-semibold text-gray-700 tag mr-2 mb-2">${answer.timeElapsed}  ago</span>
+                                              <span class="badge font-semibold text-gray-700 tag mr-2 mb-2">${answer.upvotes - answer.downvotes}  pts.</span>
                                             </div>
                                         </div>`
                 }

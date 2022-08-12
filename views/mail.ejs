@@ -83,7 +83,58 @@
       max-width: 50%;
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <body class="bg-blue-500">
+    <style>
+       .bg-white {
+          background-color: rgb(34, 34, 34);
+        }
+        .bg-gray-50 {
+          background-color: rgb(51, 51, 51);
+        }
+        .bg-gray-200 {
+          background-color: rgb(66, 66, 66);
+        }
+        .bg-green-200 {
+          background-color: rgb(70, 167, 135);
+        }
+        .bg-blue-500 {
+          background-color: rgb(11, 13, 18);
+        }
+        .text-black {
+          color: rgb(255, 255, 255);
+        }
+        .kindagray {
+          background-color: rgb(25, 25, 26);
+        }
+        .tag {
+            background-color: rgb(11, 11, 17);
+        }
+        .text-gray-700 {
+          color: rgb(224, 224, 224);
+        }
+        .text-gray-900 {
+          color: rgb(224, 224, 224);
+        }
+        input.text-gray-900 {
+          color: black;
+        }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        code,
+        pre,
+        blockquote,
+        li,
+        ul,
+        p {
+            color:white;
+        }
+      </style>
     <%- include('./navbar'), { loggedIn: true, login: false, } %>
     <div class="grid grid-cols-12 gap-x-4 my-5 w-11/12 mx-auto">
 
@@ -174,9 +225,7 @@
             let author = message.sender
             let subject = message.subject
             let messageText = message.text
-            let parsedText = marked.parse(messageText.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
-                return '&#' + i.charCodeAt(0) + ';';
-            }))
+            let parsedText = DOMPurify.sanitize(marked.parse(messageText));
             console.log(parsedText)
             // console.log(message)
             // console.log(text)

@@ -286,9 +286,12 @@ class Api {
     var users = [];
     var lastUser = null;
     var success = true;
-    while (true) {
+    var maxReqs = 10;
+    var reqsSent = 0;
+    while (true && reqsSent < maxReqs) {
       var data = await this.getUsers(lastUser);
       if (data.success) {
+        reqsSent++;
         if (data.users.length == 0) {
           break;
         }
