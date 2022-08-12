@@ -76,7 +76,6 @@ app.use(session({
 
 
 //------------- DARK MODE STUFF -------------------
-req.session.lightMode = "light"
 app.get('/lightMode', async (req, res) => {
   let prefferedMode = req.query.lightMode
   if(prefferedMode) {
