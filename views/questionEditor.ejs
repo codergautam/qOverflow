@@ -140,6 +140,60 @@
 </head>
 
 <body class="bg-blue-500">
+  <style>
+          .bg-white {
+          background-color: rgb(34, 34, 34);
+        }
+        .bg-gray-50 {
+          background-color: rgb(51, 51, 51);
+        }
+        .bg-gray-200 {
+          background-color: rgb(66, 66, 66);
+        }
+        .bg-green-200 {
+          background-color: rgb(70, 167, 135);
+        }
+        .bg-blue-500 {
+          background-color: rgb(11, 13, 18);
+        }
+        .text-black {
+          color: rgb(255, 255, 255);
+        }
+        .kindagray {
+          background-color: rgb(25, 25, 26);
+        }
+        .tag {
+            background-color: rgb(11, 11, 17);
+        }
+        .text-gray-700 {
+          color: rgb(224, 224, 224);
+        }
+        .text-gray-900 {
+          color: rgb(224, 224, 224);
+        }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        code,
+        pre,
+        blockquote,
+        p {
+            color:white;
+        }
+
+        .bg-blue-200 {
+          background-color: rgb(49, 54, 65);
+
+
+        }
+
+        .bg-gray-100 {
+          color: rgb(0, 0, 0);
+        }
+  </style>
     <%- include('../views/navbar.ejs', {loggedIn: true, user}); %>
 
     <div class="m-5 bg-blue-200 shadow-md rounded-lg hover:shadow-xl text-4xl">
@@ -152,7 +206,7 @@
                     <div class="flex-1 w-full">
                         <input type="hidden" name="username" value="<% username %> ">
                         <div class="grid sm:flex place-content-center mb-8 mt-5 w-full">
-                            <label class="text-2xl mr-3 text-center md:text-left font-extrabold block">Title:</label>
+                            <label class="text-2xl mr-3 text-center md:text-left font-extrabold block text-black">Title:</label>
                             <input maxlength="150" type="text" id="text150" name="title"
                                 class="text-xl outline-black rounded outline outline-4 text-center flex place-self-center font-bold block h-10 w-full md:w-3/4" required/>
                         </div>
@@ -226,8 +280,8 @@
           *<span class="italic" >italic</span>* text <br>
           ***<span class="font-bold italic">emboldened italic</span>*** text <br>
           > Blockquote -> <br>  <br>
-          <span class="border-l-4 pl-8 bg-gray-100 border-gray-500">Blockquote</span> <br> <br>
-          `nano` -> <span class="px-2 bg-gray-100 rounded-md my-auto">nano</span> <br>
+          <span class="border-l-4 pl-8  bg-gray-100 border-gray-500">Blockquote</span> <br> <br>
+          `nano` -> <span class="px-2  bg-gray-100 rounded-md my-auto">nano</span> <br>
           <span class="text-xl mt-2">[Link Text](Link Address) <br> ![Title of Image](Image Link)</span>
           <br>
           <span class="text-lg mt-4">And more at this <a class="text-blue-500 no-underline hover:underline underline-offset-0 underline-blue-300 transition-all delay-75 duration-300 ease-in-out" href="https://www.markdownguide.org/basic-syntax">Markdown Guide</a></span>
