@@ -11,6 +11,33 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <body class=" bg-blue-500">
+  
+  <style>
+    .bg-white {
+      background-color: rgb(34, 34, 34);
+    }
+    .bg-gray-50 {
+      background-color: rgb(51, 51, 51);
+    }
+    .bg-gray-200 {
+      background-color: rgb(66, 66, 66);
+    }
+    .bg-green-200 {
+      background-color: rgb(70, 167, 135);
+    }
+    .bg-blue-500 {
+      background-color: rgb(41, 61, 129);
+    }
+    .text-black {
+      color: rgb(255, 255, 255);
+    }
+    .text-gray-700 {
+      color: rgb(224, 224, 224);
+    }
+    .text-gray-900 {
+      color: rgb(224, 224, 224);
+    }
+  </style>
   <div class="flex flex-col">
       <%- include('../views/navbar.ejs', {loggedIn: false, login: true}); %>
     <div class="flex justify-center items-center flex-grow">
@@ -30,13 +57,13 @@
                 <div>
                   <label for="1" class="sr-only">Username</label>
                   <input id="1" name="username" type="text" required
-                    class="font-semibold transition-all delay-75 duration-300 ease-in-out appearance-none rounded-none relative block w-full px-3 py-2 border-b-2 border-gray-500 placeholder-gray-500 text-gray-900 outline-none focus:border-indigo-300 focus:z-10 sm:text-sm"
+                    class="bg-transparent font-semibold transition-all delay-75 duration-300 ease-in-out appearance-none rounded-none relative block w-full px-3 py-2 border-b-2 border-gray-500 placeholder-gray-500 text-gray-900 outline-none focus:border-indigo-300 focus:z-10 sm:text-sm"
                     placeholder="Username">
                 </div>
                 <div>
                   <label for="1" class="sr-only">Password</label>
                   <input id="1" name="password" type="password" autocomplete="current-password" required
-                    class="font-semibold mt-4 transition-all duration-300 ease-in-out appearance-none rounded-none relative block w-full px-3 py-2 border-b-2 border-gray-500 placeholder-gray-500 text-gray-900 outline-none focus:border-indigo-300 focus:z-10 sm:text-sm"
+                    class="bg-transparent font-semibold mt-4 transition-all duration-300 ease-in-out appearance-none rounded-none relative block w-full px-3 py-2 border-b-2 border-gray-500 placeholder-gray-500 text-gray-900 outline-none focus:border-indigo-300 focus:z-10 sm:text-sm"
                     placeholder="Password">
                 </div>
                 <div>
