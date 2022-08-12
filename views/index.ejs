@@ -98,6 +98,11 @@
 </div> -->
 
         <script>
+          async function getLightMode() {
+            let lightMode = await fetch('/lightMode');
+            lightMode = await lightMode.json();
+            console.log(lightMode);
+          }
           // alert("Temporary dev, styling in progress! Won't always be like this! :-)")
           
           async function getLightMode() {
