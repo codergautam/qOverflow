@@ -137,6 +137,8 @@
   border-top: none;
 }
     </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 
 <body class="bg-blue-500">
@@ -364,11 +366,8 @@
         }
 
         function val(e) {
-            ghf = e.value.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
-   return '&#'+i.charCodeAt(0)+';';
-});
-            console.log(marked.parse(ghf))
-            codeblock = marked.parse(ghf);
+            ghf = e.value
+            codeblock = DOMPurify.sanitize(marked.parse(ghf));
             document.getElementById("viewer").innerHTML = "<article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words bg-white overflow-scroll m-2 p-3 outline-black rounded text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
         }
         // function qwerty(e) {

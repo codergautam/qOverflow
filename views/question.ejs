@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/styles/default.min.css">
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.6.0/highlight.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 <!-- <script src="https://cdn.tailwindcss.com"></script> -->
 <script>
@@ -599,9 +600,9 @@
 }
 
                                         document.getElementById('questionText').innerHTML =
-                                          marked.parse(decodeHtml(atob((`<%= Buffer.from(question.text, 'binary').toString('base64') %>`))), {
-                                            sanitize: true
-                                          });
+                                          marked.parse(DOMPurify.sanitize((atob((`<%= Buffer.from(question.text, 'binary').toString('base64') %>`))), {
+                                            sanitize: false
+                                          }));
 
                                         var actiongoing = false;
                                         async function questionUp() {
@@ -1060,9 +1061,9 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
 } else {
   document.getElementById("showMore").parentElement.insertAdjacentHTML("beforebegin", t);
 }
-  document.getElementById(answer.answer_id+"Text").innerHTML = marked.parse(answer.text, {
-    sanitize: true
-  });
+  document.getElementById(answer.answer_id+"Text").innerHTML = DOMPurify.sanitize(marked.parse(answer.text, {
+    sanitize: false
+  }));
   
 
 if( document.getElementById("acceptAnswer"+answer.answer_id)) {
@@ -1551,9 +1552,9 @@ var remaining = [];
   <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
 
   document.getElementById("answerText").addEventListener("keyup", () => {
-    document.getElementById("previewText").innerHTML = marked.parse(document.getElementById("answerText").value, {
-      sanitize: true
-    });
+    document.getElementById("previewText").innerHTML = DOMPurify.sanitize(marked.parse(document.getElementById("answerText").value, {
+      sanitize: false
+    }));
 
     if(document.getElementById("answerText").value.length == 0) {
       document.getElementById("createAnswer").disabled = true;

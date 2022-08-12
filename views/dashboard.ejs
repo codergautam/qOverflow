@@ -31,6 +31,8 @@
             content: counter(item) ".";
         }
     </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 
 <body class="bg-blue-500">
@@ -395,8 +397,7 @@
                                             <div class="px-4 py-4 ">
                                               <div class="text-base font-semibold mb-2"><span class="font-bold ${color}">${answer.accepted ? "Accepted" : ""}</span></div>
                                               <p class="font-bold text-gray-700 text-xl w-5/6">
-                                               ${marked.parse(answer.text.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
-   return '&#'+i.charCodeAt(0)+';'}))} 
+                                               ${DOMPurify.sanitize(marked.parse(answer.text))} 
                                               </p>
                                             </div>
                                             <div class="pl-3 pr-6 pt-4 pb-2 ">
