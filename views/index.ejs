@@ -16,7 +16,7 @@
   <div class="overflow-x-hidden flex-col break-words justify-between w-3/4 mt-2 lg:w-3/4 md:w-11/12 xl:w-3/4 mx-auto bg-white rounded-lg sm:md:mt-4 sm:md:align-middle">
     
     
-    <div class="shrink space-x-2 w-min mx-auto justify-between flex mt-6 rounded-2xl sm:px-[25px] lg:px-[65px] px-2 md:px-[30px] py-3 text-md md:text-lg lg:text-xl xl:text-2xl">
+    <div class="shrink space-x-2 w-min mx-auto justify-between flex mt-6 rounded-2xl sm:px-[25px] lg:px-[65px] px-2 md:px-[30px] py-0 text-md md:text-lg lg:text-xl xl:text-2xl">
       <% var possible = ["Recent", "Best", "Interesting", "Hottest"] %>
       <!-- <p class="px-3">Sort Order: </p> -->
       <% for (var i = 0; i < possible.length; i++) { %>
@@ -43,14 +43,7 @@
       </div>
       <% } %>
       <div class="mx-auto flex form-check form-switch justify-center items-center py-2">
-        <div class="flex-col text-center mr-2">
-          <p class="text-lg font-bold text-black mr-2">
-            Change Light Mode, by
-          </p>
-          <p class="text-base font-semibold text-black mr-2">
-            cliking the Icon!
-          </p>
-        </div>
+      
         <div id="lightModeIcon">
           <svg onclick="switchLight()" xmlns="http://www.w3.org/2000/svg" class="cursor-pointer h-6 w-6 stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
@@ -92,7 +85,7 @@
 </div> -->
 
         <script>
-          let darkMode = `<style id="darkMode">
+          let darkMode = `  <style id="darkMode">
     .bg-white {
       background-color: rgb(34, 34, 34);
     }
@@ -106,7 +99,7 @@
       background-color: rgb(70, 167, 135);
     }
     .bg-blue-500 {
-      background-color: rgb(41, 61, 129);
+      background-color: rgb(16, 20, 34);
     }
     .text-black {
       color: rgb(255, 255, 255);
@@ -114,16 +107,13 @@
     .text-gray-700 {
       color: rgb(224, 224, 224);
     }
-    .stroke-black {
-      stroke: #FFF;
-    }
   </style>`;
           let darkElem = `
-        <svg onclick="switchLight()" xmlns="http://www.w3.org/2000/svg" class="cursor-pointer h-6 w-6 stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+        <svg style="color: #FFFFFF" onclick="switchLight()" xmlns="http://www.w3.org/2000/svg" class="cursor-pointer h-6 mb-3 w-6 stroke-black" fill="none" viewBox="0 0 24 24" stroke="#FFFFFF" stroke-width="2">
+          <path  stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke="#FFFFFF" />
         </svg>`;
 
-          let lightElem = `<svg onclick="switchLight()" xmlns="http://www.w3.org/2000/svg" class="cursor-pointer h-6 w-6 stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          let lightElem = `<svg onclick="switchLight()" xmlns="http://www.w3.org/2000/svg" class="cursor-pointer mb-3 h-6 w-6 stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
   <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
 </svg>`;
 
