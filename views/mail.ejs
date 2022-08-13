@@ -86,12 +86,17 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <body class="bg-blue-500">
-    <style>
+    <script src="./lightMode.js"></script>
+    <style id="darkMode">
+        .shadow-indigo-600 {
+            --tw-shadow-color: rgb(12 12 12);
+            --tw-shadow: var(--tw-shadow-colored);
+        }
        .bg-white {
           background-color: rgb(34, 34, 34);
         }
         .bg-gray-50 {
-          background-color: rgb(51, 51, 51);
+          background-color: rgb(0, 0, 255);
         }
         .bg-gray-200 {
           background-color: rgb(66, 66, 66);
@@ -113,6 +118,9 @@
         }
         .text-gray-700 {
           color: rgb(224, 224, 224);
+        }
+        .text-gray-800 {
+          color: rgb(18, 18, 18);
         }
         .text-gray-900 {
           color: rgb(224, 224, 224);
@@ -246,12 +254,12 @@
         let moreToCome = false
         appendMessage = (mail) => {
             let feed = document.getElementById("inbox")
-            feed.innerHTML += `<div onclick="preview('${mail.mail_id}')" class="bg-white hover:bg-gray-50 w-5/6 group cursor-pointer mt-4 flex-col px-2 pl-2 pb-2 border-b-2 border-spacing-2 border-gray- transition delay-75 duration-300 ease-in-out">
+            feed.innerHTML += `<div onclick="preview('${mail.mail_id}')" class="bg-white hover:bg-gray-50 w-5/6 group cursor-pointer mt-4 flex-col px-2 pl-2 pb-2 border-b-2 border-spacing-2 transition delay-75 duration-300 ease-in-out">
                     <div class="flex justify-between items-baseline w-full">
                         <p class="text-start text-base text-gray-400 font-bold mb-0">
                             ${mail.sender}
                         </p>
-                        <p class="text-start text-sm text-gray-700 font-semibold mt-1 badge">
+                        <p class="text-start text-sm text-gray-800 font-semibold mt-1 badge">
                             ${mail.timeElapsed ?? "just now"} ago
                         </p>
                     </div>

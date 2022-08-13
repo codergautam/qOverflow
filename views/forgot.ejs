@@ -11,7 +11,8 @@
 <script src="https://cdn.tailwindcss.com"></script>
 
 <body class="bg-blue-500">
-  <style>
+  <script src="./lightMode.js"></script>
+  <style id="darkMode">
     .bg-white {
       background-color: rgb(34, 34, 34);
     }
@@ -36,12 +37,9 @@
     .text-gray-900 {
       color: rgb(224, 224, 224);
     }
-    input.text-gray-900 {
-          color: black;
-        }
   </style>
     <%- include('../views/navbar.ejs', {loggedIn: false, login: true}); %>
-        <div class="flex justify-center items-center mt-24 flex-grow">
+        <div class="flex justify-center items-center flex-grow">
           <% if (typeof error !="undefined" ) { %>
             <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
               <strong class="font-bold"> Failed!</strong>
@@ -68,14 +66,12 @@
                         <div>
                           <label for="1" class="sr-only">Username</label>
                           <input id="1" name="username" type="text" required
-                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                            placeholder="Username">
+                          class="bg-transparent font-semibold mt-4 transition-all duration-300 ease-in-out appearance-none rounded-none relative block w-full px-3 py-2 border-b-2 border-gray-500 placeholder-gray-500 text-gray-900 outline-none focus:border-indigo-300 focus:z-10 sm:text-sm"                            placeholder="Username">
 
                           <!-- email-->
                           <label for="2" class="sr-only">Email</label>
                           <input id="2" name="email" type="email" required
-                            class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                            placeholder="Email">
+                          class="bg-transparent font-semibold mt-4 transition-all duration-300 ease-in-out appearance-none rounded-none relative block w-full px-3 py-2 border-b-2 border-gray-500 placeholder-gray-500 text-gray-900 outline-none focus:border-indigo-300 focus:z-10 sm:text-sm"                            placeholder="Email">
                         </div>
                       </div>
 
