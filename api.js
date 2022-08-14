@@ -37,7 +37,7 @@ class Api {
           },
         });
       } catch (e) {
-        console.log(e);
+        console.log("Failed to fetch data: ", e, "Request: ", endpoint, method);
         this.requestsInQueue--;
         if (count <= 2)
           return await this.sendRequest(endpoint, method, data, count + 1);
@@ -53,7 +53,7 @@ class Api {
         try {
           var text = await req.text();
         } catch (e) {
-          console.log(e, count);
+          console.log("Failed to get request text", e, count);
           return { success: false, failed: true };
         }
 
@@ -77,7 +77,7 @@ class Api {
             r = JSON.parse(r);
             return r;
           } catch (e) {
-            console.log(e);
+            console.log("Invalid JSON", e);
           if (count <= 5)
             return await this.sendRequest(endpoint, method, data, count + 1);
           else return { success: false, failed: true };
@@ -91,7 +91,7 @@ class Api {
             console.log(r);
             return r;
           } catch (e) {
-            console.log(e);
+            console.log("Invalid JSON", e);
            return { success: false, failed: true };
           }
         } else if(status == 400) {
@@ -103,7 +103,7 @@ class Api {
             console.log(r);
             return r;
           } catch (e) {
-            console.log(e);
+            console.log("Invalid JSON",e);
            return { success: false, failed: true };
           }
         }
@@ -274,6 +274,7 @@ class Api {
   }
 
   async getUser(username) {
+    if(typeof username == "undefined") return {success: false};
     username = encodeURIComponent(username);
     return this.sendRequest("/users/" + username, "GET");
   }
