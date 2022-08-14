@@ -148,6 +148,7 @@ var modifyPoints = async (amount, username) => {
   })
 }
 
+
 var levelCalculation = (userPoints) => {
   let _level
   for(let i = 0; i < levelMinimums.length; i++) {

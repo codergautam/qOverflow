@@ -411,10 +411,11 @@
                                                               <br />
                                                               <p>
                                                                 <%= "Current voters: " +ongoingVotes.votes.join(", ") %></p>
+                                                                <p>Votes needed: <%= 3- ongoingVotes.votes.length %></p>
                       <br>
                       <!-- remove votebtn-->
                       <% if(ongoingVotes.votes.includes(user.username)) { %>
-                      <button id=" removeVote" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                      <button id="removeVote" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                                                                   Remove Vote</button>
                                                                   <% } else { %>
                                                                     <button id="addVote"
