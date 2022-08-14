@@ -156,9 +156,7 @@
                 <div class="mt-2 text-xl font-semibold text-gray-500">
                     View your messages
                 </div>
-                <div class="mt-4">
-                    <img src="<%= user.img %> " alt="" class="w-30 mx-auto rounded-full hover:-translate-y-2 transition-all delay-75 duration-200 ease-in-out">
-                </div>
+              
                 <% if(locals.success) { %>
                     <div class="mt-4 bg-teal-100 border-t-4 border-teal-500 rounded-b text-teal-900 px-4 py-3 shadow-md" role="alert">
                         <div class="flex">
@@ -302,7 +300,7 @@
                     // var error = 
                 }
             } catch (error) {
-                console.log(error)
+                console.log("Failed to get user mail", error)
             }
         }
         async function loadMore(size, _lastResult) {

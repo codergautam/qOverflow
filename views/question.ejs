@@ -740,7 +740,7 @@
                                               window.timecache["<%= question.question_id %>"].votes = Date.now();
                                             }
                                           } catch (e) {
-                                            console.log(e);
+                                            console.log("Failed to upvote question", e);
                                             setTimeout(() => {
                                               actiongoing = false;
                                             }, 3000);
@@ -788,7 +788,7 @@
                                               window.timecache["<%= question.question_id %>"].votes = Date.now();
                                             }
                                           } catch (e) {
-                                            console.log(e);
+                                            console.log("Failed to downvote question", e);
 
                                             setTimeout(() => {
                                               actiongoing = false;
@@ -812,7 +812,7 @@
                                           }
                                          await questionUp();
                                         } catch (e) {
-                                          console.log(e);
+                                          console.log("Failed to execute upvote or downvote on question", e);
                                         }
                                          document.getElementById("questionUp").classList.remove("cursor-wait");
                                          document.getElementById("questionDown").classList.remove("cursor-wait");
@@ -834,7 +834,7 @@
                                           }
                                           await questionDown();
                                         } catch (e) {
-                                          console.log(e)
+                                          console.log("Failed to execute downvote/upvote action on question", e)
                                         }
 
                                           document.getElementById("questionUp").classList.remove("cursor-wait");
@@ -1189,7 +1189,7 @@ if( document.getElementById("acceptAnswer"+answer.answer_id)) {
         document.getElementById("acceptAnswer"+answer.answer_id).innerHTML = "Accept Answer";
       }
   }).catch(err => {
-    console.log(err);
+    console.log("Failed to accept answer", err);
     document.getElementById("acceptAnswer"+answer.answer_id).disabled = false;
     document.getElementById("acceptAnswer"+answer.answer_id).innerHTML = "Accept Answer";
   })
@@ -1319,7 +1319,7 @@ try {
     }
     await answerUp();
   } catch(e) {
-  console.log(e);
+  console.log("Failed to execute upvote/downvote action on answer", e);
 }
 
 
@@ -1345,7 +1345,7 @@ try {
     }
     await answerDown();
   } catch(e) {
-  console.log(e);
+  console.log("Failed to execute upvote/downvote on answer",e);
 }
 document.getElementById("answerUp"+answer.answer_id).classList.remove("cursor-wait");
                                          document.getElementById("answerDown"+answer.answer_id).classList.remove("cursor-wait");
@@ -1462,7 +1462,7 @@ try {
         document.getElementById("showComments"+id).click();
       }
     } catch(e) {
-      console.log(e);
+      console.log("Failed to load comments", e);
     document.getElementById("showComments"+id).disabled = true;
 
     }
@@ -1526,7 +1526,7 @@ hideThisCommentList();
       }).catch(err => {
         //enable button
         document.getElementById("postComment"+answer.answer_id).disabled = false;
-        console.log(err);
+        console.log("Failed to post comment on answer", err);
       }
       );
     }
@@ -1622,7 +1622,7 @@ var remaining = [];
       try {
       document.getElementById("spinneranswer").remove();
       } catch(err) {
-        console.log(err);
+        console.log("Failed to find spinner on answer", err);
       }
       var errorHtml = 
       `<div class="flex justify-center items-center" >
@@ -1767,7 +1767,7 @@ var commenty = htmlDoc.body.firstChild;
         }
       
     }).catch(err => {
-      console.log(err);
+      console.log("Failed to check if user voted comment",err);
     }
     );
 
@@ -1866,7 +1866,7 @@ var commenty = htmlDoc.body.firstChild;
   }
   await upvoteComment();
   } catch(err) {
-    console.log(err);
+    console.log("Failed to execute upvote/downvote on comment", err);
   }
 
                                           document.getElementById("commentUp"+comment.comment_id).classList.remove("cursor-wait");
@@ -1889,7 +1889,8 @@ var commenty = htmlDoc.body.firstChild;
   }
   await downvoteComment();
   } catch(err) {
-    console.log(err);
+    console.log("Failed to execute upvote/downvote action on comment", err);
+
   }
                                           document.getElementById("commentUp"+comment.comment_id).classList.remove("cursor-wait");
                                          document.getElementById("commentDown"+comment.comment_id).classList.remove("cursor-wait");
@@ -2025,7 +2026,8 @@ appendCommentSpinner()
           alert("Failure to load comments, please try again later");
           document.getElementById("showComments"+where).click();
         }
-      }).catch(err => {console.log(err)
+      }).catch(err => {
+        console.log("Failed to load comments", err)
         document.getElementById("showComments"+where).disabled = false;
       });
   }
@@ -2068,7 +2070,9 @@ appendCommentSpinner()
           showComments();
         }
       }
-    }).catch(err => {console.log(err);
+    }).catch(err => {
+      
+      console.log("Failed to load comments1", err);
       document.getElementById("postComment").disabled = false;
     });
   });
