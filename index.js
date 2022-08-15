@@ -209,16 +209,16 @@ app.get('/search', async (req, res) => {
     q = formatQuery(q)
     console.log(q)
     regexQuery = {
-      "title": `(?=.*${q.join("\\b)(?=.*\\b")}\\b)`
+      "title": `(?=.*${q.join(")(?=.*")})`
     }
   } else if(sort == "Text") {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
     q = formatQuery(q)
-    console.log(q, `(?=.*${q.join("\\b)(?=.*\\b")}\\b)`)
+    console.log(q, `(?=.*${q.join(")(?=.*")})`)
     regexQuery = {
-      "text": `(?=.*${q.join("\\b)(?=.*\\b")}\\b)`
+      "text": `(?=.*${q.join(")(?=.*")})`
     }
   }
   console.log(matchQuery)
@@ -425,7 +425,7 @@ app.post('/search', async (req, res) => {
     q = formatQuery(q)
     console.log(q)
     regexQuery = {
-      "title":  `(?=.*${q.join("\\b)(?=.*\\b")}\\b)`
+      "title":  `(?=.*${q.join(")(?=.*")})`
     }
     console.log(regexQuery.title)
   } else if(sort == "Text") {
@@ -434,10 +434,10 @@ app.post('/search', async (req, res) => {
     let q = newQ.split(" ")
     q = formatQuery(q)
     console.log(q)
-    console.log(q, `(?=.*${q.join("\\b)(?=.*\\b")}\\b)`)
+    console.log(q, `(?=.*${q.join(")(?=.*")})`)
 
     regexQuery = {
-      "text": `(?=.*${q.join("\\b)(?=.*\\b")}\\b)`
+      "text": `(?=.*${q.join(")(?=.*")})`
     }
     console.log(regexQuery.title)
   }
