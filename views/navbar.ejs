@@ -9,16 +9,16 @@
     overflow-x: hidden;
    }
   </style>
-  <div class=" w-full py-2 lg:py-3 xl:py-4 mx-auto px-2 md:px-3 lg:px-4 flex  ">
-    <div class="w-16 md:w-full flex">
-      <a href="/" id="logo" class="flex items-baseline">
+  <div class=" w-full py-2 lg:py-3 xl:py-4 mx-auto px-2 md:px-3 lg:px-4 flex">
+    <div class="w-full flex">
+      <a href="/" id="logo" class="flex w-full items-baseline">
         <!-- Logo -->
-          <img  class="w-8 nav" src="../BDPALogo.png">
-          <img class="hidden h-14 w-auto sm:hidden md:hidden lg:inline xl:inline nav" src="../qOverflowLogoSmall.png">
+        <img class="h-8 w-fill nav" src="../BDPALogo.png">
+          <img class="h-14 w-fill nav" src="../qOverflowLogoSmall.png">
         </a>
       </div>
-      <div class="flex w-full mr-4 group " id="search">
-          <form class="flex w-full sm:w-4/5 xl:w-full 2xl:w-full" action="/search" method="POST">
+      <div class="flex pl-5 mr-4 w-full group" id="search">
+          <form class="flex w-full sm:w-4/5 xl:w-full h-full 2xl:w-full" action="/search" method="POST">
             <input id="1" name="searchQuery" type="text" required maxlength="100"
               class="mr-2 transition delay-75  w-full duration-100 ease-in-out bg-white focus:bg-gray-50 focus:rounded-lg focus:border-none border-b-2 border-gray-100 border-spacing-1 focus:outline-none py-1 appearance-none px-3 placeholder-gray-500 text-gray-900 focus:z-10 text-sm lg:text-base font-semibold"
               placeholder="Search" value="<%= locals.searchQuery %>">
@@ -93,7 +93,7 @@
                           <div class="flex flex-row">
                             <img class="h-8 mr-1 xl:h-9 rounded-full" src="<%= locals.user?.img%> " alt="">
                             <h2
-                              class="wavy-hover text-2xl xl:text-3xl my-auto font-dummy text-blue-700 transition-all delay-75 duration-100 ease-in-out" style="color: #566FD6;">
+                              class="wavy-hover text-2xl xl:text-3xl font-semibold my-auto font-dummy text-blue-700 transition-all delay-75 duration-100 ease-in-out" style="color: #566FD6;">
                               <%= locals.user.username %>
                             </h2>
                           </div>
