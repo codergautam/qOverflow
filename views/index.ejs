@@ -12,38 +12,16 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <body class="bg-blue-500">
-  <style>
-    .bg-white {
-      background-color: rgb(34, 34, 34);
-    }
-    .bg-gray-50 {
-      background-color: rgb(51, 51, 51);
-    }
-    .bg-gray-200 {
-      background-color: rgb(66, 66, 66);
-    }
-    .bg-green-200 {
-      background-color: rgb(70, 167, 135);
-    }
-    .bg-blue-500 {
-      background-color: rgb(41, 61, 129);
-    }
-    .text-black {
-      color: rgb(255, 255, 255);
-    }
-    .text-gray-700 {
-      color: rgb(224, 224, 224);
-    }
-  </style>
   <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
-<div  >
-  <div class="justify-between block w-3/4 lg:w-3/4 md:w-11/12 xl:w-3/4 mx-auto bg-white rounded-lg sm:md:mt-4 sm:md:align-middle">
-    <div class="mx-auto justify between w-min flex mt-6 rounded-2xl lg:px-[65px] px-2 md:px-[30px] py-3 text-md md:text-lg lg:text-xl xl:text-2xl">
+  <div class="overflow-x-hidden flex-col break-words justify-between w-3/4 mt-2 lg:w-3/4 md:w-11/12 xl:w-3/4 mx-auto bg-white rounded-lg sm:md:mt-4 sm:md:align-middle">
+    
+    
+    <div class="shrink space-x-2 w-min mx-auto justify-between flex mt-6 rounded-2xl sm:px-[25px] lg:px-[65px] px-2 md:px-[30px] py-0 text-md md:text-lg lg:text-xl xl:text-2xl">
       <% var possible = ["Recent", "Best", "Interesting", "Hottest"] %>
       <!-- <p class="px-3">Sort Order: </p> -->
       <% for (var i = 0; i < possible.length; i++) { %>
        
-        <a href="/?sort=<%= possible[i].toLowerCase() %>" class="inline-block px-3 <%= sort.toLowerCase() == possible[i].toLowerCase() ? 'bg-green-200' : '' %> hover:-translate-y-2 py-2 text-base sm:text-base md:lg:xl:2xl:text-lg rounded-2xl leading-5 font-medium text-black focus:outline-none focus:bg-gray-50 transition-all ease-in-out delay-75 duration-300">
+        <a href="/?sort=<%= possible[i].toLowerCase() %>" class="inline-block px-3 <%= sort.toLowerCase() == possible[i].toLowerCase() ? 'bg-green-200' : '' %> hover:-translate-y-2 py-2 text-xs sm:text-xs md:text-lg lg:text-lg xl:text-lg 2xl:text-lg rounded-2xl leading-5 text-center font-medium text-black focus:outline-none focus:bg-gray-50 transition-all ease-in-out delay-75 duration-300">
           <%= possible[i] %>
         </a>
        <% } %>
@@ -64,6 +42,15 @@
         </form>
       </div>
       <% } %>
+      <div class="mx-auto flex form-check form-switch justify-center items-center py-2">
+      
+        <div id="lightModeIcon">
+          <svg onclick="switchLight()" xmlns="http://www.w3.org/2000/svg" class="cursor-pointer h-6 w-6 stroke-black" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </div>
+      </div>
+      
   </div>
     <% if(locals.success) { %>
       <center>
@@ -96,28 +83,8 @@
     </div>
   </div>
 </div> -->
-
+        <script src="./lightMode.js"></script>
         <script>
-          async function getLightMode() {
-            let lightMode = await fetch('/lightMode');
-            lightMode = await lightMode.json();
-            console.log(lightMode);
-          }
-          // alert("Temporary dev, styling in progress! Won't always be like this! :-)")
-          
-          async function getLightMode() {
-            let lightMode = await fetch('/lightMode');
-            lightMode = await lightMode.json();
-            console.log(lightMode);
-            // lightMode = await lightMode.json();
-            if(lightMode == "light" || lightMode == "default") {
-              console.log("Light Mode!")
-            } else if(lightMode == "dark") {
-              console.log("Dark Mode!")
-            }
-            // console.log(!lightMode);
-          }
-
           lastQuestionId = undefined;
           var pageSize = 6;
           var questionsShown = 0;
@@ -145,7 +112,7 @@
             console.log(lastQuestionId);
             var loader = `
     <div class="sm:flex items-center justify-center flex-col px-[30px] md:justify-self-center 2xl:w-2/3 lg:w-9/12 transition-all delay-150">
-      <div class="transition-all delay-150 my-5 shadow-blue-900 rounded-2xl sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full bg-white px-5 py-5 ">
+      <div class="transition-all delay-150 my-5 shadow-indigo-600 rounded-2xl sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full bg-white px-5 py-5 ">
         <div class="transition-all delay-150 p-4 pb-2 sm:p-0 sm:pt-2 sm:pl-2 col-span-5 row-span-2 sm:col-span-1 sm:row-span-2 ">
             <center class="align-middle cursor-default" style="hyphens: auto;">
          <img class="animate-spin" width="100" height="100" src="https://media.24ways.org/2009/15/assets/img/spinner.png">
@@ -183,35 +150,51 @@
           }
 
           function msToTime(duration) {
-            const portions = [];
-            const msInDay = 1000 * 60 * 60 * 24;
-            const days = Math.trunc(duration / msInDay);
-            if (days > 0) {
-              portions.push(days + 'd');
-              duration = duration - (days * msInDay);
-            }
+    const portions = [];
 
-            const msInHour = 1000 * 60 * 60;
-            const hours = Math.trunc(duration / msInHour);
-            if (hours > 0) {
-              portions.push(hours + 'h');
-              duration = duration - (hours * msInHour);
-            }
+    const msInYear = 1000 * 60 * 60 * 24 * 365;
+    const years = Math.trunc(duration / msInYear);
 
-            const msInMinute = 1000 * 60;
-            const minutes = Math.trunc(duration / msInMinute);
-            if (minutes > 0) {
-              portions.push(minutes + 'm');
-              duration = duration - (minutes * msInMinute);
-            }
+    if (years > 0) {
+        portions.push(`${years} year${years > 1 ? 's' : ''}`);
+        duration -= years * msInYear;
+    }
 
-            const seconds = Math.trunc(duration / 1000);
-            if (seconds > 0) {
-              portions.push(seconds + 's');
-            }
+    const msInMonth = 1000 * 60 * 60 * 24 * 30;
+    const months = Math.trunc(duration / msInMonth);
+    if (months > 0) {
+        portions.push(months + ' month'+(months > 1 ? 's' : ''));
+        duration -= months * msInMonth;
+    }
 
-            return portions[0];
-          }
+      const msInDay = 1000 * 60 * 60 * 24;
+    const days = Math.trunc(duration / msInDay);
+    if (days > 0) {
+      portions.push(days + 'd');
+      duration = duration - (days * msInDay);
+    }
+  
+    const msInHour = 1000 * 60 * 60;
+    const hours = Math.trunc(duration / msInHour);
+    if (hours > 0) {
+      portions.push(hours + 'h');
+      duration = duration - (hours * msInHour);
+    }
+  
+    const msInMinute = 1000 * 60;
+    const minutes = Math.trunc(duration / msInMinute);
+    if (minutes > 0) {
+      portions.push(minutes + 'm');
+      duration = duration - (minutes * msInMinute);
+    }
+  
+    const seconds = Math.trunc(duration / 1000);
+    if (seconds > 0) {
+      portions.push(seconds + 's');
+    }
+  
+    return portions[0] ? portions[0] : 'Just now';
+  }
           appendQuestion = (data, i) => {
             console.log(data);
             if (i >= pageSize) return;
@@ -227,7 +210,7 @@
 
             var question = `
     <div class="sm:flex items-center justify-center flex-col px-[30px] md:justify-self-center 2xl:w-2/3 lg:w-9/12 transition-all delay-150 " id="mainQuestionDiv${data.question_id}">
-      <div class="tition-all delay-150 my-5 shadow-blue-900 rounded-2xl sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full cursor-pointer bg-white px-5 py-5 " onclick="location.href = '/question/${data.question_id}'">
+      <div class="tition-all delay-150 my-5 shadow-indigo-600 rounded-2xl sm:grid-rows-auto grid-rows-2 grid sm:grid-cols-3 grid-cols-5 overflow-hidden shadow-lg min-w-full cursor-pointer bg-white px-5 py-5 " onclick="location.href = '/question/${data.question_id}'">
         <div class="transition-all delay-150 p-4 pb-2 sm:p-0 sm:pt-2 sm:pl-2 col-span-5 row-span-2 sm:col-span-1 sm:row-span-2 ">
           <span class="transition-all delay-150 inline-block align-middle place-content-stretch w-full sm:w-full h-auto max-h-auto bg-gray-200 px-2 py-1 text-xs font-semibold xl:font-bold text-gray-700 mr-2 mb-2 rounded-xl">
             <center class="align-middle cursor-default" style="hyphens: auto;">

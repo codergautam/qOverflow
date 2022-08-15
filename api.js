@@ -37,7 +37,7 @@ class Api {
           },
         });
       } catch (e) {
-        console.log(e);
+        console.log("Failed to fetch data: ", e, "Request: ", endpoint, method);
         this.requestsInQueue--;
         if (count <= 2)
           return await this.sendRequest(endpoint, method, data, count + 1);
@@ -53,7 +53,7 @@ class Api {
         try {
           var text = await req.text();
         } catch (e) {
-          console.log(e, count);
+          console.log("Failed to get request text", e, count);
           return { success: false, failed: true };
         }
 
@@ -66,7 +66,7 @@ class Api {
       } else {
         var status = req.status;
         console.log("status", status);
-        if ((status != 404) && (status != 403) && (status != 400)) {
+        if ((status != 404) && (status != 403) && (status != 400) && (status!= 429)) {
           this.requestsInQueue--;
           return { success: false, failed: true };
         } else if (status == 404) {
@@ -77,7 +77,7 @@ class Api {
             r = JSON.parse(r);
             return r;
           } catch (e) {
-            console.log(e);
+            console.log("Invalid JSON", e);
           if (count <= 5)
             return await this.sendRequest(endpoint, method, data, count + 1);
           else return { success: false, failed: true };
@@ -91,7 +91,7 @@ class Api {
             console.log(r);
             return r;
           } catch (e) {
-            console.log(e);
+            console.log("Invalid JSON", e);
            return { success: false, failed: true };
           }
         } else if(status == 400) {
@@ -103,7 +103,19 @@ class Api {
             console.log(r);
             return r;
           } catch (e) {
-            console.log(e);
+            console.log("Invalid JSON",e);
+           return { success: false, failed: true };
+          }
+        } else if(status == 429) {
+          this.requestsInQueue--;
+          try {
+            var r = await req.text();
+            r = JSON.parse(r);
+            console.log("Rate limited", r);
+            return { success: false, failed: true };
+         
+          } catch (e) {
+            console.log("Invalid JSON",e);
            return { success: false, failed: true };
           }
         }
@@ -274,6 +286,7 @@ class Api {
   }
 
   async getUser(username) {
+    if(typeof username == "undefined") return {success: false};
     username = encodeURIComponent(username);
     return this.sendRequest("/users/" + username, "GET");
   }
@@ -286,9 +299,12 @@ class Api {
     var users = [];
     var lastUser = null;
     var success = true;
-    while (true) {
+    var maxReqs = 10;
+    var reqsSent = 0;
+    while (true && reqsSent < maxReqs) {
       var data = await this.getUsers(lastUser);
       if (data.success) {
+        reqsSent++;
         if (data.users.length == 0) {
           break;
         }

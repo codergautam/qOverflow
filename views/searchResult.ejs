@@ -8,9 +8,69 @@
     <link rel="stylesheet" href="/index.css">
 </head>
 <body class="bg-blue-500">
+    <script src="../lightMode.js"></script>
     <div class="grid grid-cols-12 bg-blue-500">
         <div class="col-span-12">
             <%- include('./navbar'), { loggedIn: true, login: false, user: user, searchQuery } %> 
+            <style id="darkMode">
+            .bg-white {
+          background-color: rgb(34, 34, 34);
+        }
+        .bg-gray-50 {
+          background-color: rgb(51, 51, 51);
+        }
+        .bg-gray-200 {
+          background-color: rgb(66, 66, 66);
+        }
+        .bg-green-200 {
+          background-color: rgb(70, 167, 135);
+        }
+        .bg-blue-500 {
+          background-color: rgb(11, 13, 18);
+        }
+        .text-black {
+          color: rgb(255, 255, 255);
+        }
+        .kindagray {
+          background-color: rgb(25, 25, 26);
+        }
+        .tag {
+            background-color: rgb(11, 11, 17);
+        }
+        .text-gray-700 {
+          color: rgb(224, 224, 224);
+        }
+        .text-gray-900 {
+          color: rgb(225, 225, 225);
+        }
+        input.text-gray-900:focus {
+            color: rgb(11, 11, 17);
+        }
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        code,
+        pre,
+        blockquote,
+        li,
+        ul,
+        p {
+            color:white;
+        }
+
+        .bg-blue-200 {
+          background-color: rgb(49, 54, 65);
+
+
+        }
+
+        .bg-gray-100 {
+          color: rgb(0, 0, 0);
+        }
+          </style>
         </div>  
         <div class="flex-col grid mt-6 col-start-5 col-span-4 items-center relative">
             <div class="flex-col">
@@ -62,14 +122,13 @@
             appendQuestion = (question) => {
                 let searchFeed = document.getElementById("searchFeed")
                 searchFeed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="mx-auto rounded-3xl cursor-pointer hover:-translate-y-1 hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white  overflow-hidden shadow-lg w-full">
-                                <div class="px-4 py-4 ">
-                                <div class="hidden questionId">${question.question_id}</div>
-                                <div class="font-bold text-lg mb-2 break-words">${question.title}</div>
+                                <div class="px-4 py-4">
+                                <div class="font-bold text-lg mb-2 break-words text-black">${question.title}</div>
                                 </div>
                                 <div class="pl-3 pr-6 pt-4 pb-2 ">
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">By: ${question.creator} </span>
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.timeElapsed} ago</span>
-                                <span class="badge font-semibold text-gray-700 mr-2 mb-2">${question.upvotes - question.downvotes} points</span>
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2 tag">By: ${question.creator} </span>
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2 tag">${question.timeElapsed} ago</span>
+                                <span class="badge font-semibold text-gray-700 mr-2 mb-2 tag">${question.upvotes - question.downvotes} points</span>
                                 </div>
                             </div>
                             `

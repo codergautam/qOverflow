@@ -73,6 +73,7 @@ app.use(session({
   ),
   saveUninitialized: true
 }))
+
 app.get('/lightMode', async (req, res) => {
   let prefferedMode = req.query.lightMode
   if(prefferedMode) {
@@ -93,7 +94,7 @@ app.get('/', async (req, res) => { //Homepage
   try {
    var basicData = await getBasicData(req.session.user?.username);
   } catch(e) {
-    console.log(e)
+    console.log("Failed to get basic user data", e)
     var basicData = {};
   }
   res.render('index', {
@@ -146,9 +147,6 @@ var modifyPoints = async (amount, username) => {
     amount: amount
   })
 }
-
-
-
 
 
 var levelCalculation = (userPoints) => {
@@ -633,7 +631,7 @@ app.post('/acceptAnswer',  (req, res) => {
     await modifyPoints(15, owner);
 
   }).catch((err) => {
-    console.log(err)
+    console.log("Failed to accept answer: ", err)
     res.send({success: false})
   })
 
@@ -652,26 +650,26 @@ function autocomplete(input, array) {
 
 
 app.get("/api/autocomplete", async (req, res) => {
-  var current = req.query.current;
-  if(!current) return res.send({success: true, data: []});
-  if(Date.now() - allUsersCache.time > 1000 * 60 * 10) {
-   var allUsers = await api.getAllUsers()
-    if(allUsers.success) {
-      allUsersCache.time = Date.now();
-      allUsersCache.data = allUsers.users.map((user) => {
-        return {
-          u: user.username,
-          img: gravatarGen(user.email)
-        }
-      })
-    } else {
-      return res.send({success: false, data: []});
-    }
-  }
+  // var current = req.query.current;
+  // if(!current) return res.send({success: true, data: []});
+  // if(Date.now() - allUsersCache.time > 1000 * 60 * 10) {
+  //  var allUsers = await api.getAllUsers()
+  //   if(allUsers.success) {
+  //     allUsersCache.time = Date.now();
+  //     allUsersCache.data = allUsers.users.map((user) => {
+  //       return {
+  //         u: user.username,
+  //         img: gravatarGen(user.email)
+  //       }
+  //     })
+  //   } else {
+  //     return res.send({success: false, data: []});
+  //   }
+  // }
 
-  var users = autocomplete(current, allUsersCache.data).slice(0,5);
-  res.send({success: true, data: users});
-
+  // var users = autocomplete(current, allUsersCache.data).slice(0,5);
+  // res.send({success: true, data: users});
+  return res.send({success: false, data: []});
   
 })
 
@@ -792,7 +790,6 @@ app.post("/auth/signup", (req,res) => {
       res.redirect('/')
     } else {
       var err = data.error;
-      console.log(err)
       if(err == "an item with that \"email\" already exists") err = "An account with that email already exists!"
       else if(err == "an item with that \"username\" already exists") err = "An account with that username already exists!";
 
@@ -877,7 +874,7 @@ app.get('/getAnswers', async (req, res) => {
       res.send({success: false})
     }
   }).catch(err => {
-    console.log(err)
+    console.log("Failed to get answers", err)
     res.send({success: false});
     });
 });
@@ -1128,7 +1125,6 @@ app.get("/question/:id", (req, res) => {
       io.emit("increaseView", id)
       // console.timeEnd("getQuestion")
       getBasicData(req.session.user?.username).then(basicData => {
-        console.log(ongoingVotes[id])
     res.render('question', {
       question: data.question,
       user: req.session.user,
@@ -1145,7 +1141,6 @@ app.get("/question/:id", (req, res) => {
   });
   }).catch(err => {
     console.timeEnd("getQuestion")
-    console.log(err)
     res.render('question', {
       question: data.question,
       user: req.session.user,
@@ -1210,7 +1205,7 @@ app.get("/questionComments", (req, res) => {
   api.getQuestionComments(question, after).then(data => {
     res.send(JSON.stringify(data))
   }).catch(err => {
-    console.log(err)
+    console.log("Failed to get question comments", err)
     res.send(JSON.stringify({success: false}))
   });
 });
@@ -1223,7 +1218,7 @@ app.post("/answerComments", (req, res) => {
   api.getAnswerComments(question, answer, after).then(data => {
     res.send(JSON.stringify(data))
   }).catch(err => {
-    console.log(err)
+    console.log("Failed to get answer comments", err)
     res.send(JSON.stringify({success: false}))
   });
 });
@@ -1250,7 +1245,7 @@ app.post("/addCommentQuestion", (req, res) => {
   api.addCommentQuestion(question, user, comment).then(data => {
     res.send(JSON.stringify(data))
   }).catch(err => {
-    console.log(err)
+    console.log("Failed to comment on question", err)
     res.send(JSON.stringify({success: false}))
   });
 });
@@ -1264,7 +1259,7 @@ app.get("/hasUserVotedComment", (req, res) => {
   api.hasUserVotedComment(question,comment,user,answer).then(data => {
     res.send(JSON.stringify(data))
   }).catch(err => {
-    console.log(err)
+    console.log("Failed to check if a user has voted a comment", err)
     res.send(JSON.stringify({success: false}))
   });
 });
@@ -1290,7 +1285,7 @@ app.post("/addCommentAnswer", (req, res) => {
   api.addCommentAnswer(question, answer, user, comment).then(data => {
     res.send(JSON.stringify(data))
   }).catch(err => {
-    console.log(err)
+    console.log("Failed to comment on an answer", err)
     res.send(JSON.stringify({success: false}))
   });
 });
@@ -1333,7 +1328,7 @@ app.post("/forgot", (req, res) => {
       return
     }
   }).catch(err => {
-    console.log(err)
+    console.log("Failed to get user (for forgot password)", err)
     res.render('forgot', {
       error: {msg: "Something went wrong.. Please try again"}
     })
@@ -1398,7 +1393,7 @@ app.post("/reset/:token", (req, res) => {
             })
           }
         }).catch(err => {
-          console.log(err)
+          console.log("Failed to reset password", err)
           res.render('reset', {
             username: username,
             error: {msg: "Something went wrong.. Please try again"}

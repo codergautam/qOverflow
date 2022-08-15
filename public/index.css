@@ -896,6 +896,10 @@ video {
   margin-right: auto;
 }
 
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
 .box-content {
   box-sizing: content-box;
 }
@@ -1259,6 +1263,10 @@ video {
 }
 
 .flex-shrink {
+  flex-shrink: 1;
+}
+
+.shrink {
   flex-shrink: 1;
 }
 
@@ -1882,6 +1890,10 @@ video {
 
 .stroke-gray-400 {
   stroke: #9ca3af;
+}
+
+.stroke-black {
+  stroke: #000;
 }
 
 .p-4 {
@@ -3105,6 +3117,11 @@ video {
     padding-right: 1.5rem;
   }
 
+  .sm\:px-\[25px\] {
+    padding-left: 25px;
+    padding-right: 25px;
+  }
+
   .sm\:px-0 {
     padding-left: 0px;
     padding-right: 0px;
@@ -3134,6 +3151,11 @@ video {
   .sm\:text-sm {
     font-size: 0.875rem;
     line-height: 1.25rem;
+  }
+
+  .sm\:text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
   }
 
   .sm\:text-base {
@@ -3439,6 +3461,11 @@ video {
     line-height: 1.75rem;
   }
 
+  .lg\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
   .lg\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -3513,6 +3540,11 @@ video {
     line-height: 2rem;
   }
 
+  .xl\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
   .xl\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
@@ -3521,11 +3553,6 @@ video {
   .xl\:text-3xl {
     font-size: 1.875rem;
     line-height: 2.25rem;
-  }
-
-  .xl\:text-lg {
-    font-size: 1.125rem;
-    line-height: 1.75rem;
   }
 
   .xl\:font-bold {
@@ -3553,6 +3580,11 @@ video {
     line-height: 1;
   }
 
+  .\32xl\:text-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+
   .\32xl\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
@@ -3570,11 +3602,6 @@ video {
       @media (min-width: 1536px) {
         .md\:lg\:xl\:2xl\:mt-4 {
           margin-top: 1rem;
-        }
-
-        .md\:lg\:xl\:2xl\:text-lg {
-          font-size: 1.125rem;
-          line-height: 1.75rem;
         }
 
         .md\:lg\:xl\:2xl\:text-xl {

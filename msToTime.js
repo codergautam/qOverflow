@@ -1,5 +1,21 @@
 function msToTime(duration) {
     const portions = [];
+
+    const msInYear = 1000 * 60 * 60 * 24 * 365;
+    const years = Math.trunc(duration / msInYear);
+
+    if (years > 0) {
+        portions.push(`${years} year${years > 1 ? 's' : ''}`);
+        duration -= years * msInYear;
+    }
+
+    const msInMonth = 1000 * 60 * 60 * 24 * 30;
+    const months = Math.trunc(duration / msInMonth);
+    if (months > 0) {
+        portions.push(months + ' month'+(months > 1 ? 's' : ''));
+        duration -= months * msInMonth;
+    }
+
       const msInDay = 1000 * 60 * 60 * 24;
     const days = Math.trunc(duration / msInDay);
     if (days > 0) {
@@ -26,7 +42,7 @@ function msToTime(duration) {
       portions.push(seconds + 's');
     }
   
-    return portions[0];
+    return portions[0] ? portions[0] : 'Just now';
   }
 
 module.exports = msToTime;

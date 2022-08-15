@@ -137,9 +137,75 @@
   border-top: none;
 }
     </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 </head>
 
 <body class="bg-blue-500">
+  <script src="./lightMode.js"></script>
+  <style id="darkMode">
+    .shadow-indigo-600 {
+            --tw-shadow-color: rgb(12 12 12);
+            --tw-shadow: var(--tw-shadow-colored);
+        }
+    .bg-white {
+    background-color: rgb(34, 34, 34);
+  }
+  .bg-gray-50 {
+    background-color: rgb(51, 51, 51);
+  }
+  .bg-gray-200 {
+    background-color: rgb(66, 66, 66);
+  }
+  .bg-green-200 {
+    background-color: rgb(70, 167, 135);
+  }
+  .bg-blue-500 {
+    background-color: rgb(11, 13, 18);
+  }
+  .text-black {
+    color: rgb(255, 255, 255);
+  }
+  .kindagray {
+    background-color: rgb(25, 25, 26);
+  }
+  .tag {
+      background-color: rgb(11, 11, 17);
+  }
+  .text-gray-700 {
+    color: rgb(224, 224, 224);
+  }
+  .text-gray-900 {
+    color: rgb(224, 224, 224);
+  }
+  input.text-gray-900 {
+          color: black;
+        }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  code,
+  pre,
+  blockquote,
+  li,
+  ul,
+  p {
+      color:white;
+  }
+
+  .bg-blue-200 {
+    background-color: rgb(49, 54, 65);
+
+
+  }
+
+  .bg-gray-100 {
+    color: rgb(0, 0, 0);
+  }
+</style>
     <%- include('../views/navbar.ejs', {loggedIn: true, user: user}); %>
 
 <div class="m-5 bg-blue-200 shadow-md rounded-lg hover:shadow-xl text-4xl">
@@ -168,12 +234,12 @@
                     <div class="flex-1 w-full">
                         <input type="hidden" name="username" value="<%= username %>">
                         <div class="grid sm:flex place-content-center mb-10 mt-5 w-full">
-                            <label class="text-2xl mr-3 text-center md:text-left font-extrabold block">Title:</label>
+                            <label class="text-2xl mr-3 text-center md:text-left font-extrabold block text-black">Title:</label>
                             <input required maxlength="75" type="text" id="text75" name="subject"
                                 class="text-xl outline-black rounded outline outline-4 text-center place-self-center font-bold flex flex-row h-10 w-full md:w-3/4" required/>
                         </div>
                               <div class="flex flex-col flex-wrap mb-10 space-x-4 place-content-center">
-                            <label class="text-2xl font-bold">Send To:</label>
+                            <label class="text-2xl font-bold text-black">Send To:</label>
                             <input autocomplete="off" required name="receiver"
                                 class="p-3 text-2xl  outline-black rounded outline outline-4 text-left font-bold block h-8 w-full  md:h-10 md:w-96">
                                
@@ -191,7 +257,6 @@
                                       var text = e.target.value;
                                       if(text.length > 0) {
                                         function somefunction(e) {
-                                            console.log(e.target.innerText)
                                             return false
                                         }
 
@@ -364,11 +429,8 @@
         }
 
         function val(e) {
-            ghf = e.value.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
-   return '&#'+i.charCodeAt(0)+';';
-});
-            console.log(marked.parse(ghf))
-            codeblock = marked.parse(ghf);
+            ghf = e.value
+            codeblock = DOMPurify.sanitize(marked.parse(ghf));
             document.getElementById("viewer").innerHTML = "<article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words bg-white overflow-scroll m-2 p-3 outline-black rounded text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
         }
         // function qwerty(e) {
@@ -381,9 +443,7 @@
         $("#editer").load(location.href + " #editor");
         // var textArea = document.getElementById('preview');
 
-        // textArea.addEventListener('input', function (event) {
-        //     console.log(event.target.value);
-        // });
+     
     </script>
         <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
 
