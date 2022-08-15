@@ -1054,7 +1054,10 @@ app.post("/api/statusVote/:status/:id", (req, res) => {``
                 res.send({success: true})
                 ongoingVotes[id].votes = [];
                 ongoingVotes[id].after = undefined;
-                ongoingVotes[id].before = status;
+                ongoingVotes[id].before = "loading";
+                setTimeout(() => {
+                  ongoingVotes[id].before = status;
+                }, 10000);
                 return;
               } else {
                 res.send({success: false})
