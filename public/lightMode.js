@@ -6,6 +6,9 @@
               .bg-gray-50 {
                 background-color: rgb(51, 51, 51);
               }
+              .bg-gray-100 {
+                background-color: rgb(51, 51, 51);
+              }
               .bg-gray-200 {
                 background-color: rgb(66, 66, 66);
               }
