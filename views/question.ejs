@@ -293,6 +293,7 @@
 
 
           <%  } %>
+       <% if(ongoingVotes.before != "loading") { %>
             <% if(question.status=="protected" ) { %>
               <div class="bg-teal-100 border-t-4 border-teal-500 rounded-3xl my-6 text-teal-900 px-4 py-3 shadow-md"
                 role="alert">
@@ -303,7 +304,7 @@
                     <p class="text-sm">This is to help protect the question against spam and other unwanted
                       things.<br />Only users level 5 or above can comment, or answer on this question.</p>
 
-                    <% } else if(question.status=="closed" ) {%>
+                    <% } else if(question.status=="closed" && ongoingVotes.before != "loading") {%>
                       <div class="bg-gray-100 border-t-4 my-6 border-gray-500 rounded-3xl text-gray-900 px-4 py-3 shadow-md"
                         role="alert">
                         <div class="flex">
@@ -312,7 +313,7 @@
                           <div>
                             <p class="font-bold">This question is Closed</p>
                             <p class="text-sm">Nobody can Comment on or Answer this question</p>
-                            <% } else if(question.status=="open" && loggedIn && basicData.level>= 6) { %>
+                            <% } else if(question.status=="open" && loggedIn && basicData.level>= 6 && ongoingVotes.before != "loading") { %>
                               <div
                                 class="bg-green-100 rounded-3xl my-6 border-t-4 border-green-500 text-green-900 px-4 py-3 shadow-md"
                                 role="alert">
@@ -325,8 +326,8 @@
                                     <% } %>
                                       <% if((question.status=="open" && loggedIn && basicData.level>= 6) ||
                                         question.status != "open") { %>
-                                        <% if( basicData.level>= 6 && ((ongoingVotes.before != "closed" &&
-                                          ongoingVotes.before != "protected") || basicData.level >= 7)) { %>
+                                        <% if( (basicData.level>= 6 && ((ongoingVotes.before != "closed" &&
+                                          ongoingVotes.before != "protected") || basicData.level >= 7)) && ongoingVotes.before != "loading") { %>
                                           <br />
                                           <p class="text-sm">You can vote to change the status of this question </p>
                                           <!-- <script>
@@ -357,6 +358,7 @@
 
 
                                           </script>
+                                          
                                           <% if(!ongoingVotes.after) {%>
                                             <% if(question.status=="open" ) { %>
                                               <% if(basicData.level>= 7) { %>
@@ -479,7 +481,24 @@
                                     </div>
                                   </div>
                                   <% } %>
-
+                                  <% } else if(loggedIn && (basicData.level >= 6)) { %>
+                                    <div class="bg-blue-100 border-t-4 my-6 border-gray-500 rounded-3xl text-gray-900 px-4 py-3 shadow-md" role="alert">
+                        <div class="flex">
+                          
+                          <div>
+                            <p class="font-bold">Please wait..</p>
+                            <p class="text-sm">This question's status is changing. <br/> Please refresh in a few seconds to see the updates.</p>
+                            
+                                      
+                                        
+                                          <br>
+                            
+                                   
+                                                                        
+                                  </div>
+                                </div>
+                              </div>
+                                    <% } %>
                                     <div class="px-9 py-6 sm:px-0 rounded-3xl text-  shadow-lg  bg-white">
                                       <div class="flex flex-row">
                                         <div class="flex content-center flex-col w-1/12 px-3">
