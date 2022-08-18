@@ -1916,6 +1916,10 @@ video {
   padding: 0px;
 }
 
+.p-9 {
+  padding: 2.25rem;
+}
+
 .px-2 {
   padding-left: 0.5rem;
   padding-right: 0.5rem;
@@ -2104,6 +2108,10 @@ video {
 
 .pr-9 {
   padding-right: 2.25rem;
+}
+
+.pl-5 {
+  padding-left: 1.25rem;
 }
 
 .text-left {
@@ -3075,10 +3083,6 @@ video {
     display: flex;
   }
 
-  .sm\:hidden {
-    display: none;
-  }
-
   .sm\:h-screen {
     height: 100vh;
   }
@@ -3199,10 +3203,6 @@ video {
 
   .md\:grid {
     display: grid;
-  }
-
-  .md\:hidden {
-    display: none;
   }
 
   .md\:h-7 {
@@ -3366,10 +3366,6 @@ video {
     display: block;
   }
 
-  .lg\:inline {
-    display: inline;
-  }
-
   .lg\:flex {
     display: flex;
   }
@@ -3492,10 +3488,6 @@ video {
 
   .xl\:mt-2 {
     margin-top: 0.5rem;
-  }
-
-  .xl\:inline {
-    display: inline;
   }
 
   .xl\:flex {

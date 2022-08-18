@@ -253,6 +253,18 @@ app.get('/search', async (req, res) => {
   }
 })
 
+app.delete('/api/comment', async (req, res) => {
+  let { commentId, type, answerId, questionId } = req.body
+  // ge tuser
+
+  if(req.session.loggedIn) {
+   await api.deleteComment(commentId, type, answerId, questionId)
+   res.send({success: true});
+  } else {
+    res.send({success: false})
+  }
+});
+
 app.get('/searchResults/:after', async (req, res) => {
   const after = req.params.after
   console.log("After: " + after)

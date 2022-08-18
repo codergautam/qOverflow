@@ -75,6 +75,11 @@
 
   %>
   <style>
+    
+    .shadow-indigo-600 {
+              --tw-shadow-color: rgb(12 12 12);
+              --tw-shadow: var(--tw-shadow-colored);
+          }
     h1 {
       font-size: 2em;
       font-weight: normal;
@@ -190,10 +195,6 @@
   <body class="bg-blue-500">
     <script src="../lightMode.js"></script>
     <style id="darkMode">
-    .shadow-indigo-600 {
-              --tw-shadow-color: rgb(12 12 12);
-              --tw-shadow: var(--tw-shadow-colored);
-          }
           .bg-white {
     background-color: rgb(34, 34, 34);
   }
@@ -1744,7 +1745,7 @@ console.log(comment.comment_id)
                                                 </div>
 
                                                 <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
-                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator} (<i class="fa fa-trash" aria-hidden="true"></i>)</div>
+                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator} <button class="bg-red-500 p-1 ${<%= loggedIn %> && '<%= user.username %>' == comment.creator ? "" : "invisible <%=user.username%>"}" id="deleteComment${comment.comment_id}" >Delete</button></div>
 
 
                                             </div>
@@ -1762,6 +1763,46 @@ var commenty = htmlDoc.body.firstChild;
 
     document.getElementById("commentsList"+where).appendChild(commenty);
 
+
+    document.getElementById("deleteComment"+comment.comment_id).addEventListener("click", () => {
+      // disable btn
+      document.getElementById("deleteComment"+comment.comment_id).disabled = true;
+      // change text
+      document.getElementById("deleteComment"+comment.comment_id).innerHTML = "Deleting...";
+      fetch('/api/comment', {
+        method: 'DELETE',
+        body: JSON.stringify({
+          commentId: comment.comment_id,
+          type: where.length == 0 ? "question" : "answer",
+          questionId: "<%= question.question_id %>",
+          answerId: where,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json()).then( async(j) => {
+        //remove disabled 
+        document.getElementById("deleteComment"+comment.comment_id).disabled = false;
+        // change text
+        document.getElementById("deleteComment"+comment.comment_id).innerHTML = "Delete";
+        if(j.success) {
+          document.getElementById("mainCommentDiv"+comment.comment_id).remove();
+          // decrement comment count id showComments
+          if(where.length == 0) {
+          mainCommentsCnt--;
+
+
+          }
+        }
+      }).catch((e) => {
+        console.log(e);
+        //remove disabled 
+        document.getElementById("deleteComment"+comment.comment_id).disabled = false;
+        // change text
+        document.getElementById("deleteComment"+comment.comment_id).innerHTML = "Delete";
+      });
+    }
+    );
 
     //comment upvote and downvote
    

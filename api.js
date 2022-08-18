@@ -243,6 +243,10 @@ class Api {
     username = encodeURIComponent(username);
     return this.sendRequest("/users/" + username, "DELETE");
   }
+  async deleteComment(commentId, type, answerId, questionId) {
+    if(type == "question") return this.sendRequest("/questions/" + questionId + "/comments/" + commentId, "DELETE");
+    else return this.sendRequest("/questions/" + questionId + "/answers/" + answerId + "/comments/" + commentId, "DELETE");
+  }
 
   async loginUser(username, password, salt) {
     username = encodeURIComponent(username);
