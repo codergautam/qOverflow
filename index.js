@@ -1,4 +1,4 @@
-let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
+let levelMinimums = [15, 50, 75, 125, 1000, 2000, 3000, 10000]
 
 const express = require('express')
 const http = require('http')
@@ -252,6 +252,18 @@ app.get('/search', async (req, res) => {
     })
   }
 })
+
+app.delete('/api/comment', async (req, res) => {
+  let { commentId, type, answerId, questionId } = req.body
+  // ge tuser
+
+  if(req.session.loggedIn) {
+   await api.deleteComment(commentId, type, answerId, questionId)
+   res.send({success: true});
+  } else {
+    res.send({success: false})
+  }
+});
 
 app.get('/searchResults/:after', async (req, res) => {
   const after = req.params.after
@@ -520,12 +532,11 @@ app.get('/dashboard', async (req, res) => {
         let user = data.user
         let userPoints = parseInt(user.points)
         let _level = levelCalculation(userPoints)
-        let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in Protection votes', 'Close and Reopen Quesitons']
+        let allAbilities = ['Create new answers', 'Upvote questions and answers', 'Comment under all questions and answers', 'Create bounties' ,'Downvote questions and answers', 'View the upvotes/downvotes of any question or answer', 'Participate in edit votes' , 'Participate in Protection votes', 'Close and Reopen Quesitons']
         let _abilities = allAbilities.splice(0, _level)
         user.points = userPoints
         user.level = _level
         let nextLevel = _level + 1
-        let levelMinimums = [15, 50, 125, 1000, 3000, 10000]
         let nextLevelPoints = levelMinimums[_level - 1]
         user.abilities = _abilities
         // console.log(`You are Level ${_level}`)
