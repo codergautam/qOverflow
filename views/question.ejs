@@ -556,6 +556,8 @@
                                                 <%= question.downvotes %>
                                               </b></p>
                                             <% } %>
+                                            <br/>
+                                         
                                         </div>
                                         <div></div> 
                                         <div class="flex-col w-full px-[90px]">
@@ -569,9 +571,39 @@
                                             </p>
                                           </div>
                                           <div class="flex-col px-6 pt-4 pb-2 text-end my-9 w-full">
+                                            <% if(loggedIn && basicData.level >= 7 ) { %>
+                                              <% if(pendingEdits.find(f=>!f.answerId)) { %>
+                                                <%  votesa = pendingEdits.find(f=>!f.answerId).votes %>
+                                            
+                                                <h4>Ongoing edit vote:<br/>Votes needed: <%= 3 - votesa.length  %></h1>
+                                                  <% if(votesa.includes(user.username)) { %>
+                                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="window.location.href='/removeEditVote?qId=<%=question.question_id%>'">
+                                                  Remove Vote
+                                                </button>
+                                                <% } else { %> 
+                                                  <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="window.location.href='/addEditVote?qId=<%=question.question_id%>'">
+                                                  Add Vote
+                                                </button>
+                                                  <% } %>
+                                                <br/>
+
+                                                
+                                               
+                                              <% } else { %>
+                                                <form action="/editQ" method="post">
+                                                <input type="hidden" name="question" value="<%= question.question_id %>">
+                                                <input type="hidden" name="questionTitle" value="<%=btoa(encodeURIComponent(question.title))%>">
+                                               
+                                                <input type="hidden" name="questionText" value="<%=btoa(encodeURIComponent(question.text))%>">
+                                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</button>
+                                              </form>
+                                                <% } %>
+                                             
+                                              <% } %>
                                             <span
                                               class="inline-block place-content-fit bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
                                               <center>
+                                                
                                                 <p>By: <%= question.creator%>
                                                 </p> <img src=''  onerror="this.src='/person.webp'" width="50" height="50" id="qPfp"
                                                   class="max-w-full h-auto rounded-full">
@@ -1139,6 +1171,44 @@
                                           var hasAcceptedAnswer = <%= question.hasAcceptedAnswer %>
   var owner = <%= loggedIn && question.creator == user.username ? "true" : "false" %>;
 
+  var pendingEdits = JSON.parse(decodeURIComponent('<%- encodeURIComponent( JSON.stringify(pendingEdits)) %>'));
+
+  var n = '';
+
+  if(pendingEdits.find(f=>answer.answer_id == f.answerId)) { 
+    var votesa = pendingEdits.find(f=>answer.answer_id == f.answerId).votes;
+    n = `
+    <h4>Ongoing edit vote:<br/>Votes needed: ${ 3 - votesa.length}  </h1>
+      `;
+          if(votesa.includes("<%=user.username%>")) {
+            n+= ` <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="window.location.href='/removeEditVote?qId=<%=question.question_id%>&aId=${answer.answer_id}'">
+                                              Remove Vote
+                                            </button>`
+          } else {
+            n+= ` <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="window.location.href='/addEditVote?qId=<%=question.question_id%>&aId=${answer.answer_id}'">
+                                              Remove Vote
+                                            </button>`
+          }
+                                          
+                                        
+                                         n+=  ` <br/>`
+                                            
+  } else {
+   n = ` <form action="/edit" method="post">
+                                                <input type="hidden" name="question" value="<%= question.question_id %>">
+                                                <input type="hidden" name="answer" value="${answer.answer_id}">
+                                                <input type="hidden" name="answerText" value="${btoa(encodeURIComponent(answer.text))}">
+                                                <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Edit</button>
+                                              </form>`
+                                             
+  }
+                                            
+                                           
+
+                                            
+                                           
+                            
+  
                                           var loggedIn = <% if (loggedIn) { %> true <% } else { %> false <% } %>;
                                           var t = `<div class="max-w-5xl bg-${answer.accepted ? "green-100" : "white"} mx-auto px-9 py-[12px] rounded-3xl my-9 overflow-hidden shadow-lg hidden" id="mainAnswerDiv${id}">
             <div class="flex flex-row">
@@ -1163,6 +1233,11 @@
               </div>
             </div>
             <div class="px-6 pt-4 pb-2 text-right">
+              <% if(loggedIn && basicData.level >= 7) { %>
+                                       ${n}  
+                                              <% } %>
+
+                                          
               <span class="inline-block place-content-stretch bg-gray-200  px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2"><center><p>By: ${answer.creator} </p> <img src='' onerror="this.src='/person.webp'" width="50" height="50" id="aPfp${answer.answer_id}" class="max-w-full h-auto rounded-full"><p id="levelText${answer.answer_id}"></p></center></span>
                <br>
                <span class="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">${msToTime(Date.now() - answer.createdAt) ?? "just now"} ago</span>

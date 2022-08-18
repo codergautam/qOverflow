@@ -658,7 +658,7 @@ class Api {
           "GET"
         )
           .then((data) => {
-            if (data.success) {
+            if (data && data.success) {
               if (data.error)
                 resolve({ success: true, voted: false, error: data.error });
               else resolve({ success: true, voted: true, vote: data.vote });

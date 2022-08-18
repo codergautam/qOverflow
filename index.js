@@ -21,6 +21,7 @@ const io = new Server(server, {
 
 var forgotTokens = {};
 var ongoingVotes = {};
+var pendingEdits = {};
 
  const api = new Api(process.env.key)
  var gravatar = require('gravatar');
@@ -85,6 +86,84 @@ app.get('/lightMode', async (req, res) => {
   }
   res.send(JSON.stringify(req.session.lightMode))
 })
+
+app.post('/edit', async (req, res) => {
+  if(!req.session.loggedIn) {
+    res.redirect('/')
+    return;
+  }
+  let { question, answer, answerText } = req.body
+
+  if(!question) {
+    res.redirect('/')
+    return;
+  }
+
+  res.render('edit', {
+    user: req.session.user,
+    username: req.session.user.username,
+    question: question,
+    answer: answer,
+    text: answerText,
+    lightMode: req.session.lightMode
+  });
+
+})
+
+app.post('/editQ', async (req, res) => {
+  if(!req.session.loggedIn) {
+    res.redirect('/')
+    return;
+  }
+  let { question, questionText, questionTitle } = req.body
+
+  if(!question) {
+    res.redirect('/')
+    return;
+  }
+
+  res.render('edit', {
+    user: req.session.user,
+    username: req.session.user.username,
+    question: question,
+    text: questionText,
+    lightMode: req.session.lightMode,
+    questionTitle: questionTitle
+  });
+
+})
+
+app.post('/edity', async (req, res) => {
+  if(!req.session.loggedIn) {
+    res.redirect('/')
+    return;
+  }
+  if(!req.body.question || !req.body.text) {
+    res.redirect('/')
+    return;
+  }
+  if(pendingEdits[req.body.question+(req.body.answer ? req.body.answer : "")]) {
+    res.render('error', {error: "Someone else has submitted an edit for this question/answer", user: req.session.user, username: req.session.user.username, lightMode: req.session.lightMode})
+    return;
+  }
+  var d = await getBasicData(req.session.user.username)
+  if(d.success) {
+
+    if(d.level < 7) return res.redirect('/')
+    let { question, text, answer, subject } = req.body
+    pendingEdits[question+(answer ? answer : "")] = {
+      questionId: question,
+      answerId: answer,
+      newText: text,
+      title: subject,
+      who: req.session.user.username,
+      votes: []
+    }
+    // res.redirect('/question/'+question);
+    res.redirect('/addEditVote?qId='+question+(answer ? "&aId="+answer : ""));
+
+  } else res.redirect('/')
+});
 
 //------------- DARK MODE STUFF -------------------
 app.get('/', async (req, res) => { //Homepage
@@ -1039,6 +1118,67 @@ app.post("/api/removeStatusVote/:id", (req, res) => {
   }
 });
 
+app.get("/removeEditVote", (req, res) => {
+  var {aId, qId} = req.query;
+  if(!qId) return res.send({success: false})
+  if(!aId) aId = '';
+
+  if(pendingEdits[qId+aId]) {
+    if(pendingEdits[qId+aId].votes.includes(req.session.user?.username)) {
+      pendingEdits[qId+aId].votes.splice(pendingEdits[qId+aId].votes.indexOf(req.session.user?.username), 1)
+      if(pendingEdits[qId+aId].votes.length == 0) {
+        delete pendingEdits[qId+aId]
+      }
+      res.redirect('/question/'+qId)
+    }
+  } else res.redirect("/question/"+qId)
+});
+
+app.get('/addEditVote', (req, res) => {
+  var {qId, aId} = req.query;
+  if(!req.session.loggedIn) {
+    res.redirect('/login')
+    return
+  }
+  if(!qId) return res.send({success: false, error: "No question id"})
+  if(!aId) aId = '';
+  getBasicData(req.session.user.username).then(data => {
+    if(data.success && data.level >= 7) {
+      if(pendingEdits[qId+aId]) {
+
+        if(pendingEdits[qId+aId].votes.includes(req.session.user.username)) {
+          res.redirect('/question/'+qId)
+        console.log(pendingEdits[qId+aId], "test2")
+          
+          return
+        }
+        pendingEdits[qId+aId].votes.push(req.session.user.username)
+        console.log(pendingEdits[qId+aId], "test1")
+        if(pendingEdits[qId+aId].votes.length == 3) {
+          if(aId.length > 0) {
+            api.updateAnswer(qId, aId, pendingEdits[qId+aId].newText).then(data => {
+              res.redirect('/question/'+qId)
+            });
+
+          } else {
+            api.updateQuestion(qId, undefined, pendingEdits[qId].title, pendingEdits[qId].newText).then(data => {
+              res.redirect('/question/'+qId)
+            })
+          }
+        } else {
+          res.redirect('/question/'+qId)
+        }
+      } else {
+        console.log(pendingEdits[qId+aId], "test5")
+
+        res.redirect('/question/'+qId)
+      }
+    } else {
+      res.redirect('/')
+    }
+  });
+});
+
 app.post("/api/statusVote/:status/:id", (req, res) => {``
   var user = req.session.user?.username;
   if(!user) res.send({success: false})
@@ -1149,6 +1289,16 @@ app.get("/question/:id", (req, res) => {
     api.hasUserVoted(id, req.session.user?.username).then(data3 => {
       io.emit("increaseView", id)
       // console.timeEnd("getQuestion")
+      
+      var pending = [];
+
+      Object.values(pendingEdits).forEach(edit => {
+        if(edit.questionId == id) {
+          pending.push(edit)
+        }
+      });
+      console.log("PENDING", pending);
+
       getBasicData(req.session.user?.username).then(basicData => {
     res.render('question', {
       question: data.question,
@@ -1161,7 +1311,8 @@ app.get("/question/:id", (req, res) => {
         before: data.question.status,
         votes: []
       },
-      bounty: bounties[id] 
+      bounty: bounties[id],
+      pendingEdits: pending
     })
     api.increaseViews(id).then(data4 => {
   });
@@ -1205,7 +1356,7 @@ function getBasicData(username) {
       basicDataCache[username] = needed;
       resolve({success:true, ...needed.data})
     } else {
-      console.log(data.error)
+      console.log(data)
       resolve(JSON.stringify({success: false}))
     }
     });
