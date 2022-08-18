@@ -4985,6 +4985,10 @@ video {
     grid-column: span 3 / span 3;
   }
 
+  .lg\:col-span-6 {
+    grid-column: span 6 / span 6;
+  }
+
   .lg\:col-span-9 {
     grid-column: span 9 / span 9;
   }
@@ -5031,6 +5035,10 @@ video {
 
   .lg\:w-11\/12 {
     width: 91.666667%;
+  }
+
+  .lg\:w-1\/2 {
+    width: 50%;
   }
 
   .lg\:w-3\/4 {
