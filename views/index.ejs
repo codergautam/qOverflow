@@ -237,7 +237,7 @@
           <span class="transition-all delay-150 justify-content-center inline-block text-center bg-gray-200 rounded-full px-3 py-1 text-sm xl:text-lg 2xl:text-xl font-semibold xl:font-bold text-gray-700 mr-1 mb-2">${msToTime(Date.now() - data.createdAt) ? msToTime(Date.now() - data.createdAt) +" ago": "Just now"}</span>
           <span class="transition-all delay-150 inline-block bg-gray-200 text-center rounded-full px-3 py-1 text-sm 2xl:text-xl xl:text-lg font-semibold xl:font-bold text-gray-700 mr-1 mb-2" id="${data.question_id}points">${data.upvotes - data.downvotes} points</span>
           <span class="transition-all delay-150 inline-block bg-gray-200 text-center rounded-full px-3 py-1 text-sm 2xl:text-xl xl:text-lg font-semibold xl:font-bold text-gray-700 mr-1 mb-2" id="${data.question_id}views">${data.views} views</span>
-          <span class="transition-all delay-150 inline-block bg-gray-200 text-center rounded-full px-3 py-1 text-sm 2xl:text-xl xl:text-lg font-semibold xl:font-bold text-gray-700 mr-1 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}" id="${data.question_id}answers">${data.answers} answers</span>
+          <span class="transition-all delay-150 inline-block bg-gray-200 text-center rounded-full px-3 py-1 text-sm 2xl:text-xl xl:text-lg font-semibold xl:font-bold text-gray-700 mr-1 mb-2 ${data.hasAcceptedAnswer ? "text-green-800" : ""}" id="${data.question_id}answers">${data.answers} answers ${data.hasAcceptedAnswer ? "<span class='underline decoration-2 underline-offset-2'>Accepted Ans.</span>" : ""}</span>
         </div>
       </div>
     </div> 

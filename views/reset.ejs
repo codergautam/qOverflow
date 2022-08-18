@@ -10,8 +10,13 @@
 </head>
 <script src="https://cdn.tailwindcss.com"></script>
 
-<body class="bg-blue-500 ">  
+<body class="bg-blue-500 ">
+  <style src="../lightMode.js"></style>  
   <style>
+    .shadow-indigo-600 {
+              --tw-shadow-color: rgb(12 12 12);
+              --tw-shadow: var(--tw-shadow-colored);
+          }
     .bg-white {
       background-color: rgb(34, 34, 34);
     }
@@ -64,11 +69,15 @@
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
             
-            <label for="password" class="block text-sm font-medium leading-5 text-gray-700">
+            <label for="password" 
+            class="block text-sm font-medium leading-5 text-gray-700"
+            >
               Password
             </label>
             <div class="mt-1 rounded-md shadow-sm">
-              <input id="password" type="password" name="password" class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5" required>
+              <input id="password" type="password" name="password"
+               class="form-input block w-full transition duration-150 ease-in-out sm:text-sm sm:leading-5" 
+               required>
               <label id="passwordLabel" style="color: red;" for="password"></label>
               <!-- password strength -->
               <script>
