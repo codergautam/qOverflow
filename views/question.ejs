@@ -500,6 +500,38 @@
                                 </div>
                               </div>
                                     <% } %>
+<% if(locals.bounty) { %>
+  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-2xl relative" role="alert">
+  <strong class="font-bold">This question has a bounty</strong>
+  <br/>
+  <span class="block sm:inline">The accepted answer of this question will recieve <%= bounty.points %> extra points<br/>Bounty by: <%= bounty.creator %></span>
+</div>
+<br/>
+<% } else if(loggedIn && basicData.level >= 4 && basicData.points >= 150 && !question.hasAcceptedAnswer) { %>
+  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-2xl relative" role="alert">
+  <strong class="font-bold">Create a bounty on this question</strong>
+  <br/>
+  <span class="block sm:inline">The accepted answer of this question will recieve extra points</span>
+ 
+  <br/>
+  <form action="/bountyAdd" method="post" >
+    <input type="hidden" name="question_id" value="<%= question.question_id %>">
+    <input type="number" id="points" name="points" min="75" value="75" max="<%= Math.min(basicData.points - 150, 500) %>" placeholder="Points" class="border border-red-400 rounded-lg px-4 py-2">
+    <br/>
+    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Create Bounty</button>
+    </form>
+    <script>
+    // prevent id points from being higher than 500
+    const points = document.getElementById("points");
+    points.addEventListener("input", function (e) {
+      if (this.value > <%= Math.min(basicData.points - 150, 500) %>) {
+        this.value = <%= Math.min(basicData.points - 150, 500) %>;
+      }
+    });
+    </script>
+</div>
+<br/>       
+  <% } %>
                                     <div class="px-9 py-6 sm:px-0 rounded-3xl text-  shadow-lg  bg-white">
                                       <div class="flex flex-row">
                                         <div class="flex content-center flex-col w-1/12 px-3">
