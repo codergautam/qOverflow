@@ -9,16 +9,16 @@
     overflow-x: hidden;
    }
   </style>
-  <div class=" w-full py-2 lg:py-3 xl:py-4 mx-auto px-2 md:px-3 lg:px-4 flex">
-    <div class="w-full flex">
-      <a href="/" id="logo" class="flex w-full items-baseline">
+  <div class="w-full py-2 lg:py-3 xl:py-4 mx-auto px-2 md:px-3 lg:px-4 flex">
+    <div class="w-8 lg:w-full flex">
+      <a href="/" id="logo" class="flex w-8 lg:w-fit items-baseline">
         <!-- Logo -->
-        <img class="h-8 w-fill nav" src="../BDPALogo.png">
-          <img class="h-14 w-fill nav" src="../qOverflowLogoSmall.png">
+        <img class="h-8 w-8 xl:h-9 xl:w-9 self-center block nav" src="../BDPALogo.png">
+          <img class="lg:h-10 xl:h-11 lg:block self-center hidden nav" src="../qOverflowLogoSmall.png">
         </a>
       </div>
       <div class="flex pl-5 mr-4 w-full group" id="search">
-          <form class="flex w-full sm:w-4/5 xl:w-full h-full 2xl:w-full" action="/search" method="POST">
+          <form class="flex w-full sm:w-4/5 max-w-sm xl:w-full h-full 2xl:w-full" action="/search" method="POST">
             <input id="1" name="searchQuery" type="text" required maxlength="100"
               class="mr-2 transition delay-75  w-full duration-100 ease-in-out bg-white focus:bg-gray-50 focus:rounded-lg focus:border-none border-b-2 border-gray-100 border-spacing-1 focus:outline-none py-1 appearance-none px-3 placeholder-gray-500 text-gray-900 focus:z-10 text-sm lg:text-base font-semibold"
               placeholder="Search" value="<%= locals.searchQuery %>">
@@ -159,7 +159,7 @@
 
     </div>
     <div
-      class="lg:hidden hidden mr-4 md:text-right place-self-end place-content-end lg:place-content-center h-full md:space-x-2 lg:justify-start w-full grid"
+      class="lg:hidden hidden mr-4 md:text-right place-self-center place-content-center h-full md:space-x-2 lg:justify-start w-full grid"
       id="menu">
       <!--Mail Icon-->
       <!-- Home Icon -->
@@ -179,7 +179,7 @@
                 </h2>
               </div>
               <!-- user level and points text-->
-              <div class="group shadow-purple-900 flex align-middle place-self-end rounded-full">
+              <div class="group shadow-purple-900 flex align-middle place-self-center rounded-full">
                 <h4
                   class="group-hover:visible text-lg xl-text-xl 2xl:text-2xl my-auto font-dummy transition-all delay-75 duration-300 ease-in-out" style="color: #01B3E7;"
                   id="user-level">Level: <%= user.level %>
@@ -194,7 +194,7 @@
           <hr>
           <% } %>
       </a>
-      <a href="/" class="lg:place-content-center w-fill md:grid w-min justify-self-end lg:align-middle">
+      <a href="/" class="place-content-center w-fill md:grid w-min justify-self-center lg:align-middle">
         <div
           class="group wavy-hover hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
           <svg xmlns="http://www.w3.org/2000/svg" class="md:ml-auto mb-1 h-8 xl:h-9 text-blue-500" viewBox="0 0 20 20" style="color: #01B3E7;"
@@ -209,7 +209,7 @@
         </div>
         <hr>
       </a>
-      <a href="/mail" class="lg:place-content-center w-min justify-self-end w-fill md:grid md:align-middle">
+      <a href="/mail" class="place-content-center w-min justify-self-center w-fill md:grid md:align-middle">
         <!-- Mail Icon -->
         <div
           class="group hover:shadow-2xl shadow-purple-900 flex align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
@@ -225,7 +225,7 @@
         <hr>
       </a>
       <div
-        class="w-full place-content-end grid justify-self-end md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
+        class="w-full place-content-center grid justify-self-center md:flex group hover:shadow-2xl shadow-purple-900 align-middle rounded-full md:px-2 py-1 transition ease-in-out delay-75 duration-300 hover:-translate-y-2">
         <a href="/logout" class="wavy-hover text-xl md:text-2xl xl:text-3xl  my-auto font-dummy text-blue-500 " style="color: #01B3E7;">Logout</a>
       </div>
     </div>

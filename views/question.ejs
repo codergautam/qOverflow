@@ -75,6 +75,11 @@
 
   %>
   <style>
+    
+    .shadow-indigo-600 {
+              --tw-shadow-color: rgb(12 12 12);
+              --tw-shadow: var(--tw-shadow-colored);
+          }
     h1 {
       font-size: 2em;
       font-weight: normal;
@@ -185,15 +190,12 @@
 
 
   </style>
-    <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
+
 
   <body class="bg-blue-500">
+    <%- include('../views/navbar.ejs', {loggedIn: loggedIn, user: user}); %>
     <script src="../lightMode.js"></script>
     <style id="darkMode">
-    .shadow-indigo-600 {
-              --tw-shadow-color: rgb(12 12 12);
-              --tw-shadow: var(--tw-shadow-colored);
-          }
           .bg-white {
     background-color: rgb(34, 34, 34);
   }
@@ -312,7 +314,7 @@
                           <div>
                             <p class="font-bold">This question is Closed</p>
                             <p class="text-sm">Nobody can Comment on or Answer this question</p>
-                            <% } else if(question.status=="open" && loggedIn && basicData.level>= 6 && ongoingVotes.before != "loading") { %>
+                            <% } else if(question.status=="open" && loggedIn && basicData.level>= 7 && ongoingVotes.before != "loading") { %>
                               <div
                                 class="bg-green-100 rounded-3xl my-6 border-t-4 border-green-500 text-green-900 px-4 py-3 shadow-md"
                                 role="alert">
@@ -323,10 +325,10 @@
                                     <p class="font-bold">This question is Open</p>
                                     <p class="text-sm">Anyone can Comment on or Answer this question</p>
                                     <% } %>
-                                      <% if((question.status=="open" && loggedIn && basicData.level>= 6) ||
+                                      <% if((question.status=="open" && loggedIn && basicData.level>= 7) ||
                                         question.status != "open") { %>
-                                        <% if( (basicData.level>= 6 && ((ongoingVotes.before != "closed" &&
-                                          ongoingVotes.before != "protected") || basicData.level >= 7)) && ongoingVotes.before != "loading") { %>
+                                        <% if( (basicData.level>= 7 && ((ongoingVotes.before != "closed" &&
+                                          ongoingVotes.before != "protected") || basicData.level >= 9)) && ongoingVotes.before != "loading") { %>
                                           <br />
                                           <p class="text-sm">You can vote to change the status of this question </p>
                                           <!-- <script>
@@ -360,7 +362,7 @@
                                           
                                           <% if(!ongoingVotes.after) {%>
                                             <% if(question.status=="open" ) { %>
-                                              <% if(basicData.level>= 7) { %>
+                                              <% if(basicData.level>= 9) { %>
                                                 <button id="voteClose"
                                                   class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote
                                                   to Close</button>
@@ -369,7 +371,7 @@
                                                     class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Vote
                                                     to Protect</button>
                                                   <script>
-                      <% if (basicData.level >= 7) { %>
+                      <% if (basicData.level >= 9) { %>
 
                                                       document.getElementById("voteClose").onclick = function() {
                                                         voteQuestionStatus("closed");
@@ -467,7 +469,7 @@
                               </div>
                               <% } %>
                                 <% if((!loggedIn || ((ongoingVotes.after=="closed" || ongoingVotes.after=="open" ) ?
-                                  (basicData.level <=6) : (basicData.level <=5))) && ongoingVotes.votes.length>= 1) { %>
+                                  (basicData.level <=7) : (basicData.level <=6))) && ongoingVotes.votes.length>= 1) { %>
                                   <div class="text-center py-4 lg:px-4">
                                     <div
                                       class="p-2 bg-teal-800 items-center text-indigo-100 leading-none lg:rounded-full flex lg:inline-flex"
@@ -480,7 +482,7 @@
                                     </div>
                                   </div>
                                   <% } %>
-                                  <% } else if(loggedIn && (basicData.level >= 6)) { %>
+                                  <% } else if(loggedIn && (basicData.level >= 7)) { %>
                                     <div class="bg-blue-100 border-t-4 my-6 border-gray-500 rounded-3xl text-gray-900 px-4 py-3 shadow-md" role="alert">
                         <div class="flex">
                           
@@ -510,12 +512,12 @@
                                             <%= question.upvotes - question.downvotes %>
                                           </p>
                                           <img
-                                            class="rounded-lg rotate-180 cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 4 ? '' : 'invisible' %>"
+                                            class="rounded-lg rotate-180 cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 5 ? '' : 'invisible' %>"
                                             id="questionDown" style="width: 50%; margin-left: auto; margin-right: auto;"
                                             src="<%= voted.voted && voted.vote == 'downvoted' ? '/voteSelected.png' : '/vote.png' %>"
                                             alt="">
                                           <br />
-                                          <% if(loggedIn && basicData.level>= 5) { %>
+                                          <% if(loggedIn && basicData.level>= 6) { %>
                                             <p>Upvotes: <b>
                                                 <%= question.upvotes %>
                                               </b> Downvotes: <b>
@@ -582,9 +584,9 @@
 
 
 
-                                        <% if(loggedIn && ((question.status=="open" && (basicData.level>= 3 ||
+                                        <% if(loggedIn && ((question.status=="open" && (basicData.level>= 4 ||
                                           question.creator == user.username)) || (question.status == "protected" &&
-                                          (basicData.level >= 5)))) { %>
+                                          (basicData.level >= 6)))) { %>
                                           <div class="flex flex-col justify-center items-center w-[50%]">
 
                                             <textarea maxlength="150" rows="2"
@@ -613,7 +615,7 @@
                                     </div>
                                     <!-- create answer -->
                                     <% if(loggedIn && ((question.status=="open" && basicData.points>= 1) ||
-                                      (question.status == "protected" && basicData.level >= 5))) { %>
+                                      (question.status == "protected" && basicData.level >= 6))) { %>
                                       <div class="flex items-center justify-center rounded-3xl flex-col bg-white px-[30px]" id="createDiv"
                                         style="display: none;">
                                         <div class=" my-5 rounded overflow-hidden min-w-full ">
@@ -1110,9 +1112,9 @@
             <div class="flex flex-row">
               <div class="flex content-center flex-col w-1/12">
                 <img class="rounded-lg cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 2 ? '' : 'hidden' %>" id="answerUp${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
-                <p class="text-center odometer text-3xl <%= loggedIn && basicData.level >= 4 ? '' : 'pt-9' %>" id="voteA${answer.answer_id}">${answer.upvotes - answer.downvotes}</p>
-                <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 4 ? '' : 'invisible' %>" id="answerDown${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;"  src="/vote.png" alt="">
-                <% if(loggedIn && basicData.level >= 5) { %>
+                <p class="text-center odometer text-3xl <%= loggedIn && basicData.level >= 5 ? '' : 'pt-9' %>" id="voteA${answer.answer_id}">${answer.upvotes - answer.downvotes}</p>
+                <img class="rounded-lg rotate-180 cursor-pointer min-w-[30px] <%= loggedIn && basicData.level >= 5 ? '' : 'invisible' %>" id="answerDown${answer.answer_id}" style="width: 50%; margin-left: auto; margin-right: auto;"  src="/vote.png" alt="">
+                <% if(loggedIn && basicData.level >= 6) { %>
                 <p>Upvotes: <b>${answer.upvotes}</b>  Downvotes: <b>${answer.downvotes}</b></p>
                 <% } %>
                 <hr/>
@@ -1152,7 +1154,7 @@
          
               
                
-${(loggedIn && ((<%= question.status == "open" %> && (<%= (basicData.level >= 3) %> || answer.creator == "<%= user?.username %>" ) ) || <%= (question.status == "protected" && (basicData.level >= 5)) %>))?`
+${(loggedIn && ((<%= question.status == "open" %> && (<%= (basicData.level >= 3) %> || answer.creator == "<%= user?.username %>" ) ) || <%= (question.status == "protected" && (basicData.level >= 6)) %>))?`
                       <div class="flex flex-col justify-center items-center w-[50%]  ">
 
                         <textarea maxlength="150" rows="2" class="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 my-2 px-4 text-gray-700 leading-tight resize-none focus:outline-none focus:bg-white focus:border-blue-500" id="commentText${id}" type="text" placeholder="Comment"></textarea>
@@ -1509,7 +1511,7 @@ hideThisCommentList();
 
   <% if(loggedIn) { %>
     
-    if(<%= (((question.status == "open" && basicData.level >= 3) || (question.status == "protected" && basicData.level >= 5))) %> || (answer.creator == "<%= user.username %>" && <%= question.status != "closed" %>)) {
+    if(<%= (((question.status == "open" && basicData.level >= 3) || (question.status == "protected" && basicData.level >= 6))) %> || (answer.creator == "<%= user.username %>" && <%= question.status != "closed" %>)) {
   document.getElementById("postComment"+answer.answer_id).onclick = () => {
     var comment = document.getElementById("commentText"+answer.answer_id).value;
     if(comment.trim().length == 0) return;
@@ -1572,7 +1574,7 @@ var remaining = [];
 
       console.log("alreadyAnswered", alreadyAnswered);
       if(!alreadyAnswered) {
-        <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
+        <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 6))) { %>
 
         document.getElementById("createDiv").style.display = "block";
         <% } %>
@@ -1662,7 +1664,7 @@ var remaining = [];
 
 
 
-  <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 5))) { %>
+  <% if(loggedIn && ((question.status == "open" && basicData.points >= 1) || (question.status == "protected" && basicData.level >= 6))) { %>
 
   document.getElementById("answerText").addEventListener("keyup", () => {
     document.getElementById("previewText").innerHTML = DOMPurify.sanitize(marked.parse(document.getElementById("answerText").value, {
@@ -1737,14 +1739,14 @@ console.log(comment.comment_id)
 
                                           <div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
                                             <div class="flex flex-col items-center justify-between   rounded-lg">
-                                              <img class="rounded-lg rotate-0  cursor-pointer min-w-[10px]" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                              <img class="rounded-lg rotate-0  cursor-pointer min-w-[10px] ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "invisible"}" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                                                 
                                               <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
-                                                <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px]" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                                <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px] ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "invisible"}}" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                                                 </div>
 
                                                 <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
-                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator}</div>
+                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator} <button class="bg-red-500 p-1 ${<%= loggedIn ?? false %> && '<%= loggedIn ? locals.user?.username : 'undefined' %>' == comment.creator ? "" : "invisible"}" id="deleteComment${comment.comment_id}" >Delete</button></div>
 
 
                                             </div>
@@ -1762,6 +1764,46 @@ var commenty = htmlDoc.body.firstChild;
 
     document.getElementById("commentsList"+where).appendChild(commenty);
 
+
+    document.getElementById("deleteComment"+comment.comment_id).addEventListener("click", () => {
+      // disable btn
+      document.getElementById("deleteComment"+comment.comment_id).disabled = true;
+      // change text
+      document.getElementById("deleteComment"+comment.comment_id).innerHTML = "Deleting...";
+      fetch('/api/comment', {
+        method: 'DELETE',
+        body: JSON.stringify({
+          commentId: comment.comment_id,
+          type: where.length == 0 ? "question" : "answer",
+          questionId: "<%= question.question_id %>",
+          answerId: where,
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => response.json()).then( async(j) => {
+        //remove disabled 
+        document.getElementById("deleteComment"+comment.comment_id).disabled = false;
+        // change text
+        document.getElementById("deleteComment"+comment.comment_id).innerHTML = "Delete";
+        if(j.success) {
+          document.getElementById("mainCommentDiv"+comment.comment_id).remove();
+          // decrement comment count id showComments
+          if(where.length == 0) {
+          mainCommentsCnt--;
+
+
+          }
+        }
+      }).catch((e) => {
+        console.log(e);
+        //remove disabled 
+        document.getElementById("deleteComment"+comment.comment_id).disabled = false;
+        // change text
+        document.getElementById("deleteComment"+comment.comment_id).innerHTML = "Delete";
+      });
+    }
+    );
 
     //comment upvote and downvote
    
@@ -1794,7 +1836,7 @@ var commenty = htmlDoc.body.firstChild;
 
     var upvoteComment = async () => {
       var action = document.getElementById("commentUp"+comment.comment_id).src.split("/")[document.getElementById("commentUp"+comment.comment_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
-
+      if(action == "decrement") return;
       var j = await fetch('/api/comment/'+comment.comment_id+'/upvote', {
         method: 'POST',
         body: JSON.stringify({
@@ -1832,6 +1874,7 @@ var commenty = htmlDoc.body.firstChild;
     }
     var downvoteComment = async () => {
       var action = document.getElementById("commentDown"+comment.comment_id).src.split("/")[document.getElementById("commentDown"+comment.comment_id).src.split("/").length-1] === "vote.png" ? "increment" : "decrement";
+      if(action == "decrement") return;
 
       var j = await fetch('/api/comment/'+comment.comment_id+'/downvote', {
         method: 'POST',
@@ -2065,7 +2108,7 @@ appendCommentSpinner()
     }
   });
 
-  <% if(loggedIn && ((question.status == "open" && (basicData.level >= 3 || question.creator ==  user.username)) || (question.status == "protected" && (basicData.level >= 5)))) { %>
+  <% if(loggedIn && ((question.status == "open" && (basicData.level >= 3 || question.creator ==  user.username)) || (question.status == "protected" && (basicData.level >= 6)))) { %>
   document.getElementById("postComment").addEventListener("click", () => {
     document.getElementById("postComment").disabled = true;
     fetch('/addCommentQuestion', {

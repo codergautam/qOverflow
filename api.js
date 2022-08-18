@@ -18,7 +18,7 @@ class Api {
   }
   async sendRequest(endpoint, method, data, count = 0) {
     this.requestsInQueue++;
-    await delay(200 * (this.requestsInQueue - 1));
+    await delay(1000 * (this.requestsInQueue - 1));
 
     console.log(
       "Send request: " + endpoint,
@@ -242,6 +242,10 @@ class Api {
   async deleteUser(username) {
     username = encodeURIComponent(username);
     return this.sendRequest("/users/" + username, "DELETE");
+  }
+  async deleteComment(commentId, type, answerId, questionId) {
+    if(type == "question") return this.sendRequest("/questions/" + questionId + "/comments/" + commentId, "DELETE");
+    else return this.sendRequest("/questions/" + questionId + "/answers/" + answerId + "/comments/" + commentId, "DELETE");
   }
 
   async loginUser(username, password, salt) {
