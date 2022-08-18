@@ -118,8 +118,11 @@ replaceCharacters = (str) => {
 }
 
 formatQuery = (query) => {
+  stopwords = ['work','want' , 'i','me','my','myself','we','our','ours','ourselves','you','your','yours','yourself','yourselves','he','him','his','himself','she','her','hers','herself','it','its','itself','they','them','their','theirs','themselves','what','which','who','whom','this','that','these','those','am','is','are','was','were','be','been','being','have','has','had','having','do','does','did','doing','a','an','the','and','but','if','or','because','as','until','while','of','at','by','for','with','about','against','between','into','through','during','before','after','above','below','to','from','up','down','in','out','on','off','over','under','again','further','then','once','here','there','when','where','why','how','all','any','both','each','few','more','most','other','some','such','no','nor','not','only','own','same','so','than','too','very','s','t','can','will','just','don','should','now']
+
   let qLength = query.length
   let q = query
+  /*
   q.forEach((data, i) => {
     if((data != '') && (data != ' ')) {
       if(((i != 0) && (i != qLength - 1))) {
@@ -134,7 +137,8 @@ formatQuery = (query) => {
       //   }
       // }
     }
-  })
+  })*/
+  q = q.filter(data => stopwords.includes(data) == false)
   return q
 }
 
@@ -147,6 +151,7 @@ var modifyPoints = async (amount, username) => {
     amount: amount
   })
 }
+
 
 var levelCalculation = (userPoints) => {
   let _level
@@ -204,26 +209,24 @@ app.get('/search', async (req, res) => {
     q = formatQuery(q)
     console.log(q)
     regexQuery = {
-      "title": `(${q.join(")|(")})`
+      "title": `(?=.*${q.join(")(?=.*")})`
     }
-    console.log(regexQuery.title)
   } else if(sort == "Text") {
     let newQ = replaceCharacters(searchQuery).trim()
     console.log(newQ)
     let q = newQ.split(" ")
     q = formatQuery(q)
-    console.log(q)
+    console.log(q, `(?=.*${q.join(")(?=.*")})`)
     regexQuery = {
-      "text": `(${q.join(")|(")})`
+      "text": `(?=.*${q.join(")(?=.*")})`
     }
-    console.log(regexQuery.title)
   }
   console.log(matchQuery)
   req.session.currentMatch = matchQuery
   req.session.currentRegex = regexQuery
   let data = await api.getQuestions(null, regexQuery, matchQuery, null)
   let questions = (data.success) ? data.questions : null
-  console.log(questions)
+  // console.log(questions)
   if(questions) {
     questions.forEach((q) => {
       q.timeElapsed = msToTime(Date.now() - q.createdAt)
@@ -422,7 +425,7 @@ app.post('/search', async (req, res) => {
     q = formatQuery(q)
     console.log(q)
     regexQuery = {
-      "title":  `(${q.join(")|(")})`
+      "title":  `(?=.*${q.join(")(?=.*")})`
     }
     console.log(regexQuery.title)
   } else if(sort == "Text") {
@@ -431,8 +434,10 @@ app.post('/search', async (req, res) => {
     let q = newQ.split(" ")
     q = formatQuery(q)
     console.log(q)
+    console.log(q, `(?=.*${q.join(")(?=.*")})`)
+
     regexQuery = {
-      "text": `(${q.join(")|(")})`
+      "text": `(?=.*${q.join(")(?=.*")})`
     }
     console.log(regexQuery.title)
   }
@@ -1053,7 +1058,10 @@ app.post("/api/statusVote/:status/:id", (req, res) => {``
                 res.send({success: true})
                 ongoingVotes[id].votes = [];
                 ongoingVotes[id].after = undefined;
-                ongoingVotes[id].before = status;
+                ongoingVotes[id].before = "loading";
+                setTimeout(() => {
+                  ongoingVotes[id].before = status;
+                }, 10000);
                 return;
               } else {
                 res.send({success: false})
@@ -1161,7 +1169,7 @@ function getBasicData(username) {
 
   } else {
     api.getUser(username).then(data => {
-      if(data.success) {
+      if(data && data.success) {
       var userPoints = data.user.points;
       let _level = levelCalculation(userPoints);
       // console.log("Level: " + _level)
