@@ -558,6 +558,10 @@
                                             <% } %>
                                             <br/>
                                          
+                                              <button class="bg-green-600 px-2 py-1 rounded flex w-fit">Share <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 self-center" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                                              </svg>
+                                            </button>
                                         </div>
                                         <div></div> 
                                         <div class="flex-col w-full px-[90px]">
@@ -1844,19 +1848,19 @@ console.log(comment.comment_id)
 
     var html = `
 
-                                          <div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
-                                            <div class="flex flex-col items-center justify-between   rounded-lg">
-                                              <img class="rounded-lg rotate-0  cursor-pointer min-w-[10px] ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "invisible"}" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                          <div class= "flex" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
+                                            <div class="flex flex-col items-center justify-between w-fit rounded-lg">
+                                              <img class="rounded-lg rotate-0  w-fit cursor-pointer ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "hidden"}" id="commentUp${comment.comment_id}" style="width: 10%;" src="/vote.png" alt="">
                                                 
-                                              <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
-                                                <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px] ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "invisible"}}" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
-                                                </div>
-
-                                                <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
-                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator} <button class="bg-red-500 p-1 ${<%= loggedIn ?? false %> && '<%= loggedIn ? locals.user?.username : 'undefined' %>' == comment.creator ? "" : "invisible"}" id="deleteComment${comment.comment_id}" >Delete</button></div>
-
-
+                                              <p class="text-center" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
+                                              <img class="rounded-lg rotate-180 w-fit cursor-pointer ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "hidden"}}" id="commentDown${comment.comment_id}" style="width: 10%;" src="/vote.png" alt="">
                                             </div>
+
+                                            <div class="flex align-middle items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
+                                            <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator} <button class="bg-red-500 p-1 ${<%= loggedIn ?? false %> && '<%= loggedIn ? locals.user?.username : 'undefined' %>' == comment.creator ? "" : "hidden"}" id="deleteComment${comment.comment_id}" >Delete</button></div>
+
+
+                                          </div>
    </div >
 </div >
                                           `

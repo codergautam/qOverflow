@@ -168,6 +168,7 @@ app.post('/edity', async (req, res) => {
 //------------- DARK MODE STUFF -------------------
 app.get('/', async (req, res) => { //Homepage
   // console.log(req.session)
+  
   var sort = req.query.sort ?? "recent";
   // console.log(sort)
   var possible = ["recent", "best", "interesting", "hottest"];
@@ -1333,7 +1334,144 @@ app.get("/question/:id", (req, res) => {
   });
   
 var basicDataCache = {};
-function getBasicData(username) {
+var badgeCache = {};
+
+function getPointsBadges(userPoints) {
+  let pointBadges = [];
+  if(userPoints >= 10000) {
+    pointBadges.unshift(["Socratic", "Gold"])
+  }
+  if(userPoints >= 3000) {
+    pointBadges.unshift(["Inquisitive", "Silver"])
+  } 
+  if(userPoints >= 100) {
+    pointBadges.unshift(["Curious", "Bronze"]);
+  }
+  console.log(pointBadges)
+  return pointBadges
+}
+
+function getAnswerBadges(answers, questions) {
+  let answerBadges = [];
+  let alreadyHasBadge = false;
+  // console.log(questions)
+  for(let i = 0; i < questions.length; i++) {
+    if(questions[i].hasAcceptedAnswer && !alreadyHasBadge) {
+      answerBadges.unshift(['Scholar', 'Bronze'])
+      alreadyHasBadge = true
+    }
+  }
+
+  let answerWithMost = questions[0];
+  let mostPoints = 0;
+  for(let i = 0; i < answers.length; i++) {
+    if((answers[i].upvotes - answers[i].downvotes) > (mostPoints)) {
+      answerWithPoints = answers[i];
+      mostPoints = answerWithMost.upvotes - answerWithMost.downvotes;
+    }
+  }
+  console.log(mostPoints)
+  if(mostPoints >= 100) {
+    answerBadges.unshift(["Great Answer", "Gold"])
+  }
+  if(mostPoints >= 25) {
+    answerBadges.unshift( ["Good Answer", "Silver"])
+  } 
+  if(mostPoints >= 10) {
+    answerBadges.unshift(["Nice Answer", "Bronze"]);
+  }
+
+  return answerBadges
+}
+
+function getQuestionsBadges(questions) {
+  let questionWithMostPoints = questions[0];
+  let mostPoints = 0;
+  let alreadyHasZombie = false;
+  let alreadyHasProtected = false;
+  let questionBadges = [];
+  // console.log(questions)
+  for(let i = 0; i < questions.length; i++) {
+    if((questions[i].upvotes - questions[i].downvotes) > (mostPoints)) {
+      questionWithMostPoints = questions[i];
+      mostPoints = questionWithMostPoints.upvotes - questionWithMostPoints.downvotes;
+    }
+    if(questions[i].status == "protected" && !alreadyHasProtected) {
+      questionBadges.unshift(["Protected", "Silver"])
+    }
+  }
+  console.log(mostPoints)
+  if(mostPoints >= 100) {
+    questionBadges.unshift(["Great Question", "Gold"])
+  }
+  if(mostPoints >= 25) {
+    questionBadges.unshift( ["Good Question", "Silver"])
+  } 
+  if(mostPoints >= 10) {
+    questionBadges.unshift(["Nice Question", "Bronze"]);
+  }
+  return questionBadges
+}
+
+async function getBadges(username) {
+  let badges = [];
+    let userPoints = await api.getUser(username).then(data => {return data})
+    userPoints = userPoints.user.points;
+    let pointsB = getPointsBadges(userPoints); //userPoints from api func
+    let questions = await getAllUserQuestions(username)
+    let answers = await getAllUserAnswers(username)
+    let answerB = []
+    answerB = getAnswerBadges(answers, questions)
+    console.log(answerB)
+    let questionsB = []
+    questionsB = getQuestionsBadges(questions) //questions provided from getAllUserQuestions()
+    badges = [...questionsB, ...pointsB, ...answerB]
+    console.log(badges)
+  return badges;
+}
+
+  app.get('/badgeInfo', async (req, res) => {
+    let username = req.query.username;
+    let badges = await getBadges(username)
+    res.send(JSON.stringify(badges))
+  })
+  
+  async function getAllUserQuestions(username) {
+    let moreToCome = true;
+    let afterId;
+    while(moreToCome) {
+      let allQuestions = [];
+      let data = await api.getUserQuestions(username, afterId).then(data => {return data})
+      let limit = 100;
+      if(data.questions.length >= limit) {
+        allQuestions = [...allQuestions, ...data.questions]
+        let afterId = data.questions[data.questions.length - 1].question_id;
+        console.log("More than 100 questions!")
+        } else if(data.questions.length < limit) {
+          allQuestions = [...allQuestions, ...data.questions]
+          return allQuestions
+        }
+    }
+  }
+
+  async function getAllUserAnswers(username) {
+    let moreToCome = true;
+    let afterId;
+    while(moreToCome) {
+      let allAnswers = [];
+      let data = await api.getUserAnswers(username, afterId).then(data => {return data})
+      let limit = 100;
+      if(data.answers.length >= limit) {
+        allAnswers = [...allAnswers, ...data.answers]
+        let afterId = data.answers[data.answers.length - 1].answer_id;
+        console.log("More than 100 questions!")
+        } else if(data.answers.length < limit) {
+          allAnswers = [...allAnswers, ...data.answers]
+          return allAnswers
+        }
+    }
+  }
+async function getBasicData(username) {
   return new Promise((resolve, reject) => {
 
   if(basicDataCache.hasOwnProperty(username) && Date.now() - basicDataCache[username].time < 5000) {
@@ -1343,7 +1481,10 @@ function getBasicData(username) {
     api.getUser(username).then(data => {
       if(data && data.success) {
       var userPoints = data.user.points;
+      console.log(data)
       let _level = levelCalculation(userPoints);
+      console.log("Level: " + _level);
+      getPointsBadges(userPoints);
       // console.log("Level: " + _level)
       var needed = {
         time: Date.now(),
@@ -1363,10 +1504,11 @@ function getBasicData(username) {
   }
 });
 }
-app.get("/getBasicData", (req, res) => {
+app.get("/getBasicData", async (req, res) => {
   if(req.query.user && typeof req.query.user == "string") {
+      
 
-    getBasicData(req.query.user).then(data => {
+    await getBasicData(req.query.user).then(data => {
 
       if(data.success && req.session.loggedIn && req.session.user && req.session.user.username == req.query.user) {
         req.session.user.points = data.points;

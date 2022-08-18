@@ -91,7 +91,7 @@
             color:white;
         }
       </style>
-        <div class="grid gap-x-5 grid-cols-6 mt-8 xl:lg:w-11/12 mx-auto relative">
+        <div class="grid gap-x-5 grid-cols-6 mt-8 xl:w-11/12 lg:w-11/12 mx-auto relative">
             <div class="relative flex-col col-span-6 lg:col-span-2 h-full">
                 <div class="flex-col px-2 rounded-3xl bg-white pt-2 pb-8">
                     <div class="ml-8 relative z-10">
@@ -130,6 +130,68 @@
                                     <%= user.points.toLocaleString('en-US') %>
                                         <% if(user.points> 1 ) { %> PTS. <% } else { %> PT. <% } %>
                                 </div> 
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap justify-between">
+                            <div class="w-1/2">
+                                <p id="Great Question" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
+                                    Great Question
+                                </p>
+                            </div>
+                            <div class="w-1/2">
+                                <p id="Great Answer" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
+                                    Great Answer
+                                </p>
+                            </div>
+                            <div class="w-1/2">
+                                <p id="Socratic" style="opacity: 30%;" class="text-opacity-45 text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
+                                    Socratic
+                                </p>
+                            </div>
+                            <div class="w-1/2">
+                                <p id="Zombie" style="opacity: 30%;" class="text-opacity-45 text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
+                                    Zombie
+                                </p>
+                            </div>
+                            <div class="w-1/2">
+                                <p id="Good Question" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
+                                    Good Question
+                                </p>
+                            </div>
+                            <div class="w-1/2">
+                                <p id="Good Answer" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
+                                    Good Answer
+                                </p>
+                            </div>
+                            <div class="w-1/32">
+                                <p id="Inquisitive" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
+                                    Inquisitive
+                                </p>
+                            </div>
+                            <div class="w-1/2">
+                                <p id="Protected" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
+                                    Protected
+                                </p>
+                            </div>
+                            <div class="w-1/2">
+                                <p id="Nice Question" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
+                                    Nice Question
+                                </p>
+                            </div>
+                            <div class="w-1/2">
+                                <p id="Nice Answer" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
+                                    Nice Answer
+                                </p>
+                            </div>
+                            <div class="w-1/32">
+                                <p id="Curious" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
+                                    Curious
+                                </p>
+                            </div>
+                            <div class="w-1/2">
+                                <p id="Scholar" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
+                                    Scholar
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -290,6 +352,24 @@
                 let standard = 3
                 let lastResultQ = 0
                 let moreToComeQ = false
+
+                
+      async function badgeData() {
+        let bronzeBadgeNum = 0;
+        let silverBadgeNum = 0;
+        let goldBadgeNum = 0;
+        let badges = await fetch('/badgeInfo?username=<%= locals.user?.username %>').then(res => {
+          return res.json()
+        });
+        console.log(badges)
+        for(let i = 0; i < badges.length; i++) {
+            console.log(badges[i][0])
+            console.log(document.querySelector(`#${badges[i][0]}`))
+            document.querySelector(`#${badges[i][0]}`).style.opacity = 1
+            document.querySelector(`#${badges[i][0]}`).classList.add("font-bold")
+        }
+      }
+      badgeData()
 
                 appendQuestion = (question) => {
                     console.log(question)
