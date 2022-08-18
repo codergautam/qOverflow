@@ -1169,7 +1169,7 @@ function getBasicData(username) {
 
   } else {
     api.getUser(username).then(data => {
-      if(data.success) {
+      if(data && data.success) {
       var userPoints = data.user.points;
       let _level = levelCalculation(userPoints);
       // console.log("Level: " + _level)
