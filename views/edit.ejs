@@ -1,0 +1,406 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/index.min.css" />
+
+    <style>
+        [contentEditable=true]:empty:not(:focus):before{
+            content:attr(data-text)
+        }
+
+        #preview h1 {
+      font-size: 2em;
+      font-weight: normal;
+      margin: 0.67em 0;
+    }
+
+    #preview  h2 {
+      font-size: 1.5em;
+      font-weight: normal;
+      margin: 0.83em 0;
+    }
+
+    #preview h3 {
+      font-size: 1.17em;
+      font-weight: normal;
+      margin: 1em 0;
+    }
+
+    #preview  h4 {
+      font-size: 1em;
+      font-weight: normal;
+      margin: 1.33em 0;
+    }
+
+    #preview h5 {
+      font-size: 0.83em;
+      font-weight: normal;
+      margin: 1.67em 0;
+    }
+
+    #preview h6 {
+      font-size: 0.67em;
+      font-weight: normal;
+      margin: 2.33em 0;
+    }
+
+    #preview table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      align-items: center;
+      align-self: center;
+      align-content: center;
+      outline: solid;
+      width: 100%;
+    }
+
+    #preview a {
+      color: #0366d6;
+    }
+
+    #preview a:hover {
+      text-decoration: underline;
+    }
+
+    #preview  blockquote {
+      background: #f9f9f9;
+      border-left: 10px solid #ccc;
+      margin: 1.5em 10px;
+      padding: 0.5em 10px;
+    }
+
+    #preview ul {
+      margin: 1.33em 0;
+      padding: 0.5em 1em;
+
+
+      list-style: disc;
+
+      list-style-position: inside;
+    }
+
+    #preview ol {
+      margin: 1.33em 0;
+      padding: 0.5em 1em;
+      list-style: decimal;
+      list-style-position: inside;
+    }
+
+    #preview li {
+      margin-bottom: 0.33em;
+    }
+
+    #preview code {
+      font-family:Roboto;
+      font-size: 0.83em;
+    }
+
+    #preview img:not(.nav) {
+      max-width: 50%;
+    }    
+/* Style the tab */
+.tab {
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Create an active/current tablink class */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border-top: none;
+}
+    </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+</head>
+
+<body class="bg-blue-500">
+  <script src="./lightMode.js"></script>
+  <style id="darkMode">
+    .shadow-indigo-600 {
+            --tw-shadow-color: rgb(12 12 12);
+            --tw-shadow: var(--tw-shadow-colored);
+        }
+    .bg-white {
+    background-color: rgb(34, 34, 34);
+  }
+  .bg-gray-50 {
+    background-color: rgb(51, 51, 51);
+  }
+  .bg-gray-200 {
+    background-color: rgb(66, 66, 66);
+  }
+  .bg-green-200 {
+    background-color: rgb(70, 167, 135);
+  }
+  .bg-blue-500 {
+    background-color: rgb(11, 13, 18);
+  }
+  .text-black {
+    color: rgb(255, 255, 255);
+  }
+  .kindagray {
+    background-color: rgb(25, 25, 26);
+  }
+  .tag {
+      background-color: rgb(11, 11, 17);
+  }
+  .text-gray-700 {
+    color: rgb(224, 224, 224);
+  }
+  .text-gray-900 {
+    color: rgb(224, 224, 224);
+  }
+  input.text-gray-900 {
+          color: black;
+        }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  code,
+  pre,
+  blockquote,
+  li,
+  ul,
+  p {
+      color:white;
+  }
+
+  .bg-blue-200 {
+    background-color: rgb(49, 54, 65);
+
+
+  }
+
+  .bg-gray-100 {
+    color: rgb(0, 0, 0);
+  }
+</style>
+    <%- include('../views/navbar.ejs', {loggedIn: true, user: user}); %>
+
+<div class="m-5 bg-blue-200 shadow-md rounded-lg hover:shadow-xl text-4xl">
+    <div class="m-4">
+        <h1 class="p-3 text-center text-3xl font-extrabold md:text-5xl ">Edit</h1>
+        </div>
+            <div class="flex justify-center">
+                <div class="cursor-pointer rounded-lg bg-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-1 font-semibold text-2xl text-gray-700">
+                    <a href="/mail">Go Back</a>
+                </div>
+            </div>
+        <div class="w-full">
+            <% if(locals.error) { %>
+                <br/>
+                <center>
+            <div class="bg-red-100 border text-center self-center border-red-400 text-lg text-red-700 px-4 py-3 w-fit rounded relative" role="alert">
+               
+                <span class="block sm:inline text-center"><b>Error:</b><br/><%= error %></span>
+        
+              </div>
+            </center>
+              <% } %>
+        
+            <form class="w-full" action="/edity" method="post">
+                <div class="flex">
+                    <div class="flex-1 w-full">
+                        <input type="hidden" name="username" value="<%= username %>">
+                        <% if(locals.answer) { %>
+                        <input type="hidden" name="answer" value="<%= locals.answer %>">
+                        <% } %>
+                        <input type="hidden" name="question" value="<%= locals.question %>">
+
+
+                        <% if(!locals.answer) { %>
+                        <div class="grid sm:flex place-content-center mb-10 mt-5 w-full">
+                            <label class="text-2xl mr-3 text-center md:text-left font-extrabold block text-black">Title:</label>
+                            <input required maxlength="150" type="text" id="text75" name="subject"
+                                class="text-xl outline-black rounded outline outline-4 text-center place-self-center font-bold flex flex-row h-10 w-full md:w-3/4" value="<%= decodeURIComponent(atob(questionTitle)) %>" required/>
+                        </div>
+                        <% } %>
+                              <div class="flex flex-col flex-wrap mb-10 space-x-4 place-content-center">
+                               
+                                <div class=" mt-1 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+                                   
+                                    <div class="py-1 hidden" id="autocomplete" role="none">
+                                    </div>
+                                  </div>
+                                  <script>
+                                
+
+                                  </script>
+                        
+                            </div>
+                            <div class="flex w-full justify-items-center">
+                                <button data-bs-toggle="modal" type="button" data-bs-target="#markdownSyntax"  class="mx-auto text-lg font-bold px-3 py-2 bg-gray-100 rounded-xl text-gray-700 hover:bg-gray-200 transition-all delay-75 duration-300 ease-in-out">
+                                    Markdown Syntax
+                                </button>
+                            </div>
+                            <br/>
+                            <div class="flex justify-center">
+                        <a id="contentButton" onclick="openCity(event, 'editor')" class="inline-block bg-green-500 mx-3 px-3 py-2 text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 cursor-pointer focus:border-gray-300 focus:border-blue-300">
+                            Editor
+                           </a>
+                           <a id="editorButton" onclick="openCity(event, 'viewer3')" class="inline-block px-3 py-2 text-lg rounded-2xl leading-5 font-medium text-black hover:text-gray-900 focus:outline-none focus:text-white-900 focus:bg-gray-50 cursor-pointer focus:border-gray-300 focus:border-blue-300">
+                             Preview
+                            </a>
+                        </div>
+                  
+                        <div class='flex mb-5 tabcontent' id="editor" style="display:block;">
+                            <textarea id='text3000' maxlength='3000' type='text' name="text" onkeyup='val(this);'
+                                class='m-2 p-3 text-2xl outline-black rounded  text-left font-bold block h-48 w-full md:h-80 md:w-full'   placeholder="Enter Markdown content..." required><%= decodeURIComponent(atob(locals.text)) %></textarea>
+                        </div>
+                        <div id="viewer3" class="tabcontent">
+                            <div id='viewer'>
+                                <article id="preview" data-text="Output of Markdown shown here..." contenteditable="false" 
+                                    class='w-min bg-white break-words overflow-scroll m-2 p-3 outline-black rounded  text-left block text-gray-400 h-48 min-w-full md:h-80'>
+                                </article>
+                            </div>
+                        </div>
+                  
+                        <div class="flex my-3 justify-center">
+                            <input type="submit" class="cursor-pointer rounded-lg bg-gray-200 hover:ring-2 hover:ring-offset-1 hover:ring-gray-200 px-2 py-2 font-semibold text-2xl text-gray-700" value="Update">
+                        </div>
+                    </div>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+   document.getElementById("contentButton").addEventListener("click", function () {
+            document.getElementById("contentButton").classList.add("bg-green-500");
+            document.getElementById("editorButton").classList.remove("bg-green-500");
+        });
+        document.getElementById("editorButton").addEventListener("click", function () {
+           // classlist add
+            document.getElementById("editorButton").classList.add("bg-green-500");
+            document.getElementById("contentButton").classList.remove("bg-green-500");
+           
+        });
+        <% if(!locals.answer) { %>
+        
+        $(document).ready(function () {
+            $("#text75").keypress(function (e) {
+                var length = this.value.length;
+                if (length >= 150) {
+                    e.preventDefault();
+                    alert("More than 150 characters not allowed in the Title");
+                }
+            });
+
+        });
+        <% } %>
+    </script>
+    <div class="modal fade fixed top-0 left-0 hidden w-full h-full outline-none overflow-x-hidden overflow-y-auto"
+    id="markdownSyntax" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog relative w-auto pointer-events-none">
+      <div
+        class="modal-content border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-white bg-clip-padding rounded-md outline-none text-current">
+        <div
+          class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md">
+          <button type="button"
+            class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
+            data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body relative py-4 px-8 space-y-4">
+          <p class="text-3xl text-gray-700 font-semibold">
+            Markdown Syntax (Remember to Include Spaces!):
+          </p>
+          <p class="text-gray-700 mt-8 text-start text-lg leading-6">
+          # <span class="text-5xl">h1</span> <br>
+          ## <span class="text-4xl">h2</span> <br>
+          ### <span class="text-3xl">h3</span> <br>
+          ####<span class="text-2xl">h4</span> <br>
+          ##### <span class="text-xl">h5</span> <br>
+          ###### <span class="text-lg">h6</span> <br> <br>
+          **<span class="font-bold">bold</span>** text <br>
+          *<span class="italic" >italic</span>* text <br>
+          ***<span class="font-bold italic">emboldened italic</span>*** text <br>
+          > Blockquote -> <br>  <br>
+          <span class="border-l-4 pl-8 bg-gray-100 border-gray-500">Blockquote</span> <br> <br>
+          `nano` -> <span class="px-2 bg-gray-100 rounded-md my-auto">nano</span> <br>
+          <span class="text-xl mt-2">[Link Text](Link Address) <br> ![Title of Image](Image Link)</span>
+          <br>
+          <span class="text-lg mt-4">And more at this <a class="text-blue-500 no-underline hover:underline underline-offset-0 underline-blue-300 transition-all delay-75 duration-300 ease-in-out" href="https://www.markdownguide.org/basic-syntax">Markdown Guide</a></span>
+          <p>
+
+          </p>
+        </div>
+        <div
+          class="modal-footer flex flex-shrink-0 flex-wrap items-center justify-end p-4 border-t border-gray-200 rounded-b-md">
+          <button type="button"
+            class="inline-block px-6 py-2.5 bg-blue-600 text-white font-medium text-xs leading-tight uppercase rounded shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out ml-1"
+            data-bs-dismiss="modal">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+    <script>
+
+        function openCity(evt, cityName) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(cityName).style.display = "block";
+        evt.currentTarget.className += " active";
+        }
+
+        function val(e) {
+            ghf = e.value
+            codeblock = DOMPurify.sanitize(marked.parse(ghf));
+            document.getElementById("viewer").innerHTML = "<article id='preview' data-text='Output of Markdown shown here...' contenteditable='false' class='break-words bg-white overflow-scroll m-2 p-3 outline-black rounded text-left block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</article>";
+        }
+        val(document.getElementById("text3000"));
+        // function qwerty(e) {
+        //     ghf = e.value;
+        //     console.log(ghf);
+        //     codeblock = ghf;
+        //     document.getElementById("viewer").innerHTML = "<label class='text-xl font-bold'>View:</label><div id='preview' contentEditable=true data-text='Output of Markdown shown here...'class='m-2 p-3 text-2xl outline-black rounded outline outline-4 text-left font-bold block text-black h-48 min-w-full md:h-80 md:min-w-full'>"+codeblock+"</div>";
+        // }
+        $("#viewer").load(location.href + " #viewer");
+        $("#editer").load(location.href + " #editor");
+        // var textArea = document.getElementById('preview');
+
+     
+    </script>
+        <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
+
+</body>
+</html>
