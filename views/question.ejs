@@ -1769,19 +1769,19 @@ console.log(comment.comment_id)
 
     var html = `
 
-                                          <div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
-                                            <div class="flex flex-col items-center justify-between   rounded-lg">
-                                              <img class="rounded-lg rotate-0  cursor-pointer min-w-[10px] ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "invisible"}" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                          <div class= "flex" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
+                                            <div class="flex flex-col items-center justify-between w-fit rounded-lg">
+                                              <img class="rounded-lg rotate-0  w-fit cursor-pointer ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "hidden"}" id="commentUp${comment.comment_id}" style="width: 10%;" src="/vote.png" alt="">
                                                 
-                                              <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
-                                                <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px] ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "invisible"}}" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
-                                                </div>
-
-                                                <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
-                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator} <button class="bg-red-500 p-1 ${<%= loggedIn ?? false %> && '<%= loggedIn ? locals.user?.username : 'undefined' %>' == comment.creator ? "" : "invisible"}" id="deleteComment${comment.comment_id}" >Delete</button></div>
-
-
+                                              <p class="text-center" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
+                                              <img class="rounded-lg rotate-180 w-fit cursor-pointer ${<%= (loggedIn && basicData.level >= 2) ?? false %> ? "" : "hidden"}}" id="commentDown${comment.comment_id}" style="width: 10%;" src="/vote.png" alt="">
                                             </div>
+
+                                            <div class="flex align-middle items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
+                                            <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator} <button class="bg-red-500 p-1 ${<%= loggedIn ?? false %> && '<%= loggedIn ? locals.user?.username : 'undefined' %>' == comment.creator ? "" : "hidden"}" id="deleteComment${comment.comment_id}" >Delete</button></div>
+
+
+                                          </div>
    </div >
 </div >
                                           `
