@@ -222,6 +222,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script>
         async function preview(mailId) {
+            //mark message as read
+            var currentArray = JSON.parse(localStorage.getItem("readMail") ?? "[]");
+           if(!currentArray.includes(mailId)) currentArray.push(mailId);
+            localStorage.setItem("readMail", JSON.stringify(currentArray));
+            document.getElementById("readMarker"+mailId).innerHTML = "read";
+
             document.getElementById("previewAuthor").innerHTML = ""
             document.getElementById("previewSubject").innerHTML = "Loading..."
             document.getElementById("previewText").innerHTML = "Your message will appear soon."
@@ -247,6 +253,13 @@
         }
     </script>
     <script>
+        function localStorageKeyExists(key) {
+            return localStorage.getItem(key) !== null;
+        }
+        if(!localStorageKeyExists("readMail")) {
+            localStorage.setItem("readMail", "[]")
+        }
+
         let standard = 12
         let lastResult = 0
         let moreToCome = false
@@ -259,6 +272,9 @@
                         </p>
                         <p class="text-start text-sm text-gray-800 font-semibold mt-1 badge">
                             ${mail.timeElapsed ?? "just now"} ago
+                        </p>
+                        <p class="text-start text-sm text-gray-800 font-semibold mt-1 badge" id="readMarker${mail.mail_id}">
+                           ${ JSON.parse(localStorage.getItem("readMail")).includes(mail.mail_id) ? "read" : "unread"}
                         </p>
                     </div>
                     <div class="flex">
