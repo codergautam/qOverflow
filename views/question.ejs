@@ -75,11 +75,6 @@
 
   %>
   <style>
-    
-    .shadow-indigo-600 {
-              --tw-shadow-color: rgb(12 12 12);
-              --tw-shadow: var(--tw-shadow-colored);
-          }
     h1 {
       font-size: 2em;
       font-weight: normal;
@@ -195,6 +190,10 @@
   <body class="bg-blue-500">
     <script src="../lightMode.js"></script>
     <style id="darkMode">
+    .shadow-indigo-600 {
+              --tw-shadow-color: rgb(12 12 12);
+              --tw-shadow: var(--tw-shadow-colored);
+          }
           .bg-white {
     background-color: rgb(34, 34, 34);
   }
@@ -293,6 +292,7 @@
 
 
           <%  } %>
+       <% if(ongoingVotes.before != "loading") { %>
             <% if(question.status=="protected" ) { %>
               <div class="bg-teal-100 border-t-4 border-teal-500 rounded-3xl my-6 text-teal-900 px-4 py-3 shadow-md"
                 role="alert">
@@ -303,7 +303,7 @@
                     <p class="text-sm">This is to help protect the question against spam and other unwanted
                       things.<br />Only users level 5 or above can comment, or answer on this question.</p>
 
-                    <% } else if(question.status=="closed" ) {%>
+                    <% } else if(question.status=="closed" && ongoingVotes.before != "loading") {%>
                       <div class="bg-gray-100 border-t-4 my-6 border-gray-500 rounded-3xl text-gray-900 px-4 py-3 shadow-md"
                         role="alert">
                         <div class="flex">
@@ -312,7 +312,7 @@
                           <div>
                             <p class="font-bold">This question is Closed</p>
                             <p class="text-sm">Nobody can Comment on or Answer this question</p>
-                            <% } else if(question.status=="open" && loggedIn && basicData.level>= 6) { %>
+                            <% } else if(question.status=="open" && loggedIn && basicData.level>= 6 && ongoingVotes.before != "loading") { %>
                               <div
                                 class="bg-green-100 rounded-3xl my-6 border-t-4 border-green-500 text-green-900 px-4 py-3 shadow-md"
                                 role="alert">
@@ -325,8 +325,8 @@
                                     <% } %>
                                       <% if((question.status=="open" && loggedIn && basicData.level>= 6) ||
                                         question.status != "open") { %>
-                                        <% if( basicData.level>= 6 && ((ongoingVotes.before != "closed" &&
-                                          ongoingVotes.before != "protected") || basicData.level >= 7)) { %>
+                                        <% if( (basicData.level>= 6 && ((ongoingVotes.before != "closed" &&
+                                          ongoingVotes.before != "protected") || basicData.level >= 7)) && ongoingVotes.before != "loading") { %>
                                           <br />
                                           <p class="text-sm">You can vote to change the status of this question </p>
                                           <!-- <script>
@@ -357,6 +357,7 @@
 
 
                                           </script>
+                                          
                                           <% if(!ongoingVotes.after) {%>
                                             <% if(question.status=="open" ) { %>
                                               <% if(basicData.level>= 7) { %>
@@ -479,7 +480,24 @@
                                     </div>
                                   </div>
                                   <% } %>
-
+                                  <% } else if(loggedIn && (basicData.level >= 6)) { %>
+                                    <div class="bg-blue-100 border-t-4 my-6 border-gray-500 rounded-3xl text-gray-900 px-4 py-3 shadow-md" role="alert">
+                        <div class="flex">
+                          
+                          <div>
+                            <p class="font-bold">Please wait..</p>
+                            <p class="text-sm">This question's status is changing. <br/> Please refresh in a few seconds to see the updates.</p>
+                            
+                                      
+                                        
+                                          <br>
+                            
+                                   
+                                                                        
+                                  </div>
+                                </div>
+                              </div>
+                                    <% } %>
                                     <div class="px-9 py-6 sm:px-0 rounded-3xl text-  shadow-lg  bg-white">
                                       <div class="flex flex-row">
                                         <div class="flex content-center flex-col w-1/12 px-3">
@@ -1719,14 +1737,14 @@ console.log(comment.comment_id)
 
                                           <div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
                                             <div class="flex flex-col items-center justify-between   rounded-lg">
-                                              <img class="rounded-lg rotate-0  cursor-pointer min-w-[10px]" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                              <img class="rounded-lg rotate-0  cursor-pointer min-w-[10px] ${<%= loggedIn && basicData.level >= 2 %> ? "" : "invisible"}" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                                                 
                                               <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
-                                                <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px]" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                                <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px] ${<%= loggedIn && basicData.level >= 4 %> ? "" : "invisible"}" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                                                 </div>
 
                                                 <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
-                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator}</div>
+                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator} (<i class="fa fa-trash" aria-hidden="true"></i>)</div>
 
 
                                             </div>
