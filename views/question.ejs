@@ -1201,7 +1201,7 @@ var hasAppended = false;
     n = `
     <h4>Ongoing edit vote:<br/>Votes needed: ${ 3 - votesa.length}  </h1>
       `;
-          if(votesa.includes("<%=user.username%>")) {
+          if(votesa.includes("<%=locals.user?.username%>")) {
             n+= ` <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onclick="window.location.href='/removeEditVote?qId=<%=question.question_id%>&aId=${answer.answer_id}'">
                                               Remove Vote
                                             </button>`
