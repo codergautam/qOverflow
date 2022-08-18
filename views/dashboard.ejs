@@ -35,7 +35,8 @@
 
 </head>
 
-<body class="bg-blue-500">
+<body class="bg-blue-500 w-full">
+    <%- include('./navbar'), { loggedIn: true, login: false, } %>
     <script src="./lightMode.js"></script>
     <style id="darkMode">
         .shadow-indigo-600 {
@@ -90,7 +91,6 @@
             color:white;
         }
       </style>
-    <%- include('./navbar'), { loggedIn: true, login: false, } %>
         <div class="grid gap-x-5 grid-cols-6 mt-8 xl:lg:w-11/12 mx-auto relative">
             <div class="relative flex-col col-span-6 lg:col-span-2 h-full">
                 <div class="flex-col px-2 rounded-3xl bg-white pt-2 pb-8">
