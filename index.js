@@ -44,6 +44,8 @@ app.use(bodyParser.json())
 app.use('/', express.static(__dirname + '/public'))
 app.set('view engine', 'ejs')
 
+const bounties = [];
+
 function replaceCharacters (str) {
   let newQ = str
   // newQ = newQ.replace(/(\sa\s)|(a\s)/gmi, " ").replace(/(\san\s)|(an\s)/gmi, " ").replace(/(\sis\s)|(is\s)/gmi, " ").replace(/(\sthe\s)|(the\s)/gmi, " ")
@@ -643,7 +645,12 @@ app.post('/acceptAnswer',  (req, res) => {
     if(!answerOwnerCache[answerId]) answerOwnerCache[answerId] = await api.getAnswerOwner(questionId, answerId);
     var owner = answerOwnerCache[answerId];
     res.send(data);
-    await modifyPoints(15, owner);
+
+    if(bounties[questionId]) {
+      var bounty = bounties[questionId];
+      await modifyPoints(15+bounty.points, owner);
+    } else await modifyPoints(15, owner);
+    
 
   }).catch((err) => {
     console.log("Failed to accept answer: ", err)
@@ -1153,7 +1160,8 @@ app.get("/question/:id", (req, res) => {
       ongoingVotes: ongoingVotes[id] ?? {
         before: data.question.status,
         votes: []
-      }
+      },
+      bounty: bounties[id] 
     })
     api.increaseViews(id).then(data4 => {
   });
@@ -1164,13 +1172,15 @@ app.get("/question/:id", (req, res) => {
       user: req.session.user,
       loggedIn: req.session.loggedIn,
       username: req.session.user?.username,
-      voted: {voted: false}
+      voted: {voted: false},
+      bounty: bounties[id]
     })
   });
   });
 });
 
   });
+  
 var basicDataCache = {};
 function getBasicData(username) {
   return new Promise((resolve, reject) => {
@@ -1267,6 +1277,38 @@ app.post("/addCommentQuestion", (req, res) => {
     res.send(JSON.stringify({success: false}))
   });
 });
+
+app.post("/bountyAdd", (req, res) => {
+  var {question_id, points} = req.body;
+  if(!req.session.loggedIn) {
+    res.redirect("/question/" + question_id)
+
+    return
+  }
+  if(!question_id || !points) {
+    res.redirect("/question/" + question_id)
+    return
+  }
+  getBasicData(req.session.user.username).then(data => {
+    if(data.success && data.points-75 >= points) {
+      bounties[question_id] = {
+        points: Number(points),
+        creator: req.session.user.username
+      }
+
+         modifyPoints(req.session.user.username, -points).then(data => {
+
+      res.redirect("/question/" + question_id)
+    }).catch(err => {
+      console.log("Failed to add bounty", err)
+      res.redirect("/question/" + question_id)
+    })
+    } else {
+      res.redirect("/question/" + question_id)
+      return
+    }
+  });
+})
 
 app.get("/hasUserVotedComment", (req, res) => {
   var comment = req.query.comment;
@@ -1605,7 +1647,7 @@ io.on('connection', (socket) => {
 
     } else {
     api.getAnswer(question, answer).then(data => {
-      if(data.answer_id) {
+      if(data && data.answer_id) {
         if(!answerVoteCache[question])  answerVoteCache[question] = {};
         var count = data.upvotes + data.downvotes;
         answerVoteCache[question][answer] = {votes: count, time: Date.now()};
