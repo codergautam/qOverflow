@@ -18,7 +18,7 @@ class Api {
   }
   async sendRequest(endpoint, method, data, count = 0) {
     this.requestsInQueue++;
-    await delay(1000 * (this.requestsInQueue - 1));
+    await delay(200 * (this.requestsInQueue - 1));
 
     console.log(
       "Send request: " + endpoint,
