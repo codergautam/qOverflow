@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <!-- GoldPlatinumDiaMond500% -->
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -31,68 +32,82 @@
             content: counter(item) ".";
         }
     </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js" integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.3.10/purify.min.js"
+        integrity="sha512-Qr/d6af6cN41/GIKiSmrQd4Y19/fo0YvWhD1VND8O+BsfbFBaZI4K7VVPoUZrd8PzMQ3CE71CkMjhrKf1NbhdQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 </head>
 
 <body class="bg-blue-500 w-full">
     <%- include('./navbar'), { loggedIn: true, login: false, } %>
-    <script src="./lightMode.js"></script>
-    <style id="darkMode">
-        .shadow-indigo-600 {
-              --tw-shadow-color: rgb(12 12 12);
-              --tw-shadow: var(--tw-shadow-colored);
-          }
-        .bg-white {
-          background-color: rgb(34, 34, 34);
-        }
-        .bg-gray-50 {
-          background-color: rgb(51, 51, 51);
-        }
-        .bg-gray-200 {
-          background-color: rgb(66, 66, 66);
-        }
-        .bg-green-200 {
-          background-color: rgb(70, 167, 135);
-        }
-        .bg-blue-500 {
-          background-color: rgb(11, 13, 18);
-        }
-        .text-black {
-          color: rgb(255, 255, 255);
-        }
-        .kindagray {
-          background-color: rgb(25, 25, 26);
-        }
-        .tag {
-            background-color: rgb(11, 11, 17);
-        }
-        .text-gray-700 {
-          color: rgb(224, 224, 224);
-        }
-        .text-gray-900 {
-          color: rgb(224, 224, 224);
-        }
-        input.text-gray-900 {
-          color: black;
-        }
-        h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6,
-        code,
-        pre,
-        blockquote,
-        li,
-        ul,
-        p {
-            color:white;
-        }
-      </style>
-        <div class="grid gap-x-5 grid-cols-6 mt-8 xl:w-11/12 lg:w-11/12 mx-auto relative">
-            <div class="relative flex-col col-span-6 lg:col-span-2 h-full">
+        <script src="./lightMode.js"></script>
+        <style id="darkMode">
+            .shadow-indigo-600 {
+                --tw-shadow-color: rgb(12 12 12);
+                --tw-shadow: var(--tw-shadow-colored);
+            }
+
+            .bg-white {
+                background-color: rgb(34, 34, 34);
+            }
+
+            .bg-gray-50 {
+                background-color: rgb(51, 51, 51);
+            }
+
+            .bg-gray-200 {
+                background-color: rgb(66, 66, 66);
+            }
+
+            .bg-green-200 {
+                background-color: rgb(70, 167, 135);
+            }
+
+            .bg-blue-500 {
+                background-color: rgb(11, 13, 18);
+            }
+
+            .text-black {
+                color: rgb(255, 255, 255);
+            }
+
+            .kindagray {
+                background-color: rgb(25, 25, 26);
+            }
+
+            .tag {
+                background-color: rgb(11, 11, 17);
+            }
+
+            .text-gray-700 {
+                color: rgb(224, 224, 224);
+            }
+
+            .text-gray-900 {
+                color: rgb(224, 224, 224);
+            }
+
+            input.text-gray-900 {
+                color: black;
+            }
+
+            h1,
+            h2,
+            h3,
+            h4,
+            h5,
+            h6,
+            code,
+            pre,
+            blockquote,
+            li,
+            ul,
+            p {
+                color: white;
+            }
+        </style>
+        <div class="grid mr-6 ml-6 gap-x-5 grid-cols-6 mt-8 relative">
+            <div class="relative flex-col h-min col-span-6 lg:col-span-2 h-full">
                 <div class="flex-col px-2 rounded-3xl bg-white pt-2 pb-8">
                     <div class="ml-8 relative z-10">
                         <div class="text-4xl font-semibold text-gray-600 mt-4">
@@ -109,8 +124,12 @@
                             </div>
                         </div> -->
                         <div class="sm:block md:block lg:flex xl:flex pt-2 px-1">
-                            <div class="grid place-content-center align-middle w-fill y-full"><img src="<%= user.img %>" alt="" class="rounded-full mr-6 w-10 h-10 align-middle hover:outline-none hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75"></div>
-                            <div class="break-words mt-1 xl:mt-0 text-4xl 2xl:text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300" style="word-break:break-word">
+                            <div class="grid place-content-center align-middle w-fill y-full"><img src="<%= user.img %>"
+                                    alt=""
+                                    class="rounded-full mr-6 w-10 h-10 align-middle hover:outline-none hover:scale-105 hover:-translate-y-2 transition ease-in-out duration-300 delay-75">
+                            </div>
+                            <div class="break-words mt-1 xl:mt-0 text-4xl 2xl:text-5xl font-bold text-gray-700 underline-offset-1 underline decoration-transparent hover:decoration-gray-200 transition-all ease-in-out delay-75 duration-300"
+                                style="word-break:break-word">
                                 <%= user.username %>
                             </div>
                         </div>
@@ -119,77 +138,90 @@
                                 <div
                                     class="group flex text-3xl font-bebas text-gray-700 hover:translate-x-4 transition-transform delay-75 duration-700 ease-in-out">
                                     Level <%= user.level %>
-                                    <% if(nextLevel <= 7) { %> 
-                                        <div
-                                            class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">
-                                            <%= nextLevelPoints - user.points %> pts. to Level <%= nextLevel %></div>
-                                    <% } %> 
+                                        <% if(nextLevel <=7) { %>
+                                            <div
+                                                class="text-transparent group-hover:text-gray-500 ml-2 text-xl transition-all delay-75 duration-500 ease-in-out">
+                                                <%= nextLevelPoints - user.points %> pts. to Level <%= nextLevel %>
+                                            </div>
+                                            <% } %>
                                 </div>
                                 <div
                                     class="font-bold text-2xl hover:translate-x-6 hover:scale-110 transition-transform delay-75 duration-500 ease-in-out <% if(user.level >= 4 )  { %> text-green-400 <% } else if(user.level >= 2) { %> text-yellow-400 <% } else if(user.level < 2) { %> text-rose-400 <% } %>  ">
                                     <%= user.points.toLocaleString('en-US') %>
                                         <% if(user.points> 1 ) { %> PTS. <% } else { %> PT. <% } %>
-                                </div> 
+                                </div>
                             </div>
                         </div>
                         <div class="flex flex-wrap justify-between">
                             <div class="w-1/2">
-                                <p id="Great Question" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
+                                <p id="Great Question" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
                                     Great Question
                                 </p>
                             </div>
                             <div class="w-1/2">
-                                <p id="Great Answer" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
+                                <p id="Great Answer" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
                                     Great Answer
                                 </p>
                             </div>
                             <div class="w-1/2">
-                                <p id="Socratic" style="opacity: 30%;" class="text-opacity-45 text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
+                                <p id="Socratic" style="opacity: 30%;"
+                                    class="text-opacity-45 text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
                                     Socratic
                                 </p>
                             </div>
                             <div class="w-1/2">
-                                <p id="Zombie" style="opacity: 30%;" class="text-opacity-45 text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
+                                <p id="Zombie" style="opacity: 30%;"
+                                    class="text-opacity-45 text-lg w-min min-w-max max-w-full text-yellow-500 decoration-2 font-semibold">
                                     Zombie
                                 </p>
                             </div>
                             <div class="w-1/2">
-                                <p id="Good Question" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
+                                <p id="Good Question" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
                                     Good Question
                                 </p>
                             </div>
                             <div class="w-1/2">
-                                <p id="Good Answer" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
+                                <p id="Good Answer" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
                                     Good Answer
                                 </p>
                             </div>
                             <div class="w-1/32">
-                                <p id="Inquisitive" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
+                                <p id="Inquisitive" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
                                     Inquisitive
                                 </p>
                             </div>
                             <div class="w-1/2">
-                                <p id="Protected" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
+                                <p id="Protected" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-gray-600 decoration-2 font-semibold">
                                     Protected
                                 </p>
                             </div>
                             <div class="w-1/2">
-                                <p id="Nice Question" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
+                                <p id="Nice Question" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
                                     Nice Question
                                 </p>
                             </div>
                             <div class="w-1/2">
-                                <p id="Nice Answer" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
+                                <p id="Nice Answer" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
                                     Nice Answer
                                 </p>
                             </div>
                             <div class="w-1/32">
-                                <p id="Curious" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
+                                <p id="Curious" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
                                     Curious
                                 </p>
                             </div>
                             <div class="w-1/2">
-                                <p id="Scholar" style="opacity: 30%;" class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
+                                <p id="Scholar" style="opacity: 30%;"
+                                    class="text-lg w-min min-w-max max-w-full text-orange-900 decoration-2 font-semibold">
                                     Scholar
                                 </p>
                             </div>
@@ -229,82 +261,42 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex-col px-2 rounded-3xl bg-white pt-2 pb-8 mt-4">
-                    <div class="ml-4 z-10 px-4 mt-4">
-                        <div class="inline-block pt-2 pb-6">
-                            <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
-                                Privileges:
-                            </div>
-                            <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
-                                <% if(user.abilities) { %> 
-                                    <% user.abilities.map((ability) => { %> 
-                                        <li><%= ability %></li>
-                                    <% }) %> 
-                                <% } %> 
-                            </div>
+            </div>
+            <div class="flex-col h-min col-span-6 lg:col-span-3 px-2 rounded-3xl bg-white pt-2 pb-8 mt-4">
+                <div class="ml-4 z-10 px-4 mt-4">
+                    <div class="inline-block pt-2 pb-6">
+                        <div class="text-4xl font-bold text-gray-700 border-b-2 pb-1 border-blue-100 ">
+                            Privileges:
                         </div>
-                    </div>
-                    <hr/>
-                    <br/>
-                    <div class="ml-6 inline-block mx-auto break-words">
-                        <div class="text-xl font-semibold text-gray-700 pb-1">
-                            <span class=" font-bold">Email:</span> <%- user.email %> 
-                        </div>
-                        <div class="text-xl font-semibold text-gray-700 pb-1 ">
-                            <span class=" font-bold">Questions:</span> <%- user.questions %> 
-                        </div>
-                        <div class="text-xl font-semibold text-gray-700 pb-1">
-                            <span class=" font-bold">Answers:</span> <%- user.answers%> 
+                        <div class="text-xl mt-2 font-semibold list-decimal text-gray-700">
+                            <% if(user.abilities) { %>
+                                <% user.abilities.map((ability)=> { %>
+                                    <li>
+                                        <%= ability %>
+                                    </li>
+                                    <% }) %>
+                                        <% } %>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-6 lg:col-span-3">
-            <div class="relative flex-col">
-                <div class="flex-col z-10">
-                    <div class="ml-2 relative w-max">
-                        <p class="font-bold text-5xl text-white">
-                            Your Activity:
-                        </p>
+                <hr />
+                <br />
+                <div class="ml-6 inline-block mx-auto break-words">
+                    <div class="text-xl font-semibold text-gray-700 pb-1">
+                        <span class=" font-bold">Email:</span>
+                        <%- user.email %>
                     </div>
-                    <div class="flex-col py-1 bg-white rounded-3xl shadow-2xl shadow-indigo-600 mt-6">
-                        <p class="ml-6 mt-4 text-gray-700 font-semibold text-3xl">
-                            Questions
-                        </p>
-                        <div class="flex-col mt-4 mb-8 overflow-y-auto max-h-80" id="questionFeed">
-                            <% if(questionFeed.length <= 0) { %>
-                                <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                    You Have No Questions Right Now
-                                </div>
-                                <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                        <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                      </svg>
-                                </span>
-                            <% } %>
-                        </div> 
-                    </div> 
-                    <div class="flex-col py-1 bg-white rounded-3xl shadow-2xl shadow-indigo-600 mt-6">
-                        <p class="ml-6 mt-4 text-gray-700 font-semibold text-3xl">
-                            Answers
-                        </p>
-                            <div class="flex-col mt-4 mb-8 overflow-y-auto max-h-80" id="answerFeed">
-                                <% if(answerFeed.length <= 0) { %>
-                                    <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
-                                        You Have No Answers Right Now
-                                    </div>
-                                    <span class="ml-6 mt-1 text-gray-500 badge w-min">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
-                                          </svg>
-                                    </span>
-                                    <% } %>
-                            </div>
-                        </div>
+                    <div class="text-xl font-semibold text-gray-700 pb-1 ">
+                        <span class=" font-bold">Questions:</span>
+                        <%- user.questions %>
+                    </div>
+                    <div class="text-xl font-semibold text-gray-700 pb-1">
+                        <span class=" font-bold">Answers:</span>
+                        <%- user.answers%>
                     </div>
                 </div>
             </div>
-            <div class="hidden lg:block col-span-1 relative h-screen">
+            <div class="hidden lg:block col-span-1 relative h-min">
                 <div class="flex justify-end">
                     <div class="flex-col justify-end">
                         <img src="<%= user.img %>" alt=""
@@ -315,8 +307,8 @@
                             <input type="submit"
                                 class="cursor-pointer text-xs font-bold text-white group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-100  transition-all delay-75 duration-300 ease-in-out"
                                 value="Change Email" />
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-white"
-                                fill="none" viewBox="0 0 24 24" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2 h-8 w-8 mr-4 stroke-white" fill="none"
+                                viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
@@ -327,18 +319,73 @@
                             <input type="submit"
                                 class="cursor-pointer text-xs font-bold text-white group-hover:scale-105 group-hover:border-b-2 group-hover:border-gray-100  transition-all delay-75 duration-300 ease-in-out"
                                 value="Change Password" />
-                                &#8202;
-                                &#8202;
-                                
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                                  </svg>
+                            &#8202;
+                            &#8202;
+
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                stroke="white" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                            </svg>
                         </form>
-                        <form  onsubmit="return confirm('Do you really want to delete your account?\nThis cannot be undone.');" action="./deleteAccount" method="POST" class="flex group mt-2 justify-end mr-6">
+                        <form
+                            onsubmit="return confirm('Do you really want to delete your account?\nThis cannot be undone.');"
+                            action="./deleteAccount" method="POST" class="flex group mt-2 justify-end mr-6">
                             <input type="hidden" name="username" value="<%= user.username %> ">
                             <input value="Delete Account" type="submit"
                                 class="cursor-pointer text-base font-bold text-white px-2 py-1 bg-rose-500 rounded-md group-hover:bg-pink-600 transition-all delay-75 duration-300 ease-in-out hover:ring-2 hover:ring-red-400 hover:ring-offset-1" />
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ml-2 mt-10 h-min relative w-max">
+                <p class="font-bold text-5xl text-white">
+                  Your Activity:
+                </p>
+              </div>
+              <div class="col-span-6 lg:col-span-6 mb-3">
+                <div class="relative flex-col">
+                  <div class="grid lg:flex z-10">
+            
+                    <div class="flex-col lg:w-1/2 py-1 lg:mr-4 bg-white rounded-3xl shadow-2xl shadow-indigo-600 mt-6">
+                            <p class="ml-6 mt-4 text-gray-700 font-semibold text-3xl">
+                                Questions
+                            </p>
+                            <div class="flex-col mt-4 mb-8 overflow-y-auto max-h-80" id="questionFeed">
+                                <% if(questionFeed.length <=0) { %>
+                                    <div id="noQuestions" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                        You Have No Questions Right Now
+                                    </div>
+                                    <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path
+                                                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                        </svg>
+                                    </span>
+                                    <% } %>
+                            </div>
+                        </div>
+                        <div class="flex-col lg:w-1/2 py-1 bg-white rounded-3xl shadow-2xl shadow-indigo-600 mt-6">
+                            <p class="ml-6 mt-4 text-gray-700 font-semibold text-3xl">
+                                Answers
+                            </p>
+                            <div class="flex-col mt-4 mb-8 overflow-y-auto max-h-80" id="answerFeed">
+                                <% if(answerFeed.length <=0) { %>
+                                    <div id="noAnswers" class="ml-6 mt-4 text-gray-500 font-semibold text-xl">
+                                        You Have No Answers Right Now
+                                    </div>
+                                    <span class="ml-6 mt-1 text-gray-500 badge w-min">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path
+                                                d="M6 10a2 2 0 11-4 0 2 2 0 014 0zM12 10a2 2 0 11-4 0 2 2 0 014 0zM16 12a2 2 0 100-4 2 2 0 000 4z" />
+                                        </svg>
+                                    </span>
+                                    <% } %>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -353,23 +400,23 @@
                 let lastResultQ = 0
                 let moreToComeQ = false
 
-                
-      async function badgeData() {
-        let bronzeBadgeNum = 0;
-        let silverBadgeNum = 0;
-        let goldBadgeNum = 0;
-        let badges = await fetch('/badgeInfo?username=<%= locals.user?.username %>').then(res => {
-          return res.json()
-        });
-        console.log(badges)
-        for(let i = 0; i < badges.length; i++) {
-            console.log(badges[i][0])
-            console.log(document.querySelector(`#${badges[i][0]}`))
-            document.querySelector(`#${badges[i][0]}`).style.opacity = 1
-            document.querySelector(`#${badges[i][0]}`).classList.add("font-bold")
-        }
-      }
-      badgeData()
+
+                async function badgeData() {
+                    let bronzeBadgeNum = 0;
+                    let silverBadgeNum = 0;
+                    let goldBadgeNum = 0;
+                    let badges = await fetch('/badgeInfo?username=<%= locals.user?.username %>').then(res => {
+                        return res.json()
+                    });
+                    console.log(badges)
+                    for (let i = 0; i < badges.length; i++) {
+                        console.log(badges[i][0])
+                        console.log(document.querySelector(`#${badges[i][0]}`))
+                        document.querySelector(`#${badges[i][0]}`).style.opacity = 1
+                        document.querySelector(`#${badges[i][0]}`).classList.add("font-bold")
+                    }
+                }
+                badgeData()
 
                 appendQuestion = (question) => {
                     console.log(question)
@@ -377,8 +424,9 @@
                     feed.innerHTML += `<div onclick="location.href = '/question/${question.question_id}'" class="ml-6 cursor-pointer hover:-translate-y-1 kindagray hover:scale-105 delay-75 duration-300 ease-in-out my-5 bg-white rounded overflow-hidden shadow-lg w-4/5" style="word-break:break-word">
                                 <div class="px-4 py-4">
                                 <div class="hidden questionId">${question.question_id}</div>
-                                <div class="font-bold text-lg text-black mb-2">${question.title.replace(/[\u00A0-\u9999<>\&]/g, function(i) {
-   return '&#'+i.charCodeAt(0)+';'})}</div>
+                                <div class="font-bold text-lg text-black mb-2">${question.title.replace(/[\u00A0-\u9999<>\&]/g, function (i) {
+                        return '&#' + i.charCodeAt(0) + ';'
+                    })}</div>
                                 </div>
                                 <div class="pl-3 pr-6 pt-4 pb-2 ">
                                 <span class="badge tag font-semibold text-gray-700 mr-2 mb-2">By: ${question.creator} </span>
@@ -519,7 +567,7 @@
                     }
                 }
             </script>
-            
+
             <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/2.1.0/showdown.min.js"></script>
 
