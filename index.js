@@ -1589,7 +1589,7 @@ app.post("/bountyAdd", (req, res) => {
         creator: req.session.user.username
       }
 
-         modifyPoints(req.session.user.username, -points).then(data => {
+         modifyPoints(-1*points, req.session.user.username).then(data => {
 
       res.redirect("/question/" + question_id)
     }).catch(err => {
