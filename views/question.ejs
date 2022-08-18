@@ -1738,14 +1738,14 @@ console.log(comment.comment_id)
 
                                           <div class= "flex flex-row" where = "${where}" id = "mainCommentDiv${comment.comment_id}" >
                                             <div class="flex flex-col items-center justify-between   rounded-lg">
-                                              <img class="rounded-lg rotate-0  cursor-pointer min-w-[10px]" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                              <img class="rounded-lg rotate-0  cursor-pointer min-w-[10px] ${<%= loggedIn && basicData.level >= 2 %> ? "" : "invisible"}" id="commentUp${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                                                 
                                               <p class="text-center odometer" id="voteC${comment.comment_id}">${comment.upvotes - comment.downvotes}</p>
-                                                <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px]" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
+                                                <img class="rounded-lg rotate-180 cursor-pointer min-w-[10px] ${<%= loggedIn && basicData.level >= 4 %> ? "" : "invisible"}" id="commentDown${comment.comment_id}" style="width: 10%; margin-left: auto; margin-right: auto;" src="/vote.png" alt="">
                                                 </div>
 
                                                 <div class="flex flex-col items-center justify-between w-fit rounded-lg -mx-[90px] break-all px-5" id="comment${comment.comment_id}">
-                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator}</div>
+                                                  <div class="flex flex-col items-center justify-between w-fit  rounded-lg  break-all px-5 text-black" ${commentt} - ${comment.creator} (<i class="fa fa-trash" aria-hidden="true"></i>)</div>
 
 
                                             </div>

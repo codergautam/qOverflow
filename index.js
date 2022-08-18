@@ -1299,7 +1299,7 @@ app.post("/addCommentAnswer", (req, res) => {
 
 
 app.get("/forgot", (req, res) => {
-  if(req.session.loggedIn) req.redirect('/')
+  if(req.session.loggedIn) res.redirect('/')
   res.render('forgot', {
   });
 })
