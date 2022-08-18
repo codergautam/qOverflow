@@ -200,7 +200,7 @@
       console.log("Correct? " + answerCorrect)
       if (answerCorrect) {
         response.innerHTML = `
-          <p class="mt-4 text-lg text-green-500 font-bold underline underline-offset-2 decoration-2 decoration-green-700">
+          <p class="mt-4 sm:mt-0 text-lg text-green-500 font-bold underline underline-offset-2 decoration-2 decoration-green-700">
             Captcha completed!
           </p>`
         document.getElementById("submission").setAttribute("type", "submit")
@@ -211,7 +211,7 @@
         document.getElementById("submission").innerText = "Sign up"
       } else if (!answerCorrect) {
         response.innerHTML = `
-          <p class="mt-4 text-lg text-rose-500 font-bold underline underline-offset-2 decoration-2 decoration-rose-700">
+          <p class="mt-4 sm:mt-0 text-lg text-rose-500 font-bold underline underline-offset-2 decoration-2 decoration-rose-700">
             Incorrect captcha, please try again.
           </p>`
       }
