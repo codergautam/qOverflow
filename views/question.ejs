@@ -590,6 +590,29 @@
                                             <p id="questionText" class="mt-4 break-words ">
 
                                             </p>
+
+                                            <% if(loggedIn && basicData.level >= 7 ) { %>
+                                              <% if(pendingEdits.find(f=>!f.answerId)) { %>
+                                                <%  votesa = pendingEdits.find(f=>!f.answerId) %>
+                                            
+                                            <h1 class="border-b-4 pb-8 border-gray-300 border-spacing-2"></h1>
+                                            <h2>
+                                              NEW Title: <%= votesa.title %></h2>
+                                              <br/>
+                                              <h3>New Question Text:</h3>
+                                              <p id="newQuestionText">
+                                                </p>
+                                                <script>
+
+                                                  if(document.getElementById('newQuestionText')) {
+                                          document.getElementById('newQuestionText').innerHTML =marked.parse(DOMPurify.sanitize((atob((`<%= Buffer.from(votesa.newText, 'binary').toString('base64') %>`))), {
+                                            sanitize: false
+                                          }));
+                                        }
+
+                                                  </script>
+                                                <% } %>
+                                                <% } %>
                                           </div>
                                           <div class="flex-col px-6 pt-4 pb-2 text-end my-9 w-full">
                                             <% if(loggedIn && basicData.level >= 7 ) { %>
@@ -802,6 +825,8 @@
                                           marked.parse(DOMPurify.sanitize((atob((`<%= Buffer.from(question.text, 'binary').toString('base64') %>`))), {
                                             sanitize: false
                                           }));
+
+                                          
 
                                         var actiongoing = false;
                                         async function questionUp() {
@@ -1192,7 +1217,7 @@ var hasAppended = false;
                                           var hasAcceptedAnswer = <%= question.hasAcceptedAnswer %>
   var owner = <%= loggedIn && question.creator == user.username ? "true" : "false" %>;
 
-  var pendingEdits = JSON.parse(decodeURIComponent('<%- encodeURIComponent( JSON.stringify(pendingEdits)) %>'));
+  var pendingEdits = (JSON.parse(decodeURIComponent(atob('<%- btoa(encodeURIComponent( JSON.stringify(pendingEdits))) %>'))));
 
   var n = '';
 
@@ -1255,6 +1280,26 @@ var hasAppended = false;
             <div class=" py-[12px] sm:px-[46px] lg:px-[46px] ">
               <div class="h-auto px-8">
                 <p id="${answer.answer_id}Text" class="break-all "> </p>
+<br/>
+<% if(loggedIn && basicData.level >= 7) { %>
+${
+  pendingEdits.find(f=>answer.answer_id == f.answerId) ? `
+  
+  <h1 class="border-b-4 pb-6 border-gray-300 "></h1>
+
+  <h2> NEW Text: </h2>
+  <br/>
+  <p id="newAnswerText${answer.answer_id}" class="break-all "> 
+    
+    </p>
+
+
+  
+  
+  
+  ` : ""
+}
+<% } %>
 
               </div>
             </div>
@@ -1312,6 +1357,21 @@ var doc  = new DOMParser().parseFromString(t, "text/html");
   document.getElementById(answer.answer_id+"Text").innerHTML = DOMPurify.sanitize(marked.parse(answer.text, {
     sanitize: false
   }));
+
+  <% if(loggedIn && basicData.level >= 7) { %>
+    // new answer text
+    if(document.getElementById(`newAnswerText${answer.answer_id}`)) {
+    document.getElementById(`newAnswerText${answer.answer_id}`).innerHTML = 
+    
+    DOMPurify.sanitize(
+      marked.parse(pendingEdits.find(f=>answer.answer_id == f.answerId).newText), {
+      sanitize: false
+    }
+    )
+  }
+
+
+    <% } %>
   
 function uha() {
 document.getElementById("answerShare"+answer.answer_id).addEventListener("click", () => {
